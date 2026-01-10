@@ -1,0 +1,5 @@
+# Chroma authentication configuration
+# For development only - change in production
+credentials:
+  - id: dev-token
+    secret: dev-secret-change-me-in-production

@@ -1,0 +1,101 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created_date": "2026-01-11",
+    "description": "Synthetic test queries for Article 1: Naive RAG baseline evaluation",
+    "corpus": "FastAPI documentation (6 files)",
+    "total_queries": 7,
+    "difficulty_distribution": {
+      "simple": 4,
+      "moderate": 3
+    }
+  },
+  "queries": [
+    {
+      "id": "q001",
+      "query": "What is FastAPI?",
+      "expected_answer": "FastAPI is a modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints.",
+      "source_docs": [
+        "01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "factual",
+      "notes": "Basic definition query, should be in first chunk of introduction"
+    },
+    {
+      "id": "q002",
+      "query": "How do I declare path parameters in FastAPI?",
+      "expected_answer": "You can declare path parameters using the same syntax as Python format strings, such as @app.get('/items/{item_id}'). The value of the path parameter will be passed to your function as an argument.",
+      "source_docs": [
+        "02_path_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "how-to",
+      "notes": "Direct procedural question with code example in source"
+    },
+    {
+      "id": "q003",
+      "query": "What are the benefits of using type annotations with path parameters?",
+      "expected_answer": "Type annotations with path parameters provide editor support (error checks, completion), automatic data parsing to convert values to the declared type, and data validation.",
+      "source_docs": [
+        "02_path_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "conceptual",
+      "notes": "Tests understanding of type system benefits"
+    },
+    {
+      "id": "q004",
+      "query": "What is dependency injection in FastAPI?",
+      "expected_answer": "Dependency Injection in FastAPI is a system that allows path operation functions to declare things they require to work (dependencies), and FastAPI automatically provides those dependencies. It's useful for shared logic, database connections, security, and minimizing code repetition.",
+      "source_docs": [
+        "05_dependencies.md"
+      ],
+      "difficulty": "moderate",
+      "category": "conceptual",
+      "notes": "Requires synthesizing multiple concepts from the dependencies documentation"
+    },
+    {
+      "id": "q005",
+      "query": "When should I use async def versus def for path operations?",
+      "expected_answer": "Use 'async def' when calling third-party libraries with 'await' (for asynchronous operations). Use just 'def' when using libraries that don't support 'await' or communicate synchronously with databases, APIs, or the file system.",
+      "source_docs": [
+        "06_async.md"
+      ],
+      "difficulty": "moderate",
+      "category": "decision-making",
+      "notes": "Tests ability to extract decision criteria from documentation"
+    },
+    {
+      "id": "q006",
+      "query": "What are the key features of FastAPI?",
+      "expected_answer": "FastAPI's key features include: high performance (on par with NodeJS and Go), fast development (200-300% speed increase), fewer bugs (40% reduction), intuitive editor support, easy to learn, minimal code duplication, production-ready with automatic documentation, and standards-based (OpenAPI and JSON Schema).",
+      "source_docs": [
+        "01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "enumeration",
+      "notes": "List-based question, tests retrieval of multiple related facts"
+    },
+    {
+      "id": "q007",
+      "query": "What dependencies does FastAPI rely on?",
+      "expected_answer": "FastAPI stands on the shoulders of Starlette for the web parts and Pydantic for the data parts.",
+      "source_docs": [
+        "01_introduction.md"
+      ],
+      "difficulty": "moderate",
+      "category": "factual",
+      "notes": "Specific technical detail that requires precise retrieval"
+    }
+  ],
+  "evaluation_notes": {
+    "purpose": "These queries serve as a baseline test set for evaluating the Naive RAG pipeline before implementing advanced techniques (HyDE, query decomposition, hybrid search, reranking).",
+    "success_criteria": {
+      "answer_correctness": "Generated answers should cover the key points in expected_answer",
+      "context_precision": "Retrieved chunks should include the source_docs listed",
+      "answer_relevance": "Answers should directly address the query without hallucination"
+    },
+    "limitations": "This is a small test set (7 queries) for rapid iteration. Full evaluation requires 50+ queries with golden Q&A pairs."
+  }
+}

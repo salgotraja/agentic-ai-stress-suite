@@ -58,7 +58,8 @@ dmypy.json
 .pytype/
 
 # Environment variables
-.env
+# Note: .env contains team defaults and IS committed
+# .env.local contains local overrides and is NOT committed
 .env.local
 .env.*.local
 

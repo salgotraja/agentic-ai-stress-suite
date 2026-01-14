@@ -1,49 +1,19 @@
 services:
-  # Text Embeddings Inference - DISABLED for M4 Apple Silicon
-  #
-  # Teaching note: text-embeddings-inference Docker image lacks ARM64 support.
-  # For M4, we run embeddings NATIVELY with PyTorch Metal backend instead.
-  #
-  # Why native is better for M4:
-  # - sentence-transformers uses PyTorch MPS (Metal Performance Shaders)
-  # - Direct GPU access without Docker overhead
-  # - 5-7x faster than CPU
-  # - Simpler setup, no container management
-  #
-  # To use embeddings on M4:
-  #   from sentence_transformers import SentenceTransformer
-  #   model = SentenceTransformer('BAAI/bge-base-en-v1.5')
-  #   # Automatically uses M4 GPU via Metal
-  #
-  # For production Linux/NVIDIA GPU, uncomment and use:
-  #   image: ghcr.io/huggingface/text-embeddings-inference:1.2-cpu-grpc
-  #   or with NVIDIA GPU:
-  #   image: ghcr.io/huggingface/text-embeddings-inference:1.2-cuda
-  #
-  # embeddings:
-  #   image: ghcr.io/huggingface/text-embeddings-inference:1.2-cpu-grpc
-  #   container_name: agentic-ai-embeddings
-  #   restart: unless-stopped
-  #   ports:
-  #     - "8080:80"
-  #   environment:
-  #     - MODEL_ID=BAAI/bge-base-en-v1.5
-  #     - MAX_BATCH_SIZE=32
-  #     - MAX_CLIENT_BATCH_SIZE=16
-  #   volumes:
-  #     - embeddings-data:/data
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:80/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #     start_period: 40s
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         memory: 2G
-
   # Redis (cache + state persistence, from Phase 1)
+  # Teaching note: Redis serves dual purpose in this architecture:
+  # 1. L1 exact-match cache for LLM responses (Article 6)
+  # 2. Distributed state backend for multi-agent systems (Article 5)
+  #
+  # Why Redis:
+  # - Fast: In-memory, sub-millisecond latency
+  # - Persistent: AOF (append-only file) for durability
+  # - Simple: Key-value API, no schema management
+  # - Mature: Battle-tested, 15+ years in production
+  #
+  # Configuration:
+  # - appendonly yes: Persist writes to disk (durability)
+  # - maxmemory 1gb: Prevent OOM on dev machines
+  # - allkeys-lru: Evict least-recently-used keys when full
   redis:
     image: redis:7-alpine
     container_name: agentic-ai-redis
@@ -63,7 +33,24 @@ services:
         limits:
           memory: 1G
 
-  # Chroma (vector DB, local dev)
+  # Chroma (vector database, local dev)
+  # Teaching note: Chroma is the baseline vector DB for development.
+  # Articles 1-2 use Chroma, Article 8 migrates to Weaviate/Qdrant for production.
+  #
+  # Why Chroma for dev:
+  # - Simple: SQLite-backed, no cluster management
+  # - Fast setup: Single container, works immediately
+  # - Good enough: Handles 10K-100K docs fine
+  # - Python-native: Built for Python ML workflows
+  #
+  # Limitations (addressed in Article 8):
+  # - No distributed mode (single node only)
+  # - Limited filtering capabilities vs Weaviate
+  # - No HNSW tuning exposed
+  #
+  # Configuration:
+  # - Token auth enabled via chroma-auth.yaml
+  # - Persist directory ensures data survives restarts
   chroma:
     image: chromadb/chroma:latest
     container_name: agentic-ai-chroma
@@ -76,10 +63,9 @@ services:
       - PERSIST_DIRECTORY=/chroma/data
     volumes:
       - chroma-data:/chroma/data
-      - ./chroma-auth.yaml:/chroma/auth.yaml:ro
+      - ./infra/chroma-auth.yaml:/chroma/auth.yaml:ro
     healthcheck:
-      #test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
-      test: [ "CMD", "/bin/bash", "-c", "cat < /dev/null > /dev/tcp/localhost/8000" ]
+      test: ["CMD", "/bin/bash", "-c", "cat < /dev/null > /dev/tcp/localhost/8000"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -105,15 +91,13 @@ services:
   # - Latency/cost analysis per trace
   # - Session tracking for multi-turn conversations
   #
-  # Healthcheck note: Phoenix container has minimal tooling (no wget, curl, bash).
-  # Using Python's urllib (available in the container) for HTTP health check.
+  # Port 6006: HTTP UI and OTLP collector
   phoenix:
     image: arizephoenix/phoenix:latest
     container_name: agentic-ai-phoenix
     restart: unless-stopped
     ports:
-      - "6006:6006" # UI and OTLP HTTP collector
-      #- "4317:4317"  # OTLP gRPC collector
+      - "6006:6006"
     environment:
       - PHOENIX_PORT=6006
       - PHOENIX_WORKING_DIR=/phoenix-data
@@ -130,7 +114,21 @@ services:
         limits:
           memory: 1G
 
-  # Postgres (optional, future requirement for complex agent state/structured data)
+  # Postgres (optional, future requirement for complex agent state)
+  # Teaching note: Postgres is OPTIONAL in Phase 1. Required for Article 5+.
+  # To start Postgres: docker-compose --profile optional up postgres
+  #
+  # Use cases:
+  # - Structured agent state (conversation history with metadata)
+  # - Audit logs (tamper-evident, queryable)
+  # - Eval result storage (RAGAS metrics over time)
+  # - Multi-agent coordination (shared task queue)
+  #
+  # Why Postgres:
+  # - ACID transactions (critical for agent state consistency)
+  # - Rich query capabilities (JOIN, window functions)
+  # - JSON support (flexible schema for agent state)
+  # - pgvector extension (hybrid search in Article 8)
   postgres:
     image: postgres:16-alpine
     container_name: agentic-ai-postgres
@@ -157,8 +155,6 @@ services:
       - optional
 
 volumes:
-  # embeddings-data:  # Not needed - embeddings run natively on M4
-  #   driver: local
   redis-data:
     driver: local
   chroma-data:

@@ -1,0 +1,315 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created_date": "2026-02-09",
+    "description": "Synthetic test queries for Article 2: Advanced Retrieval with metadata filters",
+    "total_queries": 30,
+    "difficulty_distribution": {
+      "simple": 8,
+      "moderate": 10,
+      "complex": 5,
+      "comparison": 2
+    },
+    "category_distribution": {
+      "simple": 5,
+      "filtered": 10,
+      "cross_framework": 5,
+      "procedural": 3,
+      "comparison": 2
+    }
+  },
+  "queries": [
+    {
+      "id": "q201",
+      "query": "What annotations does Spring use for REST endpoints?",
+      "expected_answer": "Spring uses @RestController, @GetMapping, @PostMapping, @PutMapping, @DeleteMapping annotations for REST endpoints. @RequestMapping provides a more generic mapping.",
+      "source_docs": ["spring/09_rest_api_development.md"],
+      "difficulty": "simple",
+      "category": "filtered",
+      "metadata_filter": {"framework": "spring", "doc_type": "reference"},
+      "notes": "Framework-specific filtered query"
+    },
+    {
+      "id": "q202",
+      "query": "How does FastAPI handle path parameters with type validation?",
+      "expected_answer": "FastAPI uses Python type hints in path parameter declarations. Path parameters are automatically validated against the declared type, returning 422 errors for type mismatches.",
+      "source_docs": ["fastapi/02_path_parameters.md"],
+      "difficulty": "simple",
+      "category": "filtered",
+      "metadata_filter": {"framework": "fastapi"},
+      "notes": "Single framework filter"
+    },
+    {
+      "id": "q203",
+      "query": "What is dependency injection and how does it differ between FastAPI and Spring?",
+      "expected_answer": "Dependency injection provides shared resources to components. FastAPI uses Depends() function with callable dependencies, while Spring uses @Autowired annotation with IoC container managing bean lifecycle.",
+      "source_docs": ["fastapi/05_dependencies__dependency_injection.md", "spring/03_dependency_injection.md"],
+      "difficulty": "complex",
+      "category": "cross_framework",
+      "notes": "Cross-framework comparison, no metadata filter"
+    },
+    {
+      "id": "q204",
+      "query": "How do React hooks manage component state?",
+      "expected_answer": "React hooks like useState and useEffect allow function components to manage state. useState returns a state variable and setter, useEffect handles side effects and cleanup.",
+      "source_docs": ["react/05_useState_hook.md", "react/04_state_management_basics.md"],
+      "difficulty": "moderate",
+      "category": "filtered",
+      "metadata_filter": {"framework": "react"},
+      "notes": "Framework-specific filtered query"
+    },
+    {
+      "id": "q205",
+      "query": "What is Pydantic BaseModel and how is it used for data validation?",
+      "expected_answer": "Pydantic BaseModel provides data validation using Python type annotations. Models define field types and constraints, automatically validating input data at runtime.",
+      "source_docs": ["pydantic/02_basemodel_basics.md", "pydantic/01_introduction_to_pydantic.md"],
+      "difficulty": "simple",
+      "category": "filtered",
+      "metadata_filter": {"framework": "pydantic"},
+      "notes": "Pydantic-specific query"
+    },
+    {
+      "id": "q206",
+      "query": "How does FastAPI implement WebSocket support?",
+      "expected_answer": "FastAPI provides WebSocket support through the WebSocket class and @app.websocket decorator. It supports full-duplex communication with async handling.",
+      "source_docs": ["fastapi/16_websockets_and_serversent_events_in_fastapi.md"],
+      "difficulty": "moderate",
+      "category": "filtered",
+      "metadata_filter": {"framework": "fastapi", "doc_type": "guide"},
+      "notes": "Multi-field metadata filter"
+    },
+    {
+      "id": "q207",
+      "query": "What are the different bean scopes available in Spring?",
+      "expected_answer": "Spring provides singleton, prototype, request, session, and application bean scopes. Singleton is the default, creating one instance per container.",
+      "source_docs": ["spring/04_bean_scopes.md"],
+      "difficulty": "moderate",
+      "category": "filtered",
+      "metadata_filter": {"framework": "spring"},
+      "notes": "Spring-specific filtered query"
+    },
+    {
+      "id": "q208",
+      "query": "How do FastAPI and Pydantic work together for request validation?",
+      "expected_answer": "FastAPI uses Pydantic models to define request body schemas. When a request arrives, FastAPI automatically validates the body against the Pydantic model, returning 422 errors for invalid data.",
+      "source_docs": ["fastapi/12_request_validation_with_pydantic_in_fastapi.md", "fastapi/04_request_body.md"],
+      "difficulty": "moderate",
+      "category": "filtered",
+      "metadata_filter": {"framework": "fastapi"},
+      "notes": "FastAPI+Pydantic integration query"
+    },
+    {
+      "id": "q209",
+      "query": "What state management patterns are available in React?",
+      "expected_answer": "React provides useState for local state, useReducer for complex state, useContext for shared state, and external libraries like Redux for global state management.",
+      "source_docs": ["react/04_state_management_basics.md", "react/09_usereducer_for_complex_state.md", "react/10_usecontext_for_state_management.md"],
+      "difficulty": "complex",
+      "category": "filtered",
+      "metadata_filter": {"framework": "react"},
+      "notes": "Multi-doc React query"
+    },
+    {
+      "id": "q210",
+      "query": "How does Spring MVC handle HTTP requests and responses?",
+      "expected_answer": "Spring MVC uses DispatcherServlet to route requests to controllers. Controllers use @RequestMapping annotations to map URLs to handler methods, with @RequestBody and @ResponseBody for payload handling.",
+      "source_docs": ["spring/08_spring_mvc_fundamentals.md", "spring/10_request_and_response_handling.md"],
+      "difficulty": "moderate",
+      "category": "filtered",
+      "metadata_filter": {"framework": "spring"},
+      "notes": "Spring MVC multi-doc query"
+    },
+    {
+      "id": "q211",
+      "query": "What middleware options does FastAPI provide?",
+      "expected_answer": "FastAPI supports ASGI middleware including CORS, GZip, HTTPS redirect, and custom middleware. Middleware is added using app.add_middleware() and processes requests before and after route handlers.",
+      "source_docs": ["fastapi/07_middleware_in_fastapi.md"],
+      "difficulty": "moderate",
+      "category": "filtered",
+      "metadata_filter": {"framework": "fastapi"},
+      "notes": "FastAPI middleware query"
+    },
+    {
+      "id": "q212",
+      "query": "Compare how React and Spring handle component lifecycle",
+      "expected_answer": "React uses useEffect hooks for lifecycle management (mount, update, unmount). Spring uses @PostConstruct, @PreDestroy annotations and InitializingBean interface for bean lifecycle callbacks.",
+      "source_docs": ["react/07_advanced_useeffect_patterns.md", "spring/06_bean_lifecycle_and_callbacks.md"],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Cross-framework lifecycle comparison, no filter"
+    },
+    {
+      "id": "q213",
+      "query": "How does Pydantic handle field validation and constraints?",
+      "expected_answer": "Pydantic uses Field() for validation constraints like min/max length, regex patterns, and custom validators. String constraints include min_length, max_length, and pattern.",
+      "source_docs": ["pydantic/03_field_types_and_validation.md", "pydantic/04_string_constraints.md"],
+      "difficulty": "moderate",
+      "category": "filtered",
+      "metadata_filter": {"framework": "pydantic"},
+      "notes": "Pydantic validation query"
+    },
+    {
+      "id": "q214",
+      "query": "What is JSX and how does it relate to React components?",
+      "expected_answer": "JSX is a syntax extension for JavaScript that looks like HTML. It allows writing UI components declaratively and gets compiled to React.createElement() calls. Components return JSX to define their visual output.",
+      "source_docs": ["react/02_jsx_fundamentals.md", "react/03_components_and_props.md"],
+      "difficulty": "simple",
+      "category": "filtered",
+      "metadata_filter": {"framework": "react"},
+      "notes": "React basics query"
+    },
+    {
+      "id": "q215",
+      "query": "How does FastAPI implement background tasks?",
+      "expected_answer": "FastAPI provides BackgroundTasks class that accepts functions to run after returning a response. Tasks are added via add_task() and execute asynchronously without blocking the response.",
+      "source_docs": ["fastapi/08_background_tasks_in_fastapi.md"],
+      "difficulty": "simple",
+      "category": "filtered",
+      "metadata_filter": {"framework": "fastapi"},
+      "notes": "FastAPI background tasks query"
+    },
+    {
+      "id": "q216",
+      "query": "What testing approaches does FastAPI support?",
+      "expected_answer": "FastAPI supports testing with TestClient (based on httpx), pytest fixtures for dependency overrides, and async test support. Test isolation is achieved by overriding dependencies.",
+      "source_docs": ["fastapi/09_testing_fastapi_applications.md"],
+      "difficulty": "moderate",
+      "category": "filtered",
+      "metadata_filter": {"framework": "fastapi", "doc_type": "guide"},
+      "notes": "Testing-specific filtered query"
+    },
+    {
+      "id": "q217",
+      "query": "How does Spring configure profiles for different environments?",
+      "expected_answer": "Spring profiles are activated via @Profile annotation or spring.profiles.active property. Different beans and configurations are loaded based on active profile (dev, test, prod).",
+      "source_docs": ["spring/07_spring_profiles.md"],
+      "difficulty": "moderate",
+      "category": "filtered",
+      "metadata_filter": {"framework": "spring"},
+      "notes": "Spring profiles query"
+    },
+    {
+      "id": "q218",
+      "query": "What security features does FastAPI provide?",
+      "expected_answer": "FastAPI supports OAuth2 with password/bearer flows, API key authentication, CORS configuration, and HTTPS enforcement. Security is implemented through dependency injection patterns.",
+      "source_docs": ["fastapi/10_security_in_fastapi.md"],
+      "difficulty": "moderate",
+      "category": "filtered",
+      "metadata_filter": {"framework": "fastapi", "doc_type": "guide"},
+      "notes": "Security-specific filtered query"
+    },
+    {
+      "id": "q219",
+      "query": "How do custom hooks work in React?",
+      "expected_answer": "Custom hooks are JavaScript functions starting with 'use' that compose built-in hooks. They encapsulate reusable stateful logic and can be shared across components without changing the component hierarchy.",
+      "source_docs": ["react/08_custom_hooks_deep_dive.md"],
+      "difficulty": "simple",
+      "category": "filtered",
+      "metadata_filter": {"framework": "react"},
+      "notes": "React custom hooks query"
+    },
+    {
+      "id": "q220",
+      "query": "What is discriminated union in Pydantic and when to use it?",
+      "expected_answer": "Pydantic discriminated unions use a literal field to determine which model variant to parse. They are useful when a field can be one of several types, identified by a type discriminator field.",
+      "source_docs": ["pydantic/06_discriminated_unions.md"],
+      "difficulty": "complex",
+      "category": "filtered",
+      "metadata_filter": {"framework": "pydantic"},
+      "notes": "Advanced Pydantic feature query"
+    },
+    {
+      "id": "q221",
+      "query": "How do you handle file uploads in FastAPI?",
+      "expected_answer": "FastAPI handles file uploads using File() and UploadFile parameters. UploadFile provides async file reading with filename and content_type attributes. Multiple files can be uploaded simultaneously.",
+      "source_docs": ["fastapi/17_file_uploads_and_streaming_in_fastapi.md"],
+      "difficulty": "simple",
+      "category": "procedural",
+      "metadata_filter": {"framework": "fastapi"},
+      "notes": "How-to query with filter"
+    },
+    {
+      "id": "q222",
+      "query": "What is the Spring IoC container and how does it work?",
+      "expected_answer": "The Spring IoC (Inversion of Control) container manages object creation and dependency wiring. It reads configuration metadata (annotations, XML, or Java config) to instantiate, configure, and assemble beans.",
+      "source_docs": ["spring/02_ioc_container.md"],
+      "difficulty": "simple",
+      "category": "filtered",
+      "metadata_filter": {"framework": "spring"},
+      "notes": "Spring core concept query"
+    },
+    {
+      "id": "q223",
+      "query": "Compare validation approaches between Pydantic and FastAPI request bodies",
+      "expected_answer": "Pydantic provides standalone data validation with BaseModel, while FastAPI integrates Pydantic models as request body parameters. FastAPI adds HTTP-specific validation (path, query, header) on top of Pydantic model validation.",
+      "source_docs": ["pydantic/03_field_types_and_validation.md", "fastapi/04_request_body.md", "fastapi/12_request_validation_with_pydantic_in_fastapi.md"],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Cross-library comparison, no filter"
+    },
+    {
+      "id": "q224",
+      "query": "How does FastAPI handle database integration with SQLAlchemy?",
+      "expected_answer": "FastAPI integrates with SQLAlchemy using dependency injection for database sessions. A session factory creates per-request sessions, models define table schemas, and CRUD operations use the session API.",
+      "source_docs": ["fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md"],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "metadata_filter": {"framework": "fastapi", "doc_type": "guide"},
+      "notes": "Database integration query with multi-field filter"
+    },
+    {
+      "id": "q225",
+      "query": "What is model inheritance in Pydantic and how is it used?",
+      "expected_answer": "Pydantic supports model inheritance where child models inherit fields and validators from parent models. This enables base schemas with shared fields and specialized models for different contexts.",
+      "source_docs": ["pydantic/05_model_inheritance_and_composition.md"],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "metadata_filter": {"framework": "pydantic"},
+      "notes": "Pydantic inheritance query"
+    },
+    {
+      "id": "q226",
+      "query": "What are the three main approaches to concurrency in Python?",
+      "expected_answer": "Python provides threading (for I/O-bound tasks, limited by GIL), multiprocessing (for CPU-bound tasks, bypasses GIL), and asyncio (cooperative multitasking with async/await for high-concurrency I/O).",
+      "source_docs": ["pdfs/python_concurrency_patterns.pdf"],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "PDF document query - Python concurrency"
+    },
+    {
+      "id": "q227",
+      "query": "How does React.memo optimize component rendering?",
+      "expected_answer": "React.memo is a higher-order component that memoizes rendered output. It performs shallow comparison of props and skips re-rendering if props haven't changed, useful for components that render often with the same props.",
+      "source_docs": ["pdfs/react_performance_optimization.pdf"],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "PDF document query - React performance"
+    },
+    {
+      "id": "q228",
+      "query": "What are the best practices for REST API resource naming?",
+      "expected_answer": "Use plural nouns for collections (/users, /orders), path parameters for identifiers (/users/123), nested resources for relationships (/users/123/orders), avoid verbs in URLs, and use kebab-case for multi-word resources.",
+      "source_docs": ["pdfs/api_design_best_practices.pdf"],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "PDF document query - API design"
+    },
+    {
+      "id": "q229",
+      "query": "When should you use multiprocessing vs asyncio in Python?",
+      "expected_answer": "Use multiprocessing for CPU-bound workloads (bypasses GIL, runs separate processes). Use asyncio for high-concurrency I/O workloads like web servers (single thread, cooperative scheduling via await points, avoids race conditions).",
+      "source_docs": ["pdfs/python_concurrency_patterns.pdf"],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "PDF document query - concurrency comparison"
+    },
+    {
+      "id": "q230",
+      "query": "How does code splitting with React.lazy reduce bundle size?",
+      "expected_answer": "React.lazy enables dynamic imports that split bundles into smaller chunks loaded on demand. Combined with Suspense for loading states, route-based splitting loads page components only when the user navigates to them.",
+      "source_docs": ["pdfs/react_performance_optimization.pdf"],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "PDF document query - React code splitting"
+    }
+  ]
+}

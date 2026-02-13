@@ -1,101 +1,3447 @@
 {
   "metadata": {
     "version": "1.0",
-    "created_date": "2026-01-11",
-    "description": "Synthetic test queries for Article 1: Naive RAG baseline evaluation",
-    "corpus": "FastAPI documentation (6 files)",
-    "total_queries": 7,
+    "created_date": "2026-01-15",
+    "description": "Synthetic test queries for Article 1: RAG baseline evaluation",
+    "total_queries": 300,
     "difficulty_distribution": {
-      "simple": 4,
-      "moderate": 3
+      "simple": 108,
+      "moderate": 131,
+      "negation": 3,
+      "complex": 42,
+      "temporal": 13,
+      "comparison": 3
+    },
+    "category_distribution": {
+      "simple": 75,
+      "procedural": 92,
+      "temporal": 38,
+      "comparison": 66,
+      "negation": 29
     }
   },
   "queries": [
     {
       "id": "q001",
-      "query": "What is FastAPI?",
-      "expected_answer": "FastAPI is a modern, fast (high-performance) web framework for building APIs with Python 3.7+ based on standard Python type hints.",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
       "source_docs": [
-        "01_introduction.md"
+        "fastapi/01_introduction.md"
       ],
       "difficulty": "simple",
-      "category": "factual",
-      "notes": "Basic definition query, should be in first chunk of introduction"
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
     },
     {
       "id": "q002",
-      "query": "How do I declare path parameters in FastAPI?",
-      "expected_answer": "You can declare path parameters using the same syntax as Python format strings, such as @app.get('/items/{item_id}'). The value of the path parameter will be passed to your function as an argument.",
+      "query": "What is the difference between path parameters and query parameters in FastAPI?",
+      "expected_answer": "Path parameters are included in the endpoint URL, while query parameters are optional and passed in the query string. Path parameters are typically used to identify resources, while query parameters filter or sort resources.",
       "source_docs": [
-        "02_path_parameters.md"
+        "fastapi/02_path_parameters.md",
+        "fastapi/03_query_parameters.md"
       ],
-      "difficulty": "simple",
-      "category": "how-to",
-      "notes": "Direct procedural question with code example in source"
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "Comparison query from two related topics"
     },
     {
       "id": "q003",
-      "query": "What are the benefits of using type annotations with path parameters?",
-      "expected_answer": "Type annotations with path parameters provide editor support (error checks, completion), automatic data parsing to convert values to the declared type, and data validation.",
+      "query": "Can you give an example of using the Depends() function in FastAPI?",
+      "expected_answer": "Depends() is used to provide shared resources, such as databases or services. For example, using depends_on_db() from a database client.",
       "source_docs": [
-        "02_path_parameters.md"
+        "fastapi/05_dependencies.md"
       ],
       "difficulty": "simple",
-      "category": "conceptual",
-      "notes": "Tests understanding of type system benefits"
+      "category": "procedural",
+      "notes": "How-to query from a specific doc"
     },
     {
       "id": "q004",
-      "query": "What is dependency injection in FastAPI?",
-      "expected_answer": "Dependency Injection in FastAPI is a system that allows path operation functions to declare things they require to work (dependencies), and FastAPI automatically provides those dependencies. It's useful for shared logic, database connections, security, and minimizing code repetition.",
+      "query": "What is the purpose of the async def keyword in FastAPI?",
+      "expected_answer": "async def is used to define asynchronous functions that can be awaited. This allows FastAPI to handle requests concurrently and improve performance.",
       "source_docs": [
-        "05_dependencies.md"
+        "fastapi/06_async.md"
       ],
-      "difficulty": "moderate",
-      "category": "conceptual",
-      "notes": "Requires synthesizing multiple concepts from the dependencies documentation"
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "When-to-use query from a specific doc"
     },
     {
       "id": "q005",
-      "query": "When should I use async def versus def for path operations?",
-      "expected_answer": "Use 'async def' when calling third-party libraries with 'await' (for asynchronous operations). Use just 'def' when using libraries that don't support 'await' or communicate synchronously with databases, APIs, or the file system.",
+      "query": "How do you implement authentication in FastAPI?",
+      "expected_answer": "Authentication in FastAPI involves using middlewares or using the OAuth2PasswordBearer dependency to validate user credentials.",
       "source_docs": [
-        "06_async.md"
+        "fastapi/10_security.md"
       ],
       "difficulty": "moderate",
-      "category": "decision-making",
-      "notes": "Tests ability to extract decision criteria from documentation"
+      "category": "procedural",
+      "notes": "How-to query from security doc"
     },
     {
       "id": "q006",
-      "query": "What are the key features of FastAPI?",
-      "expected_answer": "FastAPI's key features include: high performance (on par with NodeJS and Go), fast development (200-300% speed increase), fewer bugs (40% reduction), intuitive editor support, easy to learn, minimal code duplication, production-ready with automatic documentation, and standards-based (OpenAPI and JSON Schema).",
+      "query": "What is the key difference between a BaseModel and a standard Pydantic model?",
+      "expected_answer": "A BaseModel is used to create a base class for other Pydantic models, while a standard model is a standalone model.",
       "source_docs": [
-        "01_introduction.md"
+        "pydantic/01_introduction.md"
       ],
       "difficulty": "simple",
-      "category": "enumeration",
-      "notes": "List-based question, tests retrieval of multiple related facts"
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
     },
     {
       "id": "q007",
-      "query": "What dependencies does FastAPI rely on?",
-      "expected_answer": "FastAPI stands on the shoulders of Starlette for the web parts and Pydantic for the data parts.",
+      "query": "How do you validate JSON data using Pydantic models?",
+      "expected_answer": "You can validate JSON data using the validate() method on a Pydantic model.",
       "source_docs": [
-        "01_introduction.md"
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "How-to query from a specific doc"
+    },
+    {
+      "id": "q008",
+      "query": "What is the difference between the @autowired and @bean annotations in Spring?",
+      "expected_answer": "@autowired is used to inject a bean into a method, while @bean is used to define a bean.",
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Comparison query from an IOC container doc"
+    },
+    {
+      "id": "q009",
+      "query": "How do you implement dependency injection in Spring?",
+      "expected_answer": "Dependency injection in Spring involves using annotations such as @Autowired and @Bean to provide shared resources.",
+      "source_docs": [
+        "spring/03_dependency_injection.md"
       ],
       "difficulty": "moderate",
-      "category": "factual",
-      "notes": "Specific technical detail that requires precise retrieval"
+      "category": "procedural",
+      "notes": "How-to query from a dependency injection doc"
+    },
+    {
+      "id": "q010",
+      "query": "What is the purpose of the useState hook in React?",
+      "expected_answer": "The useState hook is used to manage state in functional components.",
+      "source_docs": [
+        "react/04_state_management_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "When-to-use query from state management doc"
+    },
+    {
+      "id": "q011",
+      "query": "Can you give an example of using a React hook to manage state?",
+      "expected_answer": "Using the useState hook, for example: const [count, setCount] = useState(0);",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "How-to query from a specific hook doc"
+    },
+    {
+      "id": "q012",
+      "query": "How do you handle errors in React?",
+      "expected_answer": "Error handling in React involves using try-catch blocks and error boundaries.",
+      "source_docs": [
+        "react/01_introduction.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from introduction"
+    },
+    {
+      "id": "q013",
+      "query": "What is the difference between a React component and a functional component?",
+      "expected_answer": "A React component is a class that extends React.Component, while a functional component is a function that returns JSX or a value.",
+      "source_docs": [
+        "react/03_components_and_props.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Comparison query from components and props doc"
+    },
+    {
+      "id": "q014",
+      "query": "How do you optimize the performance of a React application?",
+      "expected_answer": "Performance optimization in React involves using memoization, lazy loading, and other techniques to minimize unnecessary re-renders.",
+      "source_docs": [
+        "react/03_components_and_props.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from components and props doc"
+    },
+    {
+      "id": "q015",
+      "query": "What is the purpose of the @bean annotation in Spring?",
+      "expected_answer": "@bean is used to define a bean in the Spring IOC container.",
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "When-to-use query from IOC container doc"
+    },
+    {
+      "id": "q016",
+      "query": "Can you give an example of using a Spring bean to provide a service?",
+      "expected_answer": "For example: @Service public class UserService { public void doSomething() { ... } }",
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "How-to query from IOC container doc"
+    },
+    {
+      "id": "q017",
+      "query": "How do you implement a bean lifecycle in Spring?",
+      "expected_answer": "Bean lifecycle in Spring involves using annotations such as @PostConstruct and @PreDestroy to manage the lifecycle of a bean.",
+      "source_docs": [
+        "spring/04_bean_scopes.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from a bean scopes doc"
+    },
+    {
+      "id": "q018",
+      "query": "What is the difference between a Pydantic model and a standard Python class?",
+      "expected_answer": "A Pydantic model is a class that extends BaseModel, while a standard Python class is a class that does not extend BaseModel.",
+      "source_docs": [
+        "pydantic/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Comparison query from introduction"
+    },
+    {
+      "id": "q019",
+      "query": "How do you use string constraints in Pydantic models?",
+      "expected_answer": "You can use string constraints such as min_length and max_length to validate string fields in Pydantic models.",
+      "source_docs": [
+        "pydantic/04_string_constraints.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "How-to query from string constraints doc"
+    },
+    {
+      "id": "q020",
+      "query": "What is the purpose of the Depends() function in FastAPI?",
+      "expected_answer": "Depends() is used to provide shared resources in FastAPI.",
+      "source_docs": [
+        "fastapi/05_dependencies.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "When-to-use query from dependency injection doc"
+    },
+    {
+      "id": "q021",
+      "query": "Can you give an example of using the Depends() function to provide a database client?",
+      "expected_answer": "Using Depends() to provide a database client, for example: depends_on_db() from a database client.",
+      "source_docs": [
+        "fastapi/05_dependencies.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "How-to query from a specific dependency injection doc"
+    },
+    {
+      "id": "q022",
+      "query": "How do you implement authentication in FastAPI using OAuth2PasswordBearer?",
+      "expected_answer": "You can implement authentication in FastAPI using OAuth2PasswordBearer by adding it as a dependency.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from security doc"
+    },
+    {
+      "id": "q023",
+      "query": "What is the difference between using async def and def in FastAPI?",
+      "expected_answer": "async def is used to define asynchronous functions, while def is used to define synchronous functions.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Comparison query from concurrency doc"
+    },
+    {
+      "id": "q024",
+      "query": "How do you optimize the performance of a FastAPI application?",
+      "expected_answer": "Performance optimization in FastAPI involves using techniques such as asynchronous programming and caching to minimize unnecessary computations.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from concurrency doc"
+    },
+    {
+      "id": "q025",
+      "query": "What is the purpose of the @autowired annotation in Spring?",
+      "expected_answer": "@autowired is used to inject a bean into a method in Spring.",
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "When-to-use query from IOC container doc"
+    },
+    {
+      "id": "q026",
+      "query": "Can you give an example of using @autowired to inject a service?",
+      "expected_answer": "Using @autowired to inject a service, for example: @Autowired private UserService userService;",
+      "source_docs": [
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "How-to query from dependency injection doc"
+    },
+    {
+      "id": "q027",
+      "query": "What is the key difference between a Spring bean and a Pydantic model?",
+      "expected_answer": "A Spring bean is a class that is managed by the Spring IOC container, while a Pydantic model is a class that is used to validate data.",
+      "source_docs": [
+        "spring/02_ioc_container.md",
+        "pydantic/01_introduction.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Comparison query from IOC container and introduction doc"
+    },
+    {
+      "id": "q028",
+      "query": "How do you use the Depends() function to provide a service in FastAPI?",
+      "expected_answer": "You can use the Depends() function to provide a service by creating a service class and using Depends() to inject it into a route.",
+      "source_docs": [
+        "fastapi/05_dependencies.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from dependency injection doc"
+    },
+    {
+      "id": "q029",
+      "query": "What is the purpose of the async def keyword in FastAPI?",
+      "expected_answer": "async def is used to define asynchronous functions in FastAPI.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "When-to-use query from concurrency doc"
+    },
+    {
+      "id": "q030",
+      "query": "Can you give an example of using async def to define an asynchronous function?",
+      "expected_answer": "Using async def to define an asynchronous function, for example: async def async_function(): ...",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "How-to query from concurrency doc"
+    },
+    {
+      "id": "q031",
+      "query": "What is the difference between using @autowired and @bean in Spring?",
+      "expected_answer": "@autowired is used to inject a bean into a method, while @bean is used to define a bean.",
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Comparison query from IOC container doc"
+    },
+    {
+      "id": "q032",
+      "query": "How do you optimize the performance of a Spring application?",
+      "expected_answer": "Performance optimization in Spring involves using techniques such as caching and connection pooling to minimize unnecessary computations.",
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from IOC container doc"
+    },
+    {
+      "id": "q033",
+      "query": "What are common pitfalls to avoid when using Pydantic models?",
+      "expected_answer": "Common pitfalls to avoid when using Pydantic models include not using fields with default values and not using the validate() method.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md"
+      ],
+      "difficulty": "negation",
+      "category": "negation",
+      "notes": "What-not-to-do query from a specific validation doc"
+    },
+    {
+      "id": "q034",
+      "query": "How do you implement authentication in React using the useReducer hook?",
+      "expected_answer": "You can implement authentication in React using the useReducer hook by creating a reducer function and using it with the useReducer hook.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from a specific hook doc"
+    },
+    {
+      "id": "q035",
+      "query": "What is the difference between the @autowired and @bean annotations in Spring compared to FastAPI's Depends() function?",
+      "expected_answer": "@autowired and @bean in Spring are used for dependency injection, while Depends() in FastAPI is used to provide shared resources.",
+      "source_docs": [
+        "spring/02_ioc_container.md",
+        "fastapi/05_dependencies.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Comparison query from two frameworks"
+    },
+    {
+      "id": "q036",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q037",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q038",
+      "query": "What are common pitfalls when using Pydantic validation?",
+      "expected_answer": "Common pitfalls include incorrect type annotations, missing validation rules, and incorrect use of validators. It is essential to carefully design your models and validate user input to avoid these issues.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md",
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Query highlighting what not to do"
+    },
+    {
+      "id": "q039",
+      "query": "How to implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "To implement authentication in FastAPI, you can use the OAuth2 library. You need to create an OAuth2 client, register it, and then use the client credentials to authenticate your users. You can also use the FastAPI built-in support for OAuth2.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Step-by-step query for implementing OAuth2"
+    },
+    {
+      "id": "q040",
+      "query": "What are the differences between React hooks and Spring bean lifecycle?",
+      "expected_answer": "React hooks provide a way to manage state and side effects in functional components. Spring bean lifecycle, on the other hand, is focused on managing the lifecycle of beans in a Spring application. While both are used for managing state, they serve different purposes.",
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "spring/05_dependency_injection_patterns.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two concepts"
+    },
+    {
+      "id": "q041",
+      "query": "When should I use async def vs def in FastAPI?",
+      "expected_answer": "You should use async def in FastAPI when you need to perform asynchronous operations. This includes I/O-bound operations, concurrent processing, and other scenarios where using async def provides benefits.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "Query about when to use async/await"
+    },
+    {
+      "id": "q042",
+      "query": "How to optimize the performance of a Spring application?",
+      "expected_answer": "To optimize the performance of a Spring application, you can use caching, optimize database queries, use asynchronous programming, and minimize unnecessary computations. You can also use Spring's built-in support for caching and asynchronous programming.",
+      "source_docs": [
+        "spring/02_ioc_container.md",
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Step-by-step query for optimizing performance"
+    },
+    {
+      "id": "q043",
+      "query": "How does Pydantic handle model inheritance and composition?",
+      "expected_answer": "Pydantic handles model inheritance and composition using base model classes and field inheritance. You can create a base model class and inherit from it to create child models. You can also use field inheritance to reuse fields across models.",
+      "source_docs": [
+        "pydantic/05_model_inheritance_and_composition.md"
+      ],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "Query about how Pydantic handles model inheritance"
+    },
+    {
+      "id": "q044",
+      "query": "Can you give an example of using Pydantic's custom validators?",
+      "expected_answer": "You can use Pydantic's custom validators by creating a custom validator function and passing it as a field validator. For example, you can create a custom validator for email addresses or phone numbers.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Step-by-step query for using custom validators"
+    },
+    {
+      "id": "q045",
+      "query": "How do I use React's useReducer hook to manage complex state?",
+      "expected_answer": "You can use the useReducer hook to manage complex state by creating a reducer function that takes the current state and an action as inputs and returns the new state. You can then use the useReducer hook to dispatch actions and update the state.",
+      "source_docs": [
+        "react/09_usereducer_for_complex_state.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Step-by-step query for using useReducer"
+    },
+    {
+      "id": "q046",
+      "query": "What are the differences between React hooks and Spring bean lifecycle?",
+      "expected_answer": "React hooks and Spring bean lifecycle are unrelated concepts. React hooks manage state and side effects in functional components, whereas Spring bean lifecycle handles the life cycle of Java objects.",
+      "source_docs": [
+        "react/03_components_and_props.md",
+        "spring/04_bean_scopes.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q047",
+      "query": "How does Pydantic handle model inheritance and composition?",
+      "expected_answer": "In Pydantic, model inheritance and composition are achieved through the use of the base_model parameter and the inclusion of one model within another.",
+      "source_docs": [
+        "pydantic/05_model_inheritance_and_composition.md"
+      ],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "Basic Pydantic concept"
+    },
+    {
+      "id": "q048",
+      "query": "What are common pitfalls when using async def in FastAPI?",
+      "expected_answer": "Common pitfalls when using async def in FastAPI include the use of await instead of wait() for blocking operations and the failure to properly handle exceptions.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Query about common pitfalls"
+    },
+    {
+      "id": "q049",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "To implement authentication in FastAPI using OAuth2, use the OAuth2PasswordBearer class to authenticate users and the Depends() function to inject the token into the endpoint.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query about authentication"
+    },
+    {
+      "id": "q050",
+      "query": "What are the differences between Pydantic's field types and validation?",
+      "expected_answer": "Pydantic's field types determine the data type of the field, while validation ensures that the field meets certain criteria, such as being within a specific range.",
+      "source_docs": [
+        "pydantic/03_field_types_and_validation.md"
+      ],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "Basic Pydantic concept"
+    },
+    {
+      "id": "q051",
+      "query": "When should I use the useReducer hook in React?",
+      "expected_answer": "Use the useReducer hook in React when managing complex state that cannot be easily handled with the useState hook or when the state depends on other state or props.",
+      "source_docs": [
+        "react/09_usereducer_for_complex_state.md"
+      ],
+      "difficulty": "moderate",
+      "category": "temporal",
+      "notes": "Query about when to use a hook"
+    },
+    {
+      "id": "q052",
+      "query": "How does Spring handle bean scopes and lifecycle?",
+      "expected_answer": "Spring uses bean scopes to define the life cycle of beans. The bean's lifecycle is controlled by the scope in which it is defined, such as singleton or prototype.",
+      "source_docs": [
+        "spring/04_bean_scopes.md"
+      ],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "Basic Spring concept"
+    },
+    {
+      "id": "q053",
+      "query": "What are the benefits of using FastAPI's automatic documentation feature?",
+      "expected_answer": "FastAPI's automatic documentation feature provides a user-friendly API documentation that can be easily shared with clients, improving collaboration and reducing documentation effort.",
+      "source_docs": [
+        "fastapi/01_fastapi_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Benefits of a FastAPI feature"
+    },
+    {
+      "id": "q054",
+      "query": "How do I use Pydantic's custom validators?",
+      "expected_answer": "To use Pydantic's custom validators, create a custom validator class that implements the Validator class and use the @validates decorator to apply the validator to a field.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query about custom validators"
+    },
+    {
+      "id": "q055",
+      "query": "What are the key features of the Spring IoC container?",
+      "expected_answer": "The Spring IoC container provides features such as dependency injection, bean creation, and wiring, making it an essential tool for building enterprise-level applications.",
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic Spring concept"
+    },
+    {
+      "id": "q056",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q057",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q058",
+      "query": "What are common pitfalls when using Pydantic's custom validators?",
+      "expected_answer": "Common pitfalls with Pydantic's custom validators include incorrect validator types and not handling validation errors properly. It's essential to validate input data correctly and handle potential exceptions.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "simple",
+      "category": "negation",
+      "notes": "Simple query highlighting common pitfalls"
+    },
+    {
+      "id": "q059",
+      "query": "How do I implement background tasks in FastAPI?",
+      "expected_answer": "To implement background tasks in FastAPI, you can use the async def background() function. This function runs in a separate task, allowing you to offload heavy computations or I/O operations from the main request thread.",
+      "source_docs": [
+        "fastapi/08_background_tasks.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query showing how-to implement feature"
+    },
+    {
+      "id": "q060",
+      "query": "What are the benefits of using Pydantic's forward references and recursive models?",
+      "expected_answer": "Pydantic's forward references and recursive models enable efficient and flexible model definitions. They allow for complex data structures and relationships, making it easier to model data correctly and effectively.",
+      "source_docs": [
+        "pydantic/07_forward_references.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic benefits query from introduction"
+    },
+    {
+      "id": "q061",
+      "query": "When should I use the async def syntax in FastAPI?",
+      "expected_answer": "Use the async def syntax in FastAPI when you need to perform asynchronous operations. This includes database queries, network I/O, or any other operation that blocks the main thread.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "Query asking when to use specific syntax"
+    },
+    {
+      "id": "q062",
+      "query": "How do I implement authentication in my FastAPI application using OAuth2?",
+      "expected_answer": "To implement authentication in FastAPI using OAuth2, you need to create an OAuth2 client and use the OAuth2PasswordBearer class. You must also configure the client correctly and validate incoming tokens.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query showing how-to implement feature"
+    },
+    {
+      "id": "q063",
+      "query": "What is the difference between React's useState and useReducer hooks?",
+      "expected_answer": "The main difference between React's useState and useReducer hooks is how they handle state updates. useState updates state directly, while useReducer uses a reducer function to manage state updates. This makes useReducer more suitable for complex state management.",
+      "source_docs": [
+        "react/06_advanced_usestate.md",
+        "react/09_usereducer.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two hooks"
+    },
+    {
+      "id": "q064",
+      "query": "What are the key features of Spring's IoC container?",
+      "expected_answer": "Spring's IoC container is a key feature that enables dependency injection and management of application components. It allows developers to decouple dependencies, simplify code, and improve maintainability.",
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic key features query from introduction"
+    },
+    {
+      "id": "q065",
+      "query": "How do I compare the performance of FastAPI and Spring Framework?",
+      "expected_answer": "To compare the performance of FastAPI and Spring Framework, you can use benchmarks such as those provided by the framework's documentation. FastAPI is generally faster due to its async design and built-in support for asynchronous operations.",
+      "source_docs": [
+        "fastapi/01_introduction.md",
+        "spring/01_introduction.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query requiring complex analysis"
+    },
+    {
+      "id": "q066",
+      "query": "What are common pitfalls when using Pydantic's custom validators?",
+      "expected_answer": "Common pitfalls of Pydantic's custom validators include incorrect usage of the `validate` method, failure to handle nested fields, and incorrect usage of `root_validator`.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md",
+        "pydantic/04_string_constraints.md"
+      ],
+      "difficulty": "complex",
+      "category": "negation",
+      "notes": "Query about avoiding common mistakes with Pydantic"
+    },
+    {
+      "id": "q067",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "To implement authentication in FastAPI using OAuth2, use the FastAPI OAuth2 library and follow the steps outlined in the documentation for client registration, authorization code flow, and access token validation.",
+      "source_docs": [
+        "fastapi/10_security.md",
+        "fastapi/09_testing_fastapi_applications.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query about implementing authentication in FastAPI"
+    },
+    {
+      "id": "q068",
+      "query": "What is the difference between React's useState and useReducer hooks?",
+      "expected_answer": "useState is used for simple state updates, while useReducer is used for more complex state management and can handle multiple updates at once.",
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "react/09_usereducer_for_complex_state.md"
+      ],
+      "difficulty": "simple",
+      "category": "comparison",
+      "notes": "Query comparing two React hooks"
+    },
+    {
+      "id": "q069",
+      "query": "When should I use the async def syntax in FastAPI?",
+      "expected_answer": "Use async def syntax in FastAPI when handling asynchronous operations, such as database queries or API calls, to ensure the function returns a response once the operation is complete.",
+      "source_docs": [
+        "fastapi/06_async.md",
+        "fastapi/08_background_tasks_in_fastapi.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "Query about when to use async def in FastAPI"
+    },
+    {
+      "id": "q070",
+      "query": "How do I implement background tasks in FastAPI?",
+      "expected_answer": "To implement background tasks in FastAPI, use the `BackgroundTasks` object and schedule tasks using the `add_task` method. Background tasks can be used to run long-running operations asynchronously.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query about implementing background tasks in FastAPI"
+    },
+    {
+      "id": "q071",
+      "query": "What are the benefits of using Pydantic's forward references and recursive models?",
+      "expected_answer": "Forward references and recursive models in Pydantic enable the creation of complex data models with nested fields and relationships, providing a clear and explicit way to define data structures.",
+      "source_docs": [
+        "pydantic/07_forward_references_and_recursive_models.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Query about the benefits of Pydantic's forward references and recursive models"
+    },
+    {
+      "id": "q072",
+      "query": "How do I compare the performance of FastAPI and Spring Framework?",
+      "expected_answer": "To compare the performance of FastAPI and Spring Framework, use benchmarking tools to measure the execution time of similar operations and applications.",
+      "source_docs": [
+        "fastapi/06_async.md",
+        "spring/09_rest_api_development.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Query about comparing performance between two frameworks"
+    },
+    {
+      "id": "q073",
+      "query": "What are the key features of Spring's IoC container?",
+      "expected_answer": "The key features of Spring's IoC container include component scanning, bean registration, and dependency injection, which enable the creation of modular and maintainable applications.",
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Query about the key features of Spring's IoC container"
+    },
+    {
+      "id": "q074",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q075",
+      "query": "When should I use the `BaseModel` class in Pydantic?",
+      "expected_answer": "Use the `BaseModel` class in Pydantic when creating custom data models with validation and serialization capabilities, especially when working with complex data structures.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "Query about when to use Pydantic's BaseModel class"
+    },
+    {
+      "id": "q076",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_fastapi_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q077",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q078",
+      "query": "What are common pitfalls when using Pydantic's custom validators?",
+      "expected_answer": "Common pitfalls include incorrect use of validators, not properly handling validation errors, and using custom validators without properly implementing validation logic.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "simple",
+      "category": "negation",
+      "notes": "Query highlighting common pitfalls in Pydantic documentation"
+    },
+    {
+      "id": "q079",
+      "query": "When should I use the async def syntax in FastAPI?",
+      "expected_answer": "Use async def syntax when working with asynchronous functions, such as when handling I/O operations or making external API calls.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "Query providing guidance on when to use async def syntax"
+    },
+    {
+      "id": "q080",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "FastAPI provides support for OAuth2 through the OAuth2PasswordBearer and OAuth2PasswordRequestForm classes. Use these classes to implement token-based authentication.",
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query providing step-by-step instructions for implementing authentication"
+    },
+    {
+      "id": "q081",
+      "query": "What is the difference between React's useState and useReducer hooks?",
+      "expected_answer": "useState is used for updating simple state, while useReducer is used for more complex state management that involves multiple actions and reducers.",
+      "source_docs": [
+        "react/04_state_management_basics.md",
+        "react/09_usereducer_for_complex_state.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two React hooks"
+    },
+    {
+      "id": "q082",
+      "query": "How do I implement background tasks in FastAPI?",
+      "expected_answer": "FastAPI provides a background_tasks attribute that can be used to run tasks asynchronously. Use the run_in_threadpool method to execute tasks concurrently.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "Query providing instructions for implementing background tasks"
+    },
+    {
+      "id": "q083",
+      "query": "What are the benefits of using Pydantic's forward references and recursive models?",
+      "expected_answer": "Forward references and recursive models in Pydantic provide a way to create complex models with nested relationships, making it easier to work with data structures like graphs and trees.",
+      "source_docs": [
+        "pydantic/07_forward_references_and_recursive_models.md"
+      ],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "Query providing benefits of Pydantic's forward references and recursive models"
+    },
+    {
+      "id": "q084",
+      "query": "How do I compare the performance of FastAPI and Spring Framework?",
+      "expected_answer": "Use benchmarking tools like PyBench or TimeIt to measure the performance of FastAPI and Spring Framework. Consider factors like request response time, memory usage, and concurrency support.",
+      "source_docs": [
+        "fastapi/06_async.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing performance of two frameworks"
+    },
+    {
+      "id": "q085",
+      "query": "What are the key features of Spring's IoC container?",
+      "expected_answer": "The key features of Spring's IoC container include bean creation and management, dependency injection, and bean lifecycle management.",
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Query highlighting key features of Spring's IoC container"
+    },
+    {
+      "id": "q086",
+      "query": "What is the recommended method for validating request bodies in FastAPI?",
+      "expected_answer": "The recommended method is to use Pydantic models to define the structure of the request body and perform validation using the Pydantic library.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/03_field_types_and_validation.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic query from FastAPI doc with additional context from Pydantic"
+    },
+    {
+      "id": "q087",
+      "query": "How do I implement authentication in a FastAPI application using OAuth2?",
+      "expected_answer": "You can use the FastAPI OAuth2 library to implement authentication. This involves installing the library, defining the OAuth2 endpoints, and using the `OAuth2PasswordBearer` class to authenticate requests.",
+      "source_docs": [
+        "fastapi/10_security.md",
+        "fastapi/oauth2.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query that requires following a procedure outlined in FastAPI docs"
+    },
+    {
+      "id": "q088",
+      "query": "What are the benefits of using Pydantic's forward references and recursive models?",
+      "expected_answer": "Forward references enable you to define models with recursive references, while recursive models allow you to define models that reference themselves. These features enable more complex data structures and validation rules.",
+      "source_docs": [
+        "pydantic/07_forward_references_and_recursive_models.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Query that requires understanding of Pydantic's advanced features"
+    },
+    {
+      "id": "q089",
+      "query": "Compare the performance of FastAPI and Spring Framework for building REST APIs.",
+      "expected_answer": "FastAPI is generally faster and more lightweight than Spring Framework due to its use of asynchronous programming and standard Python type hints. However, Spring Framework offers more features and flexibility for complex use cases.",
+      "source_docs": [
+        "fastapi/06_async.md",
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks with different performance characteristics"
+    },
+    {
+      "id": "q090",
+      "query": "What is the difference between React's useState and useReducer hooks?",
+      "expected_answer": "useState is used for simple state updates, while useReducer is used for more complex state updates that involve multiple actions and side effects.",
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "react/09_usereducer_for_complex_state.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic query from React docs"
+    },
+    {
+      "id": "q091",
+      "query": "How do I implement background tasks in a FastAPI application?",
+      "expected_answer": "You can use the `asyncio` library to run tasks in the background using the `async def` syntax and the `await` keyword. FastAPI also provides built-in support for background tasks using the `BackgroundTasks` class.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md",
+        "asyncio.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query that requires following a procedure outlined in FastAPI docs and additional context from asyncio library"
+    },
+    {
+      "id": "q092",
+      "query": "What are common pitfalls when using Pydantic's custom validators?",
+      "expected_answer": "Common pitfalls include forgetting to validate certain fields, using invalid validation logic, and not handling validation errors properly. It's also important to test custom validators thoroughly.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "simple",
+      "category": "negation",
+      "notes": "Query that requires understanding of Pydantic's custom validators and potential pitfalls"
+    },
+    {
+      "id": "q093",
+      "query": "How does FastAPI's dependency injection compare to Spring Framework's dependency injection?",
+      "expected_answer": "FastAPI's dependency injection is more explicit and type-safe than Spring Framework's, using function parameters with type hints and Depends() instead of @Autowired annotations.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q094",
+      "query": "What is the best way to handle concurrent requests in a FastAPI application?",
+      "expected_answer": "The best way to handle concurrent requests is to use asynchronous programming with the `async def` syntax and the `await` keyword, allowing FastAPI to handle multiple requests concurrently.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic query from FastAPI docs"
+    },
+    {
+      "id": "q095",
+      "query": "How do I implement authentication in a Spring Framework application using JWT tokens?",
+      "expected_answer": "You can use the Spring Security library to implement authentication using JWT tokens. This involves installing the library, defining the security configuration, and using the `@AuthenticationPrincipal` annotation to inject the authenticated user.",
+      "source_docs": [
+        "spring/10_request_and_response_handling.md",
+        "spring-security.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query that requires following a procedure outlined in Spring Security docs"
+    },
+    {
+      "id": "q096",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q097",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q098",
+      "query": "What NOT to do when using Pydantic for validation?",
+      "expected_answer": "Common pitfalls when using Pydantic for validation include not providing sufficient type hints, neglecting to use explicit field types, and not handling validation errors properly.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md"
+      ],
+      "difficulty": "simple",
+      "category": "negation",
+      "notes": "Query highlighting potential mistakes"
+    },
+    {
+      "id": "q099",
+      "query": "When should I use async def vs def in FastAPI?",
+      "expected_answer": "Use async def for asynchronous operations, such as database queries or external API calls, while using def for synchronous operations.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "Query about timing considerations"
+    },
+    {
+      "id": "q100",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "To implement authentication in FastAPI using OAuth2, use the OAuth2PasswordBearer authentication backend and the Depends() function for injecting the access token.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query about implementing a specific feature"
+    },
+    {
+      "id": "q101",
+      "query": "Compare React hooks to Spring bean lifecycle.",
+      "expected_answer": "React hooks manage component state and side effects, while Spring bean lifecycle manages the creation and destruction of beans. React hooks are more explicit and functional, whereas Spring's approach is more object-oriented.",
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q102",
+      "query": "How can I handle concurrent requests in a FastAPI application?",
+      "expected_answer": "Use asynchronous operations and await for results to handle concurrent requests in a FastAPI application.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "Query about handling concurrency"
+    },
+    {
+      "id": "q103",
+      "query": "What are common pitfalls when using Pydantic's custom validators?",
+      "expected_answer": "Common pitfalls when using Pydantic's custom validators include not handling validation errors properly, neglecting to use explicit field types, and not providing sufficient type hints.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Query highlighting potential mistakes"
+    },
+    {
+      "id": "q104",
+      "query": "When should I use Spring Profiles?",
+      "expected_answer": "Use Spring Profiles for environment-specific configuration and to switch between different environments.",
+      "source_docs": [
+        "spring/07_spring_profiles.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "Query about timing considerations"
+    },
+    {
+      "id": "q105",
+      "query": "How do I implement background tasks in a FastAPI application?",
+      "expected_answer": "To implement background tasks in a FastAPI application, use the background task feature from the Starlette library or the celery library for asynchronous task execution.",
+      "source_docs": [
+        "fastapi/08_background_tasks.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query about implementing a specific feature"
+    },
+    {
+      "id": "q106",
+      "query": "How do I declare path parameters in a FastAPI route?",
+      "expected_answer": "Path parameters are declared using the Path type in the path parameter of a route. For example, /items/{item_id} declares a path parameter named item_id.",
+      "source_docs": [
+        "fastapi/02_path_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": ""
+    },
+    {
+      "id": "q107",
+      "query": "When should I use Pydantic's BaseModel for data validation?",
+      "expected_answer": "You should use Pydantic's BaseModel for data validation when you need to validate and serialize complex data models. It provides a simple and efficient way to define data models and perform validation.",
+      "source_docs": [
+        "pydantic/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": ""
+    },
+    {
+      "id": "q108",
+      "query": "How do I implement authentication in a FastAPI application using OAuth2?",
+      "expected_answer": "To implement authentication in a FastAPI application using OAuth2, you can use the OAuth2PasswordBearer class and pass the tokenURL and tokenExp in the OAuth2Settings class.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q109",
+      "query": "What are common pitfalls when using Pydantic's custom validators?",
+      "expected_answer": "Common pitfalls when using Pydantic's custom validators include forgetting to add the validator to the __config__ class, not handling errors properly, and not using the @validator decorator correctly.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": ""
+    },
+    {
+      "id": "q110",
+      "query": "How does a FastAPI application handle concurrent requests compared to a Spring application?",
+      "expected_answer": "FastAPI applications use async/await for handling concurrent requests, which allows for efficient and non-blocking I/O. Spring applications use a ThreadPoolExecutor for handling concurrent requests, which can lead to performance issues if not configured properly.",
+      "source_docs": [
+        "fastapi/06_async.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q111",
+      "query": "When should I use a Spring Profile in a Spring application?",
+      "expected_answer": "You should use a Spring Profile when you need to switch between different environments, such as development and production, or when you need to support multiple configurations for different clients.",
+      "source_docs": [
+        "spring/07_spring_profiles.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": ""
+    },
+    {
+      "id": "q112",
+      "query": "How do I implement background tasks in a FastAPI application?",
+      "expected_answer": "You can implement background tasks in a FastAPI application using the BackgroundTasks class, which allows you to run tasks asynchronously and efficiently.",
+      "source_docs": [
+        "fastapi/08_background_tasks.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q113",
+      "query": "What are the main differences between React hooks and Spring bean lifecycle?",
+      "expected_answer": "React hooks and Spring bean lifecycle are different concepts that serve different purposes. React hooks are used for state management in functional components, while Spring bean lifecycle is used for managing the life cycle of beans in a Spring application.",
+      "source_docs": [
+        "react/03_components_and_props.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q114",
+      "query": "How do I handle errors in a FastAPI application using Pydantic?",
+      "expected_answer": "You can handle errors in a FastAPI application using Pydantic by using the validation error messages and the HTTPException class to return meaningful error messages to the client.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/03_field_types_validation.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q115",
+      "query": "Compare the performance of a FastAPI application with a Spring application?",
+      "expected_answer": "FastAPI applications are generally faster and more efficient than Spring applications due to their use of async/await and modern Python features. However, Spring applications can be more scalable and handle high traffic loads with proper configuration.",
+      "source_docs": [
+        "fastapi/06_async.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q116",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q117",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q118",
+      "query": "What are common pitfalls for using Pydantic validation?",
+      "expected_answer": "Common pitfalls include over-reliance on custom validators, ignoring data constraints, and neglecting to handle validation errors properly.",
+      "source_docs": [
+        "pydantic/03_field_types_and_validation.md",
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Warning about common issues"
+    },
+    {
+      "id": "q119",
+      "query": "How do I implement authentication in a FastAPI application using OAuth2?",
+      "expected_answer": "FastAPI provides built-in support for OAuth 2.0 authentication through the OAuth2PasswordBearer and Depends() functions.",
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "How-to authentication query"
+    },
+    {
+      "id": "q120",
+      "query": "What is the difference between using async def and def for handling concurrent requests in FastAPI?",
+      "expected_answer": "async def is used for asynchronous code execution, while def is used for synchronous code execution. async def provides better performance and scalability for handling concurrent requests.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "moderate",
+      "category": "temporal",
+      "notes": "Temporal query about execution"
+    },
+    {
+      "id": "q121",
+      "query": "How do I handle errors in a FastAPI application using Pydantic?",
+      "expected_answer": "FastAPI provides built-in error handling through the FastAPI exceptions. Pydantic validation errors can be caught and handled using the try-except block.",
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md",
+        "pydantic/03_field_types_and_validation.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to error handling query"
+    },
+    {
+      "id": "q122",
+      "query": "What are the key benefits of using Pydantic's BaseModel for data validation?",
+      "expected_answer": "Pydantic's BaseModel provides robust data validation, automatic generation of documentation, and strong type hints for improved maintainability and readability.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Benefits query"
+    },
+    {
+      "id": "q123",
+      "query": "How do I implement background tasks in a FastAPI application?",
+      "expected_answer": "FastAPI provides a built-in support for background tasks through the Background Tasks API.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "How-to query"
+    },
+    {
+      "id": "q124",
+      "query": "What is the difference between React hooks and Spring bean lifecycle?",
+      "expected_answer": "React hooks are used for managing state and side effects in functional components, while Spring bean lifecycle is used for managing the life cycle of Spring beans. React hooks are more lightweight and easier to use.",
+      "source_docs": [
+        "react/03_components_and_props.md",
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Comparison query between two frameworks"
+    },
+    {
+      "id": "q125",
+      "query": "How do I handle concurrent requests in a Spring application?",
+      "expected_answer": "Spring provides built-in support for handling concurrent requests through the @Async annotation and the ThreadPoolTaskExecutor.",
+      "source_docs": [
+        "spring/02_ioc_container.md",
+        "spring/08_spring_profiles.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query"
+    },
+    {
+      "id": "q126",
+      "query": "What is the difference between using async def and def for handling concurrent requests in FastAPI?",
+      "expected_answer": "async def in FastAPI is used for concurrent requests, providing non-blocking I/O operations.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "comparison",
+      "notes": "Simple query from FastAPI async documentation"
+    },
+    {
+      "id": "q127",
+      "query": "How do I handle errors in a FastAPI application using Pydantic?",
+      "expected_answer": "Pydantic's models can raise validation errors using the try-except block in FastAPI. The error messages can be customized using custom validators.",
+      "source_docs": [
+        "fastapi/09_testing_fastapi_applications.md",
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Multi-hop query combining FastAPI and Pydantic documentation"
+    },
+    {
+      "id": "q128",
+      "query": "What are common pitfalls for using Pydantic validation?",
+      "expected_answer": "Common pitfalls include not defining the correct model, not using the correct validation type, and not handling validation errors properly.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md"
+      ],
+      "difficulty": "simple",
+      "category": "negation",
+      "notes": "Simple query from Pydantic validation documentation"
+    },
+    {
+      "id": "q129",
+      "query": "How does FastAPI dependency injection compare to Spring?",
+      "expected_answer": "FastAPI's dependency injection is more explicit and type-safe, using function parameters with type hints and Depends(), whereas Spring uses @Autowired annotations.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q130",
+      "query": "What is the purpose of using React hooks?",
+      "expected_answer": "React hooks are used to manage state and side effects in functional components, making the code more modular and reusable.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic query from React hook documentation"
+    },
+    {
+      "id": "q131",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "FastAPI provides built-in support for OAuth2 through the OAuth2PasswordBearer scheme, which can be used to authenticate users.",
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query from FastAPI security documentation"
+    },
+    {
+      "id": "q132",
+      "query": "When should I use Pydantic's BaseModel for data validation?",
+      "expected_answer": "Pydantic's BaseModel is suitable for data validation when working with complex data structures that require validation and serialization.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "Simple query from Pydantic model documentation"
+    },
+    {
+      "id": "q133",
+      "query": "How do I handle concurrent requests in a Spring application?",
+      "expected_answer": "Spring provides support for concurrent requests through the use of tasks and threads, which can be managed using the TaskExecutor and TaskScheduler.",
+      "source_docs": [
+        "spring/08_background_tasks_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query from Spring task documentation"
+    },
+    {
+      "id": "q134",
+      "query": "What are the key benefits of using Pydantic's BaseModel for data validation?",
+      "expected_answer": "Pydantic's BaseModel provides automatic data validation, serialization, and deserialization, making it easier to work with complex data structures.",
+      "source_docs": [
+        "pydantic/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic query from Pydantic introduction"
+    },
+    {
+      "id": "q135",
+      "query": "How do I implement background tasks in a FastAPI application?",
+      "expected_answer": "FastAPI provides built-in support for background tasks using the BackgroundTasks class, which can be used to offload long-running tasks.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query from FastAPI background task documentation"
+    },
+    {
+      "id": "q136",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_fastapi_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q137",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md",
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q138",
+      "query": "What are common pitfalls for using Pydantic validation?",
+      "expected_answer": "Common pitfalls for using Pydantic validation include incorrect field types, missing constraints, and not handling validation errors properly. It's essential to test your validation thoroughly and handle errors correctly.",
+      "source_docs": [
+        "pydantic/03_field_types_and_validation.md",
+        "pydantic/04_string_constraints.md"
+      ],
+      "difficulty": "complex",
+      "category": "negation",
+      "notes": "Multi-hop query highlighting potential issues"
+    },
+    {
+      "id": "q139",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "To implement authentication in FastAPI using OAuth2, you can use a library like OAuth2Client. You'll need to set up OAuth2 endpoints, handle client registration, and authenticate users using the OAuth2 flow. FastAPI's built-in support for OAuth2 makes it easier to implement.",
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query for authentication"
+    },
+    {
+      "id": "q140",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def for handling concurrent requests in FastAPI when you need to perform non-blocking operations or use external APIs. Use def when you need to perform blocking operations or use synchronous code.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "When-to-use query for async and def"
+    },
+    {
+      "id": "q141",
+      "query": "What is the purpose of using Pydantic's BaseModel for data validation?",
+      "expected_answer": "Pydantic's BaseModel is used for data validation to ensure that incoming data conforms to a specific structure and type. It provides automatic validation and error handling, making it easier to handle invalid data.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q142",
+      "query": "How do I handle errors in a Spring application?",
+      "expected_answer": "To handle errors in a Spring application, you can use exception handling mechanisms like try-catch blocks, Aspect-Oriented Programming (AOP), or using the @ExceptionHandler annotation. Spring provides built-in support for error handling, making it easier to manage errors.",
+      "source_docs": [
+        "spring/10_request_and_response_handling.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query for error handling"
+    },
+    {
+      "id": "q143",
+      "query": "What are key differences between React hooks and Spring bean lifecycle?",
+      "expected_answer": "React hooks and Spring bean lifecycle are fundamentally different concepts. React hooks are used for managing state and side effects in functional components, while Spring bean lifecycle is used for managing the lifecycle of Spring beans. React hooks are more explicit and functional, whereas Spring bean lifecycle is more object-oriented and declarative.",
+      "source_docs": [
+        "react/03_components_and_props.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q144",
+      "query": "How do I implement background tasks in a FastAPI application?",
+      "expected_answer": "To implement background tasks in a FastAPI application, you can use the background tasks feature provided by FastAPI. Simply use the @background_task decorator to define a background task function, and FastAPI will handle the task execution for you.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query for background tasks"
+    },
+    {
+      "id": "q145",
+      "query": "What are the benefits of using Pydantic's custom validators?",
+      "expected_answer": "Pydantic's custom validators provide the ability to define custom validation logic for your models. This allows you to validate complex business logic and provide more informative error messages. Custom validators also enable you to reuse validation logic across multiple models.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q146",
+      "query": "What is the purpose of using Pydantic's BaseModel for data validation?",
+      "expected_answer": "Pydantic's BaseModel provides a structured way to define data models with type hints and validation. It helps catch errors at runtime and generates documentation.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from a foundational concept"
+    },
+    {
+      "id": "q147",
+      "query": "How do I handle errors in a Spring application?",
+      "expected_answer": "Spring applications can handle errors using try-except blocks, error codes, or custom error handlers. It's best to use a combination of these approaches to provide meaningful error messages and maintain application state.",
+      "source_docs": [
+        "spring/09_request_and_response_handling.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from request and response handling"
+    },
+    {
+      "id": "q148",
+      "query": "What are common pitfalls for using Pydantic validation?",
+      "expected_answer": "Common pitfalls for Pydantic validation include incorrect usage of field types, forgetting to set required fields, and using invalid validation strategies. It's essential to thoroughly test validation rules to ensure data integrity.",
+      "source_docs": [
+        "pydantic/04_string_constraints.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Multi-hop query highlighting common pitfalls"
+    },
+    {
+      "id": "q149",
+      "query": "What is the use case for Pydantic's custom validators?",
+      "expected_answer": "Pydantic's custom validators are useful for implementing complex validation rules that aren't covered by built-in validation. They allow for more flexibility and fine-grained control over data validation.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Query highlighting a specific Pydantic feature"
+    },
+    {
+      "id": "q150",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "To implement authentication in FastAPI using OAuth2, use OAuth2PasswordBearer or OAuth2PasswordRequestForm to handle token-based authentication. It's essential to customize the authentication flow according to your application's needs.",
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from security documentation"
+    },
+    {
+      "id": "q151",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def for handling concurrent requests in FastAPI when working with IO-bound operations, such as database queries or network calls. Use def for CPU-bound operations or simple synchronous code.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "complex",
+      "category": "temporal",
+      "notes": "Query requiring temporal reasoning and async/await understanding"
+    },
+    {
+      "id": "q152",
+      "query": "What are key differences between React hooks and Spring bean lifecycle?",
+      "expected_answer": "React hooks manage component state and side effects, whereas Spring bean lifecycle manages the creation, destruction, and initialization of bean objects. React uses functional programming principles, while Spring uses object-oriented programming.",
+      "source_docs": [
+        "react/03_components_and_props.md",
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q153",
+      "query": "How do I implement background tasks in a FastAPI application?",
+      "expected_answer": "To implement background tasks in a FastAPI application, use the BackgroundTasks API to schedule long-running tasks. You can use this API to execute tasks asynchronously, allowing your application to handle concurrent requests.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query from background tasks documentation"
+    },
+    {
+      "id": "q154",
+      "query": "What is the benefit of using Pydantic's custom validators?",
+      "expected_answer": "Using Pydantic's custom validators allows for more flexibility and fine-grained control over data validation. They enable you to implement complex validation rules that aren't covered by built-in validation.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Query highlighting a specific Pydantic feature"
+    },
+    {
+      "id": "q155",
+      "query": "How does Spring's IoC container compare to Pydantic's dependency injection?",
+      "expected_answer": "Spring's IoC container provides a more comprehensive dependency injection framework than Pydantic. Spring's container manages the creation, destruction, and initialization of bean objects, whereas Pydantic uses function parameters and type hints for dependency injection.",
+      "source_docs": [
+        "spring/02_ioc_container.md",
+        "pydantic/05_model_inheritance_and_composition.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q156",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q157",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q158",
+      "query": "What are common pitfalls with Pydantic validation?",
+      "expected_answer": "Common pitfalls with Pydantic validation include incorrect usage of custom validators, neglecting to validate nested models, and failure to provide default values for optional fields.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md",
+        "pydantic/05_model_inheritance_and_composition.md"
+      ],
+      "difficulty": "complex",
+      "category": "negation",
+      "notes": "Complex query requiring synthesis of multiple concepts"
+    },
+    {
+      "id": "q159",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "To implement authentication in FastAPI using OAuth2, you can use the OAuth2PasswordBearer scheme from the pyJWT library. This involves defining a dependency for the Bearer scheme and using it to authenticate requests.",
+      "source_docs": [
+        "fastapi/10_security.md",
+        "pyjwt/README.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Multi-hop query with procedural instructions"
+    },
+    {
+      "id": "q160",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "You should use async def for handling concurrent requests in FastAPI when dealing with I/O-bound operations, such as database queries or network requests. Def is suitable for CPU-bound operations.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "moderate",
+      "category": "temporal",
+      "notes": "Temporal query with a specific scenario"
+    },
+    {
+      "id": "q161",
+      "query": "How do I handle multiple query parameters in FastAPI?",
+      "expected_answer": "To handle multiple query parameters in FastAPI, you can use the Query() function with multiple argument names. You can also use the Path() function to handle multiple path parameters together.",
+      "source_docs": [
+        "fastapi/03_query_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic query parameter handling"
+    },
+    {
+      "id": "q162",
+      "query": "What is the key difference between React hooks and Spring bean lifecycle?",
+      "expected_answer": "The key difference between React hooks and Spring bean lifecycle is that React hooks are designed for functional components and provide a way to manage state and side effects, whereas Spring bean lifecycle is designed for object-oriented programming and provides a way to manage the life cycle of objects.",
+      "source_docs": [
+        "react/03_components_and_props.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Complex query requiring comparison of two frameworks"
+    },
+    {
+      "id": "q163",
+      "query": "How do I implement background tasks in a FastAPI application?",
+      "expected_answer": "To implement background tasks in a FastAPI application, you can use the Task class from the asyncio library. This involves creating a task object and passing it to the await function to run in the background.",
+      "source_docs": [
+        "fastapi/08_background_tasks.md",
+        "asyncio/README.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Multi-hop query with procedural instructions"
+    },
+    {
+      "id": "q164",
+      "query": "What are the benefits of using Pydantic's custom validators?",
+      "expected_answer": "The benefits of using Pydantic's custom validators include the ability to enforce custom validation rules, provide custom error messages, and increase code reusability.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic query about custom validators"
+    },
+    {
+      "id": "q165",
+      "query": "How do I handle errors in a Spring application?",
+      "expected_answer": "To handle errors in a Spring application, you can use exception handling mechanisms such as try-catch blocks, error handlers, and custom error classes. You can also configure error handling through the application.properties file.",
+      "source_docs": [
+        "spring/10_request_and_response_handling.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Multi-hop query with procedural instructions"
+    },
+    {
+      "id": "q166",
+      "query": "What is the purpose of path parameters in FastAPI?",
+      "expected_answer": "Path parameters in FastAPI allow capturing dynamic segments of a URL path, enabling flexible routing and parameterized API endpoints.",
+      "source_docs": [
+        "fastapi/02_path_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from path parameters doc"
+    },
+    {
+      "id": "q167",
+      "query": "How do I handle multiple request bodies in a single FastAPI endpoint?",
+      "expected_answer": "Use the Depends function with multiple parameters or use the request_body parameter with the Path function, and use the Body function with multiple parameters.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "fastapi/05_dependencies.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Multi-hop procedural query requiring multiple docs"
+    },
+    {
+      "id": "q168",
+      "query": "What are the differences between Pydantic's BaseModel and Pydantic's Model?",
+      "expected_answer": "A BaseModel is a base class for defining Pydantic models, providing basic functionality. A Model is an instance of a BaseModel, representing a specific data structure, with its own validation rules and fields.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md",
+        "pydantic/03_field_types_and_validation.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Comparison query requiring multiple docs"
+    },
+    {
+      "id": "q169",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def for handling concurrent requests in FastAPI when the function is I/O-bound and requires asynchronous execution, such as database queries or external API calls.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "Temporal query focusing on timing and context"
+    },
+    {
+      "id": "q170",
+      "query": "How do I implement authentication and authorization in a Spring application using OAuth2?",
+      "expected_answer": "Use the Spring Security module to configure OAuth2 authentication and authorization, including setting up the OAuth2 client, defining authentication and authorization roles, and implementing OAuth2 token validation.",
+      "source_docs": [
+        "spring/10_request_and_response_handling.md",
+        "spring/09_rest_api_development.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Multi-hop procedural query requiring multiple docs and framework-specific knowledge"
+    },
+    {
+      "id": "q171",
+      "query": "What are common pitfalls with Pydantic validation?",
+      "expected_answer": "Common pitfalls include incorrect validation, incomplete validation, and incorrect usage of validators, such as incorrect usage of the 'required' parameter or incorrect usage of custom validators.",
+      "source_docs": [
+        "pydantic/04_string_constraints.md",
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "negation",
+      "category": "negation",
+      "notes": "Negation query highlighting potential issues"
+    },
+    {
+      "id": "q172",
+      "query": "How do I implement background tasks in a FastAPI application using Celery?",
+      "expected_answer": "Use the FastAPI library to integrate Celery, a distributed task queue, to execute background tasks asynchronously and handle task execution and result retrieval.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md",
+        "celery/01_introduction.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Multi-hop procedural query requiring multiple docs and external knowledge"
+    },
+    {
+      "id": "q173",
+      "query": "What is the key difference between React hooks and Spring bean lifecycle?",
+      "expected_answer": "React hooks are a way to manage state and side effects in functional components, whereas Spring bean lifecycle refers to the process of creating, configuring, and destroying Spring beans. React hooks focus on state management and reactivity, whereas Spring bean lifecycle focuses on dependency injection and object creation.",
+      "source_docs": [
+        "react/03_components_and_props.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "comparison",
+      "category": "comparison",
+      "notes": "Comparison query highlighting key differences between two frameworks"
+    },
+    {
+      "id": "q174",
+      "query": "How do I handle multiple query parameters in a FastAPI endpoint?",
+      "expected_answer": "Use the Query function to define multiple query parameters, and use the Depends function to combine multiple query parameters into a single data structure.",
+      "source_docs": [
+        "fastapi/03_query_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic query handling query from query parameters doc"
+    },
+    {
+      "id": "q175",
+      "query": "When should I use forward references in Pydantic models?",
+      "expected_answer": "Use forward references in Pydantic models when you need to reference a model that is defined later in the code, or when you need to avoid circular references between models.",
+      "source_docs": [
+        "pydantic/07_forward_references_and_recursive_models.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "Temporal query focusing on timing and context"
+    },
+    {
+      "id": "q176",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q177",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q178",
+      "query": "How can I handle multiple query parameters in a FastAPI endpoint?",
+      "expected_answer": "You can use FastAPI's built-in support for multiple query parameters by defining them as separate parameters in the endpoint function. For example, def get_users(q: int, limit: int = 100): ...",
+      "source_docs": [
+        "fastapi/03_query_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Direct question from query parameters doc"
+    },
+    {
+      "id": "q179",
+      "query": "What are common pitfalls with Pydantic validation?",
+      "expected_answer": "Common pitfalls include forgetting to define custom validators, using the wrong types for fields, and neglecting to add error messages for invalid data. Regularly check the Pydantic documentation and validation logs to catch these issues.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "complex",
+      "category": "negation",
+      "notes": "Multi-hop query highlighting potential pitfalls from docs"
+    },
+    {
+      "id": "q180",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def when you need to handle concurrent requests, such as when waiting for multiple database queries or making asynchronous API calls. Use def when you only need to handle a single, synchronous request.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "moderate",
+      "category": "temporal",
+      "notes": "Question about concurrency from async doc"
+    },
+    {
+      "id": "q181",
+      "query": "How do I implement authentication and authorization in a Spring application using OAuth2?",
+      "expected_answer": "You can implement OAuth2 authentication and authorization in a Spring application by using the Spring Security OAuth2 module. This involves configuring OAuth2 providers and clients, as well as securing your endpoints with OAuth2-based authorization checks.",
+      "source_docs": [
+        "spring/10_request_and_response_handling.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Multi-hop query from request handling documentation"
+    },
+    {
+      "id": "q182",
+      "query": "What is the difference between Pydantic's BaseModel and Pydantic's Model?",
+      "expected_answer": "Pydantic's BaseModel is a basic base model that can be used to define simple schema, while Pydantic's Model is a more general-purpose model that can be used to define complex schema. BaseModel is a subclass of Model.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Direct question from base model docs"
+    },
+    {
+      "id": "q183",
+      "query": "How do I handle request body validation in FastAPI?",
+      "expected_answer": "You can handle request body validation in FastAPI by defining a Pydantic model for the request body and using the @body validator to validate the incoming request data.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/03_field_types_validation.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Multi-hop query from request body and pydantic validation docs"
+    },
+    {
+      "id": "q184",
+      "query": "What is the purpose of using a bean scope in a Spring application?",
+      "expected_answer": "The purpose of using a bean scope in a Spring application is to define the lifecycle and scope of beans, such as prototype, request, or singleton scopes. This helps to manage the creation, destruction, and reuse of beans.",
+      "source_docs": [
+        "spring/04_bean_scopes.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Direct question from bean scopes doc"
+    },
+    {
+      "id": "q185",
+      "query": "Can I use React state management with a Spring backend?",
+      "expected_answer": "Yes, you can use React state management with a Spring backend. Since the state management is on the client-side, you can use React's state management hooks to manage state on the client-side, and then use RESTful API calls to communicate with the Spring backend.",
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "spring/09_rest_api_development.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing react and spring"
+    },
+    {
+      "id": "q186",
+      "query": "How do I declare path parameters in FastAPI?",
+      "expected_answer": "Path parameters in FastAPI are declared using the function parameter name without a default value. They are typically annotated with a Path() annotation.",
+      "source_docs": [
+        "fastapi/02_path_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": ""
+    },
+    {
+      "id": "q187",
+      "query": "What are common pitfalls with Pydantic validation?",
+      "expected_answer": "Common pitfalls with Pydantic validation include missing default values for optional fields, incorrect use of custom validators, and forgetting to set the error messages for fields. It is also essential to handle validation errors properly.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md",
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": ""
+    },
+    {
+      "id": "q188",
+      "query": "How do I implement authentication in a Spring application using OAuth2?",
+      "expected_answer": "To implement authentication in Spring using OAuth2, you can use the Spring Security OAuth 2.0 module. Add the required dependencies, configure the OAuth2 provider, and use the @EnableOAuth2Client annotation to enable OAuth2 client support.",
+      "source_docs": [
+        "spring/10_request_and_response_handling.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q189",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def for handling concurrent requests in FastAPI when you need to perform I/O operations, such as reading from a database or making external API calls. Use def for CPU-bound tasks or when you need strict order of execution.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "moderate",
+      "category": "temporal",
+      "notes": ""
+    },
+    {
+      "id": "q190",
+      "query": "How do I handle request body validation in FastAPI?",
+      "expected_answer": "To handle request body validation in FastAPI, use the Pydantic model to define the expected structure and types of data. FastAPI automatically validates the request body against the Pydantic model.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": ""
+    },
+    {
+      "id": "q191",
+      "query": "What is the purpose of using a bean scope in a Spring application?",
+      "expected_answer": "The purpose of using a bean scope in a Spring application is to define the lifetime and availability of a bean instance. Bean scopes help manage the creation and destruction of bean instances.",
+      "source_docs": [
+        "spring/04_bean_scopes.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": ""
+    },
+    {
+      "id": "q192",
+      "query": "Compare React hooks to Spring bean lifecycle.",
+      "expected_answer": "React hooks provide a way to manage component state and side effects, similar to Spring bean lifecycle, which manages the creation and destruction of beans. However, React hooks are more explicit and functional, while Spring bean lifecycle is more object-oriented and based on Java annotations.",
+      "source_docs": [
+        "react/06_advanced_usestate_patterns.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q193",
+      "query": "How can I implement authentication and authorization in a FastAPI application?",
+      "expected_answer": "To implement authentication and authorization in a FastAPI application, use libraries like OAuth2-client, JWT, or Passport. Define routes and endpoints with authentication and authorization requirements using FastAPI's built-in support for authentication and authorization.",
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q194",
+      "query": "What are some common use cases for middleware in FastAPI?",
+      "expected_answer": "Common use cases for middleware in FastAPI include authentication, rate limiting, and logging. Middleware can be used to intercept and modify requests and responses, allowing for flexible and reusable code.",
+      "source_docs": [
+        "fastapi/07_middleware_in_fastapi.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": ""
+    },
+    {
+      "id": "q195",
+      "query": "How do I handle multiple query parameters in a FastAPI endpoint?",
+      "expected_answer": "To handle multiple query parameters in a FastAPI endpoint, use the Query() annotation with the name of the parameter. FastAPI will automatically handle the request and provide the query parameters as an object.",
+      "source_docs": [
+        "fastapi/03_query_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": ""
+    },
+    {
+      "id": "q196",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q197",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q198",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def with async and await keywords to write asynchronous code that runs concurrently with other tasks. Use def for synchronous code that blocks until completion.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "Query addressing timing considerations"
+    },
+    {
+      "id": "q199",
+      "query": "What are some common pitfalls with Pydantic model validation?",
+      "expected_answer": "Common pitfalls include incorrect type annotations, missing validation constraints, and failure to handle custom validators.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md",
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Query highlighting potential issues"
+    },
+    {
+      "id": "q200",
+      "query": "How do I implement request body validation in a FastAPI endpoint using Pydantic?",
+      "expected_answer": "Use Pydantic models with validation enabled to validate request bodies. Use Depends() to inject validated models into endpoint functions.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Step-by-step instructions for implementing a common task"
+    },
+    {
+      "id": "q201",
+      "query": "What is the difference between Pydantic's BaseModel and dataclass?",
+      "expected_answer": "BaseModel is a more advanced model class that provides validation, serialization, and deserialization capabilities. dataclass is a simpler class that only provides attribute serialization.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "comparison",
+      "notes": "Query comparing two related concepts"
+    },
+    {
+      "id": "q202",
+      "query": "How do I handle multiple query parameters in a FastAPI endpoint?",
+      "expected_answer": "Use the Query() function to define multiple query parameters. Use the Depends() function to inject validated query parameters into endpoint functions.",
+      "source_docs": [
+        "fastapi/03_query_parameters.md",
+        "fastapi/05_dependencies.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Step-by-step instructions for implementing a common task"
+    },
+    {
+      "id": "q203",
+      "query": "When should I use React Hooks and Spring's bean lifecycle?",
+      "expected_answer": "Use React Hooks when building user interfaces and managing state. Use Spring's bean lifecycle when developing server-side applications and managing dependencies.",
+      "source_docs": [
+        "react/02_jsx_fundamentals.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "temporal",
+      "category": "comparison",
+      "notes": "Query addressing timing considerations and comparing two frameworks"
+    },
+    {
+      "id": "q204",
+      "query": "How do I implement authentication and authorization in a Spring application using OAuth2?",
+      "expected_answer": "Use the Spring Security OAuth module to implement authentication and authorization using OAuth2. Configure OAuth2 clients and resources to secure application endpoints.",
+      "source_docs": [
+        "spring/10_request_and_response_handling.md",
+        "spring/09_rest_api_development.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Step-by-step instructions for implementing a complex task"
+    },
+    {
+      "id": "q205",
+      "query": "What are the key differences between FastAPI and Spring Framework?",
+      "expected_answer": "FastAPI is a lightweight, Python-based framework for building APIs. Spring Framework is a mature, Java-based framework for building enterprise applications. FastAPI provides automatic API documentation, while Spring provides a comprehensive set of features for building robust applications.",
+      "source_docs": [
+        "fastapi/01_introduction.md",
+        "spring/01_introduction.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Query comparing two frameworks"
+    },
+    {
+      "id": "q206",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "To implement authentication in FastAPI using OAuth2, you can use libraries like PyJWT and OAuth2. You can also leverage FastAPI's built-in support for OAuth2 using the Security feature. Refer to the FastAPI security documentation for more details.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q207",
+      "query": "What are the differences between Pydantic's BaseModel and dataclass?",
+      "expected_answer": "Pydantic's BaseModel and dataclass are both used for building data models, but they have different approaches. BaseModel uses a more explicit and type-safe approach, while dataclass relies on Python's dataclass feature. BaseModel provides additional features like validation and serialization.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q208",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "You should use async def for handling concurrent requests in FastAPI when you need to perform I/O-bound operations, such as reading from a database or making API calls. For CPU-bound operations, def can be used. However, the async def approach is generally recommended for faster and more efficient handling of concurrent requests.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": ""
+    },
+    {
+      "id": "q209",
+      "query": "How do I handle multiple query parameters in a FastAPI endpoint?",
+      "expected_answer": "To handle multiple query parameters in a FastAPI endpoint, you can use the Query() annotation on the function parameter. For example, you can use Query() with multiple arguments to specify different fields for different query parameters.",
+      "source_docs": [
+        "fastapi/03_query_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": ""
+    },
+    {
+      "id": "q210",
+      "query": "What are some common pitfalls with Pydantic model validation?",
+      "expected_answer": "Some common pitfalls with Pydantic model validation include incorrect use of annotations, missing validation rules, and not handling errors properly. It's also essential to ensure that the validation process is efficient and doesn't lead to performance bottlenecks.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md"
+      ],
+      "difficulty": "negation",
+      "category": "negation",
+      "notes": ""
+    },
+    {
+      "id": "q211",
+      "query": "How do I implement authentication and authorization in a Spring application using OAuth2?",
+      "expected_answer": "To implement authentication and authorization in a Spring application using OAuth2, you can use libraries like Spring Security and OAuth2. You can also leverage Spring Boot's built-in support for OAuth2 using the OAuth2 features. Refer to the Spring Security documentation for more details.",
+      "source_docs": [
+        "spring/10_request_and_response_handling.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q212",
+      "query": "What is the difference between React Hooks and Spring's bean lifecycle?",
+      "expected_answer": "React Hooks and Spring's bean lifecycle are both used for managing state, but they have different approaches. React Hooks use a more declarative and functional programming approach, while Spring's bean lifecycle relies on the bean life cycle callbacks. React Hooks are more concise and efficient, but Spring's approach provides more control and flexibility.",
+      "source_docs": [
+        "react/03_components_and_props.md",
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "comparison",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q213",
+      "query": "How do I implement request body validation in a FastAPI endpoint using Pydantic?",
+      "expected_answer": "To implement request body validation in a FastAPI endpoint using Pydantic, you can use the Body() annotation on the function parameter. For example, you can define a Pydantic model using BaseModel and use it to validate the request body.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q214",
+      "query": "What are the key differences between FastAPI and Spring Framework?",
+      "expected_answer": "FastAPI and Spring Framework are both used for building APIs, but they have different approaches. FastAPI uses a more modern and Pythonic approach, while Spring relies on a more traditional and object-oriented approach. FastAPI provides faster and more efficient development, while Spring provides more control and flexibility.",
+      "source_docs": [
+        "fastapi/01_introduction.md",
+        "spring/01_introduction.md"
+      ],
+      "difficulty": "comparison",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q215",
+      "query": "How do I handle background tasks in FastAPI?",
+      "expected_answer": "To handle background tasks in FastAPI, you can use the Background Tasks feature. You can schedule tasks using the celery library and use the celery beat scheduler to run the tasks in the background. Refer to the FastAPI background tasks documentation for more details.",
+      "source_docs": [
+        "fastapi/08_background_tasks.md"
+      ],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": ""
+    },
+    {
+      "id": "q216",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q217",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q218",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def for handling concurrent requests in FastAPI to improve performance and responsiveness. Async def allows the framework to handle multiple requests concurrently, reducing the need for threads and improving overall performance.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "When question about concurrency"
+    },
+    {
+      "id": "q219",
+      "query": "What are some common pitfalls when using Pydantic model validation?",
+      "expected_answer": "Common pitfalls when using Pydantic model validation include forgetting to include validation in the model, using the wrong field types, and not handling validation errors properly. Always validate model fields and handle errors accordingly.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "What NOT to do query about Pydantic validation"
+    },
+    {
+      "id": "q220",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "To implement authentication in FastAPI using OAuth2, use the OAuth2PasswordBearer class to validate and access the token. Then, use the token to authenticate the user and access protected routes.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query about authentication in FastAPI"
+    },
+    {
+      "id": "q221",
+      "query": "Compare React Hooks and Spring's bean lifecycle in terms of component management.",
+      "expected_answer": "React Hooks and Spring's bean lifecycle both provide component management capabilities, but React Hooks are designed for functional components, while Spring's bean lifecycle is designed for object-oriented components. Hooks are more lightweight and easier to use, while Spring's bean lifecycle is more complex and powerful.",
+      "source_docs": [
+        "react/03_components_and_props.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q222",
+      "query": "What is the difference between FastAPI's path parameters and query parameters?",
+      "expected_answer": "Path parameters are used in the URL path, while query parameters are used in the query string. Path parameters are typically used for identifying resources, while query parameters are used for filtering or sorting data.",
+      "source_docs": [
+        "fastapi/02_path_parameters.md",
+        "fastapi/03_query_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Direct comparison query"
+    },
+    {
+      "id": "q223",
+      "query": "How do I handle multiple query parameters in a FastAPI endpoint?",
+      "expected_answer": "To handle multiple query parameters in a FastAPI endpoint, use the Query class with multiple parameters. This will allow the framework to validate and handle multiple query parameters, making it easier to implement filters and sorting capabilities.",
+      "source_docs": [
+        "fastapi/03_query_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "How-to query about query parameters"
+    },
+    {
+      "id": "q224",
+      "query": "When should I use Pydantic's BaseModel vs dataclass for model definition?",
+      "expected_answer": "Use Pydantic's BaseModel when you need more complex model validation and behavior, while dataclass is more suitable for simple data modeling. BaseModel provides more advanced features and flexibility, while dataclass is more lightweight and easier to use.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "When question about Pydantic model definition"
+    },
+    {
+      "id": "q225",
+      "query": "How do I implement background tasks in FastAPI using a scheduler?",
+      "expected_answer": "To implement background tasks in FastAPI using a scheduler, use a library like celery or apscheduler to schedule tasks. These libraries provide a simple and efficient way to schedule and run tasks in the background, making it easier to implement asynchronous operations.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "How-to query about background tasks"
+    },
+    {
+      "id": "q226",
+      "query": "What are common pitfalls with Pydantic model validation?",
+      "expected_answer": "Pitfalls include incorrect use of model inheritance, misconfiguring validation rules, and neglecting to handle custom validators. It's essential to validate models thoroughly before using them in your application.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md",
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Highlights potential issues with Pydantic validation"
+    },
+    {
+      "id": "q227",
+      "query": "How do I implement authentication in Spring using OAuth2?",
+      "expected_answer": "To implement OAuth2 authentication in Spring, you need to create an OAuth2 configuration class, define the authentication flow, and use the OAuth2Client to establish the connection. You can do this by creating a configuration class annotated with @Configuration, @EnableWebSecurity, and @EnableOAuth2Sso.",
+      "source_docs": [
+        "spring/10_request_and_response_handling.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Step-by-step guide to implementing OAuth2 in Spring"
+    },
+    {
+      "id": "q228",
+      "query": "What is the difference between FastAPI's path parameters and query parameters?",
+      "expected_answer": "Path parameters are used to declare variables in the URL path of a route, while query parameters are used to pass data as part of the URL query string. Path parameters are more explicit and type-safe, making it easier to handle invalid inputs.",
+      "source_docs": [
+        "fastapi/02_path_parameters.md",
+        "fastapi/03_query_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "comparison",
+      "notes": "Compares path and query parameters in FastAPI"
+    },
+    {
+      "id": "q229",
+      "query": "How do I handle multiple query parameters in a FastAPI endpoint?",
+      "expected_answer": "To handle multiple query parameters, you can use the Query() annotation from the fastapi import Query. This allows you to define multiple query parameters and specify their default values, validation rules, and other settings.",
+      "source_docs": [
+        "fastapi/03_query_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": "Step-by-step guide to handling multiple query parameters in FastAPI"
+    },
+    {
+      "id": "q230",
+      "query": "What is the purpose of Spring profiles?",
+      "expected_answer": "Spring profiles allow you to configure your application based on different environments or settings. They enable you to separate configuration settings for different environments, such as development, testing, and production.",
+      "source_docs": [
+        "spring/07_spring_profiles.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query"
+    },
+    {
+      "id": "q231",
+      "query": "How does React's useState hook compare to Spring's bean lifecycle?",
+      "expected_answer": "Both useState and bean lifecycle manage state changes in their respective contexts. However, useState is a hook used for managing component state in React, while bean lifecycle is a concept used in Spring to manage the creation and destruction of beans. They serve different purposes and are used in different frameworks.",
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q232",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "You should use async def when handling concurrent requests in FastAPI, as it allows for asynchronous code execution and better performance. Def is used for synchronous code execution and can lead to blocking behavior when dealing with concurrent requests.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "When to use async def in FastAPI"
+    },
+    {
+      "id": "q233",
+      "query": "How do I implement background tasks in FastAPI using a scheduler?",
+      "expected_answer": "You can implement background tasks in FastAPI using a scheduler by creating a worker task that runs in the background, handling the task execution, and using a scheduling library like Celery or RQ to schedule the task.",
+      "source_docs": [
+        "fastapi/08_background_tasks.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Step-by-step guide to implementing background tasks in FastAPI"
+    },
+    {
+      "id": "q234",
+      "query": "What are the benefits of using Pydantic's BaseModel over dataclass?",
+      "expected_answer": "Using Pydantic's BaseModel provides benefits like automatic validation, type checking, and support for nested models. It also allows for custom validation rules and is more extensible than dataclass.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Compares BaseModel and dataclass in Pydantic"
+    },
+    {
+      "id": "q235",
+      "query": "How do I handle multiple dependencies in FastAPI's dependency injection?",
+      "expected_answer": "You can handle multiple dependencies in FastAPI's dependency injection by creating a dependency that resolves multiple dependencies, using the Depends() function to resolve dependencies, and injecting the resolved dependencies into your endpoint or service.",
+      "source_docs": [
+        "fastapi/05_dependencies_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Step-by-step guide to handling multiple dependencies in FastAPI"
+    },
+    {
+      "id": "q236",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q237",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q238",
+      "query": "What are common pitfalls with Pydantic model validation?",
+      "expected_answer": "Common pitfalls with Pydantic model validation include incorrect type hints, missing validation rules, and neglecting to update validation rules when modifying field types.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Query about what not to do"
+    },
+    {
+      "id": "q239",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "You can implement authentication in FastAPI using OAuth2 by utilizing a library like FastAPI-OAuth2. This library provides an OAuth2 client and server implementation to handle authentication and authorization.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Query about specific implementation steps"
+    },
+    {
+      "id": "q240",
+      "query": "What is the difference between React's useState hook and Spring's bean lifecycle?",
+      "expected_answer": "React's useState hook is a functional state management solution, whereas Spring's bean lifecycle is a dependency injection and singleton management mechanism. The useState hook provides a simple way to manage local state, whereas Spring's bean lifecycle manages the creation, initialization, and destruction of Spring-managed beans.",
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q241",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "You should use async def when dealing with concurrent requests in FastAPI, as async def allows Python to run tasks concurrently using coroutines. This enables efficient handling of multiple requests without blocking the event loop.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "Query about timing and usage"
+    },
+    {
+      "id": "q242",
+      "query": "What are the benefits of using Pydantic's BaseModel over dataclass?",
+      "expected_answer": "The benefits of using Pydantic's BaseModel over Python's built-in dataclass include automatic validation and serialization, type checking, and support for complex data structures like models and enums.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Query about what to use over another"
+    },
+    {
+      "id": "q243",
+      "query": "How do I handle multiple dependencies in FastAPI's dependency injection?",
+      "expected_answer": "You can handle multiple dependencies in FastAPI's dependency injection by using the Depends() function to inject additional dependencies. This allows you to create complex dependencies that are easy to manage and test.",
+      "source_docs": [
+        "fastapi/05_dependencies.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Query about specific implementation steps"
+    },
+    {
+      "id": "q244",
+      "query": "What is the purpose of Spring profiles?",
+      "expected_answer": "The purpose of Spring profiles is to allow you to create and manage different profiles or configurations for your application, such as development, testing, and production environments.",
+      "source_docs": [
+        "spring/07_spring_profiles.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query"
+    },
+    {
+      "id": "q245",
+      "query": "How do I implement background tasks in FastAPI using a scheduler?",
+      "expected_answer": "You can implement background tasks in FastAPI using a scheduler like Celery or RQ. These libraries provide a way to run tasks asynchronously in the background, allowing you to offload time-consuming tasks from your main application.",
+      "source_docs": [
+        "fastapi/08_background_tasks.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Query about specific implementation steps"
+    },
+    {
+      "id": "q246",
+      "query": "How do I handle multiple path parameters in FastAPI?",
+      "expected_answer": "FastAPI path parameters can be handled using multiple parameter annotations in the path. For example, defining multiple path parameters in the function parameter list.",
+      "source_docs": [
+        "fastapi/02_path_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Handling multiple path parameters in FastAPI"
+    },
+    {
+      "id": "q247",
+      "query": "What are common pitfalls with Pydantic model validation?",
+      "expected_answer": "Pitfalls with Pydantic model validation include using custom validators, which can be slow and may break if model structure changes, and not checking for missing required fields.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md",
+        "pydantic/04_string_constraints.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Common pitfalls with Pydantic validation"
+    },
+    {
+      "id": "q248",
+      "query": "How do I implement authentication using OAuth2 in FastAPI?",
+      "expected_answer": "FastAPI provides a built-in OAuth2 authentication system. Implementing authentication using OAuth2 involves creating a client ID, client secret, access token, and refresh token. The implementation details, however, depend on the specific OAuth2 flow used.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Implementing OAuth2 authentication in FastAPI"
+    },
+    {
+      "id": "q249",
+      "query": "What is the difference between React's useState hook and Spring's bean lifecycle?",
+      "expected_answer": "React's useState hook is a state management hook in React, while Spring's bean lifecycle is the life cycle of a bean in Spring. The main difference is that the useState hook is used for managing component state, whereas the bean lifecycle is used for managing the life cycle of a bean in Spring.",
+      "source_docs": [
+        "react/05_usestate_hook.md",
+        "spring/04_bean_scopes.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Comparison of React's useState hook and Spring's bean lifecycle"
+    },
+    {
+      "id": "q250",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def for handling concurrent requests in FastAPI when dealing with I/O operations, such as database queries or external API calls. Use def for CPU-bound tasks or when the operation does not involve I/O.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "Choosing between async def and def in FastAPI"
+    },
+    {
+      "id": "q251",
+      "query": "How do I handle request bodies in FastAPI using Pydantic models?",
+      "expected_answer": "FastAPI can handle request bodies using Pydantic models by defining a Pydantic model in the function parameter list. The model is then automatically validated.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "Handling request bodies in FastAPI"
+    },
+    {
+      "id": "q252",
+      "query": "What are the benefits of using Pydantic's BaseModel over dataclass?",
+      "expected_answer": "Pydantic's BaseModel provides additional benefits such as support for JSON serialization, validation, and type hints compared to dataclass.",
+      "source_docs": [
+        "pydantic/01_introduction.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Comparison of Pydantic's BaseModel and dataclass"
+    },
+    {
+      "id": "q253",
+      "query": "How do I implement background tasks in FastAPI using a scheduler?",
+      "expected_answer": "FastAPI provides support for background tasks using the asyncio library and a scheduler. Implementing background tasks involves creating a task using the asyncio library and scheduling it using a scheduler such as Celery or APScheduler.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md",
+        "fastapi/09_testing_fastapi_applications.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Implementing background tasks in FastAPI"
+    },
+    {
+      "id": "q254",
+      "query": "What is the purpose of Spring profiles?",
+      "expected_answer": "The purpose of Spring profiles is to support multiple profiles or environments. Using profiles, you can configure beans, databases, and other settings based on the active profile.",
+      "source_docs": [
+        "spring/07_spring_profiles.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Purpose of Spring profiles"
+    },
+    {
+      "id": "q255",
+      "query": "How do I handle middleware in FastAPI?",
+      "expected_answer": "FastAPI allows you to handle middleware using the @app.middleware() decorator. You can define a function that handles the middleware and apply it to the application.",
+      "source_docs": [
+        "fastapi/07_middleware_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "Handling middleware in FastAPI"
+    },
+    {
+      "id": "q256",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q257",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q258",
+      "query": "What is the difference between React's state management using useState and Spring's bean lifecycle?",
+      "expected_answer": "React's useState hook provides a simple way to manage state in functional components, while Spring's bean lifecycle is a more complex mechanism for managing object creation and destruction.",
+      "source_docs": [
+        "react/04_state_management_basics.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q259",
+      "query": "How do I handle concurrency in FastAPI using async/await?",
+      "expected_answer": "Use the async and await keywords to write asynchronous code. FastAPI supports asyncio and async/await syntax for handling concurrent requests.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "moderate",
+      "category": "temporal",
+      "notes": "Query for concurrency handling"
+    },
+    {
+      "id": "q260",
+      "query": "What are common pitfalls with Pydantic model validation?",
+      "expected_answer": "Common pitfalls include using the wrong type for a field, forgetting to add validation, and not using the correct validation methods.",
+      "source_docs": [
+        "pydantic/04_string_constraints.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Query for common pitfalls"
+    },
+    {
+      "id": "q261",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "Use the OAuth2 specification to implement authentication in FastAPI. This involves creating a client, generating access tokens, and verifying them on each request.",
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Query for authentication implementation"
+    },
+    {
+      "id": "q262",
+      "query": "What is the purpose of Spring profiles?",
+      "expected_answer": "Spring profiles allow you to switch between different environments or configurations. They are useful for testing, staging, and production environments.",
+      "source_docs": [
+        "spring/07_spring_profiles.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q263",
+      "query": "How do I handle request bodies in FastAPI using Pydantic models?",
+      "expected_answer": "Use Pydantic models to validate and parse the request body in FastAPI. This involves creating a Pydantic model and using the FastAPI request body parser.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q264",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def for I/O-bound operations, while using def is suitable for CPU-bound operations.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "temporal",
+      "category": "temporal",
+      "notes": "Query for concurrency handling"
+    },
+    {
+      "id": "q265",
+      "query": "How do I implement background tasks in FastAPI using a scheduler?",
+      "expected_answer": "Use a scheduler such as Celery or RQ to run tasks in the background. FastAPI provides integration with these schedulers.",
+      "source_docs": [
+        "fastapi/08_background_tasks_in_fastapi.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Query for background tasks implementation"
+    },
+    {
+      "id": "q266",
+      "query": "What are common pitfalls with Pydantic validation?",
+      "expected_answer": "Common pitfalls include using custom validators incorrectly, forgetting to validate required fields, and not handling validation errors properly.",
+      "source_docs": [
+        "pydantic/04_string_constraints.md",
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": ""
+    },
+    {
+      "id": "q267",
+      "query": "How do I implement authentication in FastAPI using OAuth2?",
+      "expected_answer": "FastAPI provides support for OAuth2 authentication through the OAuth2PasswordBearer scheme. This can be used to protect routes and authenticate users.",
+      "source_docs": [
+        "fastapi/10_security.md"
+      ],
+      "difficulty": "simple",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q268",
+      "query": "Compare how React uses state management and Spring uses bean lifecycle for state management.",
+      "expected_answer": "React uses the useState Hook for state management, while Spring uses bean lifecycle for state management. The key difference is that React state is local to components, whereas Spring state is managed at the application level.",
+      "source_docs": [
+        "react/04_state_management_basics.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q269",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def for handling concurrent requests in FastAPI when you need to perform asynchronous operations. Use def for synchronous operations.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": ""
+    },
+    {
+      "id": "q270",
+      "query": "What is the difference between Pydantic's BaseModel and Spring's @Data annotation?",
+      "expected_answer": "Pydantic's BaseModel is used for model-based validation, while Spring's @Data annotation provides automatic getter and setter methods for fields.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q271",
+      "query": "How do I implement background tasks in FastAPI using a scheduler?",
+      "expected_answer": "FastAPI provides support for background tasks using the starlette_concurrency library. This library allows you to schedule tasks using a scheduler like Celery or RQ.",
+      "source_docs": [
+        "fastapi/08_background_tasks.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q272",
+      "query": "Compare how Spring's Dependency Injection and FastAPI's dependency injection work.",
+      "expected_answer": "Both Spring and FastAPI use dependency injection to provide shared resources. However, Spring uses a more complex annotation-based approach, whereas FastAPI uses a simpler type-hint-based approach.",
+      "source_docs": [
+        "spring/03_dependency_injection.md",
+        "fastapi/05_dependencies.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q273",
+      "query": "What are the key features of FastAPI compared to Flask?",
+      "expected_answer": "FastAPI provides better performance, faster development, automatic documentation, and standards-based design compared to Flask.",
+      "source_docs": [
+        "fastapi/01_introduction.md",
+        "flask/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "comparison",
+      "notes": ""
+    },
+    {
+      "id": "q274",
+      "query": "How do I handle request bodies in FastAPI using Pydantic models?",
+      "expected_answer": "FastAPI provides support for request bodies using Pydantic models. You can use the RequestBody annotation to specify the expected model and schema.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": ""
+    },
+    {
+      "id": "q275",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q276",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies.md",
+        "spring/02_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q277",
+      "query": "What are common pitfalls with Pydantic validation?",
+      "expected_answer": "Common pitfalls with Pydantic validation include incorrect data type specifications, missing or invalid validation constraints, and improper usage of custom validators. These can lead to unexpected results or errors when validating data.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md",
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Multi-hop query highlighting potential pitfalls"
+    },
+    {
+      "id": "q278",
+      "query": "How do I implement background tasks in FastAPI using a scheduler like Celery?",
+      "expected_answer": "To implement background tasks in FastAPI using Celery, you can use the Celery library to schedule tasks and the FastAPI framework to create a REST API. This involves installing Celery, configuring it with Redis or RabbitMQ, and then creating tasks that are executed in the background.",
+      "source_docs": [
+        "fastapi/08_background_tasks.md",
+        "celery/01_intro.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Multi-hop query involving multiple libraries"
+    },
+    {
+      "id": "q279",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "Use async def when you want to handle concurrent requests in FastAPI, as it is designed for asynchronous operations and provides better performance. Use def for synchronous operations or when you need to handle blocking tasks.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "Basic when-to-use question"
+    },
+    {
+      "id": "q280",
+      "query": "How do I declare path parameters in FastAPI?",
+      "expected_answer": "To declare path parameters in FastAPI, use the Path() function from the Pydantic library and specify the parameter name and type. For example: @app.get('/users/{user_id}'):",
+      "source_docs": [
+        "fastapi/02_path_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic how-to question from a single doc"
+    },
+    {
+      "id": "q281",
+      "query": "Compare React hooks to Spring bean lifecycle for state management.",
+      "expected_answer": "React hooks provide a more explicit and composable way to manage state, while Spring bean lifecycle uses a more implicit and stateful approach. React hooks are also more flexible and easier to debug.",
+      "source_docs": [
+        "react/04_state_management_basics.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q282",
+      "query": "How do I handle request bodies in FastAPI using Pydantic models?",
+      "expected_answer": "To handle request bodies in FastAPI using Pydantic models, define a Pydantic model that matches the expected request body and use the RequestBody() annotation to validate the request body against the model.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "moderate",
+      "category": "procedural",
+      "notes": "Multi-hop query involving two libraries"
+    },
+    {
+      "id": "q283",
+      "query": "What is the difference between Pydantic's BaseModel and Spring's @Data annotation?",
+      "expected_answer": "Pydantic's BaseModel is a more flexible and composable way to define data models, while Spring's @Data annotation is a more concise way to generate getters and setters for Java beans. Pydantic's approach is also more Pythonic and easier to use.",
+      "source_docs": [
+        "pydantic/01_introduction.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "complex",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q284",
+      "query": "How do I implement authentication in FastAPI using OAuth2 and Pydantic models?",
+      "expected_answer": "To implement authentication in FastAPI using OAuth2 and Pydantic models, use the OAuth2 library to handle authentication flows and Pydantic models to validate user data. You can also use FastAPI's built-in support for OAuth2 and Pydantic's support for OAuth2 validation.",
+      "source_docs": [
+        "fastapi/10_security.md",
+        "pydantic/02_basemodel_basics.md",
+        "oauth2/01_intro.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Multi-hop query involving multiple libraries"
+    },
+    {
+      "id": "q285",
+      "query": "How do I handle request bodies in FastAPI using Pydantic models?",
+      "expected_answer": "You can handle request bodies in FastAPI using Pydantic models by defining a Pydantic model as the return type of a path operation function, and setting the 'content_media_type' parameter to 'application/json' to enable JSON request parsing.",
+      "source_docs": [
+        "fastapi/04_request_body.md",
+        "pydantic/03_field_types_validation.md"
+      ],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "Handling request bodies with Pydantic models"
+    },
+    {
+      "id": "q286",
+      "query": "What are the common pitfalls with Pydantic validation?",
+      "expected_answer": "Common pitfalls with Pydantic validation include forgetting to add field-level constraints, using the wrong validation type (e.g. str instead of Email), and not handling validation errors properly.",
+      "source_docs": [
+        "pydantic/03_field_types_validation.md",
+        "pydantic/04_string_constraints.md"
+      ],
+      "difficulty": "complex",
+      "category": "negation",
+      "notes": "Listing common pitfalls with Pydantic validation"
+    },
+    {
+      "id": "q287",
+      "query": "How do I implement authentication in FastAPI using OAuth2 and Pydantic models?",
+      "expected_answer": "You can implement authentication in FastAPI using OAuth2 by installing the 'fastapi-security' library, creating an OAuth2 client with Pydantic models for the client and token, and then using the OAuth2 scheme to authenticate API requests.",
+      "source_docs": [
+        "fastapi/10_security.md",
+        "fastapi/05_dependencies.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Implementing authentication with OAuth2 and Pydantic models"
+    },
+    {
+      "id": "q288",
+      "query": "When should I use async def vs def for handling concurrent requests in FastAPI?",
+      "expected_answer": "You should use async def for handling concurrent requests in FastAPI when you need to perform I/O operations (e.g. database queries) that block the execution of the function, while def is sufficient for CPU-bound computations.",
+      "source_docs": [
+        "fastapi/06_async.md"
+      ],
+      "difficulty": "simple",
+      "category": "temporal",
+      "notes": "Choosing between async and regular functions"
+    },
+    {
+      "id": "q289",
+      "query": "Compare React hooks to Spring bean lifecycle for state management.",
+      "expected_answer": "React hooks provide a more lightweight and composable way to manage state compared to Spring's bean lifecycle. While Spring requires creating and managing beans, React hooks allow for more flexible and dynamic state updates.",
+      "source_docs": [
+        "react/04_state_management_basics.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Comparison of state management in React and Spring"
+    },
+    {
+      "id": "q290",
+      "query": "How do I implement background tasks in FastAPI using a scheduler like Celery?",
+      "expected_answer": "You can implement background tasks in FastAPI using a scheduler like Celery by installing the Celery library, creating a Celery app instance, and then using the 'async' context manager to run tasks asynchronously.",
+      "source_docs": [
+        "fastapi/08_background_tasks.md",
+        "celery/01_introduction.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Implementing background tasks with Celery"
+    },
+    {
+      "id": "q291",
+      "query": "What is the difference between Pydantic's BaseModel and Spring's @Data annotation?",
+      "expected_answer": "Pydantic's BaseModel provides a more explicit and type-safe way to define data models, while Spring's @Data annotation provides a more implicit way to add getters and setters to a class. Pydantic's approach is more flexible and composable.",
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md",
+        "spring/02_ioc_container.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Comparison of Pydantic's BaseModel and Spring's @Data annotation"
+    },
+    {
+      "id": "q292",
+      "query": "How do I declare path parameters in FastAPI?",
+      "expected_answer": "You can declare path parameters in FastAPI using the 'Path' function from the 'fastapi' library, specifying the parameter name and type (e.g. 'int' or 'str') to create a path parameter.",
+      "source_docs": [
+        "fastapi/02_path_parameters.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Declaring path parameters in FastAPI"
+    },
+    {
+      "id": "q293",
+      "query": "What is the purpose of using a middleware in FastAPI?",
+      "expected_answer": "The purpose of using a middleware in FastAPI is to perform some operation before or after a request is handled by the application, such as logging, authentication, or caching.",
+      "source_docs": [
+        "fastapi/07_middleware_in_fastapi.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Purpose of middleware in FastAPI"
+    },
+    {
+      "id": "q294",
+      "query": "How do I handle query parameters in FastAPI using Pydantic models?",
+      "expected_answer": "You can handle query parameters in FastAPI using Pydantic models by defining a Pydantic model with fields that match the query parameter names, and setting the 'query_arg' parameter to True to enable query parsing.",
+      "source_docs": [
+        "fastapi/03_query_parameters.md",
+        "pydantic/03_field_types_validation.md"
+      ],
+      "difficulty": "moderate",
+      "category": "simple",
+      "notes": "Handling query parameters with Pydantic models"
+    },
+    {
+      "id": "q295",
+      "query": "What is FastAPI and what are its key features?",
+      "expected_answer": "FastAPI is a modern, fast web framework for building APIs with Python 3.7+ based on standard Python type hints. Key features include high performance, fast development, automatic documentation, and standards-based design.",
+      "source_docs": [
+        "fastapi/01_introduction.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Basic definition query from introduction"
+    },
+    {
+      "id": "q296",
+      "query": "How does dependency injection work in FastAPI compared to Spring Framework?",
+      "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md",
+        "spring/03_dependency_injection.md"
+      ],
+      "difficulty": "moderate",
+      "category": "comparison",
+      "notes": "Multi-hop query comparing two frameworks"
+    },
+    {
+      "id": "q297",
+      "query": "Can I use Pydantic models with asynchronous request handlers in FastAPI?",
+      "expected_answer": "Yes, you can use Pydantic models with asynchronous request handlers in FastAPI. Just ensure the models are properly defined and the async handlers use the same BaseModel.",
+      "source_docs": [
+        "fastapi/06_async.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "simple",
+      "category": "simple",
+      "notes": "Simple question about Pydantic and async"
+    },
+    {
+      "id": "q298",
+      "query": "When should I use Spring profiles over environment variables for configuration?",
+      "expected_answer": "Use Spring profiles when you need to switch between different configurations based on environment, without altering the code. Environment variables are better suited for single-value settings.",
+      "source_docs": [
+        "spring/07_spring_profiles.md"
+      ],
+      "difficulty": "moderate",
+      "category": "temporal",
+      "notes": "Query about when to use Spring profiles"
+    },
+    {
+      "id": "q299",
+      "query": "What are common pitfalls with using Pydantic validation for API requests in FastAPI?",
+      "expected_answer": "Common pitfalls include incorrect model definitions, insufficient validation, and neglecting to handle validation errors. Ensure your models are properly defined, and validate user input thoroughly.",
+      "source_docs": [
+        "pydantic/03_field_types_and_validation.md",
+        "fastapi/10_security_in_fastapi.md"
+      ],
+      "difficulty": "moderate",
+      "category": "negation",
+      "notes": "Query about pitfalls with Pydantic validation"
+    },
+    {
+      "id": "q300",
+      "query": "How do I implement authentication in FastAPI using OAuth2 and Pydantic models, and what are the security considerations?",
+      "expected_answer": "To implement authentication using OAuth2, create a custom authentication endpoint and use Pydantic models for user input. Ensure proper validation, token generation, and secure token storage. Use HTTPS for secure communication.",
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md",
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "difficulty": "complex",
+      "category": "procedural",
+      "notes": "Query about implementing OAuth2 authentication in FastAPI"
     }
   ],
   "evaluation_notes": {
-    "purpose": "These queries serve as a baseline test set for evaluating the Naive RAG pipeline before implementing advanced techniques (HyDE, query decomposition, hybrid search, reranking).",
+    "purpose": "These queries test the RAG pipeline's ability to retrieve and answer technical documentation questions across multiple frameworks.",
     "success_criteria": {
-      "answer_correctness": "Generated answers should cover the key points in expected_answer",
+      "answer_correctness": "Generated answers should cover key points in expected_answer",
       "context_precision": "Retrieved chunks should include the source_docs listed",
       "answer_relevance": "Answers should directly address the query without hallucination"
-    },
-    "limitations": "This is a small test set (7 queries) for rapid iteration. Full evaluation requires 50+ queries with golden Q&A pairs."
+    }
   }
 }

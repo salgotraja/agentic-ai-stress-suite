@@ -1,103 +1,112 @@
-# Dataset Attribution
+# Technical Documentation Attribution
 
-This document provides attribution for all documentation sources used in this project's datasets.
+This directory contains curated technical documentation for RAG testing purposes.
 
-## FastAPI Documentation
+## Dataset Composition
 
-**Source**: FastAPI Official Documentation
-**URL**: https://fastapi.tiangolo.com/
-**License**: MIT License
-**Copyright**: Copyright (c) 2018 Sebastián Ramírez
-**Date Accessed**: January 2026
+**Total**: ~200 documentation files (50 per framework)
+**Purpose**: Comprehensive testing of RAG systems including multi-hop queries, entity relationships, and cross-framework comparisons
+**Coverage**: Core concepts, advanced patterns, integration examples, best practices
 
-### Files Included
+## Sources
 
-The following documentation pages have been adapted for this project:
+### FastAPI (~50 files)
+- **Source**: FastAPI official documentation (https://fastapi.tiangolo.com/)
+- **License**: MIT License
+- **Copyright**: © 2018-2024 Sebastián Ramírez
+- **Files**: `fastapi/01-50_*.md`
+- **Topics**: Routing, dependencies, async, testing, security, deployment, performance
+- **Last Updated**: 2026-01-14
 
-1. **01_introduction.md**
-   - Source: https://fastapi.tiangolo.com/
-   - Content: Introduction, key features, requirements, installation
+### Spring Framework (~50 files)
+- **Source**: Spring Framework official documentation (https://spring.io/projects/spring-framework)
+- **License**: Apache License 2.0
+- **Copyright**: © 2002-2024 Pivotal Software, Inc.
+- **Files**: `spring/01-50_*.md`
+- **Topics**: IoC, Spring Boot, MVC, Data, Security, WebFlux, Cloud, Testing
+- **Last Updated**: 2026-01-14
 
-2. **02_path_parameters.md**
-   - Source: https://fastapi.tiangolo.com/tutorial/path-params/
-   - Content: Path parameters, type validation, predefined values
+### React (~50 files)
+- **Source**: React official documentation (https://react.dev/)
+- **License**: MIT License
+- **Copyright**: © 2013-2024 Meta Platforms, Inc.
+- **Files**: `react/01-50_*.md`
+- **Topics**: Components, Hooks, Router, State Management, Testing, Performance, Patterns
+- **Last Updated**: 2026-01-14
 
-3. **03_query_parameters.md**
-   - Source: https://fastapi.tiangolo.com/tutorial/query-params/
-   - Content: Query parameters, optional parameters, type conversion
+### Pydantic (~50 files)
+- **Source**: Pydantic official documentation (https://docs.pydantic.dev/)
+- **License**: MIT License
+- **Copyright**: © 2017-2024 Samuel Colvin and contributors
+- **Files**: `pydantic/01-50_*.md`
+- **Topics**: Models, Validation, Settings, JSON Schema, FastAPI Integration, Performance
+- **Last Updated**: 2026-01-14
 
-4. **04_request_body.md**
-   - Source: https://fastapi.tiangolo.com/tutorial/body/
-   - Content: Request body, Pydantic models, automatic validation
+## License Summary
 
-5. **05_dependencies.md**
-   - Source: https://fastapi.tiangolo.com/tutorial/dependencies/
-   - Content: Dependency injection, shared dependencies, dependency classes
+| Framework | License | Source |
+|-----------|---------|--------|
+| FastAPI | MIT | https://github.com/tiangolo/fastapi |
+| Spring Framework | Apache 2.0 | https://github.com/spring-projects/spring-framework |
+| React | MIT | https://github.com/facebook/react |
+| Pydantic | MIT | https://github.com/pydantic/pydantic |
 
-6. **06_async.md**
-   - Source: https://fastapi.tiangolo.com/async/
-   - Content: Asynchronous code, async and await, concurrency
+## Attribution Requirements
 
-### License Terms
+All documentation in this dataset is derived from open-source projects with permissive licenses. When using this dataset:
 
-FastAPI is licensed under the MIT License:
+1. **FastAPI**: Copyright © 2018-2024 Sebastián Ramírez. Licensed under MIT License.
+2. **Spring Framework**: Copyright © 2002-2024 Pivotal Software, Inc. Licensed under Apache License 2.0.
+3. **React**: Copyright © 2013-2024 Meta Platforms, Inc. Licensed under MIT License.
+4. **Pydantic**: Copyright © 2017-2024 Samuel Colvin. Licensed under MIT License.
 
-```
-MIT License
+## Usage
 
-Copyright (c) 2018 Sebastián Ramírez
+This dataset is intended for:
+- RAG system testing and benchmarking
+- Graph RAG multi-hop query evaluation
+- Framework comparison and relationship discovery
+- Educational purposes
+- Research in information retrieval
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## Cross-Framework Relationships
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The documentation includes intentional cross-references to test multi-hop queries:
+- **FastAPI ↔ Pydantic**: Data validation integration
+- **Spring ↔ React**: Backend-frontend patterns
+- **FastAPI ↔ Spring**: Web framework comparisons
+- **React Hooks ↔ Spring Reactive**: Reactive programming patterns
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
+## License Compliance
 
-### Usage
+This project respects all upstream licenses. Content is used under the terms of each project's respective license. If you believe any content violates licensing terms, please open an issue immediately.
 
-These documentation files are used solely for:
-- Educational purposes in demonstrating RAG (Retrieval-Augmented Generation) systems
-- Benchmarking and evaluating different RAG techniques
-- Testing and validation of AI/ML systems
+## Modifications
 
-No commercial use is intended. All rights remain with the original authors.
+All documentation has been:
+- Reformatted to markdown for consistent parsing
+- Condensed and curated for RAG testing (800-1500 words per file)
+- Organized by topic with clear file naming
+- Enhanced with cross-references to other frameworks
+- Optimized for entity extraction and relationship mapping
 
-### Modifications
+## Disclaimer
 
-The original documentation has been:
-- Extracted into individual markdown files for easier processing
-- Formatted consistently for use with vector databases
-- Potentially simplified or condensed for demonstration purposes
+This dataset is for testing purposes only. Original documentation should always be consulted for:
+- Production implementations
+- Authoritative API references
+- Latest feature updates
+- Official best practices
 
-For the most current and complete documentation, please visit the official FastAPI documentation at https://fastapi.tiangolo.com/
+## Contributing
 
----
+To expand this dataset:
+1. Ensure proper attribution
+2. Verify license compatibility
+3. Maintain consistent formatting
+4. Add cross-references where relevant
+5. Update this attribution file
 
-## Future Documentation Sources
+## Acknowledgments
 
-As this project expands, additional documentation sources will be added here with proper attribution.
-
-Planned sources include:
-- React documentation
-- Spring Framework documentation
-- Pydantic documentation
-
-Each will be properly attributed with source URLs, licenses, and copyright information.
-
----
-
-**Last Updated**: January 11, 2026
-**Maintained By**: Agentic AI Stress Suite Project
+We thank the maintainers and contributors of FastAPI, Spring Framework, React, and Pydantic for creating excellent open-source software and documentation that makes this testing dataset possible.

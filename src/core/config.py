@@ -86,6 +86,7 @@ class Settings(BaseSettings):  # type: ignore[misc]
     anthropic_api_key: str | None = Field(default=None, description="Anthropic Claude API key")
     google_api_key: str | None = Field(default=None, description="Google Gemini API key")
     openai_api_key: str | None = Field(default=None, description="OpenAI API key")
+    cohere_api_key: str | None = Field(default=None, description="Cohere API key for reranking")
 
     # GPU Configuration (auto-detected, can be overridden)
     # Teaching note: GPU backend is auto-detected at startup: CUDA > Metal > CPU
@@ -180,6 +181,25 @@ class Settings(BaseSettings):  # type: ignore[misc]
         ge=0.0,
         le=1.0,
         description="Cosine similarity threshold for semantic cache hits",
+    )
+
+    # Reranking Configuration
+    use_reranking: bool = Field(
+        default=False,
+        description="Enable reranking of retrieval results with cross-encoder",
+    )
+    reranking_backend: str = Field(
+        default="flashrank",
+        description="Reranking backend: 'flashrank' (local, free) or 'cohere' (cloud, $1/1K)",
+    )
+    reranking_model: str = Field(
+        default="ms-marco-MiniLM-L-12-v2",
+        description="FlashRank cross-encoder model for reranking",
+    )
+    reranking_top_k: int = Field(
+        default=20,
+        gt=0,
+        description="Number of candidates to retrieve before reranking",
     )
 
     # Development

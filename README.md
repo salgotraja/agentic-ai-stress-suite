@@ -85,6 +85,84 @@ notebooks/         # Jupyter analysis notebooks
 
 ## Development Workflow
 
+### Generating Documentation
+
+Generate technical documentation for RAG dataset:
+
+```bash
+# Generate specific topic range
+uv run python scripts/generate_tech_docs.py --framework fastapi --start 1 --end 10
+uv run python scripts/generate_tech_docs.py --framework pydantic --start 5 --end 15
+
+# Regenerate only invalid documents
+uv run python scripts/generate_tech_docs.py --framework fastapi --regenerate-invalid
+
+# Generate all topics for a framework (1-50)
+uv run python scripts/generate_tech_docs.py --framework react
+
+# Generate all frameworks
+uv run python scripts/generate_tech_docs.py --all
+
+# Use specific model (default: Qwen 32B → Llama 70B → DeepSeek → Claude fallback)
+uv run python scripts/generate_tech_docs.py --framework spring --start 20 --end 30 --model claude
+
+# Dry run (preview without writing files)
+uv run python scripts/generate_tech_docs.py --framework fastapi --start 1 --end 5 --dry-run
+```
+
+### Validating Documentation
+
+```bash
+# Validate all documentation
+uv run python scripts/validate_tech_docs.py
+
+# Validate specific framework
+uv run python scripts/validate_tech_docs.py --framework fastapi
+
+# Verbose output with warnings
+uv run python scripts/validate_tech_docs.py --verbose
+
+# Export validation results to JSON
+uv run python scripts/validate_tech_docs.py --output results.json
+```
+
+### Generating Synthetic Queries
+
+Generate diverse test queries for RAG evaluation:
+
+```bash
+# Generate 30 queries (2 batches of 15-20, default batch size is 20)
+uv run python scripts/generate_queries.py --count 30
+
+# Generate large batch with auto-batching (generates in batches of 20)
+uv run python scripts/generate_queries.py --count 265 --append
+
+# Append to existing queries file
+uv run python scripts/generate_queries.py --count 50 --append
+
+# Generate specific query types
+uv run python scripts/generate_queries.py --count 20 --types simple,multi-hop,comparison
+
+# Use specific model (default: Groq → DeepSeek → Claude fallback)
+uv run python scripts/generate_queries.py --count 100 --model claude
+
+# Use smaller batch size (10-15) if experiencing JSON parsing errors
+uv run python scripts/generate_queries.py --count 200 --batch-size 10
+
+# Custom output file
+uv run python scripts/generate_queries.py --count 50 --output datasets/synthetic_queries/custom.json
+```
+
+### Utility Scripts
+
+```bash
+# Start Phoenix observability server (http://localhost:6006)
+uv run python scripts/start_phoenix.py
+
+# Test M4 GPU embeddings (Metal backend)
+uv run python scripts/test_m4_embeddings.py
+```
+
 ### Running Examples
 
 ```bash
@@ -100,12 +178,58 @@ uv run python demo.py --agent react --query "Calculate 2^8"
 ### Running Benchmarks
 
 ```bash
-# Article 1 benchmarks
-uv run python benchmarks/run_article_01.py --dataset datasets/synthetic_queries/article_01.json
+# Run Article 1 benchmarks (Naive RAG baseline)
+uv run python benchmarks/run_article_01.py
 
-# Generate charts
-jupyter nbconvert --execute notebooks/analysis_article_01.ipynb
+# Custom dataset or output
+uv run python benchmarks/run_article_01.py --dataset datasets/synthetic_queries/custom.json --output results/data/custom.json
+
+# More runs for better statistics
+uv run python benchmarks/run_article_01.py --runs 5
+
+# Different retrieval parameters
+uv run python benchmarks/run_article_01.py --top-k 10
+
+# Generate charts from benchmark results (executes notebook and updates in-place)
+uv run jupyter nbconvert --execute --to notebook --inplace notebooks/analysis_article_01.ipynb
+
+# Alternative: Open notebook interactively
+uv run jupyter notebook notebooks/analysis_article_01.ipynb
 ```
+
+### Running Benchmarks on Google Colab
+
+If you hit rate limits locally, use Google Colab for benchmarks:
+
+```bash
+# 1. Upload notebook to Colab
+#    - Go to https://colab.research.google.com
+#    - File → Upload notebook
+#    - Select: notebooks/colab_benchmark_runner.ipynb
+
+# 2. Set API keys in Colab Secrets (🔑 icon)
+#    - Add GROQ_API_KEY (required)
+#    - Add OPENAI_API_KEY, ANTHROPIC_API_KEY (optional fallback)
+
+# 3. Run all cells in Colab
+#    - Runtime → Run all (Ctrl+F9)
+#    - Wait 15-30 minutes
+#    - Download results automatically
+
+# 4. Merge results back to local repo
+uv run python scripts/merge_colab_results.py ~/Downloads/article_01_benchmarks.json
+
+# 5. Generate visualizations locally
+uv run jupyter nbconvert --execute --to notebook --inplace notebooks/analysis_article_01.ipynb
+```
+
+**Benefits of Colab:**
+- Fresh API quota (different IP)
+- Free T4 GPU for embeddings
+- No Docker dependencies
+- Longer runtimes without local interruption
+
+See `notebooks/COLAB_SETUP.md` for detailed instructions.
 
 ### Code Quality Checks
 

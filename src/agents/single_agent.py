@@ -2,7 +2,7 @@
 
 This module implements single-agent architectures using LangGraph:
 - ReAct: Reason-Act loop with iterative tool use
-- Plan-and-Execute: Upfront planning with sequential execution (future)
+- Plan-and-Execute: Upfront planning with sequential execution
 
 Teaching note: ReAct (Reasoning + Acting) is an iterative agent pattern where
 the agent alternates between reasoning about what to do and executing actions.
@@ -511,4 +511,483 @@ Your response (JSON only, no other text):"""
             f"ReActAgent("
             f"tools={[t.name for t in self.tools]}, "
             f"max_iterations={self.max_iterations})"
+        )
+
+
+# ============================================================================
+# Plan-and-Execute Agent
+# ============================================================================
+
+
+class PlanState(TypedDict):
+    """
+    State dictionary for Plan-and-Execute agent.
+
+    Teaching note: Plan-and-Execute vs ReAct state
+    - Plan-and-Execute has a "plan" (list of steps generated upfront)
+    - ReAct generates next action on-the-fly based on observations
+    - Plan-and-Execute is more deterministic, ReAct is more adaptive
+
+    Why Plan-and-Execute wins:
+    - Predictable: Same query → same plan → same execution path
+    - Efficient: One planning LLM call, then execute (vs multiple reasoning calls)
+    - Parallel-friendly: Can parallelize independent steps (not implemented here)
+    - Audit-friendly: Can show user the plan before executing
+
+    Why ReAct wins:
+    - Adaptive: Can change course based on tool results
+    - Error recovery: Can try alternative tools if one fails
+    - Exploration: Can discover unexpected information paths
+    - Multi-hop: Natural for open-ended questions
+
+    When to use Plan-and-Execute:
+    - Known workflows (e.g., "Generate weekly report")
+    - Multi-step tasks with clear sequence
+    - Production pipelines where predictability matters
+
+    When to use ReAct:
+    - Open-ended questions
+    - Debugging/troubleshooting (unknown solution path)
+    - Research tasks (need to follow information trails)
+
+    Attributes:
+        query: Original user query
+        plan: List of steps to execute (generated upfront)
+        step_results: Results from completed steps
+        current_step_index: Which step we're executing (0-indexed)
+        final_answer: Synthesized answer from all step results
+        correlation_id: Trace correlation ID for observability
+    """
+
+    query: str
+    plan: list[dict[str, str]]  # [{"step": "description", "tool": "ToolName", "input": "..."}]
+    step_results: list[str]
+    current_step_index: int
+    final_answer: str | None
+    correlation_id: str
+
+
+@dataclass
+class PlanAndExecuteAgent:
+    """
+    Plan-and-Execute agent implementation using LangGraph.
+
+    This agent implements the Plan-Execute pattern:
+    1. Planning node: LLM generates complete plan upfront
+    2. Execution nodes: Execute each step sequentially
+    3. Synthesis node: Combine all results into final answer
+
+    Teaching note: Architecture comparison
+
+    ReAct:
+    ┌─────────┐     ┌────────┐     ┌─────────┐
+    │ Reason  │ ──> │ Act    │ ──> │ Observe │ ─┐
+    └─────────┘     └────────┘     └─────────┘  │
+         ↑                                       │
+         └───────────────────────────────────────┘
+    (Loop until done)
+
+    Plan-and-Execute:
+    ┌──────┐     ┌──────────┐     ┌──────────┐     ┌───────────┐
+    │ Plan │ ──> │ Execute  │ ──> │ Execute  │ ──> │ Synthesize│
+    │      │     │ Step 1   │     │ Step 2   │     │           │
+    └──────┘     └──────────┘     └──────────┘     └───────────┘
+    (Linear execution)
+
+    Trade-offs:
+    - Plan-Execute: Faster (fewer LLM calls), more predictable, less adaptive
+    - ReAct: Slower (more LLM calls), less predictable, more adaptive
+
+    Latency example (3-tool task):
+    - Plan-Execute: 1 planning call + 3 execution + 1 synthesis = 5 LLM calls
+    - ReAct: 3 reasoning + 3 execution = 6+ LLM calls (may need more if adjusting)
+
+    Attributes:
+        tools: List of available tools
+        llm_client: UnifiedLLMClient for planning and synthesis
+        max_steps: Maximum plan steps (prevents runaway plans)
+        temperature: LLM temperature for planning
+        graph: Compiled LangGraph StateGraph for execution
+    """
+
+    tools: list[BaseTool]
+    llm_client: UnifiedLLMClient | None = None
+    max_steps: int = 10
+    temperature: float = 0.0
+    graph: Any = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        """Initialize LLM client and compile the agent graph."""
+        if self.llm_client is None:
+            self.llm_client = UnifiedLLMClient()
+
+        self.graph = self._build_graph()
+
+    def _build_graph(self) -> Any:
+        """
+        Build and compile the LangGraph StateGraph.
+
+        Graph structure:
+        START → plan → execute_step → [conditional] → execute_step (loop) → synthesize → END
+
+        Teaching note: Plan-and-Execute flow
+        - plan: Generate complete plan (1 LLM call)
+        - execute_step: Execute current step in plan (N tool calls)
+        - Conditional routing: If more steps, continue to execute_step. If done, synthesize.
+        - synthesize: Combine all step results into final answer (1 LLM call)
+
+        Total LLM calls: 1 (plan) + N (tools, not LLM) + 1 (synthesize) = 2 LLM calls
+        (vs ReAct which does N reasoning calls + N tool calls)
+
+        Returns:
+            Compiled StateGraph ready for execution
+        """
+        workflow = StateGraph(PlanState)
+
+        # Add nodes
+        workflow.add_node("plan", self._plan_node)
+        workflow.add_node("execute_step", self._execute_step_node)
+        workflow.add_node("synthesize", self._synthesize_node)
+
+        # Set entry point
+        workflow.set_entry_point("plan")
+
+        # Plan → execute_step
+        workflow.add_edge("plan", "execute_step")
+
+        # Conditional: execute_step → execute_step (more steps) OR synthesize (done)
+        workflow.add_conditional_edges(
+            "execute_step",
+            self._should_continue_execution,
+            {
+                "continue": "execute_step",
+                "synthesize": "synthesize",
+            },
+        )
+
+        # Synthesize → END
+        workflow.add_edge("synthesize", END)
+
+        return workflow.compile()
+
+    @traced_generation
+    def _plan_node(self, state: PlanState) -> PlanState:
+        """
+        Planning node: Generate complete execution plan upfront.
+
+        This node analyzes the query and creates a step-by-step plan.
+        Each step specifies: description, tool to use, input for tool.
+
+        Args:
+            state: Current agent state
+
+        Returns:
+            Updated state with plan populated
+
+        Teaching note: Prompt engineering for planning
+        - List available tools with descriptions
+        - Ask for structured JSON plan
+        - Emphasize: Keep plan concise (max 10 steps)
+        - Include examples of good plans
+        - Stress that plan should be executable (valid tools, clear inputs)
+        """
+        tool_descriptions = "\n".join([f"- {tool.name}: {tool.description}" for tool in self.tools])
+
+        prompt = f"""You are a planning assistant.
+Your task is to create a step-by-step plan to answer the user's question.
+
+Available tools:
+{tool_descriptions}
+
+User question: {state["query"]}
+
+Create a plan as a JSON array where each step has:
+- "step": Brief description of what this step does
+- "tool": Name of the tool to use
+- "input": Input to pass to the tool
+
+Guidelines:
+- Keep the plan concise (maximum {self.max_steps} steps)
+- Each step should use exactly one tool
+- Steps should be in logical order (e.g., gather info before summarizing)
+- Tool inputs should be specific and actionable
+- If the question is simple, the plan can be 1-2 steps
+
+Example plan for "What is FastAPI? Calculate 2^10":
+[
+  {{"step": "Look up FastAPI documentation", "tool": "RAGTool", "input": "What is FastAPI?"}},
+  {{"step": "Calculate 2 to the power of 10", "tool": "CalculatorTool", "input": "2 ** 10"}}
+]
+
+Your plan (JSON array only, no other text):"""
+
+        assert self.llm_client is not None
+        response = self.llm_client.generate(
+            prompt=prompt,
+            temperature=self.temperature,
+            max_tokens=1000,
+        )
+
+        # Parse plan from response
+        try:
+            content = response.content.strip()
+
+            # Remove markdown code blocks if present
+            if content.startswith("```"):
+                lines = content.split("\n")
+                content = "\n".join(lines[1:-1])
+                if content.startswith("json"):
+                    content = "\n".join(content.split("\n")[1:])
+
+            plan = json.loads(content)
+
+            # Validate plan
+            if not isinstance(plan, list):
+                plan = []
+
+            # Limit plan length
+            if len(plan) > self.max_steps:
+                plan = plan[: self.max_steps]
+
+            # Ensure each step has required fields
+            validated_plan = []
+            for step in plan:
+                if isinstance(step, dict) and "tool" in step and "input" in step:
+                    validated_plan.append(step)
+
+            return {
+                **state,
+                "plan": validated_plan,
+                "step_results": [],
+                "current_step_index": 0,
+            }
+
+        except json.JSONDecodeError:
+            # Failed to parse plan, create empty plan
+            return {
+                **state,
+                "plan": [],
+                "step_results": [],
+                "current_step_index": 0,
+                "final_answer": f"Failed to create plan. LLM response: {response.content[:200]}",
+            }
+
+    def _execute_step_node(self, state: PlanState) -> PlanState:
+        """
+        Execute the current step in the plan.
+
+        This node:
+        1. Gets current step from plan
+        2. Finds the specified tool
+        3. Executes tool with specified input
+        4. Stores result
+        5. Increments step index
+
+        Args:
+            state: Current agent state
+
+        Returns:
+            Updated state with step result added and index incremented
+
+        Teaching note: Sequential execution
+        - No reasoning needed (plan already decided which tool)
+        - Just execute: tool = find(step["tool"]), result = tool.execute(step["input"])
+        - Error handling: If tool fails, store error message, continue to next step
+        - This is simpler than ReAct's action node (no reasoning interleaved)
+        """
+        plan = state["plan"]
+        current_index = state["current_step_index"]
+
+        if current_index >= len(plan):
+            # Should not happen if routing logic is correct
+            return state
+
+        current_step = plan[current_index]
+        tool_name = current_step.get("tool")
+        tool_input = current_step.get("input")
+        step_description = current_step.get("step", "Unknown step")
+
+        # Find tool
+        tool = next((t for t in self.tools if t.name == tool_name), None)
+
+        if tool is None:
+            # Tool not found
+            error_result = (
+                f"Error: Tool '{tool_name}' not found. Available: {[t.name for t in self.tools]}"
+            )
+            new_results = state["step_results"].copy()
+            new_results.append(f"Step {current_index + 1} ({step_description}): {error_result}")
+
+            return {
+                **state,
+                "step_results": new_results,
+                "current_step_index": current_index + 1,
+            }
+
+        # Validate tool_input
+        if tool_input is None:
+            error_result = "Error: Tool input is None"
+            new_results = state["step_results"].copy()
+            new_results.append(f"Step {current_index + 1} ({step_description}): {error_result}")
+
+            return {
+                **state,
+                "step_results": new_results,
+                "current_step_index": current_index + 1,
+            }
+
+        # Execute tool
+        try:
+            result = tool.execute(tool_input)
+            new_results = state["step_results"].copy()
+            new_results.append(
+                f"Step {current_index + 1} ({step_description}):\n"
+                f"Tool: {tool_name}\nInput: {tool_input}\nResult: {result}"
+            )
+
+            return {
+                **state,
+                "step_results": new_results,
+                "current_step_index": current_index + 1,
+            }
+
+        except Exception as e:
+            # Tool execution failed
+            error_result = f"Tool execution error: {str(e)}"
+            new_results = state["step_results"].copy()
+            new_results.append(f"Step {current_index + 1} ({step_description}): {error_result}")
+
+            return {
+                **state,
+                "step_results": new_results,
+                "current_step_index": current_index + 1,
+            }
+
+    def _should_continue_execution(self, state: PlanState) -> Literal["continue", "synthesize"]:
+        """
+        Decide whether to execute next step or synthesize results.
+
+        Args:
+            state: Current agent state
+
+        Returns:
+            "continue" if more steps to execute, "synthesize" if done
+
+        Teaching note: Simple routing logic
+        - If current_step_index < len(plan), continue
+        - Otherwise, synthesize
+        - No complex decision making (plan is fixed)
+        """
+        if state["current_step_index"] < len(state["plan"]):
+            return "continue"
+        else:
+            return "synthesize"
+
+    @traced_generation
+    def _synthesize_node(self, state: PlanState) -> PlanState:
+        """
+        Synthesize all step results into final answer.
+
+        This node combines results from all execution steps into a
+        coherent answer to the original query.
+
+        Args:
+            state: Current agent state
+
+        Returns:
+            Updated state with final_answer populated
+
+        Teaching note: Why synthesis step?
+        - Step results are raw (tool outputs, possibly unformatted)
+        - Need to combine multiple results coherently
+        - LLM can format, summarize, and directly answer the question
+        - This is the "value add" over just returning raw tool outputs
+
+        Example:
+        Query: "What is FastAPI? Calculate 2^10"
+        Step 1 result: "FastAPI is a modern, fast web framework..."
+        Step 2 result: "1024"
+        Synthesis: "FastAPI is a modern, fast web framework for building APIs with Python.
+                    The result of 2^10 is 1024."
+        """
+        results_str = "\n\n".join(state["step_results"])
+
+        prompt = f"""You are a helpful assistant.
+The user asked a question, and we executed a plan to gather information.
+
+User question: {state["query"]}
+
+Results from plan execution:
+{results_str if results_str else "No results (plan was empty or all steps failed)"}
+
+Based on these results, provide a clear, concise answer to the user's question.
+If steps failed or returned errors, acknowledge this and provide the best answer possible.
+
+Your answer:"""
+
+        assert self.llm_client is not None
+        response = self.llm_client.generate(
+            prompt=prompt,
+            temperature=self.temperature,
+            max_tokens=500,
+        )
+
+        return {
+            **state,
+            "final_answer": response.content.strip(),
+        }
+
+    def run(self, query: str, correlation_id: str | None = None) -> dict[str, Any]:
+        """
+        Run the Plan-and-Execute agent on a query.
+
+        Args:
+            query: User question
+            correlation_id: Optional correlation ID for tracing
+
+        Returns:
+            Dictionary with:
+            - answer: Final synthesized answer
+            - plan: The generated plan (list of steps)
+            - step_results: Results from each step execution
+            - success: Whether agent completed successfully
+
+        Example:
+            >>> agent = PlanAndExecuteAgent(tools=[calculator_tool, rag_tool])
+            >>> result = agent.run("What is FastAPI? Calculate 2^8")
+            >>> print(result["answer"])
+            "FastAPI is a modern web framework. 2^8 equals 256."
+            >>> print(f"Executed {len(result['plan'])} steps")
+            Executed 2 steps
+        """
+        if correlation_id is None:
+            correlation_id = generate_correlation_id()
+
+        # Initialize state
+        initial_state: PlanState = {
+            "query": query,
+            "plan": [],
+            "step_results": [],
+            "current_step_index": 0,
+            "final_answer": None,
+            "correlation_id": correlation_id,
+        }
+
+        # Run graph
+        final_state = self.graph.invoke(initial_state)
+
+        return {
+            "answer": final_state.get("final_answer", "No answer generated."),
+            "plan": final_state.get("plan", []),
+            "step_results": final_state.get("step_results", []),
+            "success": final_state.get("final_answer") is not None,
+            "correlation_id": correlation_id,
+        }
+
+    def __repr__(self) -> str:
+        """String representation for debugging."""
+        return (
+            f"PlanAndExecuteAgent("
+            f"tools={[t.name for t in self.tools]}, "
+            f"max_steps={self.max_steps})"
         )

@@ -1,0 +1,576 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created_date": "2026-02-15",
+    "description": "Hand-crafted golden test set for RAG evaluation",
+    "total_pairs": 50,
+    "methodology": "Manually extracted from generated tech docs corpus with verified answers",
+    "difficulty_distribution": {
+      "simple": 10,
+      "moderate": 25,
+      "complex": 15
+    },
+    "query_type_distribution": {
+      "simple_fact": 10,
+      "multi_hop": 10,
+      "temporal": 5,
+      "comparison": 10,
+      "negation": 5,
+      "procedural": 10
+    }
+  },
+  "qa_pairs": [
+    {
+      "id": "golden_001",
+      "query": "What is dependency injection in FastAPI?",
+      "expected_answer": "Dependency injection in FastAPI is a design pattern that allows passing dependencies to a component rather than having the component create or locate them. FastAPI uses the Depends function to define dependencies as reusable functions that can be injected into routes.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 1,
+      "query_type": "simple_fact",
+      "notes": "Basic definition from dependency injection doc"
+    },
+    {
+      "id": "golden_002",
+      "query": "What are the two primary types of custom validators in Pydantic?",
+      "expected_answer": "The two primary types of custom validators in Pydantic are field validators and model validators. Field validators are applied to specific model fields using the @validator decorator, while model validators operate on the entire model and are used for validations involving multiple fields.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 1,
+      "query_type": "simple_fact",
+      "notes": "Direct question about Pydantic validators"
+    },
+    {
+      "id": "golden_003",
+      "query": "What does the useState hook return in React?",
+      "expected_answer": "The useState hook returns a pair: the current state value and a function to update it. The return value uses array destructuring, commonly written as [value, setValue].",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 1,
+      "query_type": "simple_fact",
+      "notes": "Basic useState hook return value"
+    },
+    {
+      "id": "golden_004",
+      "query": "What are the four ACID properties of database transactions?",
+      "expected_answer": "The four ACID properties are: Atomicity (all operations succeed or none do), Consistency (transaction transforms system from one consistent state to another), Isolation (concurrent transactions do not interfere), and Durability (once committed, changes are permanent).",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 2,
+      "query_type": "simple_fact",
+      "notes": "ACID properties definition"
+    },
+    {
+      "id": "golden_005",
+      "query": "What is the default transaction propagation level in Spring?",
+      "expected_answer": "The default transaction propagation level in Spring is REQUIRED, which means the method will use an existing transaction if one exists, or start a new transaction if none exists.",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 1,
+      "query_type": "simple_fact",
+      "notes": "Spring transaction propagation default"
+    },
+    {
+      "id": "golden_006",
+      "query": "How do you define a reusable database session dependency in FastAPI?",
+      "expected_answer": "You define a reusable database session dependency in FastAPI by creating a function that yields a session using a try-finally block. The function creates a SessionLocal instance, yields it for use in the endpoint, and ensures it's closed in the finally block. This function is then used with Depends() in route parameters.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 2,
+      "query_type": "procedural",
+      "notes": "Database session dependency pattern"
+    },
+    {
+      "id": "golden_007",
+      "query": "How do you raise a validation error in a Pydantic field validator?",
+      "expected_answer": "In a Pydantic field validator, you raise a validation error by raising a ValueError with an appropriate error message. Pydantic captures this ValueError and formats it into a ValidationError that includes details about which field failed validation.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 2,
+      "query_type": "procedural",
+      "notes": "Pydantic validation error handling"
+    },
+    {
+      "id": "golden_008",
+      "query": "What naming convention is standard for useState hook destructuring in React?",
+      "expected_answer": "The standard naming convention for useState hook destructuring is [value, setValue], where 'value' is the state variable name and 'setValue' is the setter function. For example, [count, setCount] for a counter state.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 1,
+      "query_type": "simple_fact",
+      "notes": "React naming convention"
+    },
+    {
+      "id": "golden_009",
+      "query": "What annotation is used to mark a method as transactional in Spring?",
+      "expected_answer": "The @Transactional annotation is used to mark a method or class as transactional in Spring. This annotation provides declarative transaction management with control over propagation, isolation, and rollback behavior.",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 1,
+      "query_type": "simple_fact",
+      "notes": "Spring transactional annotation"
+    },
+    {
+      "id": "golden_010",
+      "query": "What is the purpose of dependency hierarchies in FastAPI?",
+      "expected_answer": "Dependency hierarchies in FastAPI allow dependencies to be nested, where one dependency depends on another. This enables complex logic to be broken down into smaller, composable parts, making the codebase more modular and maintainable.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 2,
+      "query_type": "simple_fact",
+      "notes": "Dependency hierarchy purpose"
+    },
+    {
+      "id": "golden_011",
+      "query": "If I want to use FastAPI's dependency injection for a database session and also validate user authentication, how would these dependencies work together?",
+      "expected_answer": "In FastAPI, you can create a dependency hierarchy where the authentication dependency depends on the database session dependency. The authentication dependency would use Depends(get_db) as a parameter, allowing it to access the database session. FastAPI resolves dependencies in order, first creating the database session, then passing it to the authentication dependency, and finally both are available in your route handler.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 3,
+      "query_type": "multi_hop",
+      "notes": "Nested dependencies in FastAPI"
+    },
+    {
+      "id": "golden_012",
+      "query": "How would you validate that a Pydantic model's email field contains a valid domain and also ensure the username field is alphanumeric?",
+      "expected_answer": "You would use two separate field validators in Pydantic. Create one @validator('email') method to check for '@' symbol and valid domain with a dot, and another @validator('username') method to ensure only alphanumeric characters using string methods or regex. Each validator independently validates its field and raises ValueError if validation fails.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 3,
+      "query_type": "multi_hop",
+      "notes": "Multiple Pydantic validators"
+    },
+    {
+      "id": "golden_013",
+      "query": "In React, how does useState handle state updates when the setter function is called multiple times in the same render?",
+      "expected_answer": "When the setter function from useState is called multiple times in the same render, React batches the updates and schedules a single re-render. The state value won't change until the next render cycle. To update state based on the previous state value, you should use the functional update form: setCount(prevCount => prevCount + 1).",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 3,
+      "query_type": "multi_hop",
+      "notes": "React state batching behavior"
+    },
+    {
+      "id": "golden_014",
+      "query": "What happens when a Spring method with @Transactional(propagation=REQUIRES_NEW) is called from within another transactional method?",
+      "expected_answer": "When a method with REQUIRES_NEW propagation is called from within another transactional method, Spring suspends the current transaction and starts a new, independent transaction. The new transaction can commit or roll back independently of the outer transaction. Once the inner transaction completes, the suspended outer transaction resumes.",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 4,
+      "query_type": "multi_hop",
+      "notes": "Nested transaction propagation"
+    },
+    {
+      "id": "golden_015",
+      "query": "How do dependency injection in FastAPI and dependency injection in Spring differ in their approach?",
+      "expected_answer": "FastAPI uses function-based dependency injection where dependencies are regular Python functions decorated with Depends(), resolved at request time. Spring uses annotation-based dependency injection (@Autowired, @Inject) with a container that manages bean lifecycle. FastAPI's approach is more lightweight and explicit per-request, while Spring provides enterprise-level features like bean scopes, lifecycle callbacks, and AOP integration.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md",
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 4,
+      "query_type": "comparison",
+      "notes": "Compare DI across frameworks"
+    },
+    {
+      "id": "golden_016",
+      "query": "What are the differences between field validators and model validators in Pydantic?",
+      "expected_answer": "Field validators in Pydantic are applied to specific fields using @validator decorator and validate individual field values. Model validators operate on the entire model and are used for cross-field validations or business rules involving multiple fields. Field validators receive only the field value, while model validators can access all model fields.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 2,
+      "query_type": "comparison",
+      "notes": "Pydantic validator types comparison"
+    },
+    {
+      "id": "golden_017",
+      "query": "How does state management with useState differ from imperative DOM manipulation in vanilla JavaScript?",
+      "expected_answer": "useState in React provides declarative state management where you declare what the UI should look like for a given state, and React handles updating the DOM. Vanilla JavaScript uses imperative DOM manipulation where you manually update DOM elements when values change using methods like getElementById or querySelector. React's approach is more maintainable and predictable.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 3,
+      "query_type": "comparison",
+      "notes": "React vs vanilla JS approach"
+    },
+    {
+      "id": "golden_018",
+      "query": "Compare REQUIRED vs REQUIRES_NEW transaction propagation in Spring",
+      "expected_answer": "REQUIRED (default) reuses an existing transaction if one exists, or creates a new one if none exists, meaning all operations are part of the same transaction. REQUIRES_NEW always creates a new independent transaction, suspending any existing transaction. REQUIRED is more efficient for typical use cases, while REQUIRES_NEW is used when you need independent transactional boundaries (e.g., audit logging that must commit even if main transaction rolls back).",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 3,
+      "query_type": "comparison",
+      "notes": "Spring propagation levels"
+    },
+    {
+      "id": "golden_019",
+      "query": "Compare dependency injection patterns between FastAPI and traditional object-oriented design",
+      "expected_answer": "FastAPI uses function-based dependency injection where dependencies are plain functions that return values, while traditional OOP uses constructor or setter injection with class instances. FastAPI's approach is more functional and lightweight, using Python's type system for resolution. Traditional OOP patterns provide stronger encapsulation and lifecycle management but require more boilerplate. FastAPI's pattern is simpler for web request-response cycles.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 4,
+      "query_type": "comparison",
+      "notes": "DI pattern comparison"
+    },
+    {
+      "id": "golden_020",
+      "query": "When would you use a model validator instead of multiple field validators in Pydantic?",
+      "expected_answer": "Use a model validator when validation logic depends on relationships between multiple fields, such as ensuring end_date is after start_date, or when business rules involve the model as a whole. Field validators are suitable for independent field validation like format checking or range validation that doesn't depend on other fields.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 3,
+      "query_type": "comparison",
+      "notes": "When to use model vs field validators"
+    },
+    {
+      "id": "golden_021",
+      "query": "Does FastAPI create database sessions automatically?",
+      "expected_answer": "No, FastAPI does not create database sessions automatically. You must define a dependency function that creates and manages the database session lifecycle, typically using a generator function with yield to ensure proper cleanup. FastAPI's dependency injection system then calls this function for each request.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 2,
+      "query_type": "negation",
+      "notes": "What FastAPI doesn't do automatically"
+    },
+    {
+      "id": "golden_022",
+      "query": "Can Pydantic validators modify the field value they're validating?",
+      "expected_answer": "Yes, Pydantic validators can modify the field value by returning a transformed value. The validator function receives the current value and whatever it returns becomes the new value for that field. This allows for normalization, type coercion, or data transformation during validation.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 2,
+      "query_type": "negation",
+      "notes": "Validator value transformation capability"
+    },
+    {
+      "id": "golden_023",
+      "query": "Does calling useState's setter function immediately update the state value?",
+      "expected_answer": "No, calling the setter function from useState does not immediately update the state value. It schedules a re-render with the new value, and the state will only be updated when the component re-renders. The current render will continue using the old state value.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 2,
+      "query_type": "negation",
+      "notes": "React state update timing"
+    },
+    {
+      "id": "golden_024",
+      "query": "Is it possible to run a Spring method outside of a transaction context when using @Transactional?",
+      "expected_answer": "Yes, using the NOT_SUPPORTED propagation level allows a method to execute without a transaction, suspending the current transaction if one is active. The NEVER propagation level can also be used to ensure a method is never called within a transactional context, throwing an exception if it is.",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 3,
+      "query_type": "negation",
+      "notes": "Spring non-transactional execution"
+    },
+    {
+      "id": "golden_025",
+      "query": "Can you use dependency injection in FastAPI without the Depends function?",
+      "expected_answer": "No, the Depends function is the mechanism FastAPI uses to identify and resolve dependencies. Without Depends, FastAPI treats function parameters as regular request parameters (query, path, body) rather than dependencies to be injected.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 2,
+      "query_type": "negation",
+      "notes": "FastAPI Depends requirement"
+    },
+    {
+      "id": "golden_026",
+      "query": "Walk me through creating a database session dependency in FastAPI step by step",
+      "expected_answer": "1) Import Depends and FastAPI, 2) Set up SQLAlchemy engine with database URL, 3) Create SessionLocal using sessionmaker, 4) Define a get_db function that creates a session with SessionLocal(), 5) Use yield to return the session, 6) Add a finally block to close the session, 7) Use the dependency in routes with Depends(get_db) parameter.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 3,
+      "query_type": "procedural",
+      "notes": "Step-by-step DB dependency setup"
+    },
+    {
+      "id": "golden_027",
+      "query": "How do I create a Pydantic field validator that checks email format?",
+      "expected_answer": "1) Import BaseModel, validator, and ValidationError from pydantic, 2) Define your model class inheriting from BaseModel, 3) Add the email field with str type, 4) Create a method decorated with @validator('email'), 5) The method should check for '@' symbol and valid domain, 6) Raise ValueError with error message if validation fails, 7) Return the validated value if it passes.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 3,
+      "query_type": "procedural",
+      "notes": "Email validator implementation steps"
+    },
+    {
+      "id": "golden_028",
+      "query": "What are the steps to use useState hook in a React component?",
+      "expected_answer": "1) Import useState from 'react', 2) Inside your functional component, call useState with an initial value, 3) Use array destructuring to get the state value and setter function, 4) Use the state value in your JSX, 5) Call the setter function to update state (e.g., in an event handler), 6) React will re-render the component with the new state value.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 2,
+      "query_type": "procedural",
+      "notes": "useState implementation steps"
+    },
+    {
+      "id": "golden_029",
+      "query": "How do you apply @Transactional annotation in Spring?",
+      "expected_answer": "1) Ensure @EnableTransactionManagement is configured in your Spring configuration, 2) Add @Transactional annotation to the service method or class, 3) Optionally specify propagation level (e.g., @Transactional(propagation=Propagation.REQUIRES_NEW)), 4) Optionally specify isolation level, 5) Optionally configure rollback rules (e.g., rollbackFor=Exception.class), 6) The method will now execute within a managed transaction.",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 3,
+      "query_type": "procedural",
+      "notes": "Spring @Transactional usage steps"
+    },
+    {
+      "id": "golden_030",
+      "query": "Explain the process of creating nested dependencies in FastAPI",
+      "expected_answer": "1) Create the base dependency function (e.g., get_db for database), 2) Create a second dependency that accepts the first as a parameter using Depends (e.g., def get_current_user(db: Session = Depends(get_db))), 3) The second dependency can now use the injected value from the first, 4) In your route, use Depends on the higher-level dependency, 5) FastAPI automatically resolves the hierarchy, calling get_db first, then get_current_user.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 4,
+      "query_type": "procedural",
+      "notes": "Nested dependencies implementation"
+    },
+    {
+      "id": "golden_031",
+      "query": "What is the recommended way to update state based on previous state in React?",
+      "expected_answer": "Use the functional update form of the setter function: setState(prevState => prevState + 1). This ensures you're working with the most recent state value, especially important when state updates are batched or when the same state is updated multiple times in the same render.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 3,
+      "query_type": "procedural",
+      "notes": "Functional state updates"
+    },
+    {
+      "id": "golden_032",
+      "query": "How do you specify rollback rules for a Spring transaction?",
+      "expected_answer": "Use the rollbackFor or noRollbackFor attributes of @Transactional annotation. For example, @Transactional(rollbackFor=Exception.class) will rollback on any Exception, or @Transactional(noRollbackFor=BusinessException.class) to prevent rollback for specific exceptions.",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 3,
+      "query_type": "procedural",
+      "notes": "Spring rollback configuration"
+    },
+    {
+      "id": "golden_033",
+      "query": "Describe how to validate multiple fields together in a Pydantic model",
+      "expected_answer": "Use a model validator (also called root validator) that operates on the entire model. Decorate a method with @root_validator or @model_validator, access multiple fields from the values dictionary, perform cross-field validation logic, raise ValueError if validation fails, and return the values dictionary if validation passes.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 4,
+      "query_type": "procedural",
+      "notes": "Cross-field validation"
+    },
+    {
+      "id": "golden_034",
+      "query": "What steps are involved in ensuring a database session is properly closed in FastAPI?",
+      "expected_answer": "1) Use a generator function with yield for the dependency, 2) Create the session before yield, 3) Yield the session to make it available to the route, 4) Add a finally block after yield, 5) Call db.close() in the finally block, 6) This ensures the session is always closed even if an exception occurs in the route handler.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 3,
+      "query_type": "procedural",
+      "notes": "Session cleanup pattern"
+    },
+    {
+      "id": "golden_035",
+      "query": "In React 16.8, what major feature was introduced that changed how functional components work?",
+      "expected_answer": "Hooks were introduced in React 16.8, allowing functional components to use features previously exclusive to class components, such as state management and lifecycle methods. The useState hook is the most fundamental of these hooks.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 2,
+      "query_type": "temporal",
+      "notes": "React hooks introduction version"
+    },
+    {
+      "id": "golden_036",
+      "query": "Has Pydantic's validator decorator syntax remained the same across major versions?",
+      "expected_answer": "No, Pydantic v2 introduced changes to validator syntax. While @validator still works for backwards compatibility, Pydantic v2 recommends using @field_validator and @model_validator decorators with updated syntax. The core concepts remain similar but the implementation details have evolved.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 3,
+      "query_type": "temporal",
+      "notes": "Pydantic version evolution"
+    },
+    {
+      "id": "golden_037",
+      "query": "When did Spring Framework introduce annotation-based transaction management?",
+      "expected_answer": "Spring introduced annotation-based transaction management with the @Transactional annotation in Spring 2.0, moving away from XML-based configuration to a more developer-friendly declarative approach using annotations.",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 3,
+      "query_type": "temporal",
+      "notes": "Spring transaction annotation history"
+    },
+    {
+      "id": "golden_038",
+      "query": "What Python version is required as a minimum for FastAPI dependency injection to work?",
+      "expected_answer": "FastAPI requires Python 3.7 or higher because it relies on standard Python type hints, which were significantly enhanced in Python 3.7. The dependency injection system uses these type hints to resolve dependencies automatically.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 2,
+      "query_type": "temporal",
+      "notes": "FastAPI Python version requirement"
+    },
+    {
+      "id": "golden_039",
+      "query": "Before React hooks were introduced, how did functional components handle state?",
+      "expected_answer": "Before React hooks (pre-16.8), functional components could not manage state at all. They were stateless and could only receive props. If you needed state, you had to use class components with this.state and this.setState. Hooks revolutionized this by enabling functional components to use state.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 3,
+      "query_type": "temporal",
+      "notes": "Pre-hooks React limitation"
+    },
+    {
+      "id": "golden_040",
+      "query": "How does FastAPI's dependency injection benefit testing compared to tightly coupled code?",
+      "expected_answer": "FastAPI's dependency injection makes testing easier by allowing dependencies to be mocked or replaced. You can override dependencies in tests using app.dependency_overrides, providing test doubles for database sessions, authentication, or external services without modifying the application code. This leads to more isolated and maintainable tests.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 4,
+      "query_type": "multi_hop",
+      "notes": "DI testing benefits"
+    },
+    {
+      "id": "golden_041",
+      "query": "Why would you use both a field validator and a model validator in the same Pydantic model?",
+      "expected_answer": "You would use field validators for individual field constraints (like email format or string length) and model validators for cross-field business rules (like ensuring end_date is after start_date). Field validators run first and validate individual inputs, then model validators check relationships between validated fields. This separation of concerns makes validation logic clearer and more maintainable.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 4,
+      "query_type": "multi_hop",
+      "notes": "Combined validator usage"
+    },
+    {
+      "id": "golden_042",
+      "query": "What problem does React's batching of useState updates solve?",
+      "expected_answer": "React's batching of useState updates prevents unnecessary re-renders and improves performance. If multiple setState calls happen in the same event handler or lifecycle method, React batches them into a single re-render instead of re-rendering after each update. This reduces DOM manipulation and improves application responsiveness.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 4,
+      "query_type": "multi_hop",
+      "notes": "React batching rationale"
+    },
+    {
+      "id": "golden_043",
+      "query": "Why would you use REQUIRES_NEW propagation for audit logging in Spring?",
+      "expected_answer": "REQUIRES_NEW is used for audit logging because it creates an independent transaction that commits regardless of whether the main transaction succeeds or rolls back. This ensures audit records are always saved, even if the business operation fails. The audit transaction is isolated from the main transaction's outcome, providing reliable logging for compliance and debugging.",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 5,
+      "query_type": "multi_hop",
+      "notes": "Independent transaction use case"
+    },
+    {
+      "id": "golden_044",
+      "query": "How does the finally block in FastAPI's database dependency ensure resource cleanup even during exceptions?",
+      "expected_answer": "Python's finally block always executes regardless of whether an exception occurred in the try block or after the yield. In FastAPI's database dependency, the session is created and yielded in the try section, used in the route handler, and then the finally block executes to close the session. Even if the route handler raises an exception, the finally block runs, preventing connection leaks and ensuring proper resource management.",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md"
+      ],
+      "difficulty": 4,
+      "query_type": "multi_hop",
+      "notes": "Exception handling in dependencies"
+    },
+    {
+      "id": "golden_045",
+      "query": "Why does Pydantic capture ValueError in validators instead of letting it propagate?",
+      "expected_answer": "Pydantic captures ValueError from validators and converts them into structured ValidationError objects that include field names, error messages, and error types. This provides consistent error reporting across all validation failures, makes errors easier to handle programmatically, and presents user-friendly error messages. Raw ValueError propagation would be less informative and harder to debug.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 4,
+      "query_type": "multi_hop",
+      "notes": "Validation error wrapping"
+    },
+    {
+      "id": "golden_046",
+      "query": "Why is the functional update form of useState important for counter implementations?",
+      "expected_answer": "The functional update form (setCount(prev => prev + 1)) is important because it ensures you're incrementing the most recent state value. If you use setCount(count + 1) and call it multiple times in the same render, all calls use the same stale count value from the current render, so only one increment takes effect. The functional form receives the actual current value from React's state queue.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 4,
+      "query_type": "multi_hop",
+      "notes": "Functional update necessity"
+    },
+    {
+      "id": "golden_047",
+      "query": "How do Spring's transaction isolation levels relate to the ACID Isolation property?",
+      "expected_answer": "Spring's transaction isolation levels (READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE) directly implement the Isolation property of ACID, which controls how transactions interact with each other. Higher isolation levels prevent more types of interference (dirty reads, non-repeatable reads, phantom reads) but may reduce concurrency. Lower isolation levels improve performance but risk data inconsistencies. The choice depends on application requirements for consistency vs. throughput.",
+      "source_docs": [
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 5,
+      "query_type": "multi_hop",
+      "notes": "Isolation levels and ACID"
+    },
+    {
+      "id": "golden_048",
+      "query": "Compare how FastAPI and Spring ensure proper resource cleanup in dependency injection",
+      "expected_answer": "FastAPI uses generator functions with yield and finally blocks to ensure cleanup at the request level - resources are created per request, used, and cleaned up when the request completes. Spring uses bean lifecycle callbacks and destruction methods managed by the application context - resources are typically created once at application startup and destroyed at shutdown. FastAPI's approach is more granular (per-request), while Spring's is application-scoped, reflecting their different use cases (web APIs vs. enterprise applications).",
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md",
+        "spring/15_transaction_management.md"
+      ],
+      "difficulty": 5,
+      "query_type": "comparison",
+      "notes": "Resource management comparison"
+    },
+    {
+      "id": "golden_049",
+      "query": "What are the trade-offs between using Pydantic validators for business logic vs. implementing business logic separately?",
+      "expected_answer": "Using Pydantic validators for business logic provides automatic validation on model creation and clear error messages, but tightly couples business rules to data models, making them harder to change independently. Separating business logic into service layers provides better separation of concerns and testability but requires manual validation triggering and coordination. Best practice is to use Pydantic for data integrity rules (format, type, range) and separate services for complex business logic involving external systems or multiple entities.",
+      "source_docs": [
+        "pydantic/08_custom_validators.md"
+      ],
+      "difficulty": 5,
+      "query_type": "comparison",
+      "notes": "Validation vs business logic separation"
+    },
+    {
+      "id": "golden_050",
+      "query": "Compare the mental models required for React's declarative useState approach versus jQuery's imperative DOM manipulation",
+      "expected_answer": "React's useState requires thinking about UI as a function of state - you declare what the UI should look like for any given state, and React handles updates. jQuery requires an imperative mindset where you manually track changes and update DOM elements step-by-step using selectors and methods. React's approach is more maintainable for complex UIs because state and rendering are separated, making it easier to reason about application behavior. jQuery gives more direct control but becomes harder to maintain as complexity grows.",
+      "source_docs": [
+        "react/05_useState_hook.md"
+      ],
+      "difficulty": 5,
+      "query_type": "comparison",
+      "notes": "Declarative vs imperative paradigms"
+    }
+  ]
+}

@@ -46,6 +46,8 @@ Iteration 3:
 from __future__ import annotations
 
 import json
+import logging
+import time
 from dataclasses import dataclass, field
 from typing import Any, Literal, TypedDict
 
@@ -54,6 +56,122 @@ from langgraph.graph import END, StateGraph
 from src.agents.tools.base import BaseTool
 from src.core.llm_client import UnifiedLLMClient
 from src.core.observability import generate_correlation_id, traced_generation
+
+logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# Error Recovery Utilities
+# ============================================================================
+
+
+def execute_tool_with_retry(
+    tool: BaseTool,
+    tool_input: str,
+    max_retries: int = 3,
+    correlation_id: str | None = None,
+) -> tuple[str, list[str]]:
+    """
+    Execute tool with exponential backoff retry logic.
+
+    Teaching note: Why retry with exponential backoff?
+    - Transient failures: API timeouts, rate limits, network glitches
+    - Exponential backoff prevents overwhelming the service during recovery
+    - Example: 1s, 2s, 4s waits give service time to recover
+
+    Retry strategy:
+    - Attempt 1: No wait
+    - Attempt 2: Wait 1s before retry
+    - Attempt 3: Wait 2s before retry
+    - Attempt 4: Wait 4s before retry
+    - After max_retries: Return error message, don't raise
+
+    Args:
+        tool: Tool to execute
+        tool_input: Input to pass to tool
+        max_retries: Maximum retry attempts (default: 3)
+        correlation_id: Optional correlation ID for tracing
+
+    Returns:
+        Tuple of (result_string, error_messages_list)
+        - If successful: (result, [])
+        - If failed: (error_message, [error1, error2, ...])
+
+    Teaching note: Why return errors instead of raising?
+    - Agents should continue with partial results (graceful degradation)
+    - Agent can see errors in next reasoning step and try alternative tools
+    - Better than crashing: "Tool failed, but here's what I found from other tools"
+    """
+    errors: list[str] = []
+
+    for attempt in range(max_retries + 1):
+        try:
+            # Trace tool call for observability
+            if correlation_id:
+                # Use traced_tool_call decorator manually
+                result = tool.execute(tool_input)
+                logger.info(
+                    f"Tool {tool.name} succeeded on attempt {attempt + 1}/{max_retries + 1}",
+                    extra={
+                        "correlation_id": correlation_id,
+                        "tool": tool.name,
+                        "attempt": attempt + 1,
+                    },
+                )
+                return result, []
+            else:
+                result = tool.execute(tool_input)
+                return result, []
+
+        except Exception as e:
+            error_msg = f"Attempt {attempt + 1}/{max_retries + 1} failed: {str(e)}"
+            errors.append(error_msg)
+
+            logger.warning(
+                f"Tool {tool.name} failed on attempt {attempt + 1}/{max_retries + 1}: {e}",
+                extra={
+                    "correlation_id": correlation_id or "unknown",
+                    "tool": tool.name,
+                    "attempt": attempt + 1,
+                    "error": str(e),
+                },
+            )
+
+            # If this was the last attempt, return error
+            if attempt == max_retries:
+                final_error = (
+                    f"Tool execution failed after {max_retries + 1} attempts:\n" + "\n".join(errors)
+                )
+                logger.error(
+                    f"Tool {tool.name} failed after all retries",
+                    extra={
+                        "correlation_id": correlation_id or "unknown",
+                        "tool": tool.name,
+                        "total_attempts": max_retries + 1,
+                        "errors": errors,
+                    },
+                )
+                return final_error, errors
+
+            # Exponential backoff: 1s, 2s, 4s
+            wait_time = 2**attempt
+            logger.info(
+                f"Waiting {wait_time}s before retry",
+                extra={
+                    "correlation_id": correlation_id or "unknown",
+                    "tool": tool.name,
+                    "wait_seconds": wait_time,
+                },
+            )
+            time.sleep(wait_time)
+
+    # Should never reach here, but return error just in case
+    return "Unexpected error in retry logic", errors
+
+
+# ============================================================================
+# Agent State Definitions
+# ============================================================================
 
 
 class AgentState(TypedDict):
@@ -396,37 +514,42 @@ Your response (JSON only, no other text):"""
                 "chat_history": new_history,
             }
 
-        # Execute tool
-        # Teaching note: We use execute() for real mode, mock_execute() for testing
-        # In production, you might want a "mode" parameter to control this
-        try:
-            result = tool.execute(tool_input)
+        # Execute tool with retry logic
+        # Teaching note: Retry with exponential backoff handles transient failures
+        # - Attempt 1: Immediate
+        # - Attempt 2: Wait 1s
+        # - Attempt 3: Wait 2s
+        # - Attempt 4: Wait 4s
+        # Even if all retries fail, agent continues with error message (graceful degradation)
+        result, retry_errors = execute_tool_with_retry(
+            tool=tool,
+            tool_input=tool_input,
+            max_retries=3,
+            correlation_id=state.get("correlation_id"),
+        )
 
-            # Update chat history with action and observation
-            new_history = state["chat_history"].copy()
+        # Update chat history with action and observation
+        new_history = state["chat_history"].copy()
+        new_history.append(
+            {
+                "role": "assistant (action)",
+                "content": f"Using tool: {tool_name}\nInput: {tool_input}",
+            }
+        )
+
+        # Include retry information if there were errors
+        if retry_errors:
+            error_context = f"\n(After {len(retry_errors)} failed attempts)"
             new_history.append(
-                {
-                    "role": "assistant (action)",
-                    "content": f"Using tool: {tool_name}\nInput: {tool_input}",
-                }
+                {"role": "observation", "content": f"Tool result: {result}{error_context}"}
             )
+        else:
             new_history.append({"role": "observation", "content": f"Tool result: {result}"})
 
-            return {
-                **state,
-                "chat_history": new_history,
-            }
-
-        except Exception as e:
-            # Tool execution failed
-            new_history = state["chat_history"].copy()
-            new_history.append(
-                {"role": "system (error)", "content": f"Tool execution error: {str(e)}"}
-            )
-            return {
-                **state,
-                "chat_history": new_history,
-            }
+        return {
+            **state,
+            "chat_history": new_history,
+        }
 
     def _should_continue(self, state: AgentState) -> Literal["continue", "end"]:
         """
@@ -836,32 +959,37 @@ Your plan (JSON array only, no other text):"""
                 "current_step_index": current_index + 1,
             }
 
-        # Execute tool
-        try:
-            result = tool.execute(tool_input)
-            new_results = state["step_results"].copy()
+        # Execute tool with retry logic
+        # Teaching note: Same retry strategy as ReAct (3 retries, exponential backoff)
+        # Even if all retries fail, we continue to next step (graceful degradation)
+        # This allows plan to complete with partial results rather than failing completely
+        result, retry_errors = execute_tool_with_retry(
+            tool=tool,
+            tool_input=tool_input,
+            max_retries=3,
+            correlation_id=state.get("correlation_id"),
+        )
+
+        new_results = state["step_results"].copy()
+
+        # Include retry information if there were errors
+        if retry_errors:
+            new_results.append(
+                f"Step {current_index + 1} ({step_description}):\n"
+                f"Tool: {tool_name}\nInput: {tool_input}\n"
+                f"Result (after {len(retry_errors)} failed attempts): {result}"
+            )
+        else:
             new_results.append(
                 f"Step {current_index + 1} ({step_description}):\n"
                 f"Tool: {tool_name}\nInput: {tool_input}\nResult: {result}"
             )
 
-            return {
-                **state,
-                "step_results": new_results,
-                "current_step_index": current_index + 1,
-            }
-
-        except Exception as e:
-            # Tool execution failed
-            error_result = f"Tool execution error: {str(e)}"
-            new_results = state["step_results"].copy()
-            new_results.append(f"Step {current_index + 1} ({step_description}): {error_result}")
-
-            return {
-                **state,
-                "step_results": new_results,
-                "current_step_index": current_index + 1,
-            }
+        return {
+            **state,
+            "step_results": new_results,
+            "current_step_index": current_index + 1,
+        }
 
     def _should_continue_execution(self, state: PlanState) -> Literal["continue", "synthesize"]:
         """

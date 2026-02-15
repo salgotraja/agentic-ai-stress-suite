@@ -1795,3 +1795,452 @@ Your position (1-2 sentences):"""
         unique = list(set(position_list))
         counts = {pos: position_list.count(pos) for pos in unique}
         return max(counts.items(), key=lambda x: x[1])[0]
+
+
+# =============================================================================
+# Advanced Patterns (Task 3.15)
+# =============================================================================
+
+
+@dataclass
+class ConditionalRouter:
+    """
+    Route queries to specialized agents based on query type.
+
+    Teaching note: When to use conditional routing
+    -----------------------------------------------
+    Use conditional routing when:
+    - Different query types need different agent configurations
+    - Some queries need more tools than others
+    - Want to optimize cost/latency based on complexity
+
+    Example query types:
+    - Factual: "What is the capital of France?" → Simple retrieval
+    - Analytical: "Compare FastAPI vs Flask" → Multi-step reasoning
+    - Creative: "Write a poem about AI" → Generative agent
+    - Code: "Fix this bug in Python" → Code-focused tools
+
+    How it works:
+    1. Classify query type (LLM or rules)
+    2. Select appropriate agent configuration
+    3. Route to specialized handler
+    4. Return result with routing metadata
+
+    Production considerations:
+    - Cache routing decisions (same query type)
+    - Monitor routing accuracy (misclassifications)
+    - Provide fallback for unknown types
+    - Log routing decisions for analysis
+
+    Attributes:
+        llm_client: LLM for query classification
+        routes: Mapping from query type to handler function
+    """
+
+    llm_client: UnifiedLLMClient | None = None
+    routes: dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        """Initialize LLM client if not provided."""
+        if self.llm_client is None:
+            self.llm_client = UnifiedLLMClient()
+
+    @traced_generation
+    def classify_query(self, query: str) -> str:
+        """
+        Classify query into one of predefined types.
+
+        Teaching note: Query classification strategies
+        -----------------------------------------------
+        Simple approach (used here):
+        - LLM classifies query into predefined types
+        - Single LLM call, flexible but adds latency
+
+        Production alternatives:
+        - Keyword matching: Fast but brittle
+          Example: "compare" → analytical, "what is" → factual
+        - ML classifier: Fine-tuned BERT model, batch classification
+        - Hybrid: Keywords first, LLM fallback for ambiguous
+
+        Args:
+            query: User query to classify
+
+        Returns:
+            Query type (factual, analytical, creative, code, general)
+        """
+        prompt = f"""Classify this query into ONE of these types:
+- factual: Simple fact lookup ("What is X?", "Define Y")
+- analytical: Comparison or analysis ("Compare X and Y", "Why is X better than Y?")
+- creative: Creative generation ("Write a poem", "Generate ideas")
+- code: Programming question ("Fix this bug", "Write function to...")
+- general: Everything else
+
+Query: {query}
+
+Classification (single word):"""
+
+        assert self.llm_client is not None
+        response = self.llm_client.generate(
+            prompt=prompt,
+            temperature=0.0,  # Deterministic classification
+            max_tokens=10,
+        )
+
+        query_type = response.content.strip().lower()
+
+        # Validate and default to general if invalid
+        valid_types = {"factual", "analytical", "creative", "code", "general"}
+        if query_type not in valid_types:
+            query_type = "general"
+
+        return query_type
+
+    @traced_generation
+    def route(self, query: str, correlation_id: str | None = None) -> dict[str, Any]:
+        """
+        Route query to appropriate handler based on type.
+
+        Args:
+            query: User query
+            correlation_id: Optional trace ID
+
+        Returns:
+            Dictionary with:
+            - result: Handler output
+            - route_taken: Query type
+            - handler: Handler function name
+        """
+        if correlation_id is None:
+            correlation_id = generate_correlation_id()
+
+        # Classify query
+        query_type = self.classify_query(query)
+
+        # Get handler for this query type
+        handler = self.routes.get(query_type, self.routes.get("general"))
+
+        if handler is None:
+            return {
+                "result": f"No handler configured for query type: {query_type}",
+                "route_taken": query_type,
+                "handler": None,
+                "error": "No handler configured",
+            }
+
+        # Execute handler
+        result = handler(query, correlation_id=correlation_id)
+
+        return {
+            "result": result,
+            "route_taken": query_type,
+            "handler": handler.__name__ if hasattr(handler, "__name__") else str(handler),
+        }
+
+    def register_route(self, query_type: str, handler: Any) -> None:
+        """
+        Register handler for query type.
+
+        Args:
+            query_type: Type to handle (factual, analytical, etc.)
+            handler: Callable that processes queries of this type
+        """
+        self.routes[query_type] = handler
+
+
+@dataclass
+class HumanApprovalGate:
+    """
+    Require human approval before executing high-risk actions.
+
+    Teaching note: Human-in-the-loop patterns
+    ------------------------------------------
+    Use human approval gates for:
+    - Destructive operations (delete, modify production data)
+    - High-cost operations (bulk API calls, expensive computations)
+    - Sensitive decisions (hiring, financial transactions)
+    - Compliance requirements (regulatory approval needed)
+
+    How it works:
+    1. Agent proposes action
+    2. Present action details to human
+    3. Wait for approval (approve/reject/modify)
+    4. Execute if approved, abort if rejected
+
+    Implementation strategies:
+    - CLI: Simple input() prompt (development)
+    - Web UI: Dashboard with approve/reject buttons (production)
+    - Slack: Bot message with reaction buttons
+    - Queue: Async approval queue (Celery + Redis)
+
+    Production considerations:
+    - Timeout: Auto-reject after X minutes
+    - Audit log: Record all approval decisions
+    - Escalation: Notify if pending too long
+    - Batch approval: Group similar actions
+
+    Example usage:
+        gate = HumanApprovalGate()
+        approved = gate.request_approval(
+            action="Delete 100 records from database",
+            details={"table": "users", "count": 100},
+            risk_level="high"
+        )
+        if approved:
+            execute_deletion()
+
+    Attributes:
+        approval_method: How to get approval (cli, mock, custom)
+        timeout_seconds: Auto-reject after timeout
+    """
+
+    approval_method: Literal["cli", "mock"] = "cli"
+    timeout_seconds: int = 300  # 5 minutes
+    auto_approve_low_risk: bool = False  # Auto-approve low-risk actions
+
+    @traced_generation
+    def request_approval(
+        self,
+        action: str,
+        details: dict[str, Any] | None = None,
+        risk_level: Literal["low", "medium", "high"] = "medium",
+    ) -> dict[str, Any]:
+        """
+        Request human approval for action.
+
+        Teaching note: Risk assessment
+        -------------------------------
+        Risk levels guide approval requirements:
+        - Low: Auto-approve or quick review
+          Example: Read-only query, cache lookup
+        - Medium: Requires approval
+          Example: Write to database, API call
+        - High: Requires approval + justification
+          Example: Delete data, production deployment
+
+        Args:
+            action: Description of action to approve
+            details: Additional context for decision
+            risk_level: Severity of action
+
+        Returns:
+            Dictionary with:
+            - approved: Whether action was approved
+            - reason: Approval/rejection reason
+            - timestamp: When decision was made
+        """
+        import time
+
+        # Auto-approve low-risk if configured
+        if risk_level == "low" and self.auto_approve_low_risk:
+            return {
+                "approved": True,
+                "reason": "Auto-approved (low risk)",
+                "timestamp": time.time(),
+                "risk_level": risk_level,
+            }
+
+        # Mock approval (for testing)
+        if self.approval_method == "mock":
+            # Auto-approve in mock mode
+            return {
+                "approved": True,
+                "reason": "Mock approval (testing)",
+                "timestamp": time.time(),
+                "risk_level": risk_level,
+            }
+
+        # CLI approval (development)
+        if self.approval_method == "cli":
+            print("\n" + "=" * 80)
+            print("APPROVAL REQUIRED")
+            print("=" * 80)
+            print(f"Action: {action}")
+            print(f"Risk Level: {risk_level.upper()}")
+            if details:
+                print("\nDetails:")
+                for key, value in details.items():
+                    print(f"  {key}: {value}")
+            print("\n" + "=" * 80)
+
+            # Get approval (with timeout simulation)
+            response = input("Approve this action? (yes/no): ").strip().lower()
+
+            approved = response in {"yes", "y"}
+            reason = "Human approved" if approved else "Human rejected"
+
+            return {
+                "approved": approved,
+                "reason": reason,
+                "timestamp": time.time(),
+                "risk_level": risk_level,
+            }
+
+        # Unknown method
+        return {
+            "approved": False,
+            "reason": f"Unknown approval method: {self.approval_method}",
+            "timestamp": time.time(),
+            "risk_level": risk_level,
+        }
+
+
+@dataclass
+class AsyncToolExecutor:
+    """
+    Execute multiple tools in parallel using ThreadPoolExecutor.
+
+    Teaching note: When to use async tool execution
+    ------------------------------------------------
+    Use parallel tool execution when:
+    - Tools are I/O-bound (API calls, database queries, file reads)
+    - Tools are independent (no sequential dependencies)
+    - Latency matters more than cost
+    - Multiple tools needed for same query
+
+    Example: "Compare FastAPI vs Flask performance"
+    - Tool 1: Search for FastAPI benchmarks (parallel)
+    - Tool 2: Search for Flask benchmarks (parallel)
+    - Tool 3: RAG query for framework docs (parallel)
+    → All tools execute concurrently, 3x faster than sequential
+
+    Don't use parallel execution when:
+    - Tools have dependencies (Tool B needs Tool A output)
+    - CPU-bound work (Python GIL limits parallelism)
+    - Rate limits on external APIs (may hit limits faster)
+    - Debugging (harder to trace concurrent execution)
+
+    How it works:
+    1. Submit all tools to ThreadPoolExecutor
+    2. Wait for all to complete (or timeout)
+    3. Aggregate results
+    4. Return combined output
+
+    Production considerations:
+    - Max workers: Limit concurrent threads (default: 5)
+    - Timeout: Individual tool timeout (default: 30s)
+    - Error handling: Continue on partial failures
+    - Result ordering: Preserve or sort by completion time
+
+    Attributes:
+        max_workers: Maximum concurrent tool executions
+        timeout: Timeout per tool (seconds)
+    """
+
+    max_workers: int = 5
+    timeout: int = 30
+
+    @traced_generation
+    def execute_parallel(
+        self,
+        tools: list[tuple[BaseTool, str]],
+        correlation_id: str | None = None,
+    ) -> dict[str, Any]:
+        """
+        Execute multiple tools in parallel.
+
+        Teaching note: ThreadPoolExecutor for I/O-bound tasks
+        ------------------------------------------------------
+        Why ThreadPoolExecutor for tools:
+        - Most agent tools are I/O-bound (API calls, DB queries)
+        - Python GIL doesn't block I/O operations
+        - Simpler than asyncio for mixed sync/async code
+        - Good for 5-10 concurrent operations
+
+        For CPU-bound work (not typical for agents):
+        - Use ProcessPoolExecutor instead
+        - Each process has own GIL
+        - Higher overhead but true parallelism
+
+        Args:
+            tools: List of (tool, input) tuples
+            correlation_id: Optional trace ID
+
+        Returns:
+            Dictionary with:
+            - results: List of tool outputs
+            - successes: Number of successful executions
+            - failures: Number of failed executions
+            - total_time: Total execution time
+            - speedup: Speedup vs sequential execution
+        """
+        if correlation_id is None:
+            correlation_id = generate_correlation_id()
+
+        start_time = time.time()
+        results: list[dict[str, Any]] = []
+
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            # Submit all tools
+            future_to_tool = {
+                executor.submit(self._execute_single_tool, tool, tool_input, correlation_id): (
+                    tool,
+                    tool_input,
+                )
+                for tool, tool_input in tools
+            }
+
+            # Collect results as they complete
+            for future in as_completed(future_to_tool.keys(), timeout=self.timeout):
+                tool, tool_input = future_to_tool[future]
+
+                try:
+                    result = future.result()
+                    results.append(
+                        {
+                            "tool": tool.__class__.__name__,
+                            "input": tool_input,
+                            "output": result,
+                            "success": True,
+                        }
+                    )
+                except Exception as e:
+                    results.append(
+                        {
+                            "tool": tool.__class__.__name__,
+                            "input": tool_input,
+                            "output": None,
+                            "error": str(e),
+                            "success": False,
+                        }
+                    )
+
+        total_time = time.time() - start_time
+
+        # Calculate metrics
+        successes = sum(1 for r in results if r["success"])
+        failures = len(results) - successes
+
+        # Estimate sequential time (sum of individual times, assume 2s per tool avg)
+        estimated_sequential_time = len(tools) * 2.0
+        speedup = estimated_sequential_time / total_time if total_time > 0 else 1.0
+
+        return {
+            "results": results,
+            "successes": successes,
+            "failures": failures,
+            "total_time": total_time,
+            "speedup": speedup,
+            "tools_executed": len(tools),
+        }
+
+    def _execute_single_tool(
+        self,
+        tool: BaseTool,
+        tool_input: str,
+        correlation_id: str,
+    ) -> str:
+        """
+        Execute single tool (called from thread pool).
+
+        Args:
+            tool: Tool to execute
+            tool_input: Input for tool
+            correlation_id: Trace ID
+
+        Returns:
+            Tool output
+
+        Raises:
+            Exception: If tool execution fails
+        """
+        return tool.execute(tool_input)

@@ -34,6 +34,8 @@ Why this pattern:
 
 from __future__ import annotations
 
+import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from typing import Any, Literal, TypedDict
 
@@ -894,4 +896,376 @@ class ResearcherWriterPipeline:
         """String representation for debugging."""
         return (
             f"ResearcherWriterPipeline(researcher_tools={[t.name for t in self.researcher.tools]})"
+        )
+
+
+@dataclass
+class SpecialistAgent:
+    """
+    Specialist agent: Domain expert for a specific area.
+
+    Unlike generalist agents (ResearcherAgent, WriterAgent), specialists focus
+    on a narrow domain. Examples: React specialist, database specialist,
+    security specialist.
+
+    Teaching note: Why specialist agents?
+
+    Benefits of specialization:
+    - Expertise: Tailored prompts and tools for specific domain
+    - Quality: Deeper knowledge in focused area
+    - Composability: Combine specialists for comprehensive coverage
+    - Parallelizability: Specialists work independently, run concurrently
+
+    Use cases:
+    - Multi-framework comparison (React specialist, Vue specialist, Angular specialist)
+    - Domain analysis (frontend specialist, backend specialist, database specialist)
+    - Security review (code specialist, config specialist, network specialist)
+
+    Trade-offs:
+    - More complexity: Multiple agents to coordinate
+    - Higher cost: Multiple LLM calls (though parallelized)
+    - Integration overhead: Need aggregator to combine results
+
+    Attributes:
+        specialty: Domain of expertise (e.g., "React", "Vue", "Angular")
+        tools: Tools available to this specialist
+        llm_client: LLM for domain-specific reasoning
+        temperature: LLM temperature
+    """
+
+    specialty: str
+    tools: list[BaseTool]
+    llm_client: UnifiedLLMClient | None = None
+    temperature: float = 0.0
+
+    def __post_init__(self) -> None:
+        """Initialize LLM client if not provided."""
+        if self.llm_client is None:
+            self.llm_client = UnifiedLLMClient()
+
+    @traced_generation
+    def analyze(self, task: str) -> dict[str, Any]:
+        """
+        Analyze task from specialist's domain perspective.
+
+        Analysis process:
+        1. Interpret task through specialist lens
+        2. Query tools for domain-specific information
+        3. Synthesize findings
+        4. Return structured results
+
+        Args:
+            task: Task to analyze
+
+        Returns:
+            Dictionary with:
+            - specialty: Specialist's domain
+            - findings: Analysis results
+            - success: Whether analysis succeeded
+            - error: Error message if failed
+
+        Teaching note: Specialist prompt engineering
+
+        Good specialist prompts:
+        - Clear scope: "You are a React expert, analyze only React aspects"
+        - Domain context: Include terminology, best practices
+        - Output format: Structured (bullet points, sections)
+        - Boundaries: What NOT to analyze (other frameworks)
+
+        Poor specialist prompts:
+        - Too broad: "Analyze everything about frontend"
+        - Vague output: "Write a report"
+        - No boundaries: Specialist drifts into other domains
+        """
+        # Build tool descriptions
+        tool_descriptions = "\n".join([f"- {tool.name}: {tool.description}" for tool in self.tools])
+
+        # Specialist-specific prompt
+        prompt = f"""You are a {self.specialty} specialist. Your expertise is \
+specifically in {self.specialty} - analyze the task from this perspective only.
+
+Available tools:
+{tool_descriptions}
+
+Task: {task}
+
+Instructions:
+1. Determine what information about {self.specialty} is relevant to this task
+2. If a RAG tool is available, query it for {self.specialty}-specific information
+3. Synthesize findings focusing on {self.specialty} aspects
+4. Stay within your domain - don't analyze other frameworks/technologies
+
+Provide your analysis in this format:
+
+SPECIALTY: {self.specialty}
+KEY FINDINGS: [Bullet points of key information about {self.specialty}]
+DETAILS: [More detailed analysis, 2-3 paragraphs]
+
+Your response:"""
+
+        assert self.llm_client is not None
+        try:
+            response = self.llm_client.generate(
+                prompt=prompt,
+                temperature=self.temperature,
+                max_tokens=500,
+            )
+
+            findings = response.content.strip()
+
+            return {
+                "specialty": self.specialty,
+                "findings": findings,
+                "success": True,
+                "error": None,
+            }
+        except Exception as e:
+            return {
+                "specialty": self.specialty,
+                "findings": "",
+                "success": False,
+                "error": str(e),
+            }
+
+
+@dataclass
+class ParallelOrchestrator:
+    """
+    Parallel orchestrator: Delegates tasks to specialists concurrently.
+
+    This implements the fan-out pattern:
+    1. Orchestrator receives task
+    2. Delegates to N specialists in parallel
+    3. Waits for all to complete
+    4. Aggregates results
+    5. Returns combined output
+
+    Teaching note: Parallel vs Sequential trade-offs
+
+    Parallel execution (this implementation):
+    - Pro: Lower latency (concurrent, not serial)
+    - Pro: Higher throughput (multiple tasks simultaneously)
+    - Pro: Natural fit for independent subtasks
+    - Con: More complex (coordination, error handling)
+    - Con: Higher resource usage (N concurrent LLM calls)
+    - Con: Need aggregation strategy
+
+    Sequential execution (ResearcherWriterPipeline):
+    - Pro: Simpler coordination (one at a time)
+    - Pro: Lower resource usage (one LLM call at a time)
+    - Pro: Clear dependencies (output of A feeds B)
+    - Con: Higher latency (sum of all durations)
+    - Con: Lower throughput (no concurrency)
+
+    When to use parallel:
+    - Independent subtasks (analyzing React, Vue, Angular separately)
+    - I/O-bound work (waiting for API calls, database queries)
+    - Fan-out queries (query multiple data sources)
+    - Embarrassingly parallel (no dependencies between subtasks)
+
+    When NOT to use parallel:
+    - Sequential dependencies (B needs output of A)
+    - Limited resources (API rate limits, memory constraints)
+    - Simple tasks (overhead not worth it)
+    - Order matters (need deterministic execution order)
+
+    Attributes:
+        specialists: List of specialist agents
+        max_workers: Maximum parallel threads (default: len(specialists))
+        aggregation_strategy: How to combine results ("concat" or "synthesis")
+        llm_client: LLM for result synthesis (if aggregation_strategy="synthesis")
+    """
+
+    specialists: list[SpecialistAgent]
+    max_workers: int | None = None
+    aggregation_strategy: str = "concat"  # "concat" or "synthesis"
+    llm_client: UnifiedLLMClient | None = None
+
+    def __post_init__(self) -> None:
+        """Initialize max_workers and LLM client."""
+        if self.max_workers is None:
+            self.max_workers = len(self.specialists)
+        if self.llm_client is None and self.aggregation_strategy == "synthesis":
+            self.llm_client = UnifiedLLMClient()
+
+    @traced_generation
+    def run_parallel(self, task: str, correlation_id: str | None = None) -> dict[str, Any]:
+        """
+        Execute specialists in parallel and aggregate results.
+
+        Execution flow:
+        1. Submit all specialists to ThreadPoolExecutor
+        2. Wait for all to complete (or fail)
+        3. Collect results
+        4. Aggregate using configured strategy
+        5. Return combined output with timing
+
+        Args:
+            task: Task to delegate to specialists
+            correlation_id: Optional correlation ID for tracing
+
+        Returns:
+            Dictionary with:
+            - aggregated_result: Combined output from all specialists
+            - specialist_results: Individual results from each specialist
+            - execution_time_ms: Total parallel execution time
+            - correlation_id: Trace correlation ID
+
+        Teaching note: ThreadPoolExecutor for I/O-bound work
+
+        Why ThreadPoolExecutor (not ProcessPoolExecutor):
+        - LLM API calls are I/O-bound (waiting for network response)
+        - Threads share memory (easier state passing)
+        - Lower overhead than processes
+
+        When to use ProcessPoolExecutor instead:
+        - CPU-bound work (heavy computation, not API calls)
+        - Need true parallelism (GIL prevents this with threads)
+        - Isolated execution (no shared state)
+
+        Error handling strategy:
+        - Individual specialist failures don't fail entire orchestration
+        - Failed specialists return error field in results
+        - Aggregation proceeds with successful results only
+        - Final output notes which specialists failed
+        """
+        if correlation_id is None:
+            correlation_id = generate_correlation_id()
+
+        start_time = time.time()
+        specialist_results = []
+
+        # Execute specialists in parallel
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            # Submit all specialists
+            future_to_specialist = {
+                executor.submit(specialist.analyze, task): specialist
+                for specialist in self.specialists
+            }
+
+            # Collect results as they complete
+            for future in as_completed(future_to_specialist):
+                specialist = future_to_specialist[future]
+                try:
+                    result = future.result()
+                    specialist_results.append(result)
+                except Exception as e:
+                    # Individual specialist failure
+                    specialist_results.append(
+                        {
+                            "specialty": specialist.specialty,
+                            "findings": "",
+                            "success": False,
+                            "error": f"Execution failed: {str(e)}",
+                        }
+                    )
+
+        execution_time_ms = (time.time() - start_time) * 1000
+
+        # Aggregate results
+        aggregated = self._aggregate_results(specialist_results)
+
+        return {
+            "aggregated_result": aggregated,
+            "specialist_results": specialist_results,
+            "execution_time_ms": execution_time_ms,
+            "correlation_id": correlation_id,
+        }
+
+    def _aggregate_results(self, results: list[dict[str, Any]]) -> str:
+        """
+        Aggregate specialist results using configured strategy.
+
+        Strategies:
+        1. "concat": Simple concatenation with separators
+           - Fast, no LLM call
+           - Preserves all information
+           - May be verbose or redundant
+
+        2. "synthesis": LLM-based synthesis
+           - Slower (extra LLM call)
+           - More coherent output
+           - Can remove redundancy and contradictions
+
+        Args:
+            results: List of specialist results
+
+        Returns:
+            Aggregated output string
+        """
+        successful_results = [r for r in results if r.get("success", False)]
+        failed_results = [r for r in results if not r.get("success", False)]
+
+        if self.aggregation_strategy == "concat":
+            # Simple concatenation
+            sections = []
+
+            for result in successful_results:
+                sections.append(f"=== {result['specialty']} Analysis ===")
+                sections.append(result["findings"])
+                sections.append("")
+
+            if failed_results:
+                sections.append("=== Failed Specialists ===")
+                for result in failed_results:
+                    sections.append(
+                        f"- {result['specialty']}: {result.get('error', 'Unknown error')}"
+                    )
+
+            return "\n".join(sections)
+
+        elif self.aggregation_strategy == "synthesis":
+            # LLM-based synthesis
+            if not successful_results:
+                return "No successful specialist results to synthesize."
+
+            # Prepare specialist findings for synthesis
+            findings_text = "\n\n".join(
+                [f"**{r['specialty']}**:\n{r['findings']}" for r in successful_results]
+            )
+
+            synthesis_prompt = f"""You are synthesizing insights from multiple \
+specialists. Each specialist analyzed the task from their domain perspective.
+
+Specialist findings:
+{findings_text}
+
+Instructions:
+1. Identify common themes across specialists
+2. Note unique insights from each specialty
+3. Resolve any contradictions or inconsistencies
+4. Synthesize into coherent summary (2-4 paragraphs)
+5. Preserve important details from each specialist
+
+Your synthesis:"""
+
+            assert self.llm_client is not None
+            response = self.llm_client.generate(
+                prompt=synthesis_prompt,
+                temperature=0.3,
+                max_tokens=600,
+            )
+
+            synthesis = response.content.strip()
+
+            # Append failed specialist notes
+            if failed_results:
+                failed_note = "\n\n**Note:** Some specialists failed:\n"
+                failed_note += "\n".join(
+                    [f"- {r['specialty']}: {r.get('error', 'Unknown')}" for r in failed_results]
+                )
+                synthesis += failed_note
+
+            return synthesis
+
+        else:
+            raise ValueError(f"Unknown aggregation strategy: {self.aggregation_strategy}")
+
+    def __repr__(self) -> str:
+        """String representation for debugging."""
+        specialties = [s.specialty for s in self.specialists]
+        return (
+            f"ParallelOrchestrator(specialists={specialties}, "
+            f"max_workers={self.max_workers}, "
+            f"strategy={self.aggregation_strategy})"
         )

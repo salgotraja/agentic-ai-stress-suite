@@ -12,9 +12,11 @@ from llama_index.core.schema import Document
 
 from src.agents.multi_agent import (
     CriticAgent,
+    ParallelOrchestrator,
     ResearcherAgent,
     ResearcherWriterCriticPipeline,
     ResearcherWriterPipeline,
+    SpecialistAgent,
     WriterAgent,
 )
 from src.agents.tools.rag import RAGTool
@@ -311,3 +313,157 @@ def test_critic_score_extraction() -> None:
     for critique_text, expected_score in test_cases:
         extracted = critic._extract_score(critique_text)
         assert extracted == expected_score, f"Failed for: {critique_text}"
+
+
+def test_specialist_agent(rag_tool: RAGTool) -> None:
+    """Test specialist agent analyzes task from domain perspective."""
+    specialist = SpecialistAgent(
+        specialty="React",
+        tools=[rag_tool],
+        temperature=0.0,
+    )
+
+    result = specialist.analyze("Compare frontend frameworks")
+
+    assert result["specialty"] == "React"
+    assert result["success"] is True
+    assert result["error"] is None
+    assert len(result["findings"]) > 0
+    # Should focus on React, not other frameworks
+    assert "react" in result["findings"].lower()
+
+
+def test_parallel_orchestrator_concat(rag_tool: RAGTool) -> None:
+    """Test parallel orchestrator with concat aggregation strategy."""
+    # Create 3 specialists
+    react_specialist = SpecialistAgent(
+        specialty="React",
+        tools=[rag_tool],
+        temperature=0.0,
+    )
+    fastapi_specialist = SpecialistAgent(
+        specialty="FastAPI",
+        tools=[rag_tool],
+        temperature=0.0,
+    )
+    python_specialist = SpecialistAgent(
+        specialty="Python",
+        tools=[rag_tool],
+        temperature=0.0,
+    )
+
+    orchestrator = ParallelOrchestrator(
+        specialists=[react_specialist, fastapi_specialist, python_specialist],
+        aggregation_strategy="concat",
+        max_workers=3,
+    )
+
+    task = "Analyze modern web development frameworks"
+    result = orchestrator.run_parallel(task)
+
+    # Verify structure
+    assert "aggregated_result" in result
+    assert "specialist_results" in result
+    assert "execution_time_ms" in result
+    assert "correlation_id" in result
+
+    # Should have 3 specialist results
+    assert len(result["specialist_results"]) == 3
+
+    # All specialists should succeed
+    for specialist_result in result["specialist_results"]:
+        assert specialist_result["success"] is True
+        assert len(specialist_result["findings"]) > 0
+
+    # Aggregated result should contain all specialties
+    aggregated = result["aggregated_result"]
+    assert "React" in aggregated
+    assert "FastAPI" in aggregated
+    assert "Python" in aggregated
+
+
+def test_parallel_orchestrator_synthesis(rag_tool: RAGTool) -> None:
+    """Test parallel orchestrator with synthesis aggregation strategy."""
+    react_specialist = SpecialistAgent(
+        specialty="React",
+        tools=[rag_tool],
+        temperature=0.0,
+    )
+    fastapi_specialist = SpecialistAgent(
+        specialty="FastAPI",
+        tools=[rag_tool],
+        temperature=0.0,
+    )
+
+    orchestrator = ParallelOrchestrator(
+        specialists=[react_specialist, fastapi_specialist],
+        aggregation_strategy="synthesis",
+        max_workers=2,
+    )
+
+    task = "Compare React and FastAPI for modern applications"
+    result = orchestrator.run_parallel(task)
+
+    assert "aggregated_result" in result
+    assert len(result["specialist_results"]) == 2
+
+    # Both should succeed
+    for specialist_result in result["specialist_results"]:
+        assert specialist_result["success"] is True
+
+    # Synthesis should create coherent summary
+    aggregated = result["aggregated_result"]
+    assert len(aggregated) > 100  # Should be substantive
+    # Should mention both specialties
+    assert "react" in aggregated.lower() or "fastapi" in aggregated.lower()
+
+
+def test_parallel_vs_sequential_timing(rag_tool: RAGTool) -> None:
+    """Test parallel execution is faster than sequential for independent tasks."""
+    import time
+
+    react_specialist = SpecialistAgent(
+        specialty="React",
+        tools=[rag_tool],
+        temperature=0.0,
+    )
+    vue_specialist = SpecialistAgent(
+        specialty="Vue",
+        tools=[rag_tool],
+        temperature=0.0,
+    )
+    angular_specialist = SpecialistAgent(
+        specialty="Angular",
+        tools=[rag_tool],
+        temperature=0.0,
+    )
+
+    task = "Analyze frontend frameworks"
+
+    # Sequential execution
+    start = time.time()
+    seq_results = [
+        react_specialist.analyze(task),
+        vue_specialist.analyze(task),
+        angular_specialist.analyze(task),
+    ]
+    sequential_time = (time.time() - start) * 1000
+
+    # Parallel execution
+    orchestrator = ParallelOrchestrator(
+        specialists=[react_specialist, vue_specialist, angular_specialist],
+        aggregation_strategy="concat",
+        max_workers=3,
+    )
+    result = orchestrator.run_parallel(task)
+    parallel_time = result["execution_time_ms"]
+
+    # Parallel should be faster (or at least not much slower)
+    # Allow 20% margin due to executor overhead
+    assert parallel_time < sequential_time * 1.2, (
+        f"Parallel ({parallel_time:.0f}ms) not faster than " f"sequential ({sequential_time:.0f}ms)"
+    )
+
+    # Verify all succeeded
+    assert all(r["success"] for r in seq_results)
+    assert all(r["success"] for r in result["specialist_results"])

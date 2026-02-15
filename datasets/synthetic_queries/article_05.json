@@ -1,0 +1,130 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created_date": "2026-02-15",
+    "description": "Multi-agent collaboration tasks for Article 5: Testing orchestration patterns (sequential, parallel, critic-in-loop)",
+    "total_queries": 12,
+    "pattern_distribution": {
+      "sequential": 4,
+      "parallel": 3,
+      "critic_refinement": 3,
+      "conflict_resolution": 2
+    },
+    "complexity_distribution": {
+      "moderate": 5,
+      "hard": 5,
+      "very_hard": 2
+    },
+    "frameworks_tested": ["langgraph", "crewai", "autogen"]
+  },
+  "queries": [
+    {
+      "id": "q001",
+      "task": "Research FastAPI dependency injection, write a 2-paragraph summary, then critique and refine the summary",
+      "pattern": "sequential",
+      "required_agents": ["researcher", "writer", "critic"],
+      "expected_tools": ["rag", "search"],
+      "difficulty": "moderate",
+      "description": "Simple sequential pipeline: research → write → critique → refine"
+    },
+    {
+      "id": "q002",
+      "task": "Compare React hooks vs class components. Have 3 specialists research different aspects (state, lifecycle, performance), then synthesize findings",
+      "pattern": "parallel",
+      "required_agents": ["specialist_1", "specialist_2", "specialist_3", "synthesizer"],
+      "expected_tools": ["rag", "database"],
+      "difficulty": "hard",
+      "description": "Parallel fan-out: 3 specialists work concurrently, synthesizer aggregates"
+    },
+    {
+      "id": "q003",
+      "task": "Explain Pydantic validators with code examples. Writer drafts, critic reviews quality, writer revises based on feedback (max 2 refinement rounds)",
+      "pattern": "critic_refinement",
+      "required_agents": ["writer", "critic"],
+      "expected_tools": ["rag", "code_exec"],
+      "difficulty": "moderate",
+      "description": "Iterative refinement with quality gate (critic score >= 7/10 to pass)"
+    },
+    {
+      "id": "q004",
+      "task": "Research Spring Boot async patterns and FastAPI async patterns separately, identify similarities, and create unified best practices guide",
+      "pattern": "sequential",
+      "required_agents": ["researcher_1", "researcher_2", "synthesizer"],
+      "expected_tools": ["search", "rag", "database"],
+      "difficulty": "hard",
+      "description": "Dual research paths → synthesis with cross-framework insights"
+    },
+    {
+      "id": "q005",
+      "task": "Query database for all beginner-level docs, calculate total count, explain concepts from 3 randomly selected docs",
+      "pattern": "sequential",
+      "required_agents": ["data_analyst", "explainer"],
+      "expected_tools": ["database", "calculator", "rag"],
+      "difficulty": "moderate",
+      "description": "Data analysis → content explanation pipeline"
+    },
+    {
+      "id": "q006",
+      "task": "3 agents each research a different framework (FastAPI, React, Spring). Voting: which has best async support? Provide evidence",
+      "pattern": "conflict_resolution",
+      "required_agents": ["specialist_1", "specialist_2", "specialist_3", "voting_resolver"],
+      "expected_tools": ["rag", "search", "database"],
+      "difficulty": "very_hard",
+      "description": "Parallel research → voting-based conflict resolution with justification"
+    },
+    {
+      "id": "q007",
+      "task": "Write tutorial on React useEffect. Critic reviews for clarity and completeness (score 1-10). If < 7, refine and resubmit",
+      "pattern": "critic_refinement",
+      "required_agents": ["writer", "critic"],
+      "expected_tools": ["rag", "code_exec"],
+      "difficulty": "hard",
+      "description": "Quality-gated refinement loop with numeric scoring"
+    },
+    {
+      "id": "q008",
+      "task": "Researcher finds FastAPI security best practices, writer creates guide, critic checks for completeness, writer adds missing pieces",
+      "pattern": "sequential",
+      "required_agents": ["researcher", "writer", "critic", "writer"],
+      "expected_tools": ["search", "rag"],
+      "difficulty": "moderate",
+      "description": "Extended sequential pipeline with feedback incorporation"
+    },
+    {
+      "id": "q009",
+      "task": "Parallel query: One agent counts Spring docs, another counts Pydantic docs, third counts FastAPI docs. Aggregator reports totals and percentages",
+      "pattern": "parallel",
+      "required_agents": ["counter_1", "counter_2", "counter_3", "aggregator"],
+      "expected_tools": ["database", "calculator"],
+      "difficulty": "moderate",
+      "description": "Simple parallel counting → aggregation with statistics"
+    },
+    {
+      "id": "q010",
+      "task": "Research GraphRAG concepts, write implementation guide with code, critic reviews technical accuracy (2 refinement rounds allowed)",
+      "pattern": "critic_refinement",
+      "required_agents": ["researcher", "writer", "critic"],
+      "expected_tools": ["search", "rag", "code_exec"],
+      "difficulty": "very_hard",
+      "description": "Research → technical writing → expert review → revision"
+    },
+    {
+      "id": "q011",
+      "task": "2 agents propose different solutions for 'How to handle async errors in FastAPI?'. Supervisor reviews both and picks best approach",
+      "pattern": "conflict_resolution",
+      "required_agents": ["agent_1", "agent_2", "supervisor"],
+      "expected_tools": ["rag", "search"],
+      "difficulty": "hard",
+      "description": "Dual solution generation → hierarchical arbitration (supervisor decides)"
+    },
+    {
+      "id": "q012",
+      "task": "3 specialists (frontend, backend, testing) each research React testing tools. Synthesizer creates comprehensive comparison table",
+      "pattern": "parallel",
+      "required_agents": ["frontend_specialist", "backend_specialist", "testing_specialist", "synthesizer"],
+      "expected_tools": ["search", "rag", "database"],
+      "difficulty": "hard",
+      "description": "Domain-expert parallel research → structured synthesis"
+    }
+  ]
+}

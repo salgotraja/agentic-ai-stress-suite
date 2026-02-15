@@ -10,7 +10,13 @@ Tests the Researcher-Writer pipeline with real components:
 import pytest
 from llama_index.core.schema import Document
 
-from src.agents.multi_agent import ResearcherAgent, ResearcherWriterPipeline, WriterAgent
+from src.agents.multi_agent import (
+    CriticAgent,
+    ResearcherAgent,
+    ResearcherWriterCriticPipeline,
+    ResearcherWriterPipeline,
+    WriterAgent,
+)
 from src.agents.tools.rag import RAGTool
 from src.rag.naive_rag import NaiveRAGPipeline
 
@@ -56,6 +62,9 @@ def test_researcher_agent(rag_tool: RAGTool) -> None:
         "task": "What is FastAPI?",
         "research_findings": None,
         "draft": None,
+        "critic_feedback": None,
+        "critic_score": None,
+        "refinement_count": 0,
         "current_agent": "researcher",
         "iteration_count": 0,
         "correlation_id": "test-123",
@@ -80,6 +89,9 @@ def test_writer_agent() -> None:
             "It provides automatic API documentation and async support."
         ),
         "draft": None,
+        "critic_feedback": None,
+        "critic_score": None,
+        "refinement_count": 0,
         "current_agent": "writer",
         "iteration_count": 1,
         "correlation_id": "test-123",
@@ -132,3 +144,170 @@ def test_pipeline_state_passing(rag_tool: RAGTool) -> None:
 
     assert draft is not None
     assert len(draft) > len(research_findings)
+
+
+def test_critic_agent() -> None:
+    """Test critic agent evaluates drafts and assigns scores."""
+    critic = CriticAgent(min_acceptable_score=4)
+
+    # Test with a good draft
+    good_state = {
+        "task": "Explain FastAPI async support",
+        "research_findings": "FastAPI async research...",
+        "draft": (
+            "FastAPI provides excellent async support through Python's "
+            "asyncio framework. It allows you to define async endpoints "
+            "using async def, which enables concurrent request handling. "
+            "This is built on ASGI (Asynchronous Server Gateway Interface), "
+            "making FastAPI ideal for I/O-bound applications."
+        ),
+        "critic_feedback": None,
+        "critic_score": None,
+        "refinement_count": 0,
+        "current_agent": "critic",
+        "iteration_count": 2,
+        "correlation_id": "test-456",
+    }
+
+    result_state = critic.critique(good_state)
+
+    assert result_state["critic_feedback"] is not None
+    assert result_state["critic_score"] is not None
+    assert 1 <= result_state["critic_score"] <= 5
+    assert "SCORE" in result_state["critic_feedback"]
+
+    # Test with a poor draft
+    poor_state = {
+        "task": "Explain FastAPI async support",
+        "research_findings": "FastAPI async research...",
+        "draft": "FastAPI is good.",  # Too brief, lacks detail
+        "critic_feedback": None,
+        "critic_score": None,
+        "refinement_count": 0,
+        "current_agent": "critic",
+        "iteration_count": 2,
+        "correlation_id": "test-789",
+    }
+
+    result_state = critic.critique(poor_state)
+
+    assert result_state["critic_feedback"] is not None
+    assert result_state["critic_score"] is not None
+    # Should get low score for brief, inadequate draft
+    assert result_state["critic_score"] < 4
+
+
+def test_writer_refine() -> None:
+    """Test writer agent refines draft based on critic feedback."""
+    writer = WriterAgent()
+
+    initial_state = {
+        "task": "Explain FastAPI",
+        "research_findings": "FastAPI is a modern web framework...",
+        "draft": "FastAPI is a web framework.",
+        "critic_feedback": (
+            "SCORE: 2\n"
+            "STRENGTHS: Correct but minimal\n"
+            "ISSUES: Too brief, lacks key details\n"
+            "SUGGESTIONS: Add info about Python type hints, performance, async support"
+        ),
+        "critic_score": 2,
+        "refinement_count": 0,
+        "current_agent": "writer_refine",
+        "iteration_count": 3,
+        "correlation_id": "test-refine",
+    }
+
+    result_state = writer.refine(initial_state)
+
+    assert result_state["draft"] is not None
+    assert len(result_state["draft"]) > len(initial_state["draft"])
+    assert result_state["refinement_count"] == 1
+    assert result_state["current_agent"] == "critic"
+
+
+def test_critic_pipeline_single_iteration(rag_tool: RAGTool) -> None:
+    """Test critic pipeline with draft that passes on first try."""
+    researcher = ResearcherAgent(tools=[rag_tool])
+    writer = WriterAgent(temperature=0.0)  # More consistent output
+    critic = CriticAgent(min_acceptable_score=3, temperature=0.0)  # Lower threshold
+
+    pipeline = ResearcherWriterCriticPipeline(
+        researcher=researcher,
+        writer=writer,
+        critic=critic,
+        max_refinements=3,
+    )
+
+    result = pipeline.run(task="What is FastAPI?")
+
+    assert result["draft"] is not None
+    assert len(result["draft"]) > 0
+    assert result["critic_score"] is not None
+    assert result["critic_feedback"] is not None
+    assert result["refinement_count"] >= 0
+    assert result["refinement_count"] <= 3
+    assert "correlation_id" in result
+
+
+def test_critic_pipeline_with_refinement(rag_tool: RAGTool) -> None:
+    """Test critic pipeline triggers refinement for low-quality drafts."""
+    researcher = ResearcherAgent(tools=[rag_tool])
+    writer = WriterAgent(temperature=0.3)
+    critic = CriticAgent(min_acceptable_score=5, temperature=0.0)  # Very strict
+
+    pipeline = ResearcherWriterCriticPipeline(
+        researcher=researcher,
+        writer=writer,
+        critic=critic,
+        max_refinements=2,  # Allow refinement
+    )
+
+    result = pipeline.run(task="Explain FastAPI async support in detail")
+
+    assert result["draft"] is not None
+    assert result["critic_score"] is not None
+    assert result["critic_feedback"] is not None
+    # With strict critic (score 5), likely needs refinement
+    # But max_refinements=2 prevents infinite loops
+    assert result["refinement_count"] <= 2
+
+
+def test_critic_pipeline_max_iterations(rag_tool: RAGTool) -> None:
+    """Test critic pipeline respects max refinements limit."""
+    researcher = ResearcherAgent(tools=[rag_tool])
+    writer = WriterAgent()
+    critic = CriticAgent(min_acceptable_score=5, temperature=0.0)  # Impossible to satisfy
+
+    pipeline = ResearcherWriterCriticPipeline(
+        researcher=researcher,
+        writer=writer,
+        critic=critic,
+        max_refinements=1,  # Low limit
+    )
+
+    result = pipeline.run(task="What is React?")
+
+    # Should stop at max_refinements even if score < threshold
+    assert result["refinement_count"] == 1
+    assert result["critic_score"] is not None
+
+
+def test_critic_score_extraction() -> None:
+    """Test critic correctly extracts scores from critique text."""
+    critic = CriticAgent()
+
+    # Test score extraction from various formats
+    test_cases = [
+        ("SCORE: 4\nSTRENGTHS: Good", 4),
+        ("Score: 3\nIssues: Some problems", 3),
+        ("SCORE: 5/5\nExcellent work", 5),
+        ("Random text\nSCORE: 2\nMore text", 2),
+        ("No score mentioned here", 3),  # Default to 3
+        ("SCORE: 10\nOut of range", 5),  # Clamped to 5
+        ("SCORE: 0\nToo low", 1),  # Clamped to 1
+    ]
+
+    for critique_text, expected_score in test_cases:
+        extracted = critic._extract_score(critique_text)
+        assert extracted == expected_score, f"Failed for: {critique_text}"

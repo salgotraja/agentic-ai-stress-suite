@@ -1,0 +1,104 @@
+interactions:
+- request:
+    body: '{"messages":[{"role":"user","content":"Classify this query into ONE of
+      these types:\n- factual: Simple fact lookup (\"What is X?\", \"Define Y\")\n-
+      analytical: Comparison or analysis (\"Compare X and Y\", \"Why is X better than
+      Y?\")\n- creative: Creative generation (\"Write a poem\", \"Generate ideas\")\n-
+      code: Programming question (\"Fix this bug\", \"Write function to...\")\n- general:
+      Everything else\n\nQuery: What is FastAPI?\n\nClassification (single word):"}],"model":"llama-3.1-8b-instant","max_tokens":10,"temperature":0.7}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br, zstd
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '538'
+      Content-Type:
+      - application/json
+      Host:
+      - api.groq.com
+      User-Agent:
+      - OpenAI/Python 2.15.0
+      X-Stainless-Arch:
+      - arm64
+      X-Stainless-Async:
+      - 'false'
+      X-Stainless-Lang:
+      - python
+      X-Stainless-OS:
+      - MacOS
+      X-Stainless-Package-Version:
+      - 2.15.0
+      X-Stainless-Runtime:
+      - CPython
+      X-Stainless-Runtime-Version:
+      - 3.11.14
+      x-stainless-read-timeout:
+      - '30'
+      x-stainless-retry-count:
+      - '0'
+    method: POST
+    uri: https://api.groq.com/openai/v1/chat/completions
+  response:
+    body:
+      string: !!binary |
+        G0ICAMT/5rJ+m/LVEL0JVO0eDOrHeAFBzL3rDtx+u17seGs7tozC5u1hW1tAbUWBR5ge87h8mIrb
+        VHffmAYo9BeT+i2svO8t9V1L3BTW8FoUHTcFES8rojoXnbGiAIPvZuoTmE4dBmryDgys5adpgCqE
+        KIqmFlIybH6gFQrrajbDq1PBzx2f3J6MS2BgxM/sUN9vPHRfoHKGdose1BvRrwQFs+8Tbot3iVyC
+        gjV9OsyKf4bVjyH6bodyx7oyzFqL9L1WfSjsyQf8/zIc0X+6HnSQTtNGUPkpr5siP8uqYAjRbyHp
+        5BdyO1RRCj0gHvJz1TZlLhnSgKhEZTFSaISoZc3wlwFmEa5yNfiHRSvrUuTV/6Yd3UUyy+Dv7pDI
+        rF/RdnIjxRCnpMwGbW3Z5fJsjAXDQ4/RX6EKviLSVefFchnH9AyLLZ83N4dYXB6P9NwCGHaqYbOR
+        QpS5rKp/hml2QzpNFKHgnR5oM27A/xc=
+    headers:
+      CF-RAY:
+      - 9ce47397a9e1222d-DEL
+      Cache-Control:
+      - private, max-age=0, no-store, no-cache, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Encoding:
+      - br
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 15 Feb 2026 11:26:39 GMT
+      Server:
+      - cloudflare
+      Strict-Transport-Security:
+      - max-age=15552000
+      Transfer-Encoding:
+      - chunked
+      alt-svc:
+      - h3=":443"; ma=86400
+      cf-cache-status:
+      - DYNAMIC
+      set-cookie:
+      - __cf_bm=yDaPB0Y.rpUmhEPL4Qq7b48LPdXXl8lDDgFOu6PxXjU-1771154799.302965-1.0.1.1-wJ_7Z8uN8Hhr.KDCr2UXemVJ0A3DdQ8B1gFy4kCIFMvDiprrstvgJu_.oB2KpUEHkHQnI1MRbllFXmB2BLcPdTqNYi4ZcKzW1RSfkRuM5886WA6Tz7EdFe2hSXZPHl8.;
+        HttpOnly; Secure; Path=/; Domain=groq.com; Expires=Sun, 15 Feb 2026 11:56:39
+        GMT
+      vary:
+      - Origin
+      via:
+      - 1.1 google
+      x-groq-region:
+      - bom
+      x-ratelimit-limit-requests:
+      - '14400'
+      x-ratelimit-limit-tokens:
+      - '6000'
+      x-ratelimit-remaining-requests:
+      - '14399'
+      x-ratelimit-remaining-tokens:
+      - '5872'
+      x-ratelimit-reset-requests:
+      - 6s
+      x-ratelimit-reset-tokens:
+      - 1.28s
+      x-request-id:
+      - req_01khggtypkf2yvnjpr1hxxtymp
+    status:
+      code: 200
+      message: OK
+version: 1

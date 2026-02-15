@@ -1,0 +1,218 @@
+{
+  "metadata": {
+    "version": "1.1",
+    "created_date": "2026-02-15",
+    "description": "Complex multi-tool queries for Article 4: Single-agent workflows testing ReAct vs Plan-and-Execute",
+    "total_queries": 28,
+    "tool_call_distribution": {
+      "2_tools": 12,
+      "3_tools": 11,
+      "4_tools": 5
+    },
+    "category_distribution": {
+      "rag_calculation": 8,
+      "database_analysis": 7,
+      "code_execution": 6,
+      "multi_framework": 4,
+      "failure_scenarios": 3
+    }
+  },
+  "queries": [
+    {
+      "id": "q001",
+      "query": "What are React hooks? Count how many React documents mention 'useState'.",
+      "expected_tools": ["rag", "database"],
+      "difficulty": "moderate",
+      "category": "rag_calculation"
+    },
+    {
+      "id": "q002",
+      "query": "Search for Spring Boot async best practices, then query our database for FastAPI async patterns.",
+      "expected_tools": ["search", "database"],
+      "difficulty": "moderate",
+      "category": "multi_framework"
+    },
+    {
+      "id": "q003",
+      "query": "Execute code: print(len([x for x in range(100) if x % 7 == 0])), then calculate 2 to the power of 10.",
+      "expected_tools": ["code_exec", "calculator"],
+      "difficulty": "moderate",
+      "category": "code_execution"
+    },
+    {
+      "id": "q004",
+      "query": "What is FastAPI dependency injection? Calculate the factorial of 6.",
+      "expected_tools": ["rag", "calculator"],
+      "difficulty": "moderate",
+      "category": "rag_calculation"
+    },
+    {
+      "id": "q005",
+      "query": "Query database for all Pydantic documents with difficulty 'beginner', count them, explain what Pydantic is.",
+      "expected_tools": ["database", "calculator", "rag"],
+      "difficulty": "moderate",
+      "category": "database_analysis"
+    },
+    {
+      "id": "q006",
+      "query": "Search web for 'React useEffect cleanup', execute code showing a counter, explain cleanup in our docs.",
+      "expected_tools": ["search", "code_exec", "rag"],
+      "difficulty": "hard",
+      "category": "multi_framework"
+    },
+    {
+      "id": "q007",
+      "query": "What's the difference between Spring @Bean and @Component? Calculate 3 factorial.",
+      "expected_tools": ["rag", "calculator"],
+      "difficulty": "moderate",
+      "category": "rag_calculation"
+    },
+    {
+      "id": "q008",
+      "query": "Execute code to find primes up to 20, query database for Spring 'async' docs, count results.",
+      "expected_tools": ["code_exec", "database", "calculator"],
+      "difficulty": "hard",
+      "category": "code_execution"
+    },
+    {
+      "id": "q009",
+      "query": "What are FastAPI path parameters? Query database for examples, count total Spring documents.",
+      "expected_tools": ["rag", "database", "calculator"],
+      "difficulty": "moderate",
+      "category": "rag_calculation"
+    },
+    {
+      "id": "q010",
+      "query": "Search 'Python async tutorial', execute fibonacci(10), query FastAPI async examples, synthesize.",
+      "expected_tools": ["search", "code_exec", "rag", "database"],
+      "difficulty": "very_hard",
+      "category": "multi_framework"
+    },
+    {
+      "id": "q011",
+      "query": "Execute: import math; print(math.pi * 10**2), explain what area this calculates.",
+      "expected_tools": ["code_exec", "calculator"],
+      "difficulty": "moderate",
+      "category": "code_execution"
+    },
+    {
+      "id": "q012",
+      "query": "TIMEOUT_TEST: Search for an extremely specific obscure technical query.",
+      "expected_tools": ["search"],
+      "difficulty": "moderate",
+      "category": "failure_scenarios"
+    },
+    {
+      "id": "q013",
+      "query": "Execute INVALID code: print(undefined_var), then calculate 5 * 9.",
+      "expected_tools": ["code_exec", "calculator"],
+      "difficulty": "hard",
+      "category": "failure_scenarios"
+    },
+    {
+      "id": "q014",
+      "query": "Query database for 'NonExistentFramework', then search for React hooks.",
+      "expected_tools": ["database", "search"],
+      "difficulty": "moderate",
+      "category": "failure_scenarios"
+    },
+    {
+      "id": "q015",
+      "query": "What is Pydantic BaseModel? Execute code creating a dataclass example.",
+      "expected_tools": ["rag", "code_exec"],
+      "difficulty": "moderate",
+      "category": "code_execution"
+    },
+    {
+      "id": "q016",
+      "query": "Search 'React Context API', query database for advanced React docs, execute context demo.",
+      "expected_tools": ["search", "database", "code_exec"],
+      "difficulty": "hard",
+      "category": "multi_framework"
+    },
+    {
+      "id": "q017",
+      "query": "Calculate sum of squares 1-10, explain the mathematical formula.",
+      "expected_tools": ["code_exec", "calculator"],
+      "difficulty": "moderate",
+      "category": "code_execution"
+    },
+    {
+      "id": "q018",
+      "query": "What are Spring Bean scopes? Query database for Spring docs, calculate average docs per framework.",
+      "expected_tools": ["rag", "database", "calculator"],
+      "difficulty": "hard",
+      "category": "database_analysis"
+    },
+    {
+      "id": "q019",
+      "query": "Execute even numbers 0-20, query FastAPI docs, search 'Python list comprehensions'.",
+      "expected_tools": ["code_exec", "database", "search"],
+      "difficulty": "hard",
+      "category": "code_execution"
+    },
+    {
+      "id": "q020",
+      "query": "Compare FastAPI vs Spring dependency injection. Calculate 7 factorial.",
+      "expected_tools": ["rag", "database", "calculator"],
+      "difficulty": "hard",
+      "category": "multi_framework"
+    },
+    {
+      "id": "q021",
+      "query": "Search 'Python decorators', execute decorator demo, find FastAPI decorator examples.",
+      "expected_tools": ["search", "code_exec", "rag"],
+      "difficulty": "hard",
+      "category": "code_execution"
+    },
+    {
+      "id": "q022",
+      "query": "Execute [x**2 for x in range(5)], query Pydantic validators, count total documents.",
+      "expected_tools": ["code_exec", "database", "calculator"],
+      "difficulty": "moderate",
+      "category": "database_analysis"
+    },
+    {
+      "id": "q023",
+      "query": "What is React useCallback? Search optimization tips, execute timing demo.",
+      "expected_tools": ["rag", "search", "code_exec"],
+      "difficulty": "hard",
+      "category": "code_execution"
+    },
+    {
+      "id": "q024",
+      "query": "SECURITY_TEST: Execute import os; os.system('ls'), then query database.",
+      "expected_tools": ["code_exec", "database"],
+      "difficulty": "hard",
+      "category": "failure_scenarios"
+    },
+    {
+      "id": "q025",
+      "query": "What is Pydantic Field validation? Execute validated model, query examples, search best practices.",
+      "expected_tools": ["rag", "code_exec", "database", "search"],
+      "difficulty": "very_hard",
+      "category": "multi_framework"
+    },
+    {
+      "id": "q026",
+      "query": "Calculate fibonacci to 10 terms, query database for 'recursion' mentions.",
+      "expected_tools": ["code_exec", "database"],
+      "difficulty": "moderate",
+      "category": "code_execution"
+    },
+    {
+      "id": "q027",
+      "query": "What is Spring Boot auto-configuration? Execute config demo, query examples.",
+      "expected_tools": ["rag", "code_exec", "database"],
+      "difficulty": "hard",
+      "category": "database_analysis"
+    },
+    {
+      "id": "q028",
+      "query": "Search 'async patterns', execute async simulation, query FastAPI async, count async frameworks.",
+      "expected_tools": ["search", "code_exec", "rag", "database"],
+      "difficulty": "very_hard",
+      "category": "multi_framework"
+    }
+  ]
+}

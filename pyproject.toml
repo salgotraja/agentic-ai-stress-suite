@@ -67,6 +67,8 @@ dependencies = [
     "deepeval>=1.0.0",
     "scipy>=1.11.0",
     "ddgs>=1.0.0",
+    "nbconvert>=7.16.6",
+    "ipykernel>=7.1.0",
 ]
 
 [project.optional-dependencies]

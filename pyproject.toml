@@ -72,6 +72,7 @@ dependencies = [
     "crewai>=1.6.1",
     "crewai-tools>=1.6.1",
     "langchain-groq>=1.1.2",
+    "pyautogen>=0.10.0",
 ]
 
 [project.optional-dependencies]

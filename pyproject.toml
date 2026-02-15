@@ -163,3 +163,8 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --cov=src --cov-report=term-missing"
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.5.1",
+]

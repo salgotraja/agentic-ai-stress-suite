@@ -1269,3 +1269,529 @@ Your synthesis:"""
             f"max_workers={self.max_workers}, "
             f"strategy={self.aggregation_strategy})"
         )
+
+
+# =============================================================================
+# CONFLICT RESOLUTION STRATEGIES
+# =============================================================================
+#
+# Teaching note: When agents disagree
+# ------------------------------------
+# Multi-agent systems often produce conflicting recommendations.
+# Examples:
+# - Agent A says "use approach X", Agent B says "use approach Y"
+# - Multiple specialists provide different answers
+# - Agents have different confidence levels
+#
+# Conflict resolution strategies:
+# 1. Voting: Democratic (each agent votes, majority wins)
+# 2. Supervisor: Hierarchical (dedicated arbitrator decides)
+# 3. Round-robin: Iterative (agents debate until consensus)
+#
+# Strategy selection criteria:
+# - Voting: Fast, works when all agents equally competent
+# - Supervisor: Needs expert arbitrator, slower (extra LLM call)
+# - Round-robin: Thorough but expensive (multiple LLM calls)
+#
+# Production considerations:
+# - Cost: Voting < Supervisor < Round-robin
+# - Quality: Round-robin > Supervisor > Voting (generally)
+# - Latency: Voting < Supervisor < Round-robin
+# - Complexity: Voting < Supervisor < Round-robin
+#
+
+
+@dataclass
+class VotingResolver:
+    """
+    Voting-based conflict resolution: agents score options, highest score wins.
+
+    Teaching note: Democratic decision-making
+    ------------------------------------------
+    Use voting when:
+    - All agents have equal competence
+    - Fast decision needed
+    - Multiple options to choose from
+    - Cost is a concern
+
+    How it works:
+    1. Each agent scores each option (1-10)
+    2. Sum scores for each option
+    3. Pick option with highest total score
+    4. Break ties with random selection or first option
+
+    Example:
+        Option A: Agent1=8, Agent2=7, Agent3=6 → Total=21
+        Option B: Agent1=5, Agent2=9, Agent3=8 → Total=22
+        Winner: Option B
+
+    Pros:
+    - Fast (one LLM call per agent)
+    - Democratic (all voices heard)
+    - Scalable (works with any number of agents)
+
+    Cons:
+    - Assumes equal competence
+    - Can't synthesize novel solutions
+    - May produce suboptimal compromise
+
+    Attributes:
+        agents: List of agents who will vote
+        llm_client: LLM for scoring (if agents don't have embedded LLM)
+    """
+
+    agents: list[Any]  # List of agent instances
+    llm_client: UnifiedLLMClient | None = None
+
+    def __post_init__(self) -> None:
+        """Initialize LLM client if not provided."""
+        if self.llm_client is None:
+            self.llm_client = UnifiedLLMClient()
+
+    @traced_generation
+    def resolve(self, options: list[str], context: str = "") -> dict[str, Any]:
+        """
+        Resolve conflict by voting on options.
+
+        Args:
+            options: List of options to choose from
+            context: Additional context for scoring
+
+        Returns:
+            Dictionary with:
+            - winner: Chosen option
+            - scores: Dictionary mapping option to total score
+            - votes: List of individual agent votes
+            - method: "voting"
+
+        Teaching note: Scoring prompt design
+        -------------------------------------
+        Prompt asks agents to score 1-10 based on:
+        - Feasibility: Can this be implemented?
+        - Effectiveness: Will this solve the problem?
+        - Efficiency: Is this the optimal solution?
+
+        Alternative scoring criteria:
+        - Accuracy, Clarity, Completeness (for content)
+        - Cost, Time, Risk (for project decisions)
+        - User impact, Technical debt, Maintainability (for features)
+        """
+        votes: list[dict[str, Any]] = []
+
+        for agent_idx, agent in enumerate(self.agents):
+            # Build scoring prompt
+            options_text = "\n".join([f"{i+1}. {opt}" for i, opt in enumerate(options)])
+
+            prompt = f"""Score each option from 1-10 based on feasibility, effectiveness, \
+and efficiency.
+
+Context: {context if context else 'No additional context provided'}
+
+Options:
+{options_text}
+
+Provide scores in this format:
+Option 1: [score]
+Option 2: [score]
+...
+
+Your scores:"""
+
+            assert self.llm_client is not None
+            response = self.llm_client.generate(
+                prompt=prompt,
+                temperature=0.0,
+                max_tokens=200,
+            )
+
+            # Parse scores from response
+            scores_text = response.content.strip()
+            agent_scores = self._parse_scores(scores_text, len(options))
+
+            votes.append(
+                {
+                    "agent": f"Agent_{agent_idx}",
+                    "scores": agent_scores,
+                }
+            )
+
+        # Aggregate scores
+        total_scores = {}
+        for i, option in enumerate(options):
+            total_scores[option] = sum(vote["scores"][i] for vote in votes)
+
+        # Find winner (highest score)
+        winner = max(total_scores.items(), key=lambda x: x[1])[0]
+
+        return {
+            "winner": winner,
+            "scores": total_scores,
+            "votes": votes,
+            "method": "voting",
+        }
+
+    def _parse_scores(self, scores_text: str, num_options: int) -> list[int]:
+        """
+        Parse scores from LLM response.
+
+        Handles various formats:
+        - "Option 1: 8"
+        - "1. Score: 7"
+        - "8, 7, 9"
+
+        Returns:
+            List of scores (defaults to 5 if parsing fails)
+        """
+        scores = []
+        lines = scores_text.split("\n")
+
+        for line in lines:
+            # Try to extract number after colon or just a number
+            import re
+
+            match = re.search(r":\s*(\d+)", line)
+            if match:
+                scores.append(int(match.group(1)))
+            elif line.strip().isdigit():
+                scores.append(int(line.strip()))
+
+        # Ensure we have correct number of scores
+        while len(scores) < num_options:
+            scores.append(5)  # Default score
+
+        return scores[:num_options]
+
+
+@dataclass
+class SupervisorResolver:
+    """
+    Supervisor-based conflict resolution: dedicated arbitrator agent decides.
+
+    Teaching note: Hierarchical decision-making
+    --------------------------------------------
+    Use supervisor when:
+    - Need expert arbitration
+    - Agents have different expertise levels
+    - Quality more important than speed
+    - Can afford extra LLM call
+
+    How it works:
+    1. Agents provide recommendations
+    2. Supervisor reviews all recommendations
+    3. Supervisor makes final decision
+    4. Provides reasoning for choice
+
+    Example:
+        Agent A (Junior): "Use simple caching"
+        Agent B (Senior): "Use distributed cache with Redis"
+        Supervisor: "Choose B - scalability requirements justify Redis"
+
+    Pros:
+    - Expert arbitration
+    - Can synthesize novel solutions
+    - Provides reasoning for decision
+
+    Cons:
+    - Slower (extra LLM call)
+    - More expensive
+    - Supervisor quality critical
+
+    Attributes:
+        supervisor_prompt: Instructions for supervisor agent
+        llm_client: LLM for supervisor reasoning
+    """
+
+    supervisor_prompt: str = (
+        "You are an expert supervisor who arbitrates between agent recommendations. "
+        "Analyze each recommendation carefully, considering feasibility, effectiveness, "
+        "and potential risks. Provide your decision with clear reasoning."
+    )
+    llm_client: UnifiedLLMClient | None = None
+
+    def __post_init__(self) -> None:
+        """Initialize LLM client if not provided."""
+        if self.llm_client is None:
+            self.llm_client = UnifiedLLMClient()
+
+    @traced_generation
+    def resolve(self, recommendations: list[dict[str, str]], context: str = "") -> dict[str, Any]:
+        """
+        Resolve conflict via supervisor arbitration.
+
+        Args:
+            recommendations: List of dicts with keys:
+                - agent: Agent name
+                - recommendation: Agent's recommendation
+                - reasoning: Agent's reasoning (optional)
+            context: Additional context for decision
+
+        Returns:
+            Dictionary with:
+            - decision: Supervisor's chosen option
+            - reasoning: Supervisor's explanation
+            - reviewed_recommendations: Original recommendations
+            - method: "supervisor"
+
+        Teaching note: Supervisor prompt engineering
+        ---------------------------------------------
+        Effective supervisor prompts:
+        - Set expert role ("You are an expert...")
+        - Define criteria (feasibility, effectiveness, risk)
+        - Request structured output (decision + reasoning)
+        - Provide context (problem, constraints, goals)
+
+        Common pitfalls:
+        - Too vague: "Pick the best one"
+        - No criteria: Agent doesn't know what matters
+        - No reasoning requested: Can't debug decisions
+        """
+        # Build supervisor prompt
+        recs_text = "\n\n".join(
+            [
+                f"**{r['agent']}**: {r['recommendation']}"
+                + (f"\nReasoning: {r.get('reasoning', 'Not provided')}" if "reasoning" in r else "")
+                for r in recommendations
+            ]
+        )
+
+        prompt = f"""{self.supervisor_prompt}
+
+Context: {context if context else 'No additional context provided'}
+
+Agent Recommendations:
+{recs_text}
+
+As supervisor, provide your decision in this format:
+
+DECISION: [Your chosen recommendation or synthesized solution]
+
+REASONING: [Explain why this is the best choice, considering all factors]
+
+Your response:"""
+
+        assert self.llm_client is not None
+        response = self.llm_client.generate(
+            prompt=prompt,
+            temperature=0.3,  # Slight creativity for synthesis
+            max_tokens=400,
+        )
+
+        # Parse decision and reasoning
+        result_text = response.content.strip()
+        decision, reasoning = self._parse_supervisor_response(result_text)
+
+        return {
+            "decision": decision,
+            "reasoning": reasoning,
+            "reviewed_recommendations": recommendations,
+            "method": "supervisor",
+        }
+
+    def _parse_supervisor_response(self, response: str) -> tuple[str, str]:
+        """
+        Parse supervisor's decision and reasoning.
+
+        Returns:
+            Tuple of (decision, reasoning)
+        """
+        import re
+
+        # Try to extract DECISION and REASONING sections
+        decision_match = re.search(r"DECISION:\s*(.+?)(?:\n\nREASONING:|$)", response, re.DOTALL)
+        reasoning_match = re.search(r"REASONING:\s*(.+)", response, re.DOTALL)
+
+        decision = decision_match.group(1).strip() if decision_match else response[:200]
+        reasoning = reasoning_match.group(1).strip() if reasoning_match else "Not provided"
+
+        return decision, reasoning
+
+
+@dataclass
+class RoundRobinResolver:
+    """
+    Round-robin iterative conflict resolution: agents debate until consensus.
+
+    Teaching note: Iterative consensus-building
+    --------------------------------------------
+    Use round-robin when:
+    - Quality is paramount
+    - Complex decisions requiring debate
+    - Can afford multiple LLM calls
+    - Want thorough exploration of options
+
+    How it works:
+    1. Each agent presents initial position
+    2. Agents take turns responding to others
+    3. Continue until consensus or max iterations
+    4. Final vote if no consensus
+
+    Example (3 rounds):
+        Round 1: A proposes X, B proposes Y, C proposes Z
+        Round 2: A refines X based on B/C input
+        Round 3: B/C shift toward refined X
+        Result: Consensus on refined X
+
+    Pros:
+    - Thorough exploration
+    - Can refine solutions iteratively
+    - Agents learn from each other
+
+    Cons:
+    - Expensive (many LLM calls)
+    - Slow (sequential rounds)
+    - May not converge
+
+    Attributes:
+        agents: List of agents participating in debate
+        max_rounds: Maximum debate iterations (default: 3)
+        consensus_threshold: Fraction agreeing needed (default: 0.67)
+        llm_client: LLM for agent reasoning
+    """
+
+    agents: list[Any]
+    max_rounds: int = 3
+    consensus_threshold: float = 0.67  # 67% agreement
+    llm_client: UnifiedLLMClient | None = None
+
+    def __post_init__(self) -> None:
+        """Initialize LLM client if not provided."""
+        if self.llm_client is None:
+            self.llm_client = UnifiedLLMClient()
+
+    @traced_generation
+    def resolve(self, problem: str, context: str = "") -> dict[str, Any]:
+        """
+        Resolve conflict through iterative debate.
+
+        Args:
+            problem: Problem statement requiring resolution
+            context: Additional context
+
+        Returns:
+            Dictionary with:
+            - solution: Final agreed-upon solution
+            - rounds: List of debate rounds
+            - consensus_reached: Whether consensus was achieved
+            - method: "round_robin"
+
+        Teaching note: Convergence patterns
+        ------------------------------------
+        Healthy debates show:
+        - Initial divergence (agents explore different angles)
+        - Gradual convergence (agents incorporate others' insights)
+        - Final consensus (majority agree on refined solution)
+
+        Warning signs:
+        - No movement (agents stuck in positions)
+        - Oscillation (back-and-forth with no progress)
+        - Groupthink (premature consensus without exploration)
+
+        Mitigations:
+        - Devil's advocate agent (challenges consensus)
+        - Explicit criteria weighting
+        - Max rounds prevents infinite loops
+        """
+        rounds: list[dict[str, str]] = []
+
+        for round_num in range(self.max_rounds):
+            round_positions: dict[str, str] = {}
+
+            # Each agent responds
+            for agent_idx, agent in enumerate(self.agents):
+                agent_name = f"Agent_{agent_idx}"
+
+                # Build prompt with conversation history
+                history_text = self._format_history(rounds, agent_name)
+
+                prompt = f"""Problem: {problem}
+
+Context: {context if context else 'No additional context provided'}
+
+{history_text}
+
+Based on the discussion so far, provide your position on how to solve this problem. \
+Consider others' perspectives and refine your approach if needed.
+
+Your position (1-2 sentences):"""
+
+                assert self.llm_client is not None
+                response = self.llm_client.generate(
+                    prompt=prompt,
+                    temperature=0.5,  # Allow some creativity
+                    max_tokens=150,
+                )
+
+                position = response.content.strip()
+                round_positions[agent_name] = position
+
+            rounds.append(round_positions)
+
+            # Check for consensus
+            if self._check_consensus(round_positions):
+                return {
+                    "solution": self._synthesize_consensus(round_positions),
+                    "rounds": rounds,
+                    "consensus_reached": True,
+                    "method": "round_robin",
+                }
+
+        # Max rounds reached without consensus - use voting
+        # Extract last positions and vote
+        final_positions = list(rounds[-1].values())
+        unique_positions = list(set(final_positions))
+
+        # Simple majority vote on final positions
+        votes = {}
+        for pos in unique_positions:
+            votes[pos] = final_positions.count(pos)
+
+        winning_position = max(votes.items(), key=lambda x: x[1])[0]
+
+        return {
+            "solution": winning_position,
+            "rounds": rounds,
+            "consensus_reached": False,
+            "fallback_vote": votes,
+            "method": "round_robin",
+        }
+
+    def _format_history(self, rounds: list[dict[str, str]], current_agent: str) -> str:
+        """Format conversation history for prompt."""
+        if not rounds:
+            return "This is the first round of discussion."
+
+        history = "Previous discussion:\n\n"
+        for i, round_positions in enumerate(rounds, 1):
+            history += f"Round {i}:\n"
+            for agent, position in round_positions.items():
+                if agent != current_agent:  # Don't show agent their own past positions
+                    history += f"  {agent}: {position}\n"
+            history += "\n"
+
+        return history
+
+    def _check_consensus(self, positions: dict[str, str]) -> bool:
+        """
+        Check if positions show consensus.
+
+        Simple heuristic: If most positions are very similar, consensus reached.
+        Production: Use semantic similarity (embedding distance).
+        """
+        unique_positions = set(positions.values())
+        position_counts = {pos: list(positions.values()).count(pos) for pos in unique_positions}
+
+        # If majority holds same position
+        max_count = max(position_counts.values())
+        return max_count / len(positions) >= self.consensus_threshold
+
+    def _synthesize_consensus(self, positions: dict[str, str]) -> str:
+        """
+        Synthesize consensus from similar positions.
+
+        Production: Use LLM to merge similar positions into coherent statement.
+        Here: Return most common position.
+        """
+        position_list = list(positions.values())
+        unique = list(set(position_list))
+        counts = {pos: position_list.count(pos) for pos in unique}
+        return max(counts.items(), key=lambda x: x[1])[0]

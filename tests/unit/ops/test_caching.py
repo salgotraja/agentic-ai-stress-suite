@@ -110,3 +110,23 @@ def test_zipfian_generator_produces_skewed_distribution() -> None:
     top_20 = sum(v for _, v in counts.most_common(20))
     # Top 20% of queries should account for >= 60% of traffic
     assert top_20 / 10000 >= 0.60
+
+
+def test_purge_deletes_matching_keys() -> None:
+    """Purge with pattern removes all matching keys and returns count."""
+    mock_redis = MagicMock()
+    mock_redis.keys.return_value = [b"l1:abc", b"l1:def"]
+    mock_redis.delete.return_value = 2
+    cache = SemanticCache(redis_client=mock_redis)
+    deleted = cache.purge("l1:*")
+    assert deleted == 2
+    mock_redis.delete.assert_called_once_with(b"l1:abc", b"l1:def")
+
+
+def test_purge_empty_cache_returns_zero() -> None:
+    """Purge on empty cache returns 0 without calling delete."""
+    mock_redis = MagicMock()
+    mock_redis.keys.return_value = []
+    cache = SemanticCache(redis_client=mock_redis)
+    assert cache.purge() == 0
+    mock_redis.delete.assert_not_called()

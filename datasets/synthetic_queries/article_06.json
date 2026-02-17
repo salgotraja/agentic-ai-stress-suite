@@ -1,0 +1,402 @@
+[
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI?",
+    "category": "exact_duplicate"
+  },
+  {
+    "query": "What is FastAPI framework?",
+    "category": "similar"
+  },
+  {
+    "query": "Tell me about FastAPI",
+    "category": "similar"
+  },
+  {
+    "query": "Explain FastAPI",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI overview",
+    "category": "similar"
+  },
+  {
+    "query": "What does FastAPI do?",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI Python framework",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI web framework",
+    "category": "similar"
+  },
+  {
+    "query": "How does FastAPI work?",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI basics",
+    "category": "similar"
+  },
+  {
+    "query": "Introduction to FastAPI",
+    "category": "similar"
+  },
+  {
+    "query": "What is FastAPI framework?",
+    "category": "similar"
+  },
+  {
+    "query": "Tell me about FastAPI",
+    "category": "similar"
+  },
+  {
+    "query": "Explain FastAPI",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI overview",
+    "category": "similar"
+  },
+  {
+    "query": "What does FastAPI do?",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI Python framework",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI web framework",
+    "category": "similar"
+  },
+  {
+    "query": "How does FastAPI work?",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI basics",
+    "category": "similar"
+  },
+  {
+    "query": "Introduction to FastAPI",
+    "category": "similar"
+  },
+  {
+    "query": "What is FastAPI framework?",
+    "category": "similar"
+  },
+  {
+    "query": "Tell me about FastAPI",
+    "category": "similar"
+  },
+  {
+    "query": "Explain FastAPI",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI overview",
+    "category": "similar"
+  },
+  {
+    "query": "What does FastAPI do?",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI Python framework",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI web framework",
+    "category": "similar"
+  },
+  {
+    "query": "How does FastAPI work?",
+    "category": "similar"
+  },
+  {
+    "query": "FastAPI basics",
+    "category": "similar"
+  },
+  {
+    "query": "Introduction to FastAPI",
+    "category": "similar"
+  },
+  {
+    "query": "Unique question about topic 0",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 1",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 2",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 3",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 4",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 5",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 6",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 7",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 8",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 9",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 10",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 11",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 12",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 13",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 14",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 15",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 16",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 17",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 18",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 19",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 20",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 21",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 22",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 23",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 24",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 25",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 26",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 27",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 28",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 29",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 30",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 31",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 32",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 33",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 34",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 35",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 36",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 37",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 38",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 39",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 40",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 41",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 42",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 43",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 44",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 45",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 46",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 47",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 48",
+    "category": "unique"
+  },
+  {
+    "query": "Unique question about topic 49",
+    "category": "unique"
+  }
+]

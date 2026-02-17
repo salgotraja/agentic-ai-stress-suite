@@ -1,0 +1,13 @@
+{
+  "total_queries": 100,
+  "hit_rate": 0.39,
+  "hits": 39,
+  "misses": 61,
+  "avg_latency_hit_ms": 0.0015084589950931377,
+  "avg_latency_miss_ms": 1.4761530156781684,
+  "by_category": {
+    "exact_duplicate": 0.95,
+    "similar": 0.6666666666666666,
+    "unique": 0.0
+  }
+}

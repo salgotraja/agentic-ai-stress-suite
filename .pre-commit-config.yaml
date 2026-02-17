@@ -37,6 +37,7 @@ repos:
       - id: mypy
         additional_dependencies:
           - types-redis
+          - types-PyYAML
           - pydantic
         args: [--ignore-missing-imports, --strict]
         exclude: ^(tests/|examples/|scripts/)

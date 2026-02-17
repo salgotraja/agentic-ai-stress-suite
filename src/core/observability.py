@@ -1,4 +1,4 @@
-"""Observability and tracing decorators using Arize Phoenix.
+"""Observability and tracing decorators using Arize Phoenix and LangFuse.
 
 This module provides decorators for tracing different types of operations:
 - @traced_retrieval: For vector search and document retrieval
@@ -20,11 +20,17 @@ When to use each decorator:
 Phoenix vs LangFuse:
 - Phoenix: Local development, free, easy setup (Article 1-5)
 - LangFuse: Production, hosted, user feedback loops (Article 6+)
+
+LangFuse integration (Article 6+):
+- Activated only when LANGFUSE_PUBLIC_KEY and LANGFUSE_SECRET_KEY are set.
+- LangFuse failures never break the main code path (wrapped in try/except).
+- traced_generation sends traces to LangFuse for cost attribution and session analysis.
 """
 
 from __future__ import annotations
 
 import functools
+import os as _os
 import time
 import uuid
 from collections.abc import Callable
@@ -39,6 +45,25 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import Status, StatusCode
 
 from src.core.config import get_settings
+
+try:
+    from langfuse import Langfuse as _Langfuse
+
+    # LangFuse is optional: only activate if keys are configured.
+    # Keep Phoenix for local dev (no account needed, real-time UI).
+    # Add LangFuse for production: user sessions, prompt versioning, A/B integration.
+    _lf_public = _os.getenv("LANGFUSE_PUBLIC_KEY", "")
+    _lf_secret = _os.getenv("LANGFUSE_SECRET_KEY", "")
+    if _lf_public and _lf_secret:
+        langfuse_client: _Langfuse | None = _Langfuse(
+            public_key=_lf_public,
+            secret_key=_lf_secret,
+            host=_os.getenv("LANGFUSE_HOST", "https://cloud.langfuse.com"),
+        )
+    else:
+        langfuse_client = None
+except ImportError:
+    langfuse_client = None
 
 # Type variable for generic function signatures
 F = TypeVar("F", bound=Callable[..., Any])
@@ -329,6 +354,23 @@ def traced_generation(func: F) -> F:
                     span.set_attribute("response", result[:1000])
 
                 span.set_status(Status(StatusCode.OK))
+
+                # Mirror trace to LangFuse when configured.
+                # LangFuse enables production features Phoenix lacks:
+                # session analytics, prompt versioning, cost attribution by user.
+                # Failures are silenced so LangFuse never breaks the main path.
+                if langfuse_client is not None:
+                    try:
+                        langfuse_client.trace(
+                            name=span_name,
+                            input=prompt[:1000] if isinstance(prompt, str) else None,
+                            metadata={
+                                "latency_ms": latency_ms,
+                                "correlation_id": correlation_id,
+                            },
+                        )
+                    except Exception:
+                        pass
 
                 return result
 

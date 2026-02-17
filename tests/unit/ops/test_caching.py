@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from unittest.mock import MagicMock
 
 import pytest
@@ -57,3 +58,41 @@ def test_stats_tracks_hits_and_misses() -> None:
     assert stats["hits"] == 1
     assert stats["misses"] == 2
     assert stats["hit_rate"] == pytest.approx(1 / 3)
+
+
+def test_l2_miss_when_no_similar_entry() -> None:
+    """L2 cache returns None when no embedding is similar enough."""
+    mock_redis = MagicMock()
+    mock_redis.get.return_value = None  # L1 miss
+    mock_embed = MagicMock(return_value=[0.1, 0.2, 0.3])
+    mock_redis.keys.return_value = []  # no L2 entries
+    cache = SemanticCache(redis_client=mock_redis, embed_fn=mock_embed)
+    assert cache.get("What is FastAPI?") is None
+
+
+def test_l2_hit_when_cosine_above_threshold() -> None:
+    """L2 cache returns result when embedding similarity exceeds 0.95."""
+    mock_redis = MagicMock()
+
+    # Stored embedding: unit vector [1, 0, 0]
+    stored_emb = [1.0, 0.0, 0.0]
+    # Query embedding: nearly identical
+    query_emb = [0.999, 0.044, 0.0]  # cosine with stored ~0.999
+
+    stored_entry = json.dumps(
+        {
+            "embedding": stored_emb,
+            "response": "FastAPI is a web framework",
+        }
+    ).encode()
+
+    mock_redis.keys.return_value = [b"l2:abc123"]
+    # First get() call: L1 miss (returns None). Second get() call: L2 entry fetch.
+    mock_redis.get.side_effect = [None, stored_entry]
+
+    def mock_embed_fn(text: str) -> list[float]:
+        return query_emb
+
+    cache = SemanticCache(redis_client=mock_redis, embed_fn=mock_embed_fn, l2_threshold=0.95)
+    result = cache.get("What is FastAPI?")
+    assert result == "FastAPI is a web framework"

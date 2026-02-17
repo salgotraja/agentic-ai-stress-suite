@@ -96,3 +96,17 @@ def test_l2_hit_when_cosine_above_threshold() -> None:
     cache = SemanticCache(redis_client=mock_redis, embed_fn=mock_embed_fn, l2_threshold=0.95)
     result = cache.get("What is FastAPI?")
     assert result == "FastAPI is a web framework"
+
+
+def test_zipfian_generator_produces_skewed_distribution() -> None:
+    """Top queries appear much more often than tail queries (Pareto principle)."""
+    from collections import Counter
+
+    from scripts.cache_warmup import ZipfianQueryGenerator
+
+    gen = ZipfianQueryGenerator(vocab_size=100, alpha=1.1)
+    samples = [gen.next_query() for _ in range(10000)]
+    counts = Counter(samples)
+    top_20 = sum(v for _, v in counts.most_common(20))
+    # Top 20% of queries should account for >= 60% of traffic
+    assert top_20 / 10000 >= 0.60

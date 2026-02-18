@@ -71,6 +71,7 @@ results/
 *.csv
 *.json
 !datasets/**/*.json
+!datasets/red_team_prompts/*.csv
 !examples/**/*.json
 
 # Jupyter

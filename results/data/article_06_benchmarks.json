@@ -1,13 +1,30 @@
 {
-  "total_queries": 100,
-  "hit_rate": 0.39,
-  "hits": 39,
-  "misses": 61,
-  "avg_latency_hit_ms": 0.0015084589950931377,
-  "avg_latency_miss_ms": 1.4761530156781684,
-  "by_category": {
-    "exact_duplicate": 0.95,
-    "similar": 0.6666666666666666,
-    "unique": 0.0
+  "cache": {
+    "total_queries": 100,
+    "hit_rate": 0.39,
+    "hits": 39,
+    "misses": 61,
+    "avg_latency_hit_ms": 0.0014764358265659749,
+    "avg_latency_miss_ms": 1.2652321611760093,
+    "by_category": {
+      "exact_duplicate": 0.95,
+      "similar": 0.6666666666666666,
+      "unique": 0.0
+    },
+    "cost_without_cache_usd": 0.375,
+    "cost_with_cache_usd": 0.22875,
+    "cache_savings_usd": 0.14625,
+    "cache_savings_pct": 39.0
+  },
+  "router": {
+    "total_queries": 100,
+    "simple_queries": 97,
+    "complex_queries": 3,
+    "simple_pct": 97.0,
+    "complex_pct": 3.0,
+    "cost_no_routing_usd": 0.375,
+    "cost_with_routing_usd": 0.003019,
+    "routing_savings_usd": 0.371981,
+    "routing_savings_pct": 99.2
   }
 }

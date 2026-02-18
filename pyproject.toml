@@ -75,6 +75,7 @@ dependencies = [
     "pyautogen>=0.10.0",
     "litellm>=1.81.13",
     "langfuse>=3.14.2",
+    "nemoguardrails>=0.20.0",
 ]
 
 [project.optional-dependencies]

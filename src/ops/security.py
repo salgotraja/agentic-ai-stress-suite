@@ -212,6 +212,140 @@ class LlamaGuardClassifier:
         return GuardResult(blocked=False)
 
 
+# ---------------------------------------------------------------------------
+# Output rail: NER-based PII detection
+# Catches names, locations, and organisations that regex cannot enumerate.
+# ---------------------------------------------------------------------------
+
+# NER labels that indicate personally identifiable information.
+# PERSON / GPE (geopolitical entity) / LOC / ORG cover the main PII classes
+# returned by spaCy en_core_web_sm. Extend with DATE/CARDINAL if needed.
+_PII_NER_LABELS: frozenset[str] = frozenset({"PERSON", "GPE", "LOC", "ORG"})
+
+
+class SpacyPIIScanner:
+    """NER-based PII detector for LLM output text.
+
+    Teaching note: Regex catches *structured* PII (SSN, phone, email) with
+    near-perfect recall on known formats. NER catches *unstructured* PII
+    (personal names, addresses, organisation names) that no regex can enumerate.
+
+    Hybrid strategy for production:
+        Regex first (input gate, <1ms)  → blocks SSN/phone/email patterns.
+        NER second (output gate, ~30ms) → blocks echoed names/locations.
+
+    SpaCy model trade-offs:
+        en_core_web_sm  : 50 MB, ~85% F1 on NER, 20-50ms per sentence.
+        en_core_web_trf : 500 MB, ~92% F1 on NER, 200-400ms — use for async audit.
+
+    nlp_fn is injected (not hard-wired to spaCy) so unit tests run in <1ms
+    without loading the 50 MB model. Production code passes a real spaCy nlp:
+
+        import spacy
+        nlp = spacy.load("en_core_web_sm")
+        scanner = SpacyPIIScanner(
+            nlp_fn=lambda text: [(e.text, e.label_) for e in nlp(text).ents]
+        )
+    """
+
+    def __init__(
+        self,
+        nlp_fn: Callable[[str], list[tuple[str, str]]],
+    ) -> None:
+        # nlp_fn maps text → list of (entity_text, label) pairs.
+        # This interface is thin enough to wrap any NER backend.
+        self._nlp_fn = nlp_fn
+
+    def scan(self, text: str) -> GuardResult:
+        """Scan output text for NER-detected PII entities.
+
+        Returns GuardResult with rail="output_ner_pii" when blocked.
+        """
+        entities = self._nlp_fn(text)
+        pii_found = [(ent_text, label) for ent_text, label in entities if label in _PII_NER_LABELS]
+
+        if not pii_found:
+            return GuardResult(blocked=False)
+
+        # Surface up to 3 entities in the reason for triage. Truncating at 3
+        # keeps the reason human-readable without leaking full entity lists.
+        sample = ", ".join(f"{t} ({lbl})" for t, lbl in pii_found[:3])
+        return GuardResult(
+            blocked=True,
+            reason=f"PII entities detected in output: {sample}.",
+            rail="output_ner_pii",
+        )
+
+
+# ---------------------------------------------------------------------------
+# Output rail: raw source document chunk leakage
+# Prevents RAG systems from returning verbatim large sections of source docs.
+# ---------------------------------------------------------------------------
+
+
+class RawChunkDetector:
+    """Detects verbatim source document chunks in LLM output.
+
+    Teaching note: RAG systems should *synthesise* answers from retrieved
+    context, not parrot source documents. Verbatim chunk leakage has two risks:
+
+        1. Copyright: reproducing large sections may infringe source licences.
+        2. Confidentiality: internal knowledge-base documents may contain
+           context (pricing, internal names, credentials) that should not be
+           returned wholesale to end users.
+
+    Detection heuristic: sliding-window over chunk words, looking for a
+    run of MIN_OVERLAP_WORDS consecutive words from any source chunk inside
+    the output. MIN_OVERLAP_WORDS=10 is a practical threshold —
+        < 10  words → high false-positive rate (common technical phrases match)
+        > 20  words → misses shorter verbatim extracts
+
+    Case-insensitive comparison avoids trivial formatting bypasses.
+    """
+
+    MIN_OVERLAP_WORDS: int = 10
+
+    def scan(self, output: str, source_chunks: list[str]) -> GuardResult:
+        """Check if output reproduces a verbatim span from any source chunk.
+
+        Args:
+            output:        LLM-generated text to inspect.
+            source_chunks: Retrieved document chunks used to generate output.
+
+        Returns:
+            GuardResult with rail="output_chunk_leakage" when a verbatim
+            window of MIN_OVERLAP_WORDS or more is found.
+        """
+        if not source_chunks:
+            return GuardResult(blocked=False)
+
+        output_lower = output.lower()
+        for chunk in source_chunks:
+            if self._has_verbatim_overlap(output_lower, chunk):
+                return GuardResult(
+                    blocked=True,
+                    reason=(
+                        f"Output reproduces a verbatim {self.MIN_OVERLAP_WORDS}+ "
+                        "word span from a source document chunk."
+                    ),
+                    rail="output_chunk_leakage",
+                )
+        return GuardResult(blocked=False)
+
+    def _has_verbatim_overlap(self, output_lower: str, chunk: str) -> bool:
+        """Slide a MIN_OVERLAP_WORDS window over chunk; check for match in output."""
+        words = chunk.lower().split()
+        window = self.MIN_OVERLAP_WORDS
+        # Need at least MIN_OVERLAP_WORDS words in the chunk to trigger.
+        if len(words) < window:
+            return False
+        for i in range(len(words) - window + 1):
+            phrase = " ".join(words[i : i + window])
+            if phrase in output_lower:
+                return True
+        return False
+
+
 class GuardrailsManager:
     """Defence-in-depth guardrails for LLM inputs and outputs.
 
@@ -239,10 +373,17 @@ class GuardrailsManager:
         return llm_response
     """
 
-    def __init__(self, llama_guard: LlamaGuardClassifier | None = None) -> None:
-        # Optional Llama-Guard fallback for semantic classification.
-        # None (default) means regex-only mode — fastest, no API cost.
+    def __init__(
+        self,
+        llama_guard: LlamaGuardClassifier | None = None,
+        spacy_scanner: SpacyPIIScanner | None = None,
+        chunk_detector: RawChunkDetector | None = None,
+    ) -> None:
+        # All three scanners are optional; None means "skip that rail".
+        # Default (all None) = regex-only mode: fastest, zero API cost.
         self._llama_guard = llama_guard
+        self._spacy_scanner = spacy_scanner
+        self._chunk_detector = chunk_detector
 
     def check_input(self, text: str) -> GuardResult:
         """Apply all input rails to user-supplied text.
@@ -271,8 +412,23 @@ class GuardrailsManager:
 
         return GuardResult(blocked=False)
 
-    def check_output(self, text: str) -> GuardResult:
-        """Apply all output rails to LLM-generated text."""
+    def check_output(
+        self,
+        text: str,
+        source_chunks: list[str] | None = None,
+    ) -> GuardResult:
+        """Apply all output rails to LLM-generated text.
+
+        Execution order:
+          1. API key leakage regex — regex, fast gate.
+          2. System prompt regex   — regex, fast gate.
+          3. SpacyPIIScanner       — NER, ~30ms; only when configured.
+          4. RawChunkDetector      — sliding-window; only when configured
+                                     and source_chunks is provided.
+
+        source_chunks is optional for backward compatibility: callers that
+        do not perform RAG simply omit it.
+        """
         key_result = self._check_output_key_leakage(text)
         if key_result.blocked:
             return key_result
@@ -280,6 +436,18 @@ class GuardrailsManager:
         prompt_result = self._check_output_system_prompt(text)
         if prompt_result.blocked:
             return prompt_result
+
+        # NER-based PII detection in output (names, addresses, orgs).
+        if self._spacy_scanner is not None:
+            ner_result = self._spacy_scanner.scan(text)
+            if ner_result.blocked:
+                return ner_result
+
+        # Verbatim chunk leakage detection (RAG systems only).
+        if self._chunk_detector is not None and source_chunks:
+            chunk_result = self._chunk_detector.scan(text, source_chunks)
+            if chunk_result.blocked:
+                return chunk_result
 
         return GuardResult(blocked=False)
 

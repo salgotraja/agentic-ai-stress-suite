@@ -48,6 +48,7 @@ from __future__ import annotations
 import json
 import logging
 import time
+from concurrent.futures import Future, ProcessPoolExecutor, ThreadPoolExecutor
 from dataclasses import dataclass, field
 from typing import Any, Literal, TypedDict
 
@@ -58,6 +59,113 @@ from src.core.llm_client import UnifiedLLMClient
 from src.core.observability import generate_correlation_id, traced_generation
 
 logger = logging.getLogger(__name__)
+
+# Tool categories for executor selection.
+# I/O-bound tools: network calls, disk reads — ThreadPoolExecutor avoids GIL blockage.
+# CPU-bound tools: heavy computation — ProcessPoolExecutor bypasses GIL entirely.
+# Most LLM tools are I/O-bound (API calls); only pure-compute tools are CPU-bound.
+_IO_BOUND_TOOL_NAMES: frozenset[str] = frozenset(
+    {"search", "rag", "database_lookup", "mcp_file_read", "mcp_api_call"}
+)
+_CPU_BOUND_TOOL_NAMES: frozenset[str] = frozenset({"calculator", "code_execution"})
+
+PARALLEL_TOOL_TIMEOUT_SECONDS: int = 30
+
+
+def execute_tools_parallel(
+    tool_calls: list[tuple[str, str]],
+    tool_registry: dict[str, BaseTool],
+    timeout: int = PARALLEL_TOOL_TIMEOUT_SECONDS,
+) -> list[dict[str, str | None]]:
+    """Execute multiple independent tool calls concurrently.
+
+    Teaching note: Why parallel execution matters for latency.
+    When an agent needs results from two independent tools — e.g., a web search
+    AND a database lookup — running them sequentially wastes wall-clock time
+    because each is blocked waiting for a network response. Running them
+    concurrently cuts total latency to roughly max(individual_latencies) instead
+    of sum(individual_latencies). For typical LLM/API tools at 200-500ms each,
+    a 3-tool parallel dispatch saves 400-1000ms per agent turn.
+
+    Teaching note: ThreadPoolExecutor vs ProcessPoolExecutor.
+    - ThreadPoolExecutor: All threads share memory inside one process. The GIL
+      prevents true CPU parallelism for pure-Python code, but network I/O
+      (HTTP calls, DB queries) releases the GIL, so threads genuinely overlap.
+      Low overhead: thread startup is ~microseconds. Right choice for API tools.
+    - ProcessPoolExecutor: Spawns separate OS processes, each with its own GIL.
+      True CPU parallelism for compute-heavy work (tokenisation, large matrix ops).
+      Higher overhead: process startup is ~50-100ms plus pickling costs.
+      Only worth it when CPU work dominates and run time exceeds overhead.
+
+    Teaching note: Why per-tool timeout rather than a single global deadline.
+    A single deadline would cause one slow tool to cancel all results. Instead,
+    each future is given the same per-tool timeout independently. If one tool
+    exceeds its budget, its result is marked with a TimeoutError in the "error"
+    field and the caller still receives the results of the other tools. This
+    matches the graceful-degradation philosophy used elsewhere in this module.
+
+    Args:
+        tool_calls: Ordered list of (tool_name, tool_input) pairs to execute.
+        tool_registry: Dict mapping tool_name -> BaseTool instance.
+        timeout: Per-tool wall-clock budget in seconds (default: 30).
+
+    Returns:
+        List of result dicts in the same order as tool_calls. Each dict has:
+        - "tool_name": str — name of the tool
+        - "input": str — original input string
+        - "output": str — tool output (empty string on error)
+        - "error": str | None — error message if the call failed, else None
+    """
+    # Pre-allocate results list to preserve original order.
+    # We track futures by index so we can slot results back correctly
+    # even when futures complete out of order.
+    results: list[dict[str, str | None]] = [
+        {"tool_name": name, "input": inp, "output": "", "error": None} for name, inp in tool_calls
+    ]
+
+    # Partition indices by executor type. Unknown tool names default to I/O-bound
+    # (ThreadPoolExecutor) because most custom tools are API wrappers.
+    io_indices: list[int] = []
+    cpu_indices: list[int] = []
+    for idx, (tool_name, _) in enumerate(tool_calls):
+        tool_lower = tool_name.lower()
+        if tool_lower in _CPU_BOUND_TOOL_NAMES:
+            cpu_indices.append(idx)
+        else:
+            io_indices.append(idx)
+
+    def _run_tool(tool_name: str, tool_input: str) -> str:
+        """Look up and execute one tool; propagates exceptions to the caller."""
+        if tool_name not in tool_registry:
+            raise KeyError(f"Tool '{tool_name}' not found in registry")
+        return tool_registry[tool_name].execute(tool_input)
+
+    def _dispatch(indices: list[int], executor_cls: type) -> None:
+        """Submit futures for a group of indices using the given executor class."""
+        if not indices:
+            return
+
+        with executor_cls() as executor:
+            # Map each index to its submitted future.
+            future_to_index: dict[Future[str], int] = {}
+            for idx in indices:
+                tool_name, tool_input = tool_calls[idx]
+                future = executor.submit(_run_tool, tool_name, tool_input)
+                future_to_index[future] = idx
+
+            # Collect results with per-future timeout.
+            for future, idx in future_to_index.items():
+                try:
+                    results[idx]["output"] = future.result(timeout=timeout)
+                except TimeoutError:
+                    results[idx]["error"] = f"TimeoutError: tool did not complete within {timeout}s"
+                except Exception as exc:
+                    results[idx]["error"] = f"{type(exc).__name__}: {exc}"
+
+    _dispatch(io_indices, ThreadPoolExecutor)
+    _dispatch(cpu_indices, ProcessPoolExecutor)
+
+    return results
 
 
 # ============================================================================

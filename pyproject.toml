@@ -78,6 +78,8 @@ dependencies = [
     "nemoguardrails>=0.20.0",
     "spacy>=3.8.11",
     "en-core-web-sm",
+    "locust>=2.43.3",
+    "qdrant-client>=1.16.2",
 ]
 
 [project.optional-dependencies]

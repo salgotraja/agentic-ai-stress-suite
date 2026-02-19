@@ -80,6 +80,14 @@ dependencies = [
     "en-core-web-sm",
     "locust>=2.43.3",
     "qdrant-client>=1.16.2",
+    "torch>=2.9.1",
+    "torchvision>=0.24.1",
+    "torchaudio>=2.9.1",
+    "transformers>=4.57.3",
+    "umap-learn>=0.5.11",
+    "jax>=0.9.0.1",
+    "datasets>=4.5.0",
+    "accelerate>=1.12.0",
 ]
 
 [project.optional-dependencies]

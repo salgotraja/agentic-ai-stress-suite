@@ -96,3 +96,5 @@ docker-compose.override.yml
 .uv/
 uv.lock
 poetry.lock
+datasets/dl_training/
+models/

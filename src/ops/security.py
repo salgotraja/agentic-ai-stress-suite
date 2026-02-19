@@ -35,9 +35,13 @@ Trade-off summary:
 
 from __future__ import annotations
 
+import hashlib
+import os
 import re
+import sqlite3
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 
 
 @dataclass
@@ -344,6 +348,229 @@ class RawChunkDetector:
             if phrase in output_lower:
                 return True
         return False
+
+
+# ---------------------------------------------------------------------------
+# Output sanitization — PII redaction and code block stripping
+#
+# Why sanitize instead of (or in addition to) blocking?
+#   check_output() blocks: the caller gets an error, response is withheld.
+#   sanitize_output() remediates: PII is replaced in-place, response delivered.
+#
+#   Use BLOCK when any leakage is unacceptable (HIPAA, financial data).
+#   Use SANITIZE when a partial response is better than no response (chat UX,
+#   developer tools, lower-risk internal deployments).
+#
+#   In production: sanitize first → check again → block only if sanitization
+#   was insufficient. This layered approach maximises response delivery while
+#   maintaining a safety floor.
+#
+# Code block stripping rationale:
+#   Fenced blocks (``` or ~~~) are a common RAG leakage vector: retrieved
+#   source chunks are re-wrapped as code, bypassing semantic detectors.
+#   Strip them before redacting PII so that email/SSN inside a code example
+#   disappears cleanly (no misleading "[REDACTED]" in code context).
+# ---------------------------------------------------------------------------
+
+_FENCED_CODE_BLOCK: re.Pattern[str] = re.compile(
+    r"```[^\S\r\n]*\w*\n.*?```",  # ```[lang]\n ... ```
+    re.DOTALL,
+)
+_TILDE_CODE_BLOCK: re.Pattern[str] = re.compile(
+    r"~~~[^\S\r\n]*\w*\n.*?~~~",  # ~~~[lang]\n ... ~~~
+    re.DOTALL,
+)
+_COLLAPSE_BLANK_LINES: re.Pattern[str] = re.compile(r"\n{3,}")
+
+
+def sanitize_output(text: str) -> str:
+    """Redact PII and strip markdown code blocks from LLM output.
+
+    Applies two remediations in order:
+
+    1. Strip fenced code blocks (``` and ~~~).
+       Rationale: code blocks often reproduce source chunks verbatim.
+       Stripping them first prevents a "[REDACTED]" placeholder appearing
+       inside code that developers would read in logs.
+
+    2. Replace structured PII (email, SSN, phone) with "[REDACTED]".
+       Uses the same compiled patterns as the input_pii rail for consistency;
+       one pattern library, two uses (detect on input, redact on output).
+
+    Returns a clean string. Does not raise; safe to call on any text.
+
+    Example::
+
+        >>> sanitize_output("My email is alice@example.com")
+        'My email is [REDACTED]'
+    """
+    # Step 1: strip fenced code blocks before PII scan.
+    # Order matters: a code block containing an email is stripped wholesale;
+    # no "[REDACTED]" placeholder pollutes the remaining prose.
+    text = _FENCED_CODE_BLOCK.sub("", text)
+    text = _TILDE_CODE_BLOCK.sub("", text)
+
+    # Step 2: redact structured PII in plain prose.
+    for pattern in _INPUT_PII_PATTERNS:
+        text = pattern.sub("[REDACTED]", text)
+
+    # Normalise whitespace left by stripped blocks (3+ newlines → 2).
+    text = _COLLAPSE_BLANK_LINES.sub("\n\n", text).strip()
+    return text
+
+
+# ---------------------------------------------------------------------------
+# Audit logging — append-only SQLite record of every blocked or sanitized event
+#
+# Why append-only?
+#   Security audit logs must be tamper-evident. If an attacker (or a bug) could
+#   UPDATE or DELETE rows, they could erase evidence of their own intrusion.
+#   Append-only enforces that every event is permanent. For true immutability
+#   in production, pair this with a write-once object store (S3 Object Lock,
+#   WORM disk) and restrict DELETE privilege at the DB user level.
+#
+# Why SHA-256 of the input, not the raw text?
+#   1. Privacy: storing the raw jailbreak or PII string turns the audit log into
+#      a second data store of sensitive user input — a compliance liability.
+#   2. Traceability: the hash is deterministic; if the same string appears again,
+#      the same hash matches, enabling deduplication without storing PII.
+#   3. Verifiability: the originating team can hash a candidate string and check
+#      if it appears in the log without exposing the string itself.
+#
+# Why SQLite instead of a log file?
+#   Structured queries: count_by_rail() and date-range filtering are trivial SQL;
+#   they would require fragile log parsing on a plain text file.
+#   Concurrency: SQLite WAL mode allows multiple readers and one writer safely.
+#   Portability: single file, no daemon, ships with Python stdlib.
+#   Limitation: not suitable for multi-node distributed deployments — migrate to
+#   PostgreSQL (with audit-log extension) when horizontal scaling is required.
+# ---------------------------------------------------------------------------
+
+
+class AuditLogger:
+    """Append-only SQLite audit log for guardrail block and sanitize events.
+
+    Every event records *what* happened (rail, reason, action) and a SHA-256
+    hash of the input text (never the raw text — see teaching comment above).
+
+    Usage::
+
+        logger = AuditLogger(db_path="results/audit.db")
+        result = manager.check_input(user_query)
+        if result.blocked:
+            logger.log_blocked(user_query, result)
+
+        clean = sanitize_output(llm_response)
+        if clean != llm_response:
+            logger.log_sanitized(llm_response)
+
+        counts = logger.count_by_rail()
+        # {"input_pii": 12, "input_jailbreak": 3, ...}
+    """
+
+    _CREATE_TABLE = """
+        CREATE TABLE IF NOT EXISTS blocked_queries (
+            id          INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp   TEXT NOT NULL,
+            rail        TEXT NOT NULL,
+            reason      TEXT NOT NULL,
+            input_hash  TEXT NOT NULL,
+            action      TEXT NOT NULL
+        )
+    """
+
+    def __init__(self, db_path: str = "results/audit.db") -> None:
+        # Create the parent directory if the path has one.
+        # os.path.dirname returns "" for bare filenames — makedirs("") raises,
+        # so we guard with a truthiness check.
+        parent = os.path.dirname(db_path)
+        if parent:
+            os.makedirs(parent, exist_ok=True)
+
+        # check_same_thread=False: the connection is created in one thread but
+        # tests (and async callers) may call log_* from a different thread.
+        # SQLite WAL mode makes single-writer multi-reader access safe.
+        self._conn = sqlite3.connect(db_path, check_same_thread=False)
+        self._conn.row_factory = sqlite3.Row
+        self._conn.execute("PRAGMA journal_mode=WAL")
+        self._conn.execute(self._CREATE_TABLE)
+        self._conn.commit()
+
+    def log_blocked(self, text: str, result: GuardResult) -> None:
+        """Record a blocked event.
+
+        Uses result.rail and result.reason. If rail is None (GuardResult allows
+        it when a check passes), falls back to "unknown" so the NOT NULL
+        constraint is satisfied.
+        """
+        self._conn.execute(
+            "INSERT INTO blocked_queries (timestamp, rail, reason, input_hash, action) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (
+                datetime.now(UTC).isoformat(),
+                result.rail or "unknown",
+                result.reason or "",
+                hashlib.sha256(text.encode()).hexdigest(),
+                "blocked",
+            ),
+        )
+        self._conn.commit()
+
+    def log_sanitized(self, text: str) -> None:
+        """Record a sanitize event (PII or code block was redacted from output)."""
+        self._conn.execute(
+            "INSERT INTO blocked_queries (timestamp, rail, reason, input_hash, action) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (
+                datetime.now(UTC).isoformat(),
+                "sanitize_output",
+                "PII or code block redacted",
+                hashlib.sha256(text.encode()).hexdigest(),
+                "sanitized",
+            ),
+        )
+        self._conn.commit()
+
+    def count_by_rail(self) -> dict[str, int]:
+        """Return event counts grouped by rail name."""
+        cursor = self._conn.execute(
+            "SELECT rail, COUNT(*) AS cnt FROM blocked_queries GROUP BY rail"
+        )
+        return {row["rail"]: row["cnt"] for row in cursor.fetchall()}
+
+    def query_blocked(
+        self,
+        from_date: str | None = None,
+        to_date: str | None = None,
+    ) -> list[dict[str, str]]:
+        """Return all rows, optionally filtered by ISO8601 timestamp range.
+
+        Args:
+            from_date: Inclusive lower bound (ISO8601 string). None means no lower bound.
+            to_date:   Inclusive upper bound (ISO8601 string). None means no upper bound.
+
+        Returns:
+            List of row dicts with keys: id, timestamp, rail, reason, input_hash, action.
+        """
+        # Build the WHERE clause dynamically; SQLite compares ISO8601 strings
+        # lexicographically, which is correct for UTC timestamps.
+        clauses: list[str] = []
+        params: list[str] = []
+
+        if from_date is not None:
+            clauses.append("timestamp >= ?")
+            params.append(from_date)
+        if to_date is not None:
+            clauses.append("timestamp <= ?")
+            params.append(to_date)
+
+        where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+        cursor = self._conn.execute(
+            f"SELECT id, timestamp, rail, reason, input_hash, action "
+            f"FROM blocked_queries {where} ORDER BY id",
+            params,
+        )
+        return [dict(row) for row in cursor.fetchall()]
 
 
 class GuardrailsManager:

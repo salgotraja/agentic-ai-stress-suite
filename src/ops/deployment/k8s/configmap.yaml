@@ -1,0 +1,50 @@
+# ConfigMap: non-sensitive runtime configuration.
+# Why ConfigMap vs environment variables directly in Deployment:
+#   ConfigMaps are decoupled from the Deployment spec, allowing config
+#   changes without rebuilding the image or redeploying pods.
+#   Sensitive values (API keys) go in secrets.yaml, not here.
+#
+# Why these specific values mirror docker-compose.yml:
+#   Docker Compose uses localhost for inter-service communication (port mapping).
+#   Kubernetes uses DNS service names (e.g., redis-service) instead of localhost.
+#   Each service in K8s gets a stable DNS name within the cluster namespace.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rag-agent-config
+  namespace: default
+data:
+  # LLM provider selection
+  # Groq is the default dev/production LLM (cheapest at ~$0.05/1M tokens).
+  # Override with ANTHROPIC_API_KEY + LLM_PROVIDER=anthropic for quality benchmarks.
+  LLM_PROVIDER: "groq"
+  LLM_MODEL: "llama-3.1-8b-instant"
+
+  # Embedding configuration
+  # cpu is used in K8s (no Metal/MPS GPU available in Linux containers).
+  # For NVIDIA GPU nodes, set EMBEDDING_DEVICE=cuda and use GPU node selector.
+  EMBEDDING_MODEL: "BAAI/bge-base-en-v1.5"
+  EMBEDDING_DEVICE: "cpu"
+
+  # Service endpoints (use K8s service DNS names, not localhost)
+  # Format: <service-name>.<namespace>.svc.cluster.local (or short: <service-name>)
+  # These match the Service metadata.name fields in service.yaml and the
+  # respective service YAML files for Redis/Chroma/Phoenix.
+  REDIS_URL: "redis://redis-service:6379"
+  CHROMA_HOST: "chroma-service"
+  CHROMA_PORT: "8000"
+  QDRANT_URL: "http://qdrant-service:6333"
+  PHOENIX_ENDPOINT: "http://phoenix-service:6006"
+
+  # Application settings
+  # WARNING level suppresses INFO/DEBUG spam in production.
+  # Lower to INFO for debugging; never use DEBUG in production (PII risk in logs).
+  LOG_LEVEL: "WARNING"
+  CACHE_TTL_SECONDS: "86400"
+
+  # Max retries matches the LLM client fallback chain (Groq 8b -> 32b -> 70b).
+  # 3 retries with exponential backoff: 1s, 2s, 4s.
+  MAX_RETRIES: "3"
+
+  # Environment tag (used by observability to partition traces by environment)
+  ENVIRONMENT: "prod"

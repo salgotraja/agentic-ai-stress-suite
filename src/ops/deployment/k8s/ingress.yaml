@@ -1,0 +1,51 @@
+# Ingress: routes external HTTP/S traffic to the ClusterIP service.
+# Why NGINX Ingress Controller:
+#   - Battle-tested, widely used, supports WebSocket and SSE (needed for
+#     streaming LLM responses via Server-Sent Events)
+#   - Built-in rate limiting via annotations (no sidecar needed)
+#   - TLS termination + cert-manager integration (Let's Encrypt)
+#   - Single ingress handles all external traffic, Ingress rules fan out internally
+#
+# Install NGINX Ingress Controller (run once per cluster):
+#   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+#
+# Install cert-manager for automatic TLS (optional, production only):
+#   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+#
+# Why rate limit at 100 rps:
+#   LLM API calls are expensive. At 100 rps per IP, a single client can trigger
+#   ~$8,640/day in Groq costs at worst case. Rate limiting prevents runaway costs
+#   from misuse or bugs in client retry logic. Adjust per your SLA and budget.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rag-agent-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    # Rate limiting: 100 requests/second per client IP.
+    # Burst is allowed up to 2x (200 rps briefly) before 429 responses.
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    # Enable WebSocket/SSE keepalive for streaming LLM responses.
+    # Without this, NGINX closes connections after 60s proxy timeout.
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    # TLS: cert-manager issues Let's Encrypt certificate automatically.
+    # Uncomment the line below after deploying cert-manager.
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  # TLS block: uncomment after deploying cert-manager and updating the host.
+  # tls:
+  #   - hosts:
+  #       - api.yourdomain.com
+  #     secretName: rag-agent-tls
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rag-agent-service
+                port:
+                  number: 80

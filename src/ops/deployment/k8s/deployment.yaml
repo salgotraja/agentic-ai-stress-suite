@@ -1,0 +1,89 @@
+# Deployment: defines the desired state for the RAG/Agent API pods.
+# Why 2 replicas:
+#   Single replica = single point of failure. 2 replicas allow rolling updates
+#   with zero downtime and absorb moderate traffic spikes.
+#   HPA (hpa.yaml) auto-scales beyond 2 based on CPU pressure.
+#
+# Why this resource sizing (250m/512Mi requests, 1000m/1Gi limits):
+#   The RAG pipeline is primarily I/O-bound (Redis, Chroma, LLM API calls).
+#   CPU-bound work is minimal (embedding inference runs on CPU at low throughput).
+#   512Mi is enough for the Python process + model artifacts in memory.
+#   1Gi limit prevents OOM kill under concurrent request bursts.
+#   Adjust limits upward if BGE-base-en-v1.5 is loaded in-process (adds ~200MB).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-agent-api
+  namespace: default
+  labels:
+    app: rag-agent-api
+    version: "1.0"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: rag-agent-api
+  # Rolling update: replace pods one at a time.
+  # maxUnavailable=0: new pod must be Ready before old pod is terminated → zero-downtime.
+  # maxSurge=1: at most 1 extra pod exists during the rollout (so 3 total during deploy).
+  # This is safe because the app is stateless (state lives in Redis/Chroma).
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: rag-agent-api
+    spec:
+      containers:
+        - name: rag-agent-api
+          image: rag-agent-api:latest
+          # IfNotPresent: use local image if present (avoids registry pull in local K8s).
+          # Change to Always in production CI/CD pipelines to guarantee fresh images.
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          # Resource limits: prevent one pod from starving others on the node.
+          # requests: guaranteed allocation (scheduler uses this for pod placement).
+          # limits: hard ceiling (pod is OOM-killed if memory limit is exceeded).
+          # CPU limits are not enforced via OOM kill but via throttling.
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+          # Load non-sensitive config from ConfigMap and secrets from Secret.
+          # envFrom injects all keys as environment variables — matches how
+          # Pydantic BaseSettings reads config (case-insensitive env var lookup).
+          envFrom:
+            - configMapRef:
+                name: rag-agent-config
+            - secretRef:
+                name: rag-agent-secrets
+          # Liveness probe: restart the pod if it stops responding.
+          # Why /health: lightweight endpoint with no external dependencies.
+          # initialDelaySeconds=30: give the app time to load the embedding model
+          # and warm up the LLM client before first health check.
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+          # Readiness probe: only route traffic when the pod is fully warm.
+          # /ready checks that Redis connection and Chroma client are established.
+          # Without readiness, load balancer may send traffic to pods mid-startup
+          # that return errors (especially during rolling updates).
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 3

@@ -1,0 +1,32 @@
+# Service: stable network endpoint for the Deployment pods.
+# Why ClusterIP (not LoadBalancer or NodePort):
+#   ClusterIP is internal-only — pods can reach it by DNS name within the cluster.
+#   External traffic enters via Ingress (ingress.yaml), which gives us:
+#   - TLS termination in one place (not per-service)
+#   - Path-based routing (e.g., /api, /docs, /health on different backends)
+#   - Rate limiting annotations (NGINX)
+#   LoadBalancer per-service provisions a cloud load balancer per service ($$$)
+#   and bypasses the Ingress layer entirely. Avoid for internal services.
+#
+# Why port 80 → targetPort 8000:
+#   Standard HTTP port (80) at the Service level, mapped to the app's native
+#   port (8000, from uvicorn/FastAPI). Keeps service interface clean and avoids
+#   exposing implementation details in service DNS URLs.
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-agent-service
+  namespace: default
+  labels:
+    app: rag-agent-api
+spec:
+  type: ClusterIP
+  # selector must match the pod template labels in deployment.yaml.
+  # K8s continuously watches pods with these labels and updates endpoints.
+  selector:
+    app: rag-agent-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      protocol: TCP

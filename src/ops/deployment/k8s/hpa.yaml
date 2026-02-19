@@ -1,0 +1,52 @@
+# HorizontalPodAutoscaler: auto-scale pods based on CPU utilisation.
+# Why autoscaling/v2 (not v1):
+#   v2 supports multiple metric types (CPU, memory, custom metrics from Prometheus).
+#   v1 only supports CPU. Use v2 even if starting with CPU-only to avoid migration later.
+#   Requires Kubernetes 1.23+ (standard in all major cloud providers).
+#
+# Why 70% CPU target:
+#   At 70% CPU, pods retain 30% headroom to absorb traffic spikes before
+#   autoscaling kicks in (scaling takes ~60s end-to-end: metric collection →
+#   HPA decision → pod scheduling → readiness probe). 90%+ target → frequent
+#   throttling under burst; 50%- target → over-provisioning (wasted cost).
+#
+# Scale range: 2–8 replicas.
+#   Min 2: always maintain one spare for rolling updates and fault tolerance.
+#   Max 8: cost ceiling (~8x base cost at peak). Adjust based on budget and SLA.
+#   For Article 8 Locust load test target (100 req/sec, p95 < 500ms): 4-6 replicas
+#   under sustained load is expected; 8 provides headroom for burst.
+#
+# Cooldown windows prevent flapping:
+#   scaleDown.stabilizationWindowSeconds=300: waits 5 minutes of low CPU before
+#   scaling down. Prevents repeatedly scaling up/down around the 70% threshold.
+#   scaleUp.stabilizationWindowSeconds=60: reacts faster on the way up (60s)
+#   to avoid sustained overload. Asymmetric is intentional: fail open (more replicas)
+#   is cheaper than failing closed (under-provisioned → latency spikes → user churn).
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: rag-agent-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: rag-agent-api
+  minReplicas: 2
+  maxReplicas: 8
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          # averageUtilization is across all pods (not per-pod max).
+          # HPA scales when the mean CPU across replicas exceeds 70%.
+          averageUtilization: 70
+  behavior:
+    scaleDown:
+      # 5-minute cooldown prevents thrashing after a traffic spike subsides.
+      stabilizationWindowSeconds: 300
+    scaleUp:
+      # 60-second cooldown allows rapid response to sustained load increases.
+      stabilizationWindowSeconds: 60

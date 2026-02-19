@@ -1,0 +1,43 @@
+{
+  "pytorch": {
+    "matmul": {
+      "64": 0.0013,
+      "256": 0.0251,
+      "512": 0.1077,
+      "1024": 0.6725
+    },
+    "softmax": {
+      "128": 0.00042,
+      "512": 0.00075,
+      "2048": 0.00213,
+      "8192": 0.00767
+    },
+    "grad": {
+      "32": 0.00787,
+      "64": 0.01206,
+      "128": 0.01563,
+      "256": 0.0835
+    }
+  },
+  "jax": {
+    "matmul": {
+      "64": 0.0087,
+      "256": 0.0586,
+      "512": 0.1986,
+      "1024": 1.1635
+    },
+    "softmax": {
+      "128": 0.00237,
+      "512": 0.00575,
+      "2048": 0.00702,
+      "8192": 0.0164
+    },
+    "grad": {
+      "32": 0.00237,
+      "64": 0.00262,
+      "128": 0.01171,
+      "256": 0.02087
+    }
+  },
+  "teaching_note": "On CPU, PyTorch and JAX call the same BLAS/LAPACK libraries for matmul. Differences reflect dispatch overhead and JIT compile strategy. JAX jit tends to win on repeated calls (no Python dispatch overhead after compilation); PyTorch eager wins for one-shot ops or when torch.compile is not used. On TPU, JAX's XLA wins decisively."
+}

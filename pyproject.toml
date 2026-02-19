@@ -193,8 +193,10 @@ en-core-web-sm = { url = "https://github.com/explosion/spacy-models/releases/dow
 
 [dependency-groups]
 dev = [
+    "mypy>=1.19.1",
     "pre-commit>=4.5.1",
     "pytest-cov>=7.0.0",
+    "ruff>=0.14.11",
     "testcontainers>=4.14.0",
     "types-PyYAML>=6.0.0",
     "vcrpy>=8.1.1",

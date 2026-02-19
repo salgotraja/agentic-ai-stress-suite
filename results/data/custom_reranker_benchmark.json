@@ -1,0 +1,14 @@
+{
+  "cross_encoder": {
+    "model": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+    "ndcg_at_5": 0.874,
+    "latency_ms_median": 111.87,
+    "n_queries": 39
+  },
+  "flashrank": {
+    "model": "ms-marco-MiniLM-L-12-v2",
+    "ndcg_at_5": 0.7606,
+    "latency_ms_median": 339.11,
+    "n_queries": 39
+  }
+}

@@ -143,7 +143,9 @@ def main(*, force: bool = False, quick: bool = False) -> int:
             print(f"  Stopping early: {label} failed.")
             break
 
-    output_files = list(_STEP_OUTPUTS.values())
+    charts_dir = PROJECT_ROOT / "results" / "charts" / "article_09"
+    png_files = sorted(charts_dir.glob("*.png")) if charts_dir.exists() else []
+    output_files = list(_STEP_OUTPUTS.values()) + png_files
     print(format_summary(results, output_files))
 
     return 0 if all(r.passed for r in results) else 1

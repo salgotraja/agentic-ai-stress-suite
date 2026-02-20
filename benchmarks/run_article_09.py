@@ -139,7 +139,10 @@ def main(*, force: bool = False, quick: bool = False) -> int:
         result = run_step(label, cmd, skip=skip)
         results.append(result)
         if not result.passed:
-            # Fail fast: a failed step may invalidate downstream results
+            # Fail fast: training failure invalidates all downstream steps.
+            # benchmark_embeddings, custom_reranker, and pytorch_vs_jax all
+            # load bge_finetuned/ — running them after a training failure would
+            # benchmark the stock model silently and publish misleading numbers.
             print(f"  Stopping early: {label} failed.")
             break
 

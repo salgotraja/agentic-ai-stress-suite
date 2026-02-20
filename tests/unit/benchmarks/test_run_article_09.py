@@ -4,16 +4,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-# Project root is 4 levels up from this file
-PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
-sys.path.insert(0, str(PROJECT_ROOT))
-
-from benchmarks.run_article_09 import (  # noqa: E402, I001
-    StepResult,
-    _should_skip,
-    format_summary,
-    run_step,
-)
+from benchmarks.run_article_09 import StepResult, _should_skip, format_summary, run_step
 
 
 def test_should_skip_returns_true_when_output_exists(tmp_path: Path) -> None:
@@ -69,8 +60,8 @@ def test_format_summary_all_pass() -> None:
         StepResult(label="step B", passed=True, skipped=True, elapsed=0.0),
     ]
     summary = format_summary(results, output_files=[])
-    assert "PASS" in summary or "pass" in summary.lower()
-    assert "FAIL" not in summary
+    assert "PASS" in summary
+    assert "FAIL" not in summary.upper()
 
 
 def test_format_summary_with_failure() -> None:
@@ -79,4 +70,4 @@ def test_format_summary_with_failure() -> None:
         StepResult(label="step B", passed=False, skipped=False, elapsed=0.5),
     ]
     summary = format_summary(results, output_files=[])
-    assert "FAIL" in summary or "fail" in summary.lower()
+    assert "FAIL" in summary

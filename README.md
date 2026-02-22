@@ -1,291 +1,147 @@
 # Agentic AI Stress Test Suite
 
-Production-grade proof-of-concept demonstrating empirical trade-offs in RAG-to-agent workflows. Targets senior engineers transitioning to applied AI with reproducible benchmarks and annotated production code.
+[![CI](https://github.com/salgotraja/agentic-ai-stress-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/salgotraja/agentic-ai-stress-suite/actions/workflows/ci.yml)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+Production-grade proof-of-concept demonstrating empirical trade-offs in
+RAG-to-agent workflows. 9 articles, reproducible benchmarks, ~25,000 lines
+of annotated production code.
+
+**Target audience**: Senior engineers transitioning to applied AI.
+
+## Key Results
+
+| Technique | Metric | Improvement |
+|-----------|--------|-------------|
+| Hybrid search (BM25+RRF) | Recall@5 | 0.723 → 0.862 (+19%) |
+| BGE fine-tuning | Recall@5 | 0.61 → 0.78 (+17%) |
+| Semantic cache | LLM cost | $0.375 → $0.003 per session (99.2%) |
+| Parallel tool execution | Latency | 297ms → 114ms (2.62×) |
+| INT8 quantisation | Embed speed | 28ms → 11ms (2.51×, 4× smaller) |
+| K8s autoscaling | Throughput | 74 rps peak, p95=372ms at 50 users |
+| Guardrails | Safety | 100% PII coverage, 0% false positives |
 
 ## Quick Start
 
-### Prerequisites
-
-- Python 3.11+
-- Docker & Docker Compose
-- `uv` package manager (or Poetry)
-- LLM API keys (Groq, DeepSeek, Claude, Gemini, OpenAI)
-
-### Installation
-
 ```bash
-# Clone the repository
+# Clone and install
 git clone <repository-url>
 cd agentic-ai-stress-suite
+uv sync
 
-# Install dependencies with uv (preferred)
-export PATH="$HOME/.local/bin:$PATH"
-uv sync --all-extras
-
-# Or with Poetry
-poetry install --all-extras
-
-# Copy environment template
+# Copy env template and add your API keys
 cp .env.example .env
-# Edit .env with your API keys
 
-# Start local services (embeddings, Redis, Chroma, Phoenix)
-cd infra
-docker-compose up -d
+# Start local services (Redis, Chroma, Phoenix observability)
+docker-compose -f infra/docker-compose.yml up -d
 
-# Install pre-commit hooks
-uv run pre-commit install
-```
-
-### Verify Installation
-
-```bash
-# Check services
-docker-compose ps
-
-# Access Phoenix UI
-open http://localhost:6006
-
-# Run tests
+# Verify
 uv run pytest tests/unit/ -v
+open http://localhost:6006  # Phoenix traces
 ```
+
+**Prerequisites**: Python 3.11+, Docker, `uv`, API keys for at least one LLM
+provider (Groq is cheapest for development).
+
+## Articles and Code
+
+| # | Title | Key File | Blog Post |
+|---|-------|----------|-----------|
+| 1 | State-Aware RAG | `src/rag/advanced_rag.py` | [Article 1](docs/blog/article_01_state_aware_rag.md) |
+| 2 | Advanced Retrieval | `src/rag/hybrid_search.py` | [Article 2](docs/blog/article_02_advanced_retrieval.md) |
+| 3 | Evaluation Framework | `src/rag/evaluation/` | [Article 3](docs/blog/article_03_evaluation_framework.md) |
+| 4 | Single-Agent | `src/agents/single_agent.py` | [Article 4](docs/blog/article_04_single_agent.md) |
+| 5 | Multi-Agent | `src/agents/multi_agent.py` | [Article 5](docs/blog/article_05_multi_agent.md) |
+| 6 | LLM Ops | `src/ops/caching.py`, `routing.py` | [Article 6](docs/blog/article_06_llm_ops.md) |
+| 7 | Security | `src/ops/security.py` | [Article 7](docs/blog/article_07_security.md) |
+| 8 | Scaling | `src/ops/deployment/k8s/` | [Article 8](docs/blog/article_08_scaling.md) |
+| 9 | Deep Learning | `examples/article_09_dl/` | [Article 9](docs/blog/article_09_deep_learning.md) |
 
 ## Architecture
 
-### Hybrid Local/Cloud Infrastructure
-
-**Local Services (Docker Compose):**
-- **text-embeddings-inference**: BGE-base-en-v1.5 embeddings (Metal-accelerated on M4)
-- **Redis**: Cache + state persistence (from Phase 1)
-- **Chroma**: Vector database (local dev)
-- **Phoenix**: Observability platform
-- **Postgres**: Optional, for complex agent state (use `--profile optional`)
-
-**Cloud Services:**
-- **LLMs**: Groq → DeepSeek → Claude → Gemini → OpenAI (cost-optimized fallback chain)
-- **Qdrant**: Cloud vector DB option (production, Article 2+)
-- **Cohere**: Reranker API
-
-### Project Structure
-
 ```
 src/
-├── core/          # Shared utilities (LLM client, config, observability)
-├── rag/           # RAG implementations (Articles 1-3)
-├── agents/        # Agent systems (Articles 4-5)
-└── ops/           # Production concerns (Articles 6-8)
+├── core/           # LLM client (Groq→DeepSeek→Claude→Gemini→OpenAI fallback),
+│                   # config, observability (@traced_*), benchmarking, cost tracking
+├── rag/            # Naive RAG, HyDE, query decomp, graph RAG, hybrid search,
+│                   # reranking, chunking, evaluation (RAGAS/DeepEval/LLM-judge)
+├── agents/
+│   ├── tools/      # Calculator, RAG, Search, DB, CodeExec, MCP, CustomEmbeddingRAG
+│   ├── single_agent.py   # ReActAgent + PlanAndExecuteAgent + parallel tool dispatch
+│   ├── multi_agent.py    # Sequential, critic loop, parallel fan-out, conflict resolution
+│   └── state_persistence.py  # InMemory / SQLite / Redis backends
+└── ops/
+    ├── caching.py   # L1 exact (MD5/Redis) + L2 semantic (cosine>0.95)
+    ├── routing.py   # LiteLLM fallback chain, complexity router, cost forecasting
+    └── security.py  # Guardrails, Llama-Guard, PII scanner, audit logger
 
-infra/             # Docker Compose setup
-tests/             # Unit, integration, benchmarks
-examples/          # Runnable demos per article
-datasets/          # Tech docs corpus + synthetic queries
-results/           # Charts, data, reports
-notebooks/         # Jupyter analysis notebooks
+infra/              # Docker Compose (Redis, Chroma, Phoenix, Neo4j optional)
+examples/           # Runnable demos per article
+benchmarks/         # Reproducible benchmark runners
+notebooks/          # Jupyter analysis notebooks with charts
+datasets/           # 200 tech docs + 450 synthetic queries + 50 golden Q&A pairs
+results/            # charts/, data/, reports/
+tests/unit/         # 28+ files, mock-only, <1s per test
+tests/integration/  # Testcontainers-based, real Redis/Postgres
 ```
 
-## Development Workflow
+## LLM Cost Strategy
 
-### Generating Documentation
+Development uses Groq (Llama-3-8B: ~$0.05/1M tokens). Benchmarks escalate
+to premium models only when quality comparison is the point. Local embeddings
+(BGE-base-en-v1.5, Metal-accelerated) are free.
 
-Generate technical documentation for RAG dataset:
+Fallback chain: `Groq-8B → Groq-70B → DeepSeek → Claude → Gemini → OpenAI`
+
+Total spend across all 9 articles: **<$12**.
+
+## Running Benchmarks
 
 ```bash
-# Generate specific topic range
-uv run python scripts/generate_tech_docs.py --framework fastapi --start 1 --end 10
-uv run python scripts/generate_tech_docs.py --framework pydantic --start 5 --end 15
+# Individual article benchmarks (mock mode, no API required)
+uv run python benchmarks/run_article_04.py --mock
+uv run python benchmarks/run_article_07.py
 
-# Regenerate only invalid documents
-uv run python scripts/generate_tech_docs.py --framework fastapi --regenerate-invalid
+# Article 9: DL benchmarks (requires training data)
+uv run python benchmarks/run_article_09.py --quick
 
-# Generate all topics for a framework (1-50)
-uv run python scripts/generate_tech_docs.py --framework react
-
-# Generate all frameworks
-uv run python scripts/generate_tech_docs.py --all
-
-# Use specific model (default: Qwen 32B → Llama 70B → DeepSeek → Claude fallback)
-uv run python scripts/generate_tech_docs.py --framework spring --start 20 --end 30 --model claude
-
-# Dry run (preview without writing files)
-uv run python scripts/generate_tech_docs.py --framework fastapi --start 1 --end 5 --dry-run
+# Generate all charts (executes Jupyter notebooks)
+./scripts/generate_all_charts.sh
 ```
 
-### Validating Documentation
+## Code Quality
 
 ```bash
-# Validate all documentation
-uv run python scripts/validate_tech_docs.py
-
-# Validate specific framework
-uv run python scripts/validate_tech_docs.py --framework fastapi
-
-# Verbose output with warnings
-uv run python scripts/validate_tech_docs.py --verbose
-
-# Export validation results to JSON
-uv run python scripts/validate_tech_docs.py --output results.json
-```
-
-### Generating Synthetic Queries
-
-Generate diverse test queries for RAG evaluation:
-
-```bash
-# Generate 30 queries (2 batches of 15-20, default batch size is 20)
-uv run python scripts/generate_queries.py --count 30
-
-# Generate large batch with auto-batching (generates in batches of 20)
-uv run python scripts/generate_queries.py --count 265 --append
-
-# Append to existing queries file
-uv run python scripts/generate_queries.py --count 50 --append
-
-# Generate specific query types
-uv run python scripts/generate_queries.py --count 20 --types simple,multi-hop,comparison
-
-# Use specific model (default: Groq → DeepSeek → Claude fallback)
-uv run python scripts/generate_queries.py --count 100 --model claude
-
-# Use smaller batch size (10-15) if experiencing JSON parsing errors
-uv run python scripts/generate_queries.py --count 200 --batch-size 10
-
-# Custom output file
-uv run python scripts/generate_queries.py --count 50 --output datasets/synthetic_queries/custom.json
-```
-
-### Utility Scripts
-
-```bash
-# Start Phoenix observability server (http://localhost:6006)
-uv run python scripts/start_phoenix.py
-
-# Test M4 GPU embeddings (Metal backend)
-uv run python scripts/test_m4_embeddings.py
-```
-
-### Running Examples
-
-```bash
-# Article 1: State-Aware RAG
-cd examples/article_01_state_aware_rag/
-uv run python demo.py --query "What is FastAPI?"
-
-# Article 4: Single-Agent
-cd examples/article_04_single_agent/
-uv run python demo.py --agent react --query "Calculate 2^8"
-```
-
-### Running Benchmarks
-
-```bash
-# Run Article 1 benchmarks (Naive RAG baseline)
-uv run python benchmarks/run_article_01.py
-
-# Custom dataset or output
-uv run python benchmarks/run_article_01.py --dataset datasets/synthetic_queries/custom.json --output results/data/custom.json
-
-# More runs for better statistics
-uv run python benchmarks/run_article_01.py --runs 5
-
-# Different retrieval parameters
-uv run python benchmarks/run_article_01.py --top-k 10
-
-# Generate charts from benchmark results (executes notebook and updates in-place)
-uv run jupyter nbconvert --execute --to notebook --inplace notebooks/analysis_article_01.ipynb
-
-# Alternative: Open notebook interactively
-uv run jupyter notebook notebooks/analysis_article_01.ipynb
-```
-
-### Running Benchmarks on Google Colab
-
-If you hit rate limits locally, use Google Colab for benchmarks:
-
-```bash
-# 1. Upload notebook to Colab
-#    - Go to https://colab.research.google.com
-#    - File → Upload notebook
-#    - Select: notebooks/colab_benchmark_runner.ipynb
-
-# 2. Set API keys in Colab Secrets (🔑 icon)
-#    - Add GROQ_API_KEY (required)
-#    - Add OPENAI_API_KEY, ANTHROPIC_API_KEY (optional fallback)
-
-# 3. Run all cells in Colab
-#    - Runtime → Run all (Ctrl+F9)
-#    - Wait 15-30 minutes
-#    - Download results automatically
-
-# 4. Merge results back to local repo
-uv run python scripts/merge_colab_results.py ~/Downloads/article_01_benchmarks.json
-
-# 5. Generate visualizations locally
-uv run jupyter nbconvert --execute --to notebook --inplace notebooks/analysis_article_01.ipynb
-```
-
-**Benefits of Colab:**
-- Fresh API quota (different IP)
-- Free T4 GPU for embeddings
-- No Docker dependencies
-- Longer runtimes without local interruption
-
-See `notebooks/COLAB_SETUP.md` for detailed instructions.
-
-### Code Quality Checks
-
-```bash
-# Linting
 uv run ruff check src/ tests/
-
-# Type checking
 uv run mypy src/
-
-# Formatting
-uv run black src/ tests/
-uv run isort src/ tests/
-
-# Tests with coverage
-uv run pytest tests/unit/ --cov=src --cov-report=term-missing
+uv run pytest tests/unit/ --cov=src/ --cov-report=term-missing
 ```
 
-## Implementation Progress
+## Docker Compose Services
 
-**Current Status**: Phase 1 - End-to-End Spike
+```bash
+docker-compose -f infra/docker-compose.yml up -d   # start
+docker-compose -f infra/docker-compose.yml ps      # status
+docker-compose -f infra/docker-compose.yml down    # stop
+```
 
-See [docs/tasks.md](docs/tasks.md) for detailed task tracking across 6 implementation phases.
+Services: Redis (cache/state), Chroma (vector DB), Phoenix (observability at
+`localhost:6006`). Neo4j optional for graph RAG demos.
 
 ## Key Documents
 
-- **CLAUDE.md**: Development guidelines for Claude Code
-- **docs/specifications.md**: Complete technical specifications
-- **docs/requirements.md**: Functional and non-functional requirements
-- **docs/tasks.md**: 190 trackable tasks across 6 phases
-- **docs/discussions.md**: Project rationale and goals
+- `docs/specifications.md` — full technical specifications
+- `docs/requirements.md` — functional and non-functional requirements
+- `docs/tasks.md` — 110 implementation tasks (all phases complete)
+- `docs/blog/` — 9 article drafts with code references and benchmarks
+- `handover.md` — full implementation history and architectural decisions
 
 ## Contributing
 
-This is a personal learning project demonstrating applied AI patterns. Not currently accepting external contributions, but feel free to fork and adapt for your own use.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add new RAG techniques, agent
+tools, or benchmarks.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) file for details.
-
-## Blog Series
-
-This codebase supports an 8-9 article blog series:
-
-1. **State-Aware RAG**: Moving Beyond Top-K Retrieval
-2. **Advanced Retrieval**: Hybrid Search, Reranking, Metadata Mastery
-3. **Evaluation-Driven RAG**: Metrics, Tracing, Continuous Improvement
-4. **From RAG to Agents**: Building Reliable Single-Agent Workflows
-5. **Multi-Agent Systems**: Orchestration Patterns and Collaboration
-6. **LLM Ops in Production**: Caching, Routing, Observability, Cost Control
-7. **Security and Governance**: Prompt Injection, Data Leakage, Compliance
-8. **Scaling Agentic Systems**: Performance, Fault Tolerance, Deployment
-9. **Deep Learning Integrations**: Custom Architectures and PyTorch/JAX Internals
-
-## Contact
-
-Author: Jagdish Salgotra (@salgotraja)
-
-**Target Audience**: Senior engineers and architects transitioning to applied AI
+MIT — see [LICENSE](LICENSE).

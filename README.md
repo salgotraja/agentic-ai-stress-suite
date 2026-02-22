@@ -3,6 +3,7 @@
 [![CI](https://github.com/salgotraja/agentic-ai-stress-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/salgotraja/agentic-ai-stress-suite/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)
 
 Production-grade proof-of-concept demonstrating empirical trade-offs in
 RAG-to-agent workflows. 9 articles, reproducible benchmarks, ~25,000 lines
@@ -44,19 +45,30 @@ open http://localhost:6006  # Phoenix traces
 **Prerequisites**: Python 3.11+, Docker, `uv`, API keys for at least one LLM
 provider (Groq is cheapest for development).
 
-## Articles and Code
+[//]: # (## Articles and Code)
 
-| # | Title | Key File | Blog Post |
-|---|-------|----------|-----------|
-| 1 | State-Aware RAG | `src/rag/advanced_rag.py` | [Article 1](docs/blog/article_01_state_aware_rag.md) |
-| 2 | Advanced Retrieval | `src/rag/hybrid_search.py` | [Article 2](docs/blog/article_02_advanced_retrieval.md) |
-| 3 | Evaluation Framework | `src/rag/evaluation/` | [Article 3](docs/blog/article_03_evaluation_framework.md) |
-| 4 | Single-Agent | `src/agents/single_agent.py` | [Article 4](docs/blog/article_04_single_agent.md) |
-| 5 | Multi-Agent | `src/agents/multi_agent.py` | [Article 5](docs/blog/article_05_multi_agent.md) |
-| 6 | LLM Ops | `src/ops/caching.py`, `routing.py` | [Article 6](docs/blog/article_06_llm_ops.md) |
-| 7 | Security | `src/ops/security.py` | [Article 7](docs/blog/article_07_security.md) |
-| 8 | Scaling | `src/ops/deployment/k8s/` | [Article 8](docs/blog/article_08_scaling.md) |
-| 9 | Deep Learning | `examples/article_09_dl/` | [Article 9](docs/blog/article_09_deep_learning.md) |
+[//]: # ()
+[//]: # (| # | Title | Key File | Blog Post |)
+
+[//]: # (|---|-------|----------|-----------|)
+
+[//]: # (| 1 | State-Aware RAG | `src/rag/advanced_rag.py` | [Article 1]&#40;docs/blog/article_01_state_aware_rag.md&#41; |)
+
+[//]: # (| 2 | Advanced Retrieval | `src/rag/hybrid_search.py` | [Article 2]&#40;docs/blog/article_02_advanced_retrieval.md&#41; |)
+
+[//]: # (| 3 | Evaluation Framework | `src/rag/evaluation/` | [Article 3]&#40;docs/blog/article_03_evaluation_framework.md&#41; |)
+
+[//]: # (| 4 | Single-Agent | `src/agents/single_agent.py` | [Article 4]&#40;docs/blog/article_04_single_agent.md&#41; |)
+
+[//]: # (| 5 | Multi-Agent | `src/agents/multi_agent.py` | [Article 5]&#40;docs/blog/article_05_multi_agent.md&#41; |)
+
+[//]: # (| 6 | LLM Ops | `src/ops/caching.py`, `routing.py` | [Article 6]&#40;docs/blog/article_06_llm_ops.md&#41; |)
+
+[//]: # (| 7 | Security | `src/ops/security.py` | [Article 7]&#40;docs/blog/article_07_security.md&#41; |)
+
+[//]: # (| 8 | Scaling | `src/ops/deployment/k8s/` | [Article 8]&#40;docs/blog/article_08_scaling.md&#41; |)
+
+[//]: # (| 9 | Deep Learning | `examples/article_09_dl/` | [Article 9]&#40;docs/blog/article_09_deep_learning.md&#41; |)
 
 ## Architecture
 

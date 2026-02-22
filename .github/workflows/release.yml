@@ -1,0 +1,86 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  generate-charts:
+    name: Generate Charts
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+      - name: Install dependencies
+        run: uv sync --frozen
+      - name: Install Jupyter
+        run: uv add jupyter nbconvert
+      - name: Execute analysis notebooks (CI-safe fallback data)
+        run: |
+          for nb in notebooks/analysis_article_*.ipynb notebooks/cost_dashboard.ipynb; do
+            echo "Executing $nb..."
+            uv run jupyter nbconvert --to notebook --execute "$nb" \
+              --output "${nb%.ipynb}_executed.ipynb" \
+              --ExecutePreprocessor.timeout=300 || true
+          done
+        env:
+          ENVIRONMENT: test
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      - name: Upload charts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-charts
+          path: results/charts/
+          retention-days: 90
+
+  docker-compose-test:
+    name: Test Docker Compose Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate docker-compose syntax
+        run: docker compose -f infra/docker-compose.yml config --quiet
+      - name: Pull images (no start — avoids GPU/port requirements in CI)
+        run: docker compose -f infra/docker-compose.yml pull --quiet
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: [generate-charts, docker-compose-test]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download charts
+        uses: actions/download-artifact@v4
+        with:
+          name: release-charts
+          path: release-charts/
+      - name: Compress results
+        run: |
+          tar -czf results-charts.tar.gz release-charts/
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: results-charts.tar.gz
+          generate_release_notes: true
+          body: |
+            ## Agentic AI Stress Test Suite ${{ github.ref_name }}
+
+            Production-grade proof-of-concept demonstrating empirical trade-offs
+            in RAG-to-agent workflows across 9 articles.
+
+            **Quick start:**
+            ```bash
+            uv sync
+            docker-compose -f infra/docker-compose.yml up -d
+            uv run python examples/article_01_state_aware_rag/demo.py
+            ```
+
+            See `README.md` for full setup instructions.

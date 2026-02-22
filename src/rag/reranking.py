@@ -40,7 +40,7 @@ Production recommendation:
 from __future__ import annotations
 
 import time
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 
 from llama_index.core.schema import NodeWithScore
 
@@ -144,9 +144,9 @@ class FlashRankReranker:
         passages = []
         for i, doc in enumerate(documents):
             if is_llamaindex:
-                text = doc.node.get_content()  # type: ignore[union-attr]
+                text = cast("NodeWithScore", doc).node.get_content()
             else:
-                text = doc.get("content", "")  # type: ignore[union-attr]
+                text = cast("dict[str, Any]", doc).get("content", "")
             passages.append({"id": str(i), "text": text})
 
         from flashrank import RerankRequest
@@ -155,7 +155,7 @@ class FlashRankReranker:
         reranked = ranker.rerank(rerank_request)[:top_k]
 
         # Map back to original document format
-        reranked_docs: list[NodeWithScore] | list[dict[str, Any]] = []
+        reranked_docs: list[Any] = []
         for passage in reranked:
             idx = int(passage["id"])
             original_doc = documents[idx]
@@ -274,9 +274,10 @@ class CohereReranker:
         doc_texts = []
         for doc in documents:
             if is_llamaindex:
-                doc_texts.append(doc.node.get_content())  # type: ignore[union-attr]
+                node_with_score = cast("NodeWithScore", doc)
+                doc_texts.append(node_with_score.node.get_content())
             else:
-                doc_texts.append(doc.get("content", ""))  # type: ignore[union-attr]
+                doc_texts.append(cast("dict[str, Any]", doc).get("content", ""))
 
         # Call Cohere Rerank API
         response = client.rerank(
@@ -287,7 +288,7 @@ class CohereReranker:
         )
 
         # Map back to original document format
-        reranked_docs: list[NodeWithScore] | list[dict[str, Any]] = []
+        reranked_docs: list[Any] = []
         for result in response.results:
             idx = result.index
             original_doc = documents[idx]

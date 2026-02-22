@@ -41,11 +41,11 @@ When to use hybrid vs dense-only:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from llama_index.core import SimpleDirectoryReader, StorageContext, VectorStoreIndex
 from llama_index.core.node_parser import SentenceSplitter
-from llama_index.core.schema import Document, NodeWithScore, TextNode
+from llama_index.core.schema import BaseNode, Document, NodeWithScore, TextNode
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.vector_stores.chroma import ChromaVectorStore
 from rank_bm25 import BM25Okapi
@@ -149,13 +149,9 @@ class HybridSearchPipeline:
             cache_folder=str(self.settings.get_project_root() / ".cache" / "embeddings"),
         )
 
-        # Initialize Chroma for dense retrieval
-        import chromadb
-
-        self.chroma_client = chromadb.HttpClient(
-            host=self._parse_chroma_host(),
-            port=self._parse_chroma_port(),
-        )
+        # Delay Chroma client creation until index build to avoid hard
+        # dependency on a running Chroma service at object construction time.
+        self.chroma_client: Any | None = None
 
         # Initialize node parser
         self.node_parser = SentenceSplitter(
@@ -166,7 +162,7 @@ class HybridSearchPipeline:
         # Storage for indices
         self._dense_index: VectorStoreIndex | None = None
         self._bm25: BM25Okapi | None = None
-        self._chunks: list[TextNode] = []  # Store chunks for BM25 retrieval
+        self._chunks: list[BaseNode] = []  # Store chunks for BM25 retrieval
 
         # Initialize reranker if enabled
         self._reranker: FlashRankReranker | None = None
@@ -195,6 +191,17 @@ class HybridSearchPipeline:
         if ":" in url:
             return int(url.split(":")[1])
         return 8000
+
+    def _get_or_create_chroma_client(self) -> Any:
+        """Lazily initialize Chroma client when dense index is actually built."""
+        if self.chroma_client is None:
+            import chromadb
+
+            self.chroma_client = chromadb.HttpClient(
+                host=self._parse_chroma_host(),
+                port=self._parse_chroma_port(),
+            )
+        return self.chroma_client
 
     def load_documents(self, directory: str | Path) -> list[Document]:
         """
@@ -257,7 +264,8 @@ class HybridSearchPipeline:
         - Consider ElasticSearch for unified indexing
         """
         # Build dense index (identical to NaiveRAG)
-        chroma_collection = self.chroma_client.get_or_create_collection(name=self.collection_name)
+        chroma_client = self._get_or_create_chroma_client()
+        chroma_collection = chroma_client.get_or_create_collection(name=self.collection_name)
         vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
         storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
@@ -335,7 +343,7 @@ class HybridSearchPipeline:
         return text.lower().split()
 
     @traced_retrieval
-    def retrieve_bm25(self, query: str, top_k: int | None = None) -> list[tuple[TextNode, float]]:
+    def retrieve_bm25(self, query: str, top_k: int | None = None) -> list[tuple[BaseNode, float]]:
         """
         Retrieve using BM25 keyword search.
 
@@ -445,7 +453,7 @@ class HybridSearchPipeline:
 
     def _reciprocal_rank_fusion(
         self,
-        bm25_results: list[tuple[TextNode, float]],
+        bm25_results: list[tuple[BaseNode, float]],
         dense_results: list[NodeWithScore],
         top_k: int,
     ) -> list[NodeWithScore]:
@@ -621,19 +629,21 @@ class HybridSearchPipeline:
         )
 
         # Apply reranking if enabled
+        reranked: list[NodeWithScore] = merged_results
         if self._reranker is not None:
-            merged_results, reranking_latency = self._reranker.rerank(
+            reranked_raw, reranking_latency = self._reranker.rerank(
                 query=query,
                 documents=merged_results,
                 top_k=k,
             )
+            reranked = cast(list[NodeWithScore], reranked_raw)
             # Store latency for observability
             # Teaching note: Reranking latency is tracked separately
             # to measure cost-benefit of cross-encoder reranking
             if hasattr(self, "_last_reranking_latency_ms"):
                 self._last_reranking_latency_ms = reranking_latency
 
-        return merged_results
+        return reranked
 
     @traced_generation
     def generate(self, query: str, context_nodes: list[NodeWithScore]) -> str:

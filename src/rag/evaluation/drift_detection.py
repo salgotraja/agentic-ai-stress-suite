@@ -113,8 +113,10 @@ class DriftDetector:
         # Add to current window
         self.current_window.append(embedding)
 
-        # Only check drift if window is sufficiently full
-        if len(self.current_window) < 100:  # Minimum for reliable statistics
+        # Only check drift when the configured window is full.
+        # This keeps comparisons consistent (fixed sample size) and avoids
+        # noisy alerts from partially-filled windows.
+        if len(self.current_window) < self.window_size:
             return None
 
         # Perform drift detection
@@ -192,7 +194,7 @@ class DriftDetector:
         return metrics
 
     def _calculate_kl_divergence(
-        self, baseline: list[np.ndarray], current: list[np.ndarray], bins: int = 20
+        self, baseline: list[np.ndarray], current: list[np.ndarray], bins: int = 6
     ) -> float:
         """
         Calculate KL divergence between baseline and current distributions.

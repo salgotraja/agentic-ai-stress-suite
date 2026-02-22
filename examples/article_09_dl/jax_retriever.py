@@ -29,7 +29,7 @@ DPR (Dense Passage Retrieval):
 jax.distributed.initialize():
   In production, call once at program start before any JAX ops.
   On a multi-host TPU pod:
-    jax.distributed.initialize(coordinator_address='192.168.1.1:1234',
+    jax.distributed.initialize(coordinator_address='<coordinator-host>:1234',
                                 num_processes=8, process_id=rank)
   On a single machine: no-op (safe to call, just prints info).
   Here we demonstrate the API without multi-host infrastructure.

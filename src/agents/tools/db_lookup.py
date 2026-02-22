@@ -106,8 +106,10 @@ class DatabaseLookupTool(BaseTool):
             Formatted query results or error message
 
         Teaching note: Security-critical implementation:
-        1. Parameterized queries ONLY (prevents SQL injection)
-        2. Read-only connection (prevents data modification)
+        1. Read-only connection (mode=ro) — primary SQL injection mitigation;
+           DROP/INSERT/UPDATE/DELETE all fail at the database level
+        2. Raw SQL is accepted because this is a query tool, not a fixed-query app;
+           parameterization is for apps with fixed queries and variable params
         3. Query timeout (prevents resource exhaustion)
         4. Row limit enforcement (prevents memory overflow)
 

@@ -58,10 +58,10 @@ dmypy.json
 .pytype/
 
 # Environment variables
-# Note: .env contains team defaults and IS committed
 # .env.local contains local overrides and is NOT committed
 .env.local
 .env.*.local
+.env
 
 # Results and outputs
 results/
@@ -90,6 +90,7 @@ docker-compose.override.yml
 # Temp files
 *.tmp
 *.bak
+*.backup
 *.swp
 
 # uv / poetry

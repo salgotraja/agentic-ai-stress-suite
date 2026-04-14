@@ -146,7 +146,6 @@ Services: Redis (cache/state), Chroma (vector DB), Phoenix (observability at
 - `docs/specifications.md` — full technical specifications
 - `docs/requirements.md` — functional and non-functional requirements
 - `docs/tasks.md` — 110 implementation tasks (all phases complete)
-- `docs/blog/` — 9 article drafts with code references and benchmarks
 - `handover.md` — full implementation history and architectural decisions
 
 ## Contributing

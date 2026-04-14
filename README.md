@@ -141,13 +141,6 @@ docker-compose -f infra/docker-compose.yml down    # stop
 Services: Redis (cache/state), Chroma (vector DB), Phoenix (observability at
 `localhost:6006`). Neo4j optional for graph RAG demos.
 
-## Key Documents
-
-- `docs/specifications.md` — full technical specifications
-- `docs/requirements.md` — functional and non-functional requirements
-- `docs/tasks.md` — 110 implementation tasks (all phases complete)
-- `handover.md` — full implementation history and architectural decisions
-
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add new RAG techniques, agent

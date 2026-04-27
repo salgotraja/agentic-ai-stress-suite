@@ -25,7 +25,7 @@ of annotated production code.
 | torch.compile (BGE on MPS) | Embed latency | 28.3ms → 28.7ms (0.99×, no win on Apple Silicon) |
 | Custom cross-encoder reranker | NDCG@5 / latency | 0.761 → 0.874 (+15%) and 339ms → 112ms (3× faster) vs FlashRank |
 | K8s autoscaling | Throughput | 74 rps peak, p95=372ms at 50 users |
-| Guardrails | Safety | 100% PII coverage, 0% false positives |
+| Guardrails (PII-extraction category) | Block rate | 100% on PII-extraction prompts (regex+spaCy NER), 0% false positives. Overall block rate across all five attack categories was 19/99 |
 
 ## Quick Start
 

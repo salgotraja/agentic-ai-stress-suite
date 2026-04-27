@@ -134,6 +134,17 @@ class Settings(BaseSettings):  # type: ignore[misc]
         default="http://localhost:6006/v1/traces",
         description="Phoenix OTLP trace collector endpoint",
     )
+    observability_enabled: bool = Field(
+        default=True,
+        description=(
+            "Master switch for the @traced_retrieval / @traced_generation / "
+            "@traced_tool_call decorators. When False, decorators short-circuit "
+            "to a direct function call so benchmark runs measure the system "
+            "without OTel overhead. Default True preserves the production "
+            "tracing path; set OBSERVABILITY_ENABLED=false for clean "
+            "latency/throughput numbers."
+        ),
+    )
 
     # LLM Configuration
     default_llm_model: str = Field(

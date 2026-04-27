@@ -216,6 +216,14 @@ def traced_retrieval(func: F) -> F:
 
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
+        # OBSERVABILITY_ENABLED=false short-circuits to a direct call so
+        # benchmark runs measure the system without OTel + LangFuse overhead.
+        # The correlation-id kwarg is still consumed so the wrapped function
+        # signature behaves identically whether tracing is on or off.
+        if not get_settings().observability_enabled:
+            kwargs.pop("_correlation_id", None)
+            return func(*args, **kwargs)
+
         # Extract correlation_id if provided in kwargs
         correlation_id = kwargs.pop("_correlation_id", None) or generate_correlation_id()
 
@@ -303,6 +311,11 @@ def traced_generation(func: F) -> F:
 
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
+        # See traced_retrieval for the OBSERVABILITY_ENABLED rationale.
+        if not get_settings().observability_enabled:
+            kwargs.pop("_correlation_id", None)
+            return func(*args, **kwargs)
+
         # Extract correlation_id if provided in kwargs
         correlation_id = kwargs.pop("_correlation_id", None) or generate_correlation_id()
 
@@ -419,6 +432,11 @@ def traced_tool_call(func: F) -> F:
 
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
+        # See traced_retrieval for the OBSERVABILITY_ENABLED rationale.
+        if not get_settings().observability_enabled:
+            kwargs.pop("_correlation_id", None)
+            return func(*args, **kwargs)
+
         # Extract correlation_id if provided in kwargs
         correlation_id = kwargs.pop("_correlation_id", None) or generate_correlation_id()
 

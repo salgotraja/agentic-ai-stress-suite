@@ -164,6 +164,59 @@ class TestTracedGeneration:
         assert span.events  # exception recorded
 
 
+class TestObservabilityDisabled:
+    """OBSERVABILITY_ENABLED=false short-circuits all three decorators.
+
+    Benchmark fidelity requires zero OTel overhead. Each wrapper checks
+    the flag at call time and returns the wrapped function's result
+    without ever entering trace_context() when the flag is False.
+    """
+
+    def test_no_spans_emitted_when_flag_off(self, in_memory_exporter: InMemorySpanExporter) -> None:
+        @traced_retrieval
+        def search(query: str) -> list[str]:
+            return ["a"]
+
+        @traced_generation
+        def llm_call(prompt: str) -> str:
+            return "out"
+
+        @traced_tool_call
+        def tool(input: str) -> str:
+            return "ok"
+
+        class _Off:
+            observability_enabled = False
+
+        with patch.object(observability, "get_settings", return_value=_Off()):
+            assert search("x") == ["a"]
+            assert llm_call("x") == "out"
+            assert tool("x") == "ok"
+
+        assert _finished_spans(in_memory_exporter) == []
+
+    def test_correlation_id_kwarg_consumed_when_flag_off(
+        self, in_memory_exporter: InMemorySpanExporter
+    ) -> None:
+        # The wrapped function must not receive the internal _correlation_id
+        # kwarg, otherwise call sites that pass it would break when the flag
+        # flips off.
+        seen_kwargs: dict[str, Any] = {}
+
+        @traced_retrieval
+        def search(query: str, **kwargs: Any) -> list[str]:
+            seen_kwargs.update(kwargs)
+            return []
+
+        class _Off:
+            observability_enabled = False
+
+        with patch.object(observability, "get_settings", return_value=_Off()):
+            search("x", _correlation_id="abc-123")
+
+        assert "_correlation_id" not in seen_kwargs
+
+
 class TestTracedToolCall:
     """traced_tool_call covers agent tool execution."""
 

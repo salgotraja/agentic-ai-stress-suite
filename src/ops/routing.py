@@ -10,20 +10,23 @@ import litellm
 logger = logging.getLogger(__name__)
 
 # Fallback chain: cheapest first, most reliable last.
+# Canonical 6-link chain - must match README.md line 111 and src/core/llm_client.py.
 # Cost per 1M tokens (approximate, 2025):
-# - Groq Llama-3.1-8B: ~$0.05  (fast, cheap, good for simple queries)
-# - Groq Llama-3.1-70B: ~$0.59 (better quality, still cheap)
-# - DeepSeek R1: ~$0.14        (excellent value, strong reasoning)
-# - Claude Sonnet 4.5: ~$3     (premium quality)
-# - OpenAI GPT-4o: ~$5         (final fallback, max reliability)
+# - Groq Llama-3.1-8B:    ~$0.05  (fast, cheap, good for simple queries)
+# - Groq Llama-3.3-70B:   ~$0.59  (better quality, still cheap)
+# - DeepSeek chat:        ~$0.27  (excellent value, strong reasoning)
+# - Claude Sonnet 4.5:    ~$3.00  (premium quality, prompt caching)
+# - Gemini 2.0 Flash:     ~$0.075 (alternative high-quality, free in preview)
+# - OpenAI GPT-4o:        ~$2.50  (final fallback, max reliability)
 #
-# Why not start with GPT-4? ~100x more expensive than Groq-8B.
-# For 1M queries, Groq costs $50 vs GPT-4o's $5,000.
+# Why not start with GPT-4o? ~50x more expensive than Groq-8B.
+# For 1M queries, Groq costs $50 vs GPT-4o's $2,500.
 _FALLBACK_CHAIN = [
     "groq/llama-3.1-8b-instant",
     "groq/llama-3.3-70b-versatile",
     "deepseek/deepseek-chat",
     "anthropic/claude-sonnet-4-5-20250929",
+    "gemini/gemini-2.0-flash-exp",
     "gpt-4o",
 ]
 

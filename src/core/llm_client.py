@@ -2,13 +2,12 @@
 
 Cloud-first LLM strategy (hardware constraints on M4):
 - Local: text-embeddings-inference (BGE-base-en-v1.5, Metal-accelerated)
-- Cloud LLMs: Groq → DeepSeek → Claude → Gemini → OpenAI (final fallback)
+- Cloud LLMs: Groq-8B -> Groq-70B -> DeepSeek -> Claude -> Gemini -> OpenAI
 
-Groq fallback chain by model size:
-- Llama-3-8B: Development iteration ($0.05/1M tokens, fast)
-- Llama-3-32B: Medium complexity queries
-- Llama-3-70B: High complexity tasks
-Then escalate: DeepSeek → Claude → Gemini → OpenAI (GPT-4) for max reliability
+Canonical 6-link chain. Must match src/ops/routing.py and README.md line 111.
+- Llama-3.1-8B (Groq):  Development iteration ($0.05/1M tokens, fast)
+- Llama-3.3-70B (Groq): High complexity tasks ($0.59/1M tokens)
+Then escalate: DeepSeek -> Claude -> Gemini -> OpenAI (GPT-4o) for max reliability.
 
 Why not Ollama locally:
 - M4 memory constraints for running 7B+ models locally

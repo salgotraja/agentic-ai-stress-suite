@@ -238,7 +238,8 @@ def run_benchmark(
         SearchTool(),
         CalculatorTool(),
         DatabaseLookupTool(db_path=str(PROJECT_ROOT / "datasets" / "tech_docs.db")),
-        CodeExecutionTool(),
+        # Benchmark explicitly opts in to real execution; production callers must do the same.
+        CodeExecutionTool(enabled=True),
     ]
 
     # RAGTool requires a pipeline - skip for now in mock mode

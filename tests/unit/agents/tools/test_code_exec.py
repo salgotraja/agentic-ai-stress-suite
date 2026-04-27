@@ -27,7 +27,17 @@ def test_initialization() -> None:
     assert tool.name == "CodeExecutionTool"
     assert tool.timeout == 5  # Default
     assert tool.max_output == 10240  # Default (10KB)
+    assert tool.enabled is False  # Default off (security boundary)
     assert "Python" in tool.description
+
+
+def test_execute_disabled_by_default() -> None:
+    """Default-off semantics: execute() refuses without enabled=True opt-in."""
+    tool = CodeExecutionTool()
+    result = tool.execute("print('should not run')")
+
+    assert "disabled by default" in result
+    assert "enabled=True" in result
 
 
 def test_initialization_with_custom_params() -> None:
@@ -58,7 +68,7 @@ def test_parameter_clamping() -> None:
 
 def test_execute_simple_print() -> None:
     """Test executing simple print statement."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("print('Hello, World!')")
 
     assert "Hello, World!" in result
@@ -66,7 +76,7 @@ def test_execute_simple_print() -> None:
 
 def test_execute_calculation() -> None:
     """Test executing mathematical calculation."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("print(2**10)")
 
     assert "1024" in result
@@ -74,7 +84,7 @@ def test_execute_calculation() -> None:
 
 def test_execute_multiple_lines() -> None:
     """Test executing multiple lines of code."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     code = """
 x = 5
 y = 10
@@ -87,7 +97,7 @@ print(x + y)
 
 def test_execute_with_safe_imports() -> None:
     """Test execution with whitelisted imports."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
 
     # Test math import
     result = tool.execute("import math\nprint(math.sqrt(16))")
@@ -100,7 +110,7 @@ def test_execute_with_safe_imports() -> None:
 
 def test_execute_empty_code() -> None:
     """Test error handling for empty code."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("")
 
     assert "Error: Empty code" in result
@@ -108,7 +118,7 @@ def test_execute_empty_code() -> None:
 
 def test_execute_syntax_error() -> None:
     """Test error handling for syntax errors."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("print('missing closing quote)")
 
     assert "Syntax Error" in result or "SyntaxError" in result
@@ -116,7 +126,7 @@ def test_execute_syntax_error() -> None:
 
 def test_execute_runtime_error() -> None:
     """Test error handling for runtime errors."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("print(1/0)")
 
     assert "ZeroDivisionError" in result or "division by zero" in result.lower()
@@ -124,7 +134,7 @@ def test_execute_runtime_error() -> None:
 
 def test_security_dangerous_import_os() -> None:
     """Test that os import is blocked."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("import os\nprint(os.listdir('.'))")
 
     assert "Security Error" in result
@@ -133,7 +143,7 @@ def test_security_dangerous_import_os() -> None:
 
 def test_security_dangerous_import_subprocess() -> None:
     """Test that subprocess import is blocked."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("import subprocess\nsubprocess.run(['ls'])")
 
     assert "Security Error" in result
@@ -142,7 +152,7 @@ def test_security_dangerous_import_subprocess() -> None:
 
 def test_security_dangerous_import_sys() -> None:
     """Test that sys import is blocked."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("import sys\nprint(sys.version)")
 
     assert "Security Error" in result
@@ -151,7 +161,7 @@ def test_security_dangerous_import_sys() -> None:
 
 def test_security_dangerous_builtin_eval() -> None:
     """Test that eval() is blocked."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("eval('print(1)')")
 
     assert "Security Error" in result
@@ -160,7 +170,7 @@ def test_security_dangerous_builtin_eval() -> None:
 
 def test_security_dangerous_builtin_exec() -> None:
     """Test that exec() is blocked."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("exec('print(1)')")
 
     assert "Security Error" in result
@@ -169,7 +179,7 @@ def test_security_dangerous_builtin_exec() -> None:
 
 def test_security_dangerous_builtin_open() -> None:
     """Test that open() is blocked."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("open('test.txt', 'w')")
 
     assert "Security Error" in result
@@ -178,7 +188,7 @@ def test_security_dangerous_builtin_open() -> None:
 
 def test_security_dangerous_builtin_compile() -> None:
     """Test that compile() is blocked."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("compile('1+1', '<string>', 'eval')")
 
     assert "Security Error" in result
@@ -187,7 +197,7 @@ def test_security_dangerous_builtin_compile() -> None:
 
 def test_security_dangerous_builtin_import() -> None:
     """Test that __import__() is blocked."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("__import__('os')")
 
     assert "Security Error" in result
@@ -196,7 +206,7 @@ def test_security_dangerous_builtin_import() -> None:
 
 def test_security_from_import_blocked() -> None:
     """Test that from...import of blocked modules is prevented."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("from os import listdir\nprint(listdir('.'))")
 
     assert "Security Error" in result
@@ -205,7 +215,7 @@ def test_security_from_import_blocked() -> None:
 
 def test_timeout_enforcement() -> None:
     """Test that timeout is enforced for long-running code."""
-    tool = CodeExecutionTool(timeout=1)  # 1 second timeout
+    tool = CodeExecutionTool(timeout=1, enabled=True)  # 1 second timeout
     code = """
 import time
 time.sleep(5)  # Sleep longer than timeout
@@ -226,7 +236,7 @@ while True:
 
 def test_output_truncation() -> None:
     """Test that long output is truncated."""
-    tool = CodeExecutionTool(max_output=100)  # Small limit for testing
+    tool = CodeExecutionTool(max_output=100, enabled=True)  # Small limit for testing
     code = """
 for i in range(1000):
     print(f"Line {i}: " + "A" * 100)
@@ -242,7 +252,7 @@ for i in range(1000):
 
 def test_no_output() -> None:
     """Test code with no output."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("x = 1 + 1")
 
     assert "(No output)" in result
@@ -250,7 +260,7 @@ def test_no_output() -> None:
 
 def test_stderr_captured() -> None:
     """Test that stderr is captured."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
 
     # Note: sys is not in SAFE_IMPORTS, so we can't test stderr via sys.stderr
     # Instead, test with division by zero which outputs to stderr
@@ -334,7 +344,7 @@ def test_repr_representation() -> None:
 
 def test_safe_imports_list() -> None:
     """Test that safe imports are properly whitelisted."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
 
     # Test some safe imports
     safe_modules = ["math", "json", "re", "datetime", "random"]
@@ -347,7 +357,7 @@ def test_safe_imports_list() -> None:
 
 def test_multiple_statements_with_imports() -> None:
     """Test multiple statements including imports."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     code = """
 import math
 import json
@@ -364,7 +374,7 @@ print(data)
 
 def test_list_comprehension() -> None:
     """Test list comprehension execution."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     result = tool.execute("print([x**2 for x in range(5)])")
 
     assert "[0, 1, 4, 9, 16]" in result
@@ -372,7 +382,7 @@ def test_list_comprehension() -> None:
 
 def test_function_definition() -> None:
     """Test function definition and call."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     code = """
 def add(a, b):
     return a + b
@@ -386,7 +396,7 @@ print(add(5, 3))
 
 def test_class_definition() -> None:
     """Test class definition and instantiation."""
-    tool = CodeExecutionTool()
+    tool = CodeExecutionTool(enabled=True)
     code = """
 class Point:
     def __init__(self, x, y):

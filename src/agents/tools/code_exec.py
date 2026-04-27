@@ -26,6 +26,13 @@ NEVER use this tool in production without additional sandboxing:
 - Filesystem isolation (chroot, read-only mounts)
 - seccomp/AppArmor/SELinux policies
 
+Default-off semantics:
+- The tool refuses to execute by default. Pass `enabled=True` to opt in.
+- This makes the security boundary explicit at the call site, not buried in
+  config. A reviewer scanning for `CodeExecutionTool(` immediately sees
+  whether the caller knowingly accepted the risk.
+- `mock_execute()` is unaffected; tests and offline demos use the mock path.
+
 When to use code execution tools:
 - Mathematical calculations beyond simple arithmetic
 - Data transformations (parsing, formatting)
@@ -132,6 +139,7 @@ class CodeExecutionTool(BaseTool):
         name: str | None = None,
         timeout: int = 5,
         max_output: int = 10240,
+        enabled: bool = False,
     ) -> None:
         """
         Initialize the code execution tool.
@@ -140,6 +148,9 @@ class CodeExecutionTool(BaseTool):
             name: Optional tool name (defaults to 'CodeExecutionTool')
             timeout: Execution timeout in seconds (1-30)
             max_output: Maximum output length in bytes (1KB-1MB)
+            enabled: If False (default), execute() refuses to run. Callers must
+                explicitly pass enabled=True to opt in to running real code.
+                See module docstring for the rationale.
 
         Teaching note: Security vs usability trade-offs:
         - timeout: Short (5s) prevents DoS, but limits complex computations
@@ -150,6 +161,7 @@ class CodeExecutionTool(BaseTool):
         """
         self.timeout = max(1, min(timeout, 30))  # Clamp to 1-30s
         self.max_output = max(1024, min(max_output, 1048576))  # Clamp 1KB-1MB
+        self.enabled = enabled
         super().__init__(name)
 
     def execute(self, input: str) -> str:
@@ -172,6 +184,12 @@ class CodeExecutionTool(BaseTool):
 
         Why multiple layers: If one fails, others provide backup protection
         """
+        if not self.enabled:
+            return (
+                "Error: code execution is disabled by default. "
+                "Pass enabled=True to CodeExecutionTool() to opt in."
+            )
+
         if not input or not input.strip():
             return "Error: Empty code"
 

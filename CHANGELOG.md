@@ -18,7 +18,10 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 **Phase 2 — RAG Depth (Articles 1–3)**
 - `src/rag/advanced_rag.py`: HyDE + query decomposition; Recall@5 +9% over naive
 - `src/rag/graph_rag.py`: NetworkX entity/relation graph, multi-hop traversal
-- `src/rag/hybrid_search.py`: BM25+RRF + LlamaIndex/Haystack comparison; +19% Recall@5
+- `src/rag/hybrid_search.py`: BM25+RRF + LlamaIndex/Haystack comparison;
+  hybrid alone +8% Recall@5 (0.723 → 0.781); full pipeline (hybrid +
+  FlashRank + metadata pre-filter + late chunking) +19% Recall@5
+  (0.723 → 0.862)
 - `src/rag/reranking.py`: FlashRank (local) + Cohere API reranker
 - `src/rag/metadata_filter.py`: Pre/post-filtering with AND/OR/NOT logic
 - `src/rag/chunking.py`: Semantic, fixed, and late chunking; PDF table extraction
@@ -39,7 +42,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 **Phase 4 — Production Readiness (Articles 6–8)**
 - `src/ops/caching.py`: L1 exact (MD5/Redis, 24h TTL) + L2 semantic (cosine>0.95);
-  39% cache hit rate in benchmarks, 99.2% cost reduction
+  semantic cache alone: 39% hit rate, $0.375 → $0.229 (39% cost reduction)
+  on a 100-query workload; complexity routing alone: $0.375 → $0.003
+  (99.2% cost reduction) because 97% of queries route to Groq-8B
 - `src/ops/routing.py`: LiteLLM fallback chain, complexity router, cost forecasting
   (linear regression, 95% CI)
 - `src/core/cost_logger.py`: YAML pricing, budget alerts at 80%/100%
@@ -52,16 +57,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 **Phase 5 — Deep Learning (Article 9)**
 - BGE-base-en-v1.5 fine-tuning with MultipleNegativesRankingLoss;
-  Recall@5: 0.61 → 0.78 (+17%)
-- PyTorch optimisations: torch.compile (1.49×), INT8 quantisation (2.51×, 4× smaller),
+  Recall@5: 0.729 → 0.622 (-11%, objective-mismatch finding documented
+  in `results/data/article_09_benchmarks.json` — training used
+  query→answer-summary pairs but inference matches query→doc-chunk)
+- PyTorch optimisations: torch.compile on MPS (0.99×, no win on Apple Silicon),
+  INT8 dynamic quantisation (4× smaller, but ~1.8× slower on M4 — QNNPACK lacks
+  ARM SIMD acceleration; size win real, latency win is x86-only),
   torch.profiler Chrome trace
+- Custom cross-encoder reranker (cross-encoder/ms-marco-MiniLM-L-6-v2 base):
+  NDCG@5 0.761 (FlashRank) → 0.874 (+15%), latency 339ms → 112ms (3× faster)
+  on 39-query technical-docs set; attention hooks for [CLS] interpretability
 - JAX DPR-like retriever with jax.vmap/jit; JAX vs PyTorch benchmark
 - Custom cross-encoder with attention hooks (interpretability)
 - `src/agents/tools/custom_embedding_rag.py`: DIP plug-in, mock mode for CI
 
 **Phase 6 — Finalization**
 - GitHub Actions: CI (lint/typecheck/unit/smoke), nightly, release workflows
-- Blog posts: 9 articles in `docs/blog/`
+- Blog posts: 8 articles in `docs/blog/` (Article 9 deep-learning writeup
+  pending; code, benchmarks, and notebook shipped)
 - CONTRIBUTING.md, CHANGELOG.md
 - `scripts/generate_all_charts.sh`, `results/reports/v1.0_summary.md`
 - Git tag v1.0.0

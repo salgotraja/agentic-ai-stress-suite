@@ -15,11 +15,15 @@ of annotated production code.
 
 | Technique | Metric | Improvement |
 |-----------|--------|-------------|
-| Hybrid search (BM25+RRF) | Recall@5 | 0.723 → 0.862 (+19%) |
-| BGE fine-tuning | Recall@5 | 0.61 → 0.78 (+17%) |
-| Semantic cache | LLM cost | $0.375 → $0.003 per session (99.2%) |
+| Full retrieval pipeline (hybrid + rerank + filter + chunking) | Recall@5 | 0.723 → 0.862 (+19%) |
+| Hybrid search alone (BM25+RRF) | Recall@5 | 0.723 → 0.781 (+8%) |
+| BGE fine-tuning (regression) | Recall@5 | 0.729 → 0.622 (-11%) |
+| Semantic cache (alone) | LLM cost on 100-query workload | $0.375 → $0.229 (39%) |
+| Complexity routing (alone) | LLM cost on 100-query workload | $0.375 → $0.003 (99.2%) |
 | Parallel tool execution | Latency | 297ms → 114ms (2.62×) |
-| INT8 quantisation | Embed speed | 28ms → 11ms (2.51×, 4× smaller) |
+| INT8 quantisation (BGE) | Model size | 438MB → 110MB (4× smaller); slower on M4 (QNNPACK has no ARM speedup) |
+| torch.compile (BGE on MPS) | Embed latency | 28.3ms → 28.7ms (0.99×, no win on Apple Silicon) |
+| Custom cross-encoder reranker | NDCG@5 / latency | 0.761 → 0.874 (+15%) and 339ms → 112ms (3× faster) vs FlashRank |
 | K8s autoscaling | Throughput | 74 rps peak, p95=372ms at 50 users |
 | Guardrails | Safety | 100% PII coverage, 0% false positives |
 
@@ -148,4 +152,4 @@ tools, or benchmarks.
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT - see [LICENSE](LICENSE).

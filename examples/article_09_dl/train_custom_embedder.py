@@ -1,9 +1,9 @@
-"""Fine-tune BGE-base-en-v1.5 on tech docs corpus — task 5.3.
+"""Fine-tune BGE-base-en-v1.5 on tech docs corpus - task 5.3.
 
 Teaching note: WHY fine-tune a pre-trained embedding model?
   BGE-base-en-v1.5 is trained on general web text and NLI-style pairs.
   It scores ~63 on MTEB, but "What is FastAPI's BackgroundTasks?" is not
-  web text — the vocabulary, phrasing, and concept relationships are
+  web text - the vocabulary, phrasing, and concept relationships are
   domain-specific. Fine-tuning bridges the gap:
   - Aligns query phrasing with doc phrasing in the embedding space
   - Groups related framework concepts (DI, DI testing, FastAPI testing)
@@ -15,14 +15,14 @@ Teaching note: WHY fine-tune a pre-trained embedding model?
   1. Domain vocabulary diverges strongly from pre-training data
   2. Training data is large (10k+ pairs)
   For teaching purposes, the key lesson is the code path and evaluation
-  methodology — the numbers are secondary.
+  methodology - the numbers are secondary.
 
 Loss: MultipleNegativesRankingLoss (InfoNCE variant)
   Given a batch of (anchor, positive, negative) triplets, the loss maximises:
     log softmax(sim(anchor_i, positive_i) / temperature) against all
     {positive_j, negative_j} in the batch as negatives for anchor_i.
   With batch_size=16 and 1 explicit negative per row, each anchor sees
-  31 negatives (15 in-batch positives + 16 in-batch negatives) — efficient.
+  31 negatives (15 in-batch positives + 16 in-batch negatives) - efficient.
 
   sentence-transformers v3+ uses SentenceTransformerTrainer (HuggingFace Trainer
   under the hood). Dataset columns must match loss requirements:
@@ -152,7 +152,7 @@ def main() -> None:
     print(f"Train: {len(raw_train)} pairs  Val: {len(raw_val)} pairs")
 
     # Convert to sentence-transformers v3 column format:
-    # {anchor, positive, negative} — column names must match the loss expectation
+    # {anchor, positive, negative} - column names must match the loss expectation
     def remap(pairs: list[dict[str, str]]) -> list[dict[str, str]]:
         return [
             {"anchor": p["query"], "positive": p["positive"], "negative": p["negative"]}
@@ -178,7 +178,7 @@ def main() -> None:
     # in-batch positives as additional negatives for free.
     loss_fn = losses.MultipleNegativesRankingLoss(model)
 
-    # Training arguments — use HuggingFace Trainer conventions
+    # Training arguments - use HuggingFace Trainer conventions
     args.output_dir.mkdir(parents=True, exist_ok=True)
     training_args = SentenceTransformerTrainingArguments(
         output_dir=str(args.output_dir),

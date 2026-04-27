@@ -1,4 +1,4 @@
-"""Unit tests for AuditLogger — task 4.19.
+"""Unit tests for AuditLogger - task 4.19.
 
 All tests use tmp_path (pytest fixture) so each test gets an isolated
 SQLite database with no cross-test state pollution.

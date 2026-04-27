@@ -58,7 +58,7 @@ spec:
               cpu: "1000m"
               memory: "1Gi"
           # Load non-sensitive config from ConfigMap and secrets from Secret.
-          # envFrom injects all keys as environment variables — matches how
+          # envFrom injects all keys as environment variables - matches how
           # Pydantic BaseSettings reads config (case-insensitive env var lookup).
           envFrom:
             - configMapRef:

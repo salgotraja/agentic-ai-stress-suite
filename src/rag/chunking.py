@@ -527,11 +527,13 @@ class DocumentProcessor:
 
         if filepath.suffix.lower() not in self.SUPPORTED_EXTENSIONS:
             raise ValueError(
-                f"Unsupported file type: {filepath.suffix}. "
-                f"Supported: {self.SUPPORTED_EXTENSIONS}"
+                f"Unsupported file type: {filepath.suffix}. Supported: {self.SUPPORTED_EXTENSIONS}"
             )
 
-        metadata = {"source": str(filepath), "file_type": filepath.suffix.lower()}
+        metadata: dict[str, Any] = {
+            "source": str(filepath),
+            "file_type": filepath.suffix.lower(),
+        }
 
         if filepath.suffix.lower() == ".pdf":
             text, tables = self._pdf_processor.extract(filepath)

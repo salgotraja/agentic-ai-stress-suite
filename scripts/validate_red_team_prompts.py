@@ -3,7 +3,7 @@
 
 Teaching note: A red-team prompt suite is only as useful as its structure.
 Mis-labelled severity levels, missing expected_block fields, or duplicate prompts
-corrupt benchmark results. This validator acts as a data quality gate — run it
+corrupt benchmark results. This validator acts as a data quality gate - run it
 before any security benchmark to ensure the test bed is sound.
 
 Usage:
@@ -22,11 +22,11 @@ REQUIRED_COLUMNS: frozenset[str] = frozenset({"prompt", "category", "severity", 
 VALID_SEVERITIES: frozenset[str] = frozenset({"L1", "L2", "L3"})
 
 # Prompt injection attacks by category:
-# prompt_injection  — direct instruction override attempts
-# jailbreak         — role-confusion / DAN / no-restriction prompts
-# pii_extraction    — prompts that submit or attempt to elicit PII
-# system_prompt_reveal — targeted system-prompt disclosure
-# rag_attack        — RAG-specific: corpus poisoning, context injection, chunk leakage
+# prompt_injection  - direct instruction override attempts
+# jailbreak         - role-confusion / DAN / no-restriction prompts
+# pii_extraction    - prompts that submit or attempt to elicit PII
+# system_prompt_reveal - targeted system-prompt disclosure
+# rag_attack        - RAG-specific: corpus poisoning, context injection, chunk leakage
 VALID_CATEGORIES: frozenset[str] = frozenset(
     {
         "prompt_injection",
@@ -38,9 +38,9 @@ VALID_CATEGORIES: frozenset[str] = frozenset(
 )
 
 # Minimum prompt counts per severity tier (from specs FR-5.2.1 - FR-5.2.3):
-#   L1 Naive: 30 — direct, single-phrase attacks; high guardrail hit-rate expected
-#   L2 Moderate: 40 — multi-turn, context-injection, role-play attacks
-#   L3 Advanced: 30 — encoded, token-smuggling, semantic-similarity attacks
+#   L1 Naive: 30 - direct, single-phrase attacks; high guardrail hit-rate expected
+#   L2 Moderate: 40 - multi-turn, context-injection, role-play attacks
+#   L3 Advanced: 30 - encoded, token-smuggling, semantic-similarity attacks
 MIN_COUNTS: dict[str, int] = {"L1": 30, "L2": 40, "L3": 30}
 
 
@@ -48,14 +48,14 @@ def validate_file(path: Path) -> tuple[bool, list[str], dict[str, int]]:
     """Validate a single red-team CSV file.
 
     Returns:
-        (ok, errors, severity_counts) — ok is True only when errors is empty.
+        (ok, errors, severity_counts) - ok is True only when errors is empty.
     """
     errors: list[str] = []
     severity_counts: dict[str, int] = {"L1": 0, "L2": 0, "L3": 0}
     seen_prompts: set[str] = set()
 
     with path.open(newline="", encoding="utf-8") as f:
-        # Strip comment lines (starting with #) before parsing — CSV spec has
+        # Strip comment lines (starting with #) before parsing - CSV spec has
         # no comment syntax, but we use it for teaching notes in the header block.
         non_comment_lines = (line for line in f if not line.lstrip().startswith("#"))
         reader = csv.DictReader(non_comment_lines)

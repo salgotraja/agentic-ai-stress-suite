@@ -1,4 +1,4 @@
-"""Article 9 benchmark orchestrator — task 5.13.
+"""Article 9 benchmark orchestrator - task 5.13.
 
 Teaching note: WHY subprocess isolation?
   Each Article 9 benchmark loads 400MB+ ML models (BGE-base-en-v1.5, PyTorch,
@@ -49,7 +49,7 @@ def run_step(label: str, cmd: list[str], *, skip: bool = False) -> StepResult:
 
     Teaching note: We capture elapsed wall-clock time rather than CPU time
     because benchmark latency (I/O, model loading) is what matters for
-    reproducibility reporting — not CPU scheduling time.
+    reproducibility reporting - not CPU scheduling time.
     """
     t0 = time.perf_counter()
     if skip:
@@ -141,7 +141,7 @@ def main(*, force: bool = False, quick: bool = False) -> int:
         if not result.passed:
             # Fail fast: training failure invalidates all downstream steps.
             # benchmark_embeddings, custom_reranker, and pytorch_vs_jax all
-            # load bge_finetuned/ — running them after a training failure would
+            # load bge_finetuned/ - running them after a training failure would
             # benchmark the stock model silently and publish misleading numbers.
             print(f"  Stopping early: {label} failed.")
             break

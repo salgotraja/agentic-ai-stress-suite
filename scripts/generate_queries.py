@@ -36,12 +36,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import random
 import sys
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any
 
 # Add project root to path for imports
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
@@ -159,7 +157,7 @@ class QueriesGenerator:
         if self.preferred_model:
             print(f"Model: {self.preferred_model}")
         else:
-            print(f"Model: Groq → DeepSeek → Claude (fallback chain)")
+            print("Model: Groq → DeepSeek → Claude (fallback chain)")
 
         try:
             if self.preferred_model == "claude":
@@ -178,6 +176,7 @@ class QueriesGenerator:
                 )
             elif self.preferred_model == "groq":
                 from src.core.llm_client import GroqModel
+
                 response = self.llm_client._call_groq(
                     prompt=prompt,
                     model=GroqModel.LLAMA_3_70B,
@@ -206,6 +205,7 @@ class QueriesGenerator:
         except Exception as e:
             print(f"❌ Error generating queries: {e}")
             import traceback
+
             traceback.print_exc()
             return []
 
@@ -233,7 +233,7 @@ class QueriesGenerator:
 
         existing_context = ""
         if existing_queries:
-            existing_context = f"\n**Avoid duplicating these existing queries**:\n"
+            existing_context = "\n**Avoid duplicating these existing queries**:\n"
             for q in existing_queries[-10:]:  # Show last 10 to avoid
                 existing_context += f"- {q.query}\n"
 
@@ -245,7 +245,7 @@ Generate {count} diverse, high-quality test queries for a technical documentatio
 {docs_context}
 
 **Query Categories to Generate** (mix them):
-{', '.join(f'`{cat}`' for cat in categories)}
+{", ".join(f"`{cat}`" for cat in categories)}
 
 **Category Definitions**:
 - **simple**: Direct factual questions (e.g., "What is FastAPI?", "How do you declare path parameters?")
@@ -326,20 +326,21 @@ Generate the {count} queries now. Output ONLY valid JSON, no additional commenta
         try:
             # Try to fix common JSON issues
             json_text = json_text.replace('\\"', '"')  # Fix escaped quotes
-            json_text = json_text.replace('\\n', ' ')  # Replace literal \n
+            json_text = json_text.replace("\\n", " ")  # Replace literal \n
             queries_data = json.loads(json_text)
         except json.JSONDecodeError as e:
             print(f"⚠️  Failed to parse JSON: {e}")
-            print(f"Response text (first 1000 chars):")
+            print("Response text (first 1000 chars):")
             print(response_text[:1000])
             print("\nTrying alternative parsing...")
 
             # Strategy 1: Try to find and extract the JSON array
             import re
+
             queries_data = []
 
             # Look for array pattern [...]
-            array_match = re.search(r'\[\s*\{.*\}\s*\]', response_text, re.DOTALL)
+            array_match = re.search(r"\[\s*\{.*\}\s*\]", response_text, re.DOTALL)
             if array_match:
                 try:
                     array_text = array_match.group(0)
@@ -358,7 +359,7 @@ Generate the {count} queries now. Output ONLY valid JSON, no additional commenta
 
                 while start < len(response_text) and iteration < max_iterations:
                     iteration += 1
-                    start_idx = response_text.find('{', start)
+                    start_idx = response_text.find("{", start)
                     if start_idx == -1:
                         break
 
@@ -369,9 +370,9 @@ Generate the {count} queries now. Output ONLY valid JSON, no additional commenta
 
                     for i in range(start_idx, min(start_idx + max_chars, len(response_text))):
                         char = response_text[i]
-                        if char == '{':
+                        if char == "{":
                             depth += 1
-                        elif char == '}':
+                        elif char == "}":
                             depth -= 1
                             if depth == 0:
                                 end_idx = i + 1
@@ -381,7 +382,7 @@ Generate the {count} queries now. Output ONLY valid JSON, no additional commenta
                         obj_text = response_text[start_idx:end_idx]
                         try:
                             obj = json.loads(obj_text)
-                            if 'query' in obj:  # Validate it's a query object
+                            if "query" in obj:  # Validate it's a query object
                                 queries_data.append(obj)
                                 print(f"  Extracted query {len(queries_data)}")
                         except Exception:
@@ -392,7 +393,7 @@ Generate the {count} queries now. Output ONLY valid JSON, no additional commenta
                         start = start_idx + 1
 
                 if iteration >= max_iterations:
-                    print(f"⚠️  Hit iteration limit during parsing")
+                    print("⚠️  Hit iteration limit during parsing")
 
             if not queries_data:
                 print("❌ Could not parse any queries from response")
@@ -514,21 +515,19 @@ Generate the {count} queries now. Output ONLY valid JSON, no additional commenta
         print(f"\n💾 Saved {len(all_queries)} queries to: {filepath}")
 
         # Print statistics
-        print(f"\n📊 Query Statistics:")
+        print("\n📊 Query Statistics:")
         print(f"   Total queries: {len(all_queries)}")
-        print(f"   Difficulty distribution:")
+        print("   Difficulty distribution:")
         for diff, count in sorted(difficulty_dist.items()):
             print(f"     - {diff}: {count}")
-        print(f"   Category distribution:")
+        print("   Category distribution:")
         for cat, count in sorted(category_dist.items()):
             print(f"     - {cat}: {count}")
 
 
 def main() -> int:
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Generate synthetic queries for RAG testing"
-    )
+    parser = argparse.ArgumentParser(description="Generate synthetic queries for RAG testing")
     parser.add_argument(
         "--count",
         type=int,
@@ -593,9 +592,9 @@ def main() -> int:
 
     while remaining > 0:
         batch_count = min(remaining, args.batch_size)
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"Batch {batch_num}/{total_batches}: Generating {batch_count} queries")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
 
         # Pass existing queries + already generated queries to avoid duplicates
         context_queries = (existing_queries or []) + all_new_queries
@@ -637,9 +636,9 @@ def main() -> int:
         print("❌ No queries generated")
         return 1
 
-    print(f"\n{'='*70}")
+    print(f"\n{'=' * 70}")
     print(f"✅ Generated {len(all_new_queries)} total queries across {batch_num - 1} batches")
-    print(f"{'='*70}")
+    print(f"{'=' * 70}")
 
     # Save queries
     generator.save_queries(all_new_queries, args.output, append=args.append)

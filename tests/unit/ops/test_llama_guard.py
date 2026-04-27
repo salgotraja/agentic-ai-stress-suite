@@ -2,7 +2,7 @@
 
 Task 4.15: Llama-Guard fallback classifier.
 
-All LLM calls are mocked — tests run in <1ms without network access.
+All LLM calls are mocked - tests run in <1ms without network access.
 The mock `llm_fn` returns the exact string Llama-Guard-3 would produce:
     "safe"            → content passes
     "unsafe\nS2"      → content blocked, category S2 (Non-Violent Crimes)
@@ -39,7 +39,7 @@ def _make_failing_llm_fn() -> Callable[[str], str]:
 
 
 # ---------------------------------------------------------------------------
-# LlamaGuardClassifier — safe content
+# LlamaGuardClassifier - safe content
 # ---------------------------------------------------------------------------
 
 
@@ -59,7 +59,7 @@ def test_llama_guard_safe_content_has_no_reason() -> None:
 
 
 # ---------------------------------------------------------------------------
-# LlamaGuardClassifier — unsafe content
+# LlamaGuardClassifier - unsafe content
 # ---------------------------------------------------------------------------
 
 
@@ -80,7 +80,7 @@ def test_llama_guard_unsafe_result_includes_category() -> None:
 
 
 def test_llama_guard_unsafe_without_category() -> None:
-    """LLM returns bare 'unsafe' with no category line — still blocked."""
+    """LLM returns bare 'unsafe' with no category line - still blocked."""
     clf = LlamaGuardClassifier(llm_fn=_make_llm_fn("unsafe"))
     result = clf.classify("Do something bad.")
     assert result.blocked is True
@@ -88,7 +88,7 @@ def test_llama_guard_unsafe_without_category() -> None:
 
 
 # ---------------------------------------------------------------------------
-# LlamaGuardClassifier — error / failure modes
+# LlamaGuardClassifier - error / failure modes
 # ---------------------------------------------------------------------------
 
 
@@ -117,14 +117,14 @@ def test_llama_guard_llm_failure_fail_closed() -> None:
 
 
 # ---------------------------------------------------------------------------
-# GuardrailsManager — integration with LlamaGuardClassifier
+# GuardrailsManager - integration with LlamaGuardClassifier
 # ---------------------------------------------------------------------------
 
 
 def test_manager_with_llama_guard_blocks_semantic_threat() -> None:
     """Regex passes but Llama-Guard catches the semantically unsafe content.
 
-    Teaching note: This is the key use-case for Llama-Guard — catching
+    Teaching note: This is the key use-case for Llama-Guard - catching
     paraphrased or encoded attacks that bypass keyword regexes.
     """
     # Regex has no pattern for this; Llama-Guard flags it as S2
@@ -147,7 +147,7 @@ def test_manager_without_llama_guard_passes_semantic_threat() -> None:
 def test_manager_regex_blocks_before_llama_guard_is_called() -> None:
     """Known jailbreak phrase is blocked by regex; Llama-Guard is never invoked.
 
-    Teaching note: The fast regex layer is the first gate — it exits early
+    Teaching note: The fast regex layer is the first gate - it exits early
     without an LLM call. Llama-Guard (200-500ms) only runs when regex passes.
     """
     call_count = 0

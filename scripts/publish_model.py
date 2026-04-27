@@ -1,4 +1,4 @@
-"""Save fine-tuned model with metadata card to models/ directory — task 5.12.
+"""Save fine-tuned model with metadata card to models/ directory - task 5.12.
 
 Teaching note: Model versioning for production deployment
   A fine-tuned model without metadata is a liability: you can't tell
@@ -112,8 +112,8 @@ metrics:
 
 # BGE-base-en-v1.5 Fine-tuned on Tech Docs Corpus
 
-**Generated**: {datetime.now().strftime('%Y-%m-%d')}
-**Project**: Agentic AI Stress Test Suite — Article 9 (Deep Learning)
+**Generated**: {datetime.now().strftime("%Y-%m-%d")}
+**Project**: Agentic AI Stress Test Suite - Article 9 (Deep Learning)
 
 ## Model Description
 
@@ -239,8 +239,8 @@ metrics:
 
 # MS-MARCO MiniLM-L-6-v2 Cross-Encoder Fine-tuned on Tech Docs
 
-**Generated**: {datetime.now().strftime('%Y-%m-%d')}
-**Project**: Agentic AI Stress Test Suite — Article 9 (Deep Learning)
+**Generated**: {datetime.now().strftime("%Y-%m-%d")}
+**Project**: Agentic AI Stress Test Suite - Article 9 (Deep Learning)
 
 ## Model Description
 

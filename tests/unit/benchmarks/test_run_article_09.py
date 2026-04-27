@@ -1,4 +1,5 @@
-"""Tests for Article 9 orchestrator — task 5.13."""
+"""Tests for Article 9 orchestrator - task 5.13."""
+
 from __future__ import annotations
 
 import sys

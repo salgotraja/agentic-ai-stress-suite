@@ -3,22 +3,22 @@
 Teaching note: Prompt injection is an unsolved problem at the model level.
 No single defence stops all attacks. This module implements defence-in-depth:
 
-    Layer 1 — Fast-path regex rails (this file, <1ms):
+    Layer 1 - Fast-path regex rails (this file, <1ms):
         Block known PII patterns, jailbreak phrases, API key shapes.
         High recall on known patterns; zero recall on novel attacks.
 
-    Layer 2 — Llama-Guard semantic classifier (optional, 200-500ms LLM call):
+    Layer 2 - Llama-Guard semantic classifier (optional, 200-500ms LLM call):
         Meta's fine-tuned safety model classifies content against 14 hazard
         categories (S1-S14). Catches paraphrased / encoded attacks that
         bypass regexes (e.g. indirect jailbreaks, role-play injection).
         Used as fallback when NeMo Guardrails is unavailable.
 
-    Layer 3 — NeMo Guardrails (optional, 20-50ms LLM call):
+    Layer 3 - NeMo Guardrails (optional, 20-50ms LLM call):
         Policy-file-driven semantic rails evaluated by a secondary LLM.
         Catches paraphrased / encoded attacks that bypass regexes.
         See config/guardrails/ for Colang policy files.
 
-    Layer 4 — Monitoring (Article 7 benchmark):
+    Layer 4 - Monitoring (Article 7 benchmark):
         Log every blocked query with reason to SQLite audit log.
         Analyse false positives monthly; tune thresholds accordingly.
 
@@ -59,7 +59,7 @@ class GuardResult:
 # (example.com, test.com) to reduce false positives on developer queries.
 # ---------------------------------------------------------------------------
 
-# Block all email patterns in input — even example.com addresses — because
+# Block all email patterns in input - even example.com addresses - because
 # a user stating "my email is alice@example.com" is suspicious, not legitimate.
 # The example.com allowlist applies to OUTPUT (docs placeholders in LLM answers),
 # but output rails don't scan for emails, only API keys and system prompt leakage.
@@ -157,7 +157,7 @@ class LlamaGuardClassifier:
 
     Why use as fallback, not primary?
         Regex is instant (<1ms); Llama-Guard adds 200-500ms per request via API.
-        Use regex as the fast gate — Llama-Guard only runs when regex passes.
+        Use regex as the fast gate - Llama-Guard only runs when regex passes.
         This keeps median latency low while catching semantic attacks at the tail.
 
     fail_open=True (default for fallback):
@@ -240,7 +240,7 @@ class SpacyPIIScanner:
 
     SpaCy model trade-offs:
         en_core_web_sm  : 50 MB, ~85% F1 on NER, 20-50ms per sentence.
-        en_core_web_trf : 500 MB, ~92% F1 on NER, 200-400ms — use for async audit.
+        en_core_web_trf : 500 MB, ~92% F1 on NER, 200-400ms - use for async audit.
 
     nlp_fn is injected (not hard-wired to spaCy) so unit tests run in <1ms
     without loading the 50 MB model. Production code passes a real spaCy nlp:
@@ -300,7 +300,7 @@ class RawChunkDetector:
 
     Detection heuristic: sliding-window over chunk words, looking for a
     run of MIN_OVERLAP_WORDS consecutive words from any source chunk inside
-    the output. MIN_OVERLAP_WORDS=10 is a practical threshold —
+    the output. MIN_OVERLAP_WORDS=10 is a practical threshold -
         < 10  words → high false-positive rate (common technical phrases match)
         > 20  words → misses shorter verbatim extracts
 
@@ -351,7 +351,7 @@ class RawChunkDetector:
 
 
 # ---------------------------------------------------------------------------
-# Output sanitization — PII redaction and code block stripping
+# Output sanitization - PII redaction and code block stripping
 #
 # Why sanitize instead of (or in addition to) blocking?
 #   check_output() blocks: the caller gets an error, response is withheld.
@@ -420,7 +420,7 @@ def sanitize_output(text: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Audit logging — append-only SQLite record of every blocked or sanitized event
+# Audit logging - append-only SQLite record of every blocked or sanitized event
 #
 # Why append-only?
 #   Security audit logs must be tamper-evident. If an attacker (or a bug) could
@@ -431,7 +431,7 @@ def sanitize_output(text: str) -> str:
 #
 # Why SHA-256 of the input, not the raw text?
 #   1. Privacy: storing the raw jailbreak or PII string turns the audit log into
-#      a second data store of sensitive user input — a compliance liability.
+#      a second data store of sensitive user input - a compliance liability.
 #   2. Traceability: the hash is deterministic; if the same string appears again,
 #      the same hash matches, enabling deduplication without storing PII.
 #   3. Verifiability: the originating team can hash a candidate string and check
@@ -442,7 +442,7 @@ def sanitize_output(text: str) -> str:
 #   they would require fragile log parsing on a plain text file.
 #   Concurrency: SQLite WAL mode allows multiple readers and one writer safely.
 #   Portability: single file, no daemon, ships with Python stdlib.
-#   Limitation: not suitable for multi-node distributed deployments — migrate to
+#   Limitation: not suitable for multi-node distributed deployments - migrate to
 #   PostgreSQL (with audit-log extension) when horizontal scaling is required.
 # ---------------------------------------------------------------------------
 
@@ -451,7 +451,7 @@ class AuditLogger:
     """Append-only SQLite audit log for guardrail block and sanitize events.
 
     Every event records *what* happened (rail, reason, action) and a SHA-256
-    hash of the input text (never the raw text — see teaching comment above).
+    hash of the input text (never the raw text - see teaching comment above).
 
     Usage::
 
@@ -481,7 +481,7 @@ class AuditLogger:
 
     def __init__(self, db_path: str = "results/audit.db") -> None:
         # Create the parent directory if the path has one.
-        # os.path.dirname returns "" for bare filenames — makedirs("") raises,
+        # os.path.dirname returns "" for bare filenames - makedirs("") raises,
         # so we guard with a truthiness check.
         parent = os.path.dirname(db_path)
         if parent:
@@ -616,10 +616,10 @@ class GuardrailsManager:
         """Apply all input rails to user-supplied text.
 
         Execution order:
-          1. PII regex  — fast gate; attributes the block to the most
+          1. PII regex  - fast gate; attributes the block to the most
              actionable signal (PII > jailbreak) for support teams.
-          2. Jailbreak regex — fast gate for known injection phrases.
-          3. Llama-Guard — semantic fallback (only when set and regex passes).
+          2. Jailbreak regex - fast gate for known injection phrases.
+          3. Llama-Guard - semantic fallback (only when set and regex passes).
              Adds 200-500ms but catches encoded/paraphrased attacks.
         """
         pii_result = self._check_input_pii(text)
@@ -631,7 +631,7 @@ class GuardrailsManager:
             return jailbreak_result
 
         # Layer 2: Llama-Guard semantic classifier (optional fallback).
-        # Only called when regex passes — keeps the fast path free of LLM cost.
+        # Only called when regex passes - keeps the fast path free of LLM cost.
         if self._llama_guard is not None:
             lg_result = self._llama_guard.classify(text)
             if lg_result.blocked:
@@ -647,10 +647,10 @@ class GuardrailsManager:
         """Apply all output rails to LLM-generated text.
 
         Execution order:
-          1. API key leakage regex — regex, fast gate.
-          2. System prompt regex   — regex, fast gate.
-          3. SpacyPIIScanner       — NER, ~30ms; only when configured.
-          4. RawChunkDetector      — sliding-window; only when configured
+          1. API key leakage regex - regex, fast gate.
+          2. System prompt regex   - regex, fast gate.
+          3. SpacyPIIScanner       - NER, ~30ms; only when configured.
+          4. RawChunkDetector      - sliding-window; only when configured
                                      and source_chunks is provided.
 
         source_chunks is optional for backward compatibility: callers that

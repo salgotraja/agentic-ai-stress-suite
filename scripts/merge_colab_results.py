@@ -141,9 +141,7 @@ def merge_results(input_file: Path, output_dir: Path, force: bool = False) -> bo
 
 def main() -> int:
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Merge Colab benchmark results into repository"
-    )
+    parser = argparse.ArgumentParser(description="Merge Colab benchmark results into repository")
     parser.add_argument(
         "input_files",
         nargs="+",

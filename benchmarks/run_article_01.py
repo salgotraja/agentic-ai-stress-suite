@@ -27,9 +27,7 @@ from src.rag.naive_rag import NaiveRAGPipeline
 
 def main() -> int:
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Run Article 1 benchmarks for Naive RAG pipeline"
-    )
+    parser = argparse.ArgumentParser(description="Run Article 1 benchmarks for Naive RAG pipeline")
     parser.add_argument(
         "--dataset",
         type=Path,
@@ -131,17 +129,17 @@ def main() -> int:
     print(f"  Std:  {metrics['recall_at_k']['std']:.3f}")
     print(f"  Runs: {metrics['recall_at_k']['runs']}")
 
-    print(f"\nMRR (Mean Reciprocal Rank):")
+    print("\nMRR (Mean Reciprocal Rank):")
     print(f"  Mean: {metrics['mrr']['mean']:.3f}")
     print(f"  Std:  {metrics['mrr']['std']:.3f}")
     print(f"  Runs: {metrics['mrr']['runs']}")
 
-    print(f"\nLatency (ms):")
+    print("\nLatency (ms):")
     print(f"  Mean: {metrics['latency_ms']['mean']:.1f}")
     print(f"  Std:  {metrics['latency_ms']['std']:.1f}")
     print(f"  Runs: {[f'{r:.1f}' for r in metrics['latency_ms']['runs']]}")
 
-    print(f"\nTokens per query:")
+    print("\nTokens per query:")
     print(f"  Mean: {metrics['tokens_per_query']['mean']:.1f}")
     print(f"  Std:  {metrics['tokens_per_query']['std']:.1f}")
 

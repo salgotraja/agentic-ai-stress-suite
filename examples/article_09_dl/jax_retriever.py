@@ -1,4 +1,4 @@
-"""DPR-like dense retriever implemented in JAX — task 5.9.
+"""DPR-like dense retriever implemented in JAX - task 5.9.
 
 Teaching note: JAX vs PyTorch design philosophy
   PyTorch: imperative, eager execution, mutable state
@@ -20,7 +20,7 @@ Teaching note: JAX vs PyTorch design philosophy
     jax.jit compiles the function to XLA for hardware-optimised kernels.
 
 DPR (Dense Passage Retrieval):
-  Two encoders — query encoder Q(q) and passage encoder P(d) —
+  Two encoders - query encoder Q(q) and passage encoder P(d) -
   trained so that dot(Q(q), P(d_pos)) >> dot(Q(q), P(d_neg)).
   Here we use a single shared encoder for both (symmetric DPR)
   to keep the teaching example concise.
@@ -59,7 +59,7 @@ import numpy as np
 def init_distributed() -> None:
     """Demonstrate jax.distributed.initialize() for multi-host setups.
 
-    Teaching note: On a single machine this is a no-op — JAX already detects
+    Teaching note: On a single machine this is a no-op - JAX already detects
     all local devices. The call pattern is shown so readers know where to add
     it when scaling to TPU pods or multi-GPU clusters.
     """
@@ -72,14 +72,14 @@ def init_distributed() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Model parameters (pure dicts — JAX style)
+# Model parameters (pure dicts - JAX style)
 # ---------------------------------------------------------------------------
 
 
 def init_params(vocab_size: int, embed_dim: int, proj_dim: int, key: Any) -> dict[str, Any]:
     """Initialise model parameters as a plain dict.
 
-    Teaching note: In JAX, model state is explicit data — a dict of arrays.
+    Teaching note: In JAX, model state is explicit data - a dict of arrays.
     There are no "modules" with hidden state. This makes:
       - Serialisation trivial (just save the dict)
       - Functional transforms natural (pass params as first argument)
@@ -106,7 +106,7 @@ def init_params(vocab_size: int, embed_dim: int, proj_dim: int, key: Any) -> dic
 def encode(params: dict[str, Any], token_ids: jnp.ndarray) -> jnp.ndarray:
     """Encode a single sequence to a unit-norm dense vector.
 
-    Teaching note: This is a pure function — same inputs always produce same
+    Teaching note: This is a pure function - same inputs always produce same
     outputs, no side effects. This is required for jax.jit (which caches the
     compiled version) and jax.grad (which differentiates through it).
 
@@ -119,7 +119,7 @@ def encode(params: dict[str, Any], token_ids: jnp.ndarray) -> jnp.ndarray:
     # Step 1: embedding lookup (equivalent to nn.Embedding in PyTorch)
     x = params["embed"][token_ids]  # [seq_len, embed_dim]
 
-    # Step 2: mean pooling (simplified — real BGE uses attention mask)
+    # Step 2: mean pooling (simplified - real BGE uses attention mask)
     x = jnp.mean(x, axis=0)  # [embed_dim]
 
     # Step 3: linear projection
@@ -130,13 +130,13 @@ def encode(params: dict[str, Any], token_ids: jnp.ndarray) -> jnp.ndarray:
     return x  # [proj_dim]
 
 
-# Batched version via vmap — no explicit batch dimension in encode()
+# Batched version via vmap - no explicit batch dimension in encode()
 # jax.vmap maps encode over the first axis of token_ids [B, seq_len] → [B, proj_dim]
 # Teaching note: vmap eliminates the manual batch loop and lets XLA vectorise
-# the operation across hardware. The function doesn't change — only the call site.
+# the operation across hardware. The function doesn't change - only the call site.
 encode_batch = jax.vmap(encode, in_axes=(None, 0))
 
-# JIT-compiled version — compiled on first call, cached for all subsequent calls.
+# JIT-compiled version - compiled on first call, cached for all subsequent calls.
 # Teaching note: @jax.jit (or jax.jit(f)) traces f with abstract values,
 # compiles to XLA HLO, and caches by input shape/dtype. Subsequent calls
 # skip Python overhead (~10-100x faster for small models on TPU).
@@ -158,7 +158,7 @@ def infonce_loss(
 
     Teaching note: jax.grad requires the loss to be a scalar-valued
     pure function of params. The gradient of this function w.r.t. params
-    is computed symbolically by JAX's autograd — no .backward() call needed.
+    is computed symbolically by JAX's autograd - no .backward() call needed.
 
     InfoNCE: maximise similarity(q, pos) while minimising similarity(q, neg_i)
       loss = -log(exp(sim(q, pos)) / (exp(sim(q, pos)) + Σ exp(sim(q, neg_i))))
@@ -177,7 +177,7 @@ def infonce_loss(
 # Gradient function: same signature as infonce_loss but returns dL/d(params)
 # Teaching note: jax.grad(f)(x) is mathematically identical to ∂f/∂x.
 # Unlike PyTorch's .backward(), it returns a new dict with the same structure
-# as params — making gradient clipping and weight updates explicit.
+# as params - making gradient clipping and weight updates explicit.
 loss_and_grad = jax.jit(jax.value_and_grad(infonce_loss))
 
 
@@ -209,7 +209,7 @@ def benchmark_encode(
     for bs in batch_sizes:
         token_ids = _make_random_inputs(bs, seq_len, vocab_size, key)
 
-        # Warmup — first call triggers JIT compilation (slow)
+        # Warmup - first call triggers JIT compilation (slow)
         for _ in range(3):
             _ = encode_batch_jit(params, token_ids).block_until_ready()
 
@@ -323,7 +323,7 @@ def main() -> None:
     print(f"  Parameters: {n_params:,} ({n_params * 4 / 1e6:.1f}MB float32)")
     print()
 
-    print("[Encode benchmark — batched via vmap + jit]")
+    print("[Encode benchmark - batched via vmap + jit]")
     batch_results = benchmark_encode(
         params,
         batch_sizes=[1, 8, 32, 128],
@@ -333,7 +333,7 @@ def main() -> None:
     )
     print()
 
-    print("[Gradient computation demo — jax.value_and_grad]")
+    print("[Gradient computation demo - jax.value_and_grad]")
     key, k1, k2, k3 = jax.random.split(key, 4)
     q_ids = jax.random.randint(k1, (SEQ_LEN,), 0, VOCAB_SIZE)
     p_ids = jax.random.randint(k2, (SEQ_LEN,), 0, VOCAB_SIZE)
@@ -348,7 +348,7 @@ def main() -> None:
     print(f"  Forward+backward: {grad_ms:.2f}ms (includes JIT compilation)")
     print()
 
-    print("[Matrix multiply benchmark — N×N]")
+    print("[Matrix multiply benchmark - N×N]")
     matmul_results = benchmark_matmul(
         sizes=[64, 256, 512, 1024],
         n_runs=args.runs,

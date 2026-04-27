@@ -1,4 +1,4 @@
-"""Integration tests for parallel tool execution — task 4.22."""
+"""Integration tests for parallel tool execution - task 4.22."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from src.agents.tools.base import BaseTool
 
 
 class EchoTool(BaseTool):
-    """Returns a fixed string — used to verify basic dispatch."""
+    """Returns a fixed string - used to verify basic dispatch."""
 
     def __init__(self, name: str, response: str) -> None:
         self._response = response
@@ -49,7 +49,7 @@ class SleepTool(BaseTool):
 
 
 class RaisingTool(BaseTool):
-    """Always raises a RuntimeError — used to test error capture."""
+    """Always raises a RuntimeError - used to test error capture."""
 
     def execute(self, input: str) -> str:
         raise RuntimeError("intentional failure")

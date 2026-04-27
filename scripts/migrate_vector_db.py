@@ -81,7 +81,7 @@ def get_chroma_documents(
         collection_name: Name of the collection to export
 
     Returns:
-        Tuple of (ids, embeddings, metadatas) — parallel lists of equal length.
+        Tuple of (ids, embeddings, metadatas) - parallel lists of equal length.
         ids: string document IDs assigned by Chroma
         embeddings: float vectors (dimension matches the embedding model)
         metadatas: per-document metadata dicts (source, chunk index, etc.)
@@ -147,7 +147,7 @@ def create_qdrant_collection(
         collection_name: Name for the target collection
         vector_size: Dimensionality of the embedding vectors
 
-    Teaching note: Idempotent migration design — why skip vs recreate?
+    Teaching note: Idempotent migration design - why skip vs recreate?
     - Recreating on every run would delete partial progress from a previous
       interrupted migration. Idempotency lets us resume safely.
     - Upserting into an existing collection is safe because Qdrant's upsert
@@ -279,7 +279,7 @@ def verify_migration(
 
     if qdrant_count == chroma_count:
         logger.info(
-            f"Verification passed: Qdrant has {qdrant_count} points " f"(expected {chroma_count})"
+            f"Verification passed: Qdrant has {qdrant_count} points (expected {chroma_count})"
         )
         return True
 
@@ -399,9 +399,7 @@ def main() -> None:
     total_migrated = 0
     num_batches = math.ceil(chroma_count / args.batch_size)
 
-    logger.info(
-        f"Migrating {chroma_count} documents in {num_batches} batches " f"of {args.batch_size}"
-    )
+    logger.info(f"Migrating {chroma_count} documents in {num_batches} batches of {args.batch_size}")
 
     for batch_index in range(num_batches):
         start = batch_index * args.batch_size

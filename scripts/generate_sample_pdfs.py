@@ -36,47 +36,63 @@ def generate_python_concurrency_pdf(output_dir: Path) -> Path:
 
     pdf.set_font("Helvetica", "", 11)
     pdf.ln(5)
-    pdf.multi_cell(0, 6, (
-        "Python provides three main approaches to concurrency: threading, "
-        "multiprocessing, and asyncio. Each serves different use cases depending "
-        "on whether the workload is I/O-bound or CPU-bound."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "Python provides three main approaches to concurrency: threading, "
+            "multiprocessing, and asyncio. Each serves different use cases depending "
+            "on whether the workload is I/O-bound or CPU-bound."
+        ),
+    )
 
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "Threading (I/O-Bound)", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.multi_cell(0, 6, (
-        "Python's threading module uses OS-level threads but is limited by the "
-        "Global Interpreter Lock (GIL). Threads share memory space, making them "
-        "suitable for I/O-bound tasks like network requests, file operations, and "
-        "database queries. The concurrent.futures.ThreadPoolExecutor provides a "
-        "high-level interface for managing thread pools."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "Python's threading module uses OS-level threads but is limited by the "
+            "Global Interpreter Lock (GIL). Threads share memory space, making them "
+            "suitable for I/O-bound tasks like network requests, file operations, and "
+            "database queries. The concurrent.futures.ThreadPoolExecutor provides a "
+            "high-level interface for managing thread pools."
+        ),
+    )
 
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "Multiprocessing (CPU-Bound)", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.multi_cell(0, 6, (
-        "For CPU-bound workloads, multiprocessing bypasses the GIL by running "
-        "separate Python processes. Each process has its own memory space and "
-        "interpreter. ProcessPoolExecutor simplifies parallel execution. Inter-process "
-        "communication uses Queue, Pipe, or shared memory (multiprocessing.Value, Array). "
-        "The overhead of process creation makes this best for coarse-grained parallelism."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "For CPU-bound workloads, multiprocessing bypasses the GIL by running "
+            "separate Python processes. Each process has its own memory space and "
+            "interpreter. ProcessPoolExecutor simplifies parallel execution. Inter-process "
+            "communication uses Queue, Pipe, or shared memory (multiprocessing.Value, Array). "
+            "The overhead of process creation makes this best for coarse-grained parallelism."
+        ),
+    )
 
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "Asyncio (Cooperative Multitasking)", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.multi_cell(0, 6, (
-        "Asyncio provides cooperative multitasking using coroutines (async/await). "
-        "A single event loop schedules coroutines, switching between them at await "
-        "points. This is ideal for high-concurrency I/O workloads like web servers "
-        "(FastAPI, aiohttp) and database drivers (asyncpg, motor). Unlike threading, "
-        "asyncio avoids race conditions since only one coroutine runs at a time."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "Asyncio provides cooperative multitasking using coroutines (async/await). "
+            "A single event loop schedules coroutines, switching between them at await "
+            "points. This is ideal for high-concurrency I/O workloads like web servers "
+            "(FastAPI, aiohttp) and database drivers (asyncpg, motor). Unlike threading, "
+            "asyncio avoids race conditions since only one coroutine runs at a time."
+        ),
+    )
 
     # Add a comparison table
     pdf.ln(5)
@@ -118,57 +134,77 @@ def generate_react_performance_pdf(output_dir: Path) -> Path:
 
     pdf.set_font("Helvetica", "", 11)
     pdf.ln(5)
-    pdf.multi_cell(0, 6, (
-        "React re-renders components when state or props change. Unnecessary "
-        "re-renders degrade performance, especially in large component trees. "
-        "This guide covers proven optimization techniques."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "React re-renders components when state or props change. Unnecessary "
+            "re-renders degrade performance, especially in large component trees. "
+            "This guide covers proven optimization techniques."
+        ),
+    )
 
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "React.memo for Pure Components", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.multi_cell(0, 6, (
-        "React.memo is a higher-order component that memoizes the rendered output. "
-        "It performs a shallow comparison of props and skips re-rendering if props "
-        "haven't changed. Use it for components that render often with the same props. "
-        "Avoid wrapping components that receive new object/array props on every render, "
-        "as the shallow comparison will always detect changes."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "React.memo is a higher-order component that memoizes the rendered output. "
+            "It performs a shallow comparison of props and skips re-rendering if props "
+            "haven't changed. Use it for components that render often with the same props. "
+            "Avoid wrapping components that receive new object/array props on every render, "
+            "as the shallow comparison will always detect changes."
+        ),
+    )
 
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "useMemo and useCallback Hooks", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.multi_cell(0, 6, (
-        "useMemo caches the result of expensive computations. useCallback caches "
-        "function references to prevent child components from re-rendering when "
-        "callback props haven't logically changed. Both accept a dependency array "
-        "that controls when the cached value is recomputed. Overusing these hooks "
-        "adds complexity without benefit; profile first, optimize second."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "useMemo caches the result of expensive computations. useCallback caches "
+            "function references to prevent child components from re-rendering when "
+            "callback props haven't logically changed. Both accept a dependency array "
+            "that controls when the cached value is recomputed. Overusing these hooks "
+            "adds complexity without benefit; profile first, optimize second."
+        ),
+    )
 
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "Virtualization for Large Lists", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.multi_cell(0, 6, (
-        "Rendering thousands of DOM nodes causes jank. Libraries like react-window "
-        "and react-virtuoso render only visible items, dramatically reducing DOM nodes. "
-        "For a list of 10,000 items at 50px height in a 500px viewport, only ~10 items "
-        "are in the DOM at any time instead of 10,000."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "Rendering thousands of DOM nodes causes jank. Libraries like react-window "
+            "and react-virtuoso render only visible items, dramatically reducing DOM nodes. "
+            "For a list of 10,000 items at 50px height in a 500px viewport, only ~10 items "
+            "are in the DOM at any time instead of 10,000."
+        ),
+    )
 
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "Code Splitting with React.lazy", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.multi_cell(0, 6, (
-        "React.lazy enables dynamic imports, splitting bundles into smaller chunks "
-        "loaded on demand. Combined with Suspense for loading states, this reduces "
-        "initial bundle size. Route-based splitting is the most common pattern, "
-        "loading page components only when the user navigates to them."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "React.lazy enables dynamic imports, splitting bundles into smaller chunks "
+            "loaded on demand. Combined with Suspense for loading states, this reduces "
+            "initial bundle size. Route-based splitting is the most common pattern, "
+            "loading page components only when the user navigates to them."
+        ),
+    )
 
     filepath = output_dir / "react_performance_optimization.pdf"
     pdf.output(str(filepath))
@@ -187,32 +223,44 @@ def generate_api_design_pdf(output_dir: Path) -> Path:
 
     pdf.set_font("Helvetica", "", 11)
     pdf.ln(5)
-    pdf.multi_cell(0, 6, (
-        "Well-designed APIs are intuitive, consistent, and resilient. This document "
-        "covers essential patterns for building production-grade REST APIs."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "Well-designed APIs are intuitive, consistent, and resilient. This document "
+            "covers essential patterns for building production-grade REST APIs."
+        ),
+    )
 
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "Resource Naming Conventions", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.multi_cell(0, 6, (
-        "Use plural nouns for collections (/users, /orders). Use path parameters "
-        "for resource identifiers (/users/123). Nest related resources logically "
-        "(/users/123/orders). Avoid verbs in URLs; HTTP methods convey the action. "
-        "Use kebab-case for multi-word resources (/user-profiles)."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "Use plural nouns for collections (/users, /orders). Use path parameters "
+            "for resource identifiers (/users/123). Nest related resources logically "
+            "(/users/123/orders). Avoid verbs in URLs; HTTP methods convey the action. "
+            "Use kebab-case for multi-word resources (/user-profiles)."
+        ),
+    )
 
     pdf.ln(5)
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "HTTP Status Codes", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.multi_cell(0, 6, (
-        "Use appropriate status codes: 200 for success, 201 for creation, "
-        "204 for deletion with no content. 400 for bad requests, 401 for "
-        "unauthenticated, 403 for unauthorized, 404 for not found, 409 for "
-        "conflicts, 422 for validation errors. 500 for server errors."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "Use appropriate status codes: 200 for success, 201 for creation, "
+            "204 for deletion with no content. 400 for bad requests, 401 for "
+            "unauthenticated, 403 for unauthorized, 404 for not found, 409 for "
+            "conflicts, 422 for validation errors. 500 for server errors."
+        ),
+    )
 
     # Add status code table
     pdf.ln(5)
@@ -243,12 +291,16 @@ def generate_api_design_pdf(output_dir: Path) -> Path:
     pdf.set_font("Helvetica", "B", 13)
     pdf.cell(0, 8, "Pagination and Filtering", new_x="LMARGIN", new_y="NEXT")
     pdf.set_font("Helvetica", "", 11)
-    pdf.multi_cell(0, 6, (
-        "Always paginate collection endpoints. Use cursor-based pagination for "
-        "real-time data (avoids page drift). Use offset/limit for static datasets. "
-        "Support filtering via query parameters (/users?role=admin&active=true). "
-        "Return pagination metadata (total_count, next_cursor, has_more)."
-    ))
+    pdf.multi_cell(
+        0,
+        6,
+        (
+            "Always paginate collection endpoints. Use cursor-based pagination for "
+            "real-time data (avoids page drift). Use offset/limit for static datasets. "
+            "Support filtering via query parameters (/users?role=admin&active=true). "
+            "Return pagination metadata (total_count, next_cursor, has_more)."
+        ),
+    )
 
     filepath = output_dir / "api_design_best_practices.pdf"
     pdf.output(str(filepath))

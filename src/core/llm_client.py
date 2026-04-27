@@ -46,7 +46,7 @@ class GroqModel(str, Enum):
 
     LLAMA_3_8B = "llama-3.1-8b-instant"
     LLAMA_3_32B = "qwen/qwen3-32b"
-    LLAMA_3_70B = "llama-3.3-70b-versatile" # Note: Groq's 70B is actually their best model
+    LLAMA_3_70B = "llama-3.3-70b-versatile"  # Note: Groq's 70B is actually their best model
 
 
 @dataclass

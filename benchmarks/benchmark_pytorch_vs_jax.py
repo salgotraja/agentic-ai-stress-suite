@@ -1,4 +1,4 @@
-"""PyTorch vs JAX head-to-head benchmark — task 5.10.
+"""PyTorch vs JAX head-to-head benchmark - task 5.10.
 
 Teaching note: When to choose PyTorch vs JAX
   Both compile to XLA/hardware kernels and achieve near-identical throughput
@@ -97,7 +97,7 @@ def pt_grad(n: int) -> float:
     Teaching note: PyTorch's autograd works by recording operations on a
     computation graph (tape). .backward() walks this graph in reverse.
     The graph has O(depth) nodes and O(n²) gradient tensors for a single
-    linear layer — this is the memory cost of backprop.
+    linear layer - this is the memory cost of backprop.
     """
     w = torch.randn(n, n, requires_grad=True)
     x = torch.randn(n)
@@ -148,7 +148,7 @@ def jax_matmul(n: int) -> float:
     a = jax.random.normal(key, (n, n))
     b = jax.random.normal(key, (n, n))
 
-    # JIT warmup — first call compiles
+    # JIT warmup - first call compiles
     for _ in range(WARMUP):
         _jax_matmul(a, b).block_until_ready()
 
@@ -305,7 +305,7 @@ def main() -> None:
         jax_results["grad"][str(n)] = round(jx, 5)
 
     # --- Print summary table ---
-    print("\n[Summary — CPU, FP32, median of 100 runs]")
+    print("\n[Summary - CPU, FP32, median of 100 runs]")
     print(f"{'Operation':<25} {'PyTorch':>12} {'JAX (jit)':>12} {'Winner':>10}")
     print("-" * 63)
     for op, label, sizes in [

@@ -160,17 +160,12 @@ class MCPFileReadTool(BaseTool):
             # Check file extension
             if requested_path.suffix not in self.allowed_extensions:
                 allowed = ", ".join(sorted(self.allowed_extensions))
-                return (
-                    f"Error: File type '{requested_path.suffix}' not allowed. "
-                    f"Allowed: {allowed}"
-                )
+                return f"Error: File type '{requested_path.suffix}' not allowed. Allowed: {allowed}"
 
             # Check file size
             file_size = requested_path.stat().st_size
             if file_size > self.max_size:
-                return (
-                    f"Error: File too large ({file_size} bytes). " f"Maximum: {self.max_size} bytes"
-                )
+                return f"Error: File too large ({file_size} bytes). Maximum: {self.max_size} bytes"
 
             # Read file
             content = requested_path.read_text(encoding="utf-8")

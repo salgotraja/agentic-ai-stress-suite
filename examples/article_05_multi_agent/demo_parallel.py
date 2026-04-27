@@ -246,10 +246,7 @@ def main() -> int:
     print(f"Efficiency:      {(speedup / len(specialists)) * 100:.0f}%")
     print()
     print(f"Ideal speedup: {len(specialists):.1f}x (perfect parallelism)")
-    print(
-        f"Actual speedup: {speedup:.2f}x "
-        f"(~{(speedup / len(specialists)) * 100:.0f}% efficiency)"
-    )
+    print(f"Actual speedup: {speedup:.2f}x (~{(speedup / len(specialists)) * 100:.0f}% efficiency)")
     print()
     if speedup < len(specialists) * 0.7:
         print("Note: Lower than expected speedup due to:")

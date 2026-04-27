@@ -145,9 +145,9 @@ def validate_golden_set(golden_set_path: str, corpus_root: str = "datasets/tech_
             )
 
     # Print results
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("Golden Set Validation Report")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print(f"File: {golden_set_path}")
     print(f"Total Q&A pairs: {len(qa_pairs)}")
     print(f"Unique IDs: {len(ids_seen)}")
@@ -170,9 +170,9 @@ def validate_golden_set(golden_set_path: str, corpus_root: str = "datasets/tech_
         print(f"\n{chr(9989)} Validation passed with warnings")
 
     # Statistics
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("Statistics:")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     # Query type distribution
     query_type_counts: dict[str, int] = {}
@@ -198,7 +198,7 @@ def validate_golden_set(golden_set_path: str, corpus_root: str = "datasets/tech_
         stars = "*" * diff
         print(f"  {diff} {stars:10s}: {count:3d} ({pct:5.1f}%)")
 
-    print(f"\n{'='*60}\n")
+    print(f"\n{'=' * 60}\n")
 
     return len(errors) == 0
 

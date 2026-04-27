@@ -1,4 +1,4 @@
-"""Custom cross-encoder reranker with attention hooks — task 5.8.
+"""Custom cross-encoder reranker with attention hooks - task 5.8.
 
 Teaching note: WHY a cross-encoder for reranking?
   In a two-stage retrieval pipeline:
@@ -11,14 +11,14 @@ Teaching note: WHY a cross-encoder for reranking?
                 synonym pairs, and implicit dependencies that bi-encoders miss
 
   Why not cross-encoder for all retrieval?
-    Cross-encoders can't pre-compute doc representations — every (query, doc)
+    Cross-encoders can't pre-compute doc representations - every (query, doc)
     pair must be processed fresh. At 10K docs × 100 req/sec = 1M forward passes
     per second. Only feasible for small candidate sets (top 20-100 from Stage 1).
 
-Attention hooks — interpretability:
+Attention hooks - interpretability:
   BERT's attention mechanism computes a weight matrix A ∈ [heads, seq, seq].
   A[h, 0, j] = how much [CLS] attends to token j in head h.
-  Averaging across heads gives token-level attribution — which query/doc tokens
+  Averaging across heads gives token-level attribution - which query/doc tokens
   drove the relevance score. This is approximate (attention ≠ importance),
   but gives useful debugging signals for training data curation.
 
@@ -62,7 +62,7 @@ BASE_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 DOCS_DIR = Path("datasets/tech_docs")
 QUERIES_FILE = Path("datasets/synthetic_queries/article_01.json")
 
-# Training hyperparameters — intentionally small for fast smoke-test teaching
+# Training hyperparameters - intentionally small for fast smoke-test teaching
 TRAIN_EPOCHS = 1
 BATCH_SIZE = 16
 MAX_DOC_CHARS = 1500  # Truncate docs to fit within 512-token context window
@@ -99,7 +99,7 @@ def build_training_pairs(
       For teaching purposes, random negatives are sufficient to show the training path.
 
     1 positive + NEGATIVES_PER_QUERY negatives per query gives a
-    (1+N):1 ratio — typical for reranker training.
+    (1+N):1 ratio - typical for reranker training.
     """
     with open(QUERIES_FILE) as f:
         queries_data = json.load(f)
@@ -128,7 +128,7 @@ def build_training_pairs(
         # Positive pair
         pairs.append({"sentence1": query, "sentence2": corpus[src_key], "label": 1.0})
 
-        # Random negative pairs — avoid sampling the actual source doc
+        # Random negative pairs - avoid sampling the actual source doc
         negatives = [k for k in all_doc_keys if k != src_key]
         for neg_key in rng.sample(negatives, min(NEGATIVES_PER_QUERY, len(negatives))):
             pairs.append({"sentence1": query, "sentence2": corpus[neg_key], "label": 0.0})
@@ -188,7 +188,7 @@ def train_reranker(pairs: list[dict[str, Any]]) -> Any:
 
 
 # ---------------------------------------------------------------------------
-# Attention hooks — interpretability
+# Attention hooks - interpretability
 # ---------------------------------------------------------------------------
 
 
@@ -304,7 +304,7 @@ def benchmark_vs_flashrank(
     try:
         from flashrank import Ranker as FlashRanker
     except ImportError:
-        print("  [skip] flashrank not installed — install with: uv add flashrank")
+        print("  [skip] flashrank not installed - install with: uv add flashrank")
         return {}
 
     flash_ranker = FlashRanker(model_name="ms-marco-MiniLM-L-12-v2", cache_dir="/tmp/flashrank")
@@ -411,14 +411,14 @@ def plot_benchmark(results: dict[str, Any], output_path: Path) -> None:
         fig.suptitle("Custom Cross-Encoder vs FlashRank\n(top-20 reranking, tech docs corpus)")
 
         axes[0].bar(models, ndcg_vals, color=["#e63946", "#457b9d"], width=0.5)
-        axes[0].set_ylabel("NDCG@5 — higher is better")
+        axes[0].set_ylabel("NDCG@5 - higher is better")
         axes[0].set_ylim(0, 1)
         for i, v in enumerate(ndcg_vals):
             axes[0].text(i, v + 0.02, f"{v:.3f}", ha="center", fontsize=10)
         axes[0].grid(axis="y", alpha=0.4)
 
         axes[1].bar(models, latency_vals, color=["#e63946", "#457b9d"], width=0.5)
-        axes[1].set_ylabel("Median latency (ms) — lower is better")
+        axes[1].set_ylabel("Median latency (ms) - lower is better")
         for i, v in enumerate(latency_vals):
             axes[1].text(i, v + 1, f"{v:.1f}ms", ha="center", fontsize=10)
         axes[1].grid(axis="y", alpha=0.4)

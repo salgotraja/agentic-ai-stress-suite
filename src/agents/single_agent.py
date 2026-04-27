@@ -61,8 +61,8 @@ from src.core.observability import generate_correlation_id, traced_generation
 logger = logging.getLogger(__name__)
 
 # Tool categories for executor selection.
-# I/O-bound tools: network calls, disk reads — ThreadPoolExecutor avoids GIL blockage.
-# CPU-bound tools: heavy computation — ProcessPoolExecutor bypasses GIL entirely.
+# I/O-bound tools: network calls, disk reads - ThreadPoolExecutor avoids GIL blockage.
+# CPU-bound tools: heavy computation - ProcessPoolExecutor bypasses GIL entirely.
 # Most LLM tools are I/O-bound (API calls); only pure-compute tools are CPU-bound.
 _IO_BOUND_TOOL_NAMES: frozenset[str] = frozenset(
     {"search", "rag", "database_lookup", "mcp_file_read", "mcp_api_call"}
@@ -80,8 +80,8 @@ def execute_tools_parallel(
     """Execute multiple independent tool calls concurrently.
 
     Teaching note: Why parallel execution matters for latency.
-    When an agent needs results from two independent tools — e.g., a web search
-    AND a database lookup — running them sequentially wastes wall-clock time
+    When an agent needs results from two independent tools - e.g., a web search
+    AND a database lookup - running them sequentially wastes wall-clock time
     because each is blocked waiting for a network response. Running them
     concurrently cuts total latency to roughly max(individual_latencies) instead
     of sum(individual_latencies). For typical LLM/API tools at 200-500ms each,
@@ -111,10 +111,10 @@ def execute_tools_parallel(
 
     Returns:
         List of result dicts in the same order as tool_calls. Each dict has:
-        - "tool_name": str — name of the tool
-        - "input": str — original input string
-        - "output": str — tool output (empty string on error)
-        - "error": str | None — error message if the call failed, else None
+        - "tool_name": str - name of the tool
+        - "input": str - original input string
+        - "output": str - tool output (empty string on error)
+        - "error": str | None - error message if the call failed, else None
     """
     # Pre-allocate results list to preserve original order.
     # We track futures by index so we can slot results back correctly
@@ -1223,7 +1223,5 @@ Your answer:"""
     def __repr__(self) -> str:
         """String representation for debugging."""
         return (
-            f"PlanAndExecuteAgent("
-            f"tools={[t.name for t in self.tools]}, "
-            f"max_steps={self.max_steps})"
+            f"PlanAndExecuteAgent(tools={[t.name for t in self.tools]}, max_steps={self.max_steps})"
         )

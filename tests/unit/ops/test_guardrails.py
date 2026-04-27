@@ -1,4 +1,4 @@
-"""Unit tests for GuardrailsManager — task 4.14.
+"""Unit tests for GuardrailsManager - task 4.14.
 
 All tests use only the fast-path regex layer (no LLM, no NeMo runtime).
 NeMo integration is tested separately in integration tests.
@@ -17,7 +17,7 @@ def manager() -> GuardrailsManager:
 
 
 # ---------------------------------------------------------------------------
-# Input rails — PII detection
+# Input rails - PII detection
 # ---------------------------------------------------------------------------
 
 
@@ -43,7 +43,7 @@ def test_pii_phone_in_input_is_blocked(manager: GuardrailsManager) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Input rails — jailbreak detection
+# Input rails - jailbreak detection
 # ---------------------------------------------------------------------------
 
 
@@ -76,7 +76,7 @@ def test_jailbreak_act_as_blocked(manager: GuardrailsManager) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Output rails — API key leakage
+# Output rails - API key leakage
 # ---------------------------------------------------------------------------
 
 
@@ -102,7 +102,7 @@ def test_bearer_token_in_output_blocked(manager: GuardrailsManager) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Output rails — system prompt leakage
+# Output rails - system prompt leakage
 # ---------------------------------------------------------------------------
 
 
@@ -152,7 +152,7 @@ def test_legitimate_output_answer_passes(manager: GuardrailsManager) -> None:
 def test_example_email_in_output_not_blocked(manager: GuardrailsManager) -> None:
     """'example.com' email in output (docs example) is not blocked.
 
-    Teaching note: context matters — example.com and test.com addresses
+    Teaching note: context matters - example.com and test.com addresses
     appear legitimately in documentation. Blocking them would increase
     false positives. Real production systems use allowlists for known-safe domains.
     """

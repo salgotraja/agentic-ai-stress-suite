@@ -43,7 +43,6 @@ Model Options:
 from __future__ import annotations
 
 import argparse
-import json
 import re
 import sys
 from dataclasses import dataclass
@@ -294,9 +293,7 @@ class TechDocsGenerator:
         framework_name = config["name"]
         framework_desc = config["desc"]
 
-        prompt = self._build_generation_prompt(
-            framework_name, framework_desc, topic
-        )
+        prompt = self._build_generation_prompt(framework_name, framework_desc, topic)
 
         try:
             if self.preferred_model == "claude":
@@ -315,6 +312,7 @@ class TechDocsGenerator:
                 )
             elif self.preferred_model == "groq":
                 from src.core.llm_client import GroqModel
+
                 response = self.llm_client._call_groq(
                     prompt=prompt,
                     model=GroqModel.LLAMA_3_70B,
@@ -324,6 +322,7 @@ class TechDocsGenerator:
                 )
             elif retry_count == 0:
                 from src.core.llm_client import GroqModel
+
                 response = self.llm_client._call_groq(
                     prompt=prompt,
                     model=GroqModel.LLAMA_3_32B,
@@ -333,6 +332,7 @@ class TechDocsGenerator:
                 )
             elif retry_count == 1:
                 from src.core.llm_client import GroqModel
+
                 response = self.llm_client._call_groq(
                     prompt=prompt,
                     model=GroqModel.LLAMA_3_70B,
@@ -373,13 +373,13 @@ class TechDocsGenerator:
         Returns:
             Cleaned markdown content starting with first heading
         """
-        lines = content.split('\n')
+        lines = content.split("\n")
 
         # Find first line that starts with # (markdown heading)
         for i, line in enumerate(lines):
-            if line.strip().startswith('#'):
+            if line.strip().startswith("#"):
                 # Return everything from first heading onwards
-                return '\n'.join(lines[i:])
+                return "\n".join(lines[i:])
 
         # If no heading found, return as-is (validation will catch it)
         return content
@@ -521,7 +521,7 @@ Generate the documentation NOW. First line must be: # {topic.title}"""
         framework: str,
         start: int | None = None,
         end: int | None = None,
-        specific_topics: list[int] | None = None
+        specific_topics: list[int] | None = None,
     ) -> list[GenerationResult]:
         """Generate all documentation for a framework.
 
@@ -550,9 +550,7 @@ Generate the documentation NOW. First line must be: # {topic.title}"""
             if end is not None:
                 topics = [t for t in topics if t.number <= end]
 
-        print(
-            f"\n{'='*70}\nGenerating {len(topics)} documents for {framework_name}\n{'='*70}"
-        )
+        print(f"\n{'=' * 70}\nGenerating {len(topics)} documents for {framework_name}\n{'=' * 70}")
 
         results = []
 
@@ -643,36 +641,32 @@ Generate the documentation NOW. First line must be: # {topic.title}"""
 
     def print_summary(self, results: dict[str, list[GenerationResult]]) -> None:
         """Print generation summary statistics."""
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print("GENERATION SUMMARY")
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         for framework, framework_results in results.items():
             config = self.FRAMEWORKS[framework]
             print(f"{config['name']}:")
             print(f"  Successful: {sum(1 for r in framework_results if r.success)}")
             print(f"  Failed: {sum(1 for r in framework_results if not r.success)}")
-            print(
-                f"  Total words: {sum(r.word_count for r in framework_results):,}"
-            )
+            print(f"  Total words: {sum(r.word_count for r in framework_results):,}")
             print(f"  Total tokens: {sum(r.tokens_used for r in framework_results):,}")
             print(f"  Total cost: ${sum(r.cost_usd for r in framework_results):.4f}\n")
 
-        print(f"{'='*70}")
-        print(f"OVERALL TOTALS")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
+        print("OVERALL TOTALS")
+        print(f"{'=' * 70}")
         print(f"Successful generations: {self.successful_gens}")
         print(f"Failed generations: {self.failed_gens}")
         print(f"Total tokens used: {self.total_tokens:,}")
         print(f"Total cost: ${self.total_cost:.4f}")
-        print(
-            f"Average cost per document: ${self.total_cost/max(self.successful_gens, 1):.4f}"
-        )
+        print(f"Average cost per document: ${self.total_cost / max(self.successful_gens, 1):.4f}")
 
         if self.dry_run:
-            print(f"\n{'='*70}")
+            print(f"\n{'=' * 70}")
             print("DRY RUN - No files were written")
-            print(f"{'='*70}")
+            print(f"{'=' * 70}")
 
 
 def main() -> int:
@@ -750,9 +744,7 @@ def main() -> int:
                 continue
             print(f"\n🔄 Found {len(invalid_topics)} invalid documents to regenerate:")
             print(f"   Topic numbers: {invalid_topics}")
-            results = generator.generate_framework(
-                framework, specific_topics=invalid_topics
-            )
+            results = generator.generate_framework(framework, specific_topics=invalid_topics)
         else:
             results = generator.generate_framework(framework, args.start, args.end)
         all_results[framework] = results

@@ -481,7 +481,7 @@ Sub-queries:"""
         # Format context
         context_texts = [node["text"] for node in context_nodes]
         context_str = "\n\n".join(
-            [f"Document {i+1}:\n{text}" for i, text in enumerate(context_texts)]
+            [f"Document {i + 1}:\n{text}" for i, text in enumerate(context_texts)]
         )
 
         # Build prompt

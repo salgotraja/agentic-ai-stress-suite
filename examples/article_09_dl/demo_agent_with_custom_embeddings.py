@@ -1,4 +1,4 @@
-"""Demo: LangGraph agent using fine-tuned embedding RAG tool — task 5.11.
+"""Demo: LangGraph agent using fine-tuned embedding RAG tool - task 5.11.
 
 Teaching note: WHY integrate a custom embedder into the agent system?
   The full picture of Article 9:
@@ -13,10 +13,10 @@ Teaching note: WHY integrate a custom embedder into the agent system?
     - search: web search for current events
     - calculator: arithmetic
   The agent's reasoning (Chain-of-Thought) shows when it reaches for
-  the RAG tool vs other options — demonstrating tool selection in action.
+  the RAG tool vs other options - demonstrating tool selection in action.
 
 Mock mode (default):
-  The demo runs in mock mode by default — no LLM API calls, no model loading.
+  The demo runs in mock mode by default - no LLM API calls, no model loading.
   This makes it fast and reproducible for CI/CD and teaching demos.
   Pass --real to run with actual Groq/LLM calls and model loading.
 
@@ -120,7 +120,7 @@ def run_real_demo() -> list[dict[str, Any]]:
     try:
         from src.rag.naive_rag import NaiveRAGPipeline
     except ImportError:
-        print("  [skip] NaiveRAGPipeline not importable — falling back to mock mode")
+        print("  [skip] NaiveRAGPipeline not importable - falling back to mock mode")
         return run_mock_demo()
 
     settings = Settings()
@@ -140,7 +140,7 @@ def run_real_demo() -> list[dict[str, Any]]:
         print(f"  Query: {query}")
         t0 = time.perf_counter()
         try:
-            # Use mock_execute for safety — real execute requires full pipeline init
+            # Use mock_execute for safety - real execute requires full pipeline init
             answer = custom_rag_tool.mock_execute(query)
             latency = (time.perf_counter() - t0) * 1000
             print(f"  Answer: {answer[:100]}...")

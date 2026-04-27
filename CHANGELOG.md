@@ -7,7 +7,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-**Phase 1 — End-to-End Spike**
+**Phase 1 - End-to-End Spike**
 - `src/core/`: UnifiedLLMClient with Groq→DeepSeek→Claude→Gemini→OpenAI fallback,
   Pydantic BaseSettings config, `@traced_*` observability decorators, BenchmarkRunner
 - `src/rag/naive_rag.py`: LlamaIndex + BGE-base-en-v1.5 + Chroma pipeline
@@ -15,7 +15,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `infra/docker-compose.yml`: Redis, Chroma, Phoenix, Neo4j (optional)
 - 200 tech docs dataset (FastAPI, Pydantic, React, Spring)
 
-**Phase 2 — RAG Depth (Articles 1–3)**
+**Phase 2 - RAG Depth (Articles 1–3)**
 - `src/rag/advanced_rag.py`: HyDE + query decomposition; Recall@5 +9% over naive
 - `src/rag/graph_rag.py`: NetworkX entity/relation graph, multi-hop traversal
 - `src/rag/hybrid_search.py`: BM25+RRF + LlamaIndex/Haystack comparison;
@@ -29,7 +29,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   drift detection (KS test + KL divergence)
 - `datasets/golden_set/qa_pairs.json`: 50 hand-crafted Q&A pairs
 
-**Phase 3 — Agent Breadth (Articles 4–5)**
+**Phase 3 - Agent Breadth (Articles 4–5)**
 - Tool suite: SearchTool (DuckDuckGo), DatabaseLookupTool (SQLite), CodeExecutionTool
   (AST sandbox), MCPFileReadTool, MCPAPICallTool
 - `src/agents/single_agent.py`: 3-retry error recovery, `execute_tools_parallel()`
@@ -40,7 +40,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - `src/agents/state_persistence.py`: InMemory, SQLite, Redis backends
 - CrewAI and AutoGen comparison implementations
 
-**Phase 4 — Production Readiness (Articles 6–8)**
+**Phase 4 - Production Readiness (Articles 6–8)**
 - `src/ops/caching.py`: L1 exact (MD5/Redis, 24h TTL) + L2 semantic (cosine>0.95);
   semantic cache alone: 39% hit rate, $0.375 → $0.229 (39% cost reduction)
   on a 100-query workload; complexity routing alone: $0.375 → $0.003
@@ -55,13 +55,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Locust load test: 74 rps peak, p95=372ms at 50 users
 - Chroma → Qdrant migration script (idempotent, batched, count-verified)
 
-**Phase 5 — Deep Learning (Article 9)**
+**Phase 5 - Deep Learning (Article 9)**
 - BGE-base-en-v1.5 fine-tuning with MultipleNegativesRankingLoss;
   Recall@5: 0.729 → 0.622 (-11%, objective-mismatch finding documented
-  in `results/data/article_09_benchmarks.json` — training used
+  in `results/data/article_09_benchmarks.json` - training used
   query→answer-summary pairs but inference matches query→doc-chunk)
 - PyTorch optimisations: torch.compile on MPS (0.99×, no win on Apple Silicon),
-  INT8 dynamic quantisation (4× smaller, but ~1.8× slower on M4 — QNNPACK lacks
+  INT8 dynamic quantisation (4× smaller, but ~1.8× slower on M4 - QNNPACK lacks
   ARM SIMD acceleration; size win real, latency win is x86-only),
   torch.profiler Chrome trace
 - Custom cross-encoder reranker (cross-encoder/ms-marco-MiniLM-L-6-v2 base):
@@ -71,7 +71,7 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Custom cross-encoder with attention hooks (interpretability)
 - `src/agents/tools/custom_embedding_rag.py`: DIP plug-in, mock mode for CI
 
-**Phase 6 — Finalization**
+**Phase 6 - Finalization**
 - GitHub Actions: CI (lint/typecheck/unit/smoke), nightly, release workflows
 - Blog posts: 8 articles in `docs/blog/` (Article 9 deep-learning writeup
   pending; code, benchmarks, and notebook shipped)

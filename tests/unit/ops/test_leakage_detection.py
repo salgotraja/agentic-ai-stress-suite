@@ -1,8 +1,8 @@
 """Unit tests for leakage detection: SpacyPIIScanner and RawChunkDetector.
 
-Task 4.17: Leakage detection — NER-based PII in output, verbatim chunk detection.
+Task 4.17: Leakage detection - NER-based PII in output, verbatim chunk detection.
 
-All spaCy NLP calls are mocked via injected callables — tests run fast
+All spaCy NLP calls are mocked via injected callables - tests run fast
 without loading the 50 MB model. The mock returns a list of (text, label)
 tuples matching the shape SpacyPIIScanner expects from its nlp_fn.
 """
@@ -39,7 +39,7 @@ def _nlp_fn_empty() -> Callable[[str], list[tuple[str, str]]]:
 
 
 # ---------------------------------------------------------------------------
-# SpacyPIIScanner — blocked cases
+# SpacyPIIScanner - blocked cases
 # ---------------------------------------------------------------------------
 
 
@@ -83,7 +83,7 @@ def test_ner_blocked_reason_includes_label() -> None:
 
 
 # ---------------------------------------------------------------------------
-# SpacyPIIScanner — pass-through cases
+# SpacyPIIScanner - pass-through cases
 # ---------------------------------------------------------------------------
 
 
@@ -103,7 +103,7 @@ def test_ner_pass_has_no_reason() -> None:
 
 
 # ---------------------------------------------------------------------------
-# RawChunkDetector — blocked cases
+# RawChunkDetector - blocked cases
 # ---------------------------------------------------------------------------
 
 
@@ -133,7 +133,7 @@ def test_chunk_detector_verbatim_overlap_blocked() -> None:
 def test_chunk_detector_blocked_reason_is_set() -> None:
     """Blocked result includes a human-readable reason."""
     chunk = (
-        "The quick brown fox jumps over the lazy dog and then runs away " "into the forest at dusk."
+        "The quick brown fox jumps over the lazy dog and then runs away into the forest at dusk."
     )
     output = "The quick brown fox jumps over the lazy dog and then runs away into the forest."
     detector = RawChunkDetector()
@@ -143,7 +143,7 @@ def test_chunk_detector_blocked_reason_is_set() -> None:
 
 
 # ---------------------------------------------------------------------------
-# RawChunkDetector — pass-through cases
+# RawChunkDetector - pass-through cases
 # ---------------------------------------------------------------------------
 
 
@@ -181,7 +181,7 @@ def test_chunk_detector_unrelated_chunks_pass() -> None:
 
 
 # ---------------------------------------------------------------------------
-# GuardrailsManager integration — SpacyPIIScanner in check_output
+# GuardrailsManager integration - SpacyPIIScanner in check_output
 # ---------------------------------------------------------------------------
 
 
@@ -202,7 +202,7 @@ def test_manager_without_spacy_scanner_passes_names() -> None:
 
 
 # ---------------------------------------------------------------------------
-# GuardrailsManager integration — RawChunkDetector in check_output
+# GuardrailsManager integration - RawChunkDetector in check_output
 # ---------------------------------------------------------------------------
 
 

@@ -1,4 +1,4 @@
-"""Locust load test for the RAG + Agent API — task 4.27.
+"""Locust load test for the RAG + Agent API - task 4.27.
 
 Teaching note: WHY load test before K8s deploy?
   Load tests surface:
@@ -101,11 +101,11 @@ class RAGSystemUser(HttpUser):  # type: ignore[misc]
         confirm the correct number of virtual users has spawned when watching
         a live test run.
         """
-        print(f"[locust] Virtual user started — host: {self.host}")
+        print(f"[locust] Virtual user started - host: {self.host}")
 
     @task(7)  # type: ignore[misc]
     def query_rag(self) -> None:
-        """RAG query — the primary load pattern (70% of traffic).
+        """RAG query - the primary load pattern (70% of traffic).
 
         Teaching note: POST /query matches the API expected by the FastAPI app
         in Article 8. Failure is caught by Locust automatically if status != 2xx.
@@ -121,11 +121,11 @@ class RAGSystemUser(HttpUser):  # type: ignore[misc]
 
     @task(2)  # type: ignore[misc]
     def query_agent(self) -> None:
-        """Agent query — heavier, 20% of traffic.
+        """Agent query - heavier, 20% of traffic.
 
         Teaching note: agent calls invoke tool use + multiple LLM round-trips,
         making them 5-10x slower than a plain RAG query. Even at 20% of traffic
-        they account for the majority of backend CPU time — critical to include
+        they account for the majority of backend CPU time - critical to include
         when sizing K8s resource requests.
         """
         task_text = random.choice(self._AGENT_TASKS)
@@ -137,12 +137,12 @@ class RAGSystemUser(HttpUser):  # type: ignore[misc]
 
     @task(1)  # type: ignore[misc]
     def health_check(self) -> None:
-        """Health check — 10% of traffic; verifies liveness probe endpoint.
+        """Health check - 10% of traffic; verifies liveness probe endpoint.
 
         Teaching note: including health checks in the load test confirms that
         the liveness probe stays responsive under load. If /health latency
         spikes above the K8s probe timeout (default 1s), the kubelet will
-        restart pods during normal traffic — a silent production failure mode.
+        restart pods during normal traffic - a silent production failure mode.
         """
         self.client.get("/health", name="/health")
 

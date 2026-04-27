@@ -1,6 +1,6 @@
 # Service: stable network endpoint for the Deployment pods.
 # Why ClusterIP (not LoadBalancer or NodePort):
-#   ClusterIP is internal-only — pods can reach it by DNS name within the cluster.
+#   ClusterIP is internal-only - pods can reach it by DNS name within the cluster.
 #   External traffic enters via Ingress (ingress.yaml), which gives us:
 #   - TLS termination in one place (not per-service)
 #   - Path-based routing (e.g., /api, /docs, /health on different backends)

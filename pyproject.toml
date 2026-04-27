@@ -144,6 +144,12 @@ ignore = []
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
+# CLI entry-point scripts and benchmark runners do sys.path bootstrap
+# before local imports (E402) and embed long generation prompts (E501).
+# These conventions are intentional for runnable scripts; the rules
+# remain strict for src/ and tests/.
+"scripts/*.py" = ["E402", "E501", "F841"]
+"benchmarks/*.py" = ["E402", "E501", "F841"]
 
 [tool.black]
 line-length = 100

@@ -1,6 +1,6 @@
-"""Scaling benchmark for Article 8 — task 4.29.
+"""Scaling benchmark for Article 8 - task 4.29.
 
-Teaching note — why simulated benchmarks are valid for teaching:
+Teaching note - why simulated benchmarks are valid for teaching:
     Live load tests require a running K8s cluster, Locust workers, and real API
     endpoints, which makes them expensive (infra cost) and fragile (flaky in CI).
     Simulated benchmarks using well-chosen mathematical models produce
@@ -10,7 +10,7 @@ Teaching note — why simulated benchmarks are valid for teaching:
     - Fixed random seed ensures every reader reproduces the same charts.
     The goal is teaching insight, not operational telemetry.
 
-Teaching note — why concurrency exhibits quadratic saturation:
+Teaching note - why concurrency exhibits quadratic saturation:
     Python async frameworks share one OS thread and one GIL. Beyond a certain
     concurrency level the event loop cannot dispatch new I/O completions faster
     than it handles existing ones. Separately, connection pools (Chroma client,
@@ -20,7 +20,7 @@ Teaching note — why concurrency exhibits quadratic saturation:
     where c = concurrency, k = per-user throughput, N = saturation ceiling.
     Tuning N requires profiling the connection pool size and GIL contention.
 
-Teaching note — why p99 matters more than p95 for SLA design:
+Teaching note - why p99 matters more than p95 for SLA design:
     An SLA of "p95 < 500ms" means 5 out of 100 users see slow responses.
     At 1000 req/sec that is 50 users per second experiencing degradation.
     p99 captures the worst realistic user experience before true outliers
@@ -43,7 +43,7 @@ PROJECT_ROOT = Path(__file__).parent.parent
 _OUTPUT_JSON = PROJECT_ROOT / "results" / "data" / "article_08_benchmarks.json"
 
 # Saturation ceiling for the throughput model.
-# At N=120 concurrent users, throughput drops to zero — models connection pool
+# At N=120 concurrent users, throughput drops to zero - models connection pool
 # exhaustion plus GIL contention in a typical Python async RAG service.
 # The quadratic formula peaks at N/2 = 60 users, matching the observed
 # saturation point for a single-pod FastAPI + Groq service with a default
@@ -58,7 +58,7 @@ _PER_USER_THROUGHPUT = 2.5
 # Gaussian noise scale: 5% of signal, matching Locust measurement variance.
 _NOISE_SCALE = 0.05
 
-# Base latency (ms) at zero concurrency — reflects model loading + network RTT.
+# Base latency (ms) at zero concurrency - reflects model loading + network RTT.
 _BASE_LATENCY_P50_MS = 50.0
 _BASE_LATENCY_P95_MS = 120.0
 _BASE_LATENCY_P99_MS = 200.0
@@ -71,7 +71,7 @@ _P50_GROWTH_MS_PER_USER = 2.0
 _P95_GROWTH_MS_PER_USER = 5.0
 _P99_GROWTH_MS_PER_USER = 10.0
 
-# Simulated tool call latency — each tool call takes ~100ms (network I/O to Groq).
+# Simulated tool call latency - each tool call takes ~100ms (network I/O to Groq).
 _TOOL_CALL_LATENCY_MS = 100.0
 
 # Parallel overhead: thread spawn + result collection in ThreadPoolExecutor.
@@ -80,7 +80,7 @@ _PARALLEL_OVERHEAD_MS = 10.0
 
 
 def simulate_parallel_speedup(n_requests: int = 20) -> dict[str, float]:
-    """Compute speedup from parallel vs sequential tool execution — task 4.22.
+    """Compute speedup from parallel vs sequential tool execution - task 4.22.
 
     Models 20 requests, each with 3 independent tool calls at ~100ms each.
     Sequential baseline executes all three calls in series (300ms worst case).
@@ -88,7 +88,7 @@ def simulate_parallel_speedup(n_requests: int = 20) -> dict[str, float]:
     total time = max(individual latencies) + thread overhead (~10ms).
 
     Why ThreadPoolExecutor for tool calls:
-        Tool calls (RAG retrieval, web search, DB lookup) are all I/O-bound —
+        Tool calls (RAG retrieval, web search, DB lookup) are all I/O-bound -
         they block waiting for a network response, not CPU. The GIL is released
         during I/O, so threads run truly concurrently for network waits.
         ProcessPoolExecutor is only needed for CPU-bound tools (e.g., code execution).
@@ -132,7 +132,7 @@ def simulate_throughput_curve(
     1. At low concurrency (c << N): throughput scales linearly with users.
     2. At mid concurrency (c ~ N/2): throughput peaks.
     3. Beyond saturation: connection pool exhaustion causes queuing, not
-       additional throughput — CPU spends time managing rejected connections.
+       additional throughput - CPU spends time managing rejected connections.
 
     Latency model: linear growth
         p50 = BASE + c * GROWTH_PER_USER
@@ -173,7 +173,7 @@ def simulate_throughput_curve(
 
 
 def simulate_fault_recovery(n_runs: int = 5) -> dict[str, list[float]]:
-    """Measure simulated recovery times for three fault injection scenarios — task 4.28.
+    """Measure simulated recovery times for three fault injection scenarios - task 4.28.
 
     Fault types and their recovery mechanisms:
     - db_failure: Chroma HNSW index must reload from disk on pod restart.
@@ -181,7 +181,7 @@ def simulate_fault_recovery(n_runs: int = 5) -> dict[str, list[float]]:
       Chroma docs cite 8-15s for a 500MB index (our tech docs corpus).
     - network_latency: Transient packet loss or DNS hiccup.
       Self-healing: TCP retries + connection pooling absorb the latency spike.
-      No hard recovery step — recovery time is effectively 0s (retries succeed).
+      No hard recovery step - recovery time is effectively 0s (retries succeed).
     - memory_exhaustion: Pod OOMKilled by kubelet → pod restart.
       Recovery = container image pull check + JVM/Python startup + index warm-up.
       Typically 15-30s from OOM event to first successful request on the new pod.
@@ -189,7 +189,7 @@ def simulate_fault_recovery(n_runs: int = 5) -> dict[str, list[float]]:
     Teaching note: Measuring mean recovery time per fault type informs the
     K8s readinessProbe initialDelaySeconds. Setting it below the max recovery
     time for the slowest fault causes the kubelet to route traffic to a pod
-    that is not yet ready — silent data loss or 503 errors during recovery.
+    that is not yet ready - silent data loss or 503 errors during recovery.
     """
     recovery_times: dict[str, list[float]] = {
         "db_failure": [],
@@ -216,7 +216,7 @@ def simulate_replica_comparison() -> dict[str, dict[str, float]]:
     3-replica results reflect horizontal scaling with round-robin load balancing.
     Throughput grows near-linearly (3x) for I/O-bound workloads because each
     pod maintains its own connection pool. Error rate drops because a single
-    slow pod does not block the entire cluster — the load balancer routes
+    slow pod does not block the entire cluster - the load balancer routes
     around it. p95 drops because queuing depth per pod is lower.
 
     Teaching note: horizontal scaling helps I/O-bound workloads (LLM calls)
@@ -269,13 +269,13 @@ def print_summary(results: dict[str, Any]) -> None:
     three = replicas["three_replicas"]
     print("\n1 Replica vs 3 Replicas:")
     print(f"  {'Metric':<20} {'1 Replica':>12} {'3 Replicas':>12}")
-    print(f"  {'-'*46}")
+    print(f"  {'-' * 46}")
     print(
         f"  {'Throughput (rps)':<20} {one['throughput_rps']:>12.1f} "
         f"{three['throughput_rps']:>12.1f}"
     )
-    print(f"  {'p95 latency (ms)':<20} {one['p95_ms']:>12.1f} " f"{three['p95_ms']:>12.1f}")
-    print(f"  {'Error rate':<20} {one['error_rate']:>12.3f} " f"{three['error_rate']:>12.3f}")
+    print(f"  {'p95 latency (ms)':<20} {one['p95_ms']:>12.1f} {three['p95_ms']:>12.1f}")
+    print(f"  {'Error rate':<20} {one['error_rate']:>12.3f} {three['error_rate']:>12.3f}")
     print()
 
 

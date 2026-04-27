@@ -1,4 +1,4 @@
-"""PyTorch inference optimizations for embedding models — tasks 5.5, 5.6, 5.7.
+"""PyTorch inference optimizations for embedding models - tasks 5.5, 5.6, 5.7.
 
 Teaching note: WHY optimise the embedding model?
   In a high-traffic RAG pipeline, the embedding step runs on every query:
@@ -7,7 +7,7 @@ Teaching note: WHY optimise the embedding model?
   At 100 req/sec (Article 8 target), embedding latency directly caps throughput.
   Three standard optimisation techniques are benchmarked:
 
-  1. torch.compile() — graph compilation
+  1. torch.compile() - graph compilation
      PyTorch's JIT compiler fuses ops into optimised kernels. First call
      is slow (trace overhead ~1-3s), but subsequent calls are 20-50% faster.
      Best for models with stable input shapes (fixed sequence length).
@@ -21,7 +21,7 @@ Teaching note: WHY optimise the embedding model?
      because INT8 quantization error is below the noise floor for most tasks.
      Note: INT8 quantization is CPU-only in PyTorch (no GPU/MPS support yet).
 
-  3. torch.profiler — bottleneck identification
+  3. torch.profiler - bottleneck identification
      Records operator-level execution times. The profile reveals which ops
      dominate inference time (usually attention and layer norm), guiding
      targeted optimisation effort.
@@ -74,7 +74,7 @@ def _tokenize(query: str, tokenizer: Any) -> dict[str, torch.Tensor]:
 
 
 def _mean_pool(token_embeddings: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
-    """Mean pooling over non-padding tokens — standard for BGE models."""
+    """Mean pooling over non-padding tokens - standard for BGE models."""
     mask_expanded = attention_mask.unsqueeze(-1).float()
     return (token_embeddings * mask_expanded).sum(1) / mask_expanded.sum(1).clamp(min=1e-9)
 
@@ -118,7 +118,7 @@ def benchmark_compile(
 
     Teaching note: torch.compile is most effective on hardware with
     dedicated CUDA tensor cores. On CPU (and MPS which has partial support),
-    gains are more modest — typically 10-25% for transformer inference.
+    gains are more modest - typically 10-25% for transformer inference.
     The lesson is the code path, not the exact speedup number.
     """
     print("  [eager] measuring...")
@@ -129,7 +129,7 @@ def benchmark_compile(
     # aot_eager is a CPU-compatible backend that works without CUDA.
     # The full inductor backend (default) requires triton which is CUDA-only.
     compiled: torch.nn.Module = torch.compile(model, backend="aot_eager")  # type: ignore[assignment]
-    # First call triggers compilation — not included in benchmark
+    # First call triggers compilation - not included in benchmark
     _encode(compiled, inputs)
 
     print("  [compile] measuring compiled model...")
@@ -157,7 +157,7 @@ def benchmark_quantization(
 
     Teaching note: torch.quantization.quantize_dynamic replaces specified
     layer types (here: nn.Linear) with INT8 equivalents at runtime. No
-    calibration dataset required — hence 'dynamic' (vs static quantization).
+    calibration dataset required - hence 'dynamic' (vs static quantization).
     The tradeoff:
       - Pro: 4x smaller weights (float32 → int8), faster GEMM on CPU
       - Con: slight accuracy loss (< 1% cosine similarity drift for BGE)
@@ -171,7 +171,7 @@ def benchmark_quantization(
 
     QNNPACK vs FBGEMM result: on Apple Silicon, QNNPACK INT8 is actually
     SLOWER than FP32 because Apple's CPU doesn't have x86-style VNNI
-    instructions — size reduction is real (4x) but latency benefit requires x86.
+    instructions - size reduction is real (4x) but latency benefit requires x86.
     """
     fp32_ms = measure_latency_ms(model, inputs)
     fp32_size_mb = sum(p.numel() * 4 for p in model.parameters()) / 1e6
@@ -191,7 +191,7 @@ def benchmark_quantization(
         )
 
     # Quantized Linear layers store weights as packed INT8 tensors that don't
-    # show up as standard parameters — approximate size as fp32_size / 4.
+    # show up as standard parameters - approximate size as fp32_size / 4.
     int8_size_mb = fp32_size_mb / 4.0
 
     int8_ms = measure_latency_ms(quantized, inputs)
@@ -288,7 +288,7 @@ def plot_speedup(
 
         fig, ax = plt.subplots(figsize=(7, 5))
         bars = ax.bar(labels, values, color=colors, width=0.5)
-        ax.set_ylabel("Median latency (ms) — lower is better")
+        ax.set_ylabel("Median latency (ms) - lower is better")
         ax.set_title("PyTorch Inference Optimizations\n(BGE-base-en-v1.5, CPU, 128-token input)")
         ax.set_ylim(0, max(values) * 1.3)
 

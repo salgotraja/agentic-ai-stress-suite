@@ -1,8 +1,8 @@
-"""Benchmark stock vs fine-tuned BGE-base-en-v1.5 — task 5.4.
+"""Benchmark stock vs fine-tuned BGE-base-en-v1.5 - task 5.4.
 
 Teaching note: WHY compare stock vs fine-tuned on a full corpus?
   The val-set Recall@5 in training_history.json (task 5.3) only tests
-  query→positive retrieval among 400 pairs — it never sees the 207-doc
+  query→positive retrieval among 400 pairs - it never sees the 207-doc
   corpus. Full-corpus retrieval is harder: the model must distinguish the
   correct doc from 206 distractors, not just 399. This benchmark runs the
   real retrieval scenario to show the production-relevant improvement.
@@ -123,7 +123,7 @@ def plot_umap(
     should cluster documents by framework (FastAPI, Pydantic, React, Spring)
     and sub-topic. Comparing stock vs fine-tuned projections reveals whether
     fine-tuning increased within-framework cohesion or cross-framework
-    separation — the key signal that domain adaptation is working.
+    separation - the key signal that domain adaptation is working.
     """
     try:
         import matplotlib

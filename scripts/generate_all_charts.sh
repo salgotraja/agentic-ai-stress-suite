@@ -25,7 +25,7 @@ for nb in "${NOTEBOOKS[@]}"; do
             --output "${nb%.ipynb}_executed.ipynb" \
             --ExecutePreprocessor.timeout=300 \
             --ExecutePreprocessor.kernel_name=python3 2>/dev/null || \
-        echo "  Warning: $nb failed (may need live data — continuing)"
+        echo "  Warning: $nb failed (may need live data - continuing)"
     else
         echo "  Skipping: $nb (not found)"
     fi

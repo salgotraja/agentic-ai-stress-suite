@@ -20,7 +20,7 @@ class ZipfianQueryGenerator:
 
     def __init__(self, vocab_size: int = 1000, alpha: float = 1.1) -> None:
         self._queries = [f"query_{i:04d}" for i in range(vocab_size)]
-        # Zipfian weights: rank^(-alpha) — rank 1 appears most often
+        # Zipfian weights: rank^(-alpha) - rank 1 appears most often
         weights = np.array([1.0 / (i + 1) ** alpha for i in range(vocab_size)])
         self._probs = (weights / weights.sum()).tolist()
 

@@ -370,7 +370,7 @@ def test_react_agent_with_mock_tool_mode() -> None:
         # Finish
         LLMResponse(
             content=(
-                '{"action": "finish", "final_answer": "2 + 2 = 4", ' '"reasoning": "Got result"}'
+                '{"action": "finish", "final_answer": "2 + 2 = 4", "reasoning": "Got result"}'
             ),
             provider=LLMProvider.GROQ,
             model="llama-3.1-8b-instant",

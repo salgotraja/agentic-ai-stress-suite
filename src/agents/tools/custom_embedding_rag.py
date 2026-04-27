@@ -1,4 +1,4 @@
-"""RAG tool backed by the domain fine-tuned BGE embedding model — task 5.11.
+"""RAG tool backed by the domain fine-tuned BGE embedding model - task 5.11.
 
 Teaching note: WHY swap the embedding model in a RAG pipeline?
   The default RAGTool uses the stock BAAI/bge-base-en-v1.5 model.
@@ -17,9 +17,9 @@ Teaching note: WHY swap the embedding model in a RAG pipeline?
     2. Recall@K on custom eval set improves by >5%
     3. The fine-tuned model is stable (not over-fitted to training queries)
   When to stick with stock:
-    1. Corpus is too small (<100 docs) — stock generalises better
+    1. Corpus is too small (<100 docs) - stock generalises better
     2. Training data objective doesn't match retrieval task (task 5.4 finding)
-    3. Latency budget is tight — fine-tuned model adds no speed benefit
+    3. Latency budget is tight - fine-tuned model adds no speed benefit
 
 Mock mode:
   Returns a canned response so the tool can be used in unit tests
@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 
 FINETUNED_MODEL_DIR = Path("models/bge_finetuned")
 
-# Canned mock responses keyed by partial query match — deterministic for tests
+# Canned mock responses keyed by partial query match - deterministic for tests
 _MOCK_RESPONSES: dict[str, str] = {
     "dependency injection": (
         "FastAPI's dependency injection system uses Depends() to declare "
@@ -51,8 +51,7 @@ _MOCK_RESPONSES: dict[str, str] = {
     ),
 }
 _MOCK_DEFAULT = (
-    "Custom embedding RAG (mock): No result found for query. "
-    "This is a mock response for testing."
+    "Custom embedding RAG (mock): No result found for query. This is a mock response for testing."
 )
 
 
@@ -65,7 +64,7 @@ class CustomEmbeddingRAGTool(BaseTool):
 
     The tool is intentionally thin: it delegates all retrieval logic to
     NaiveRAGPipeline and only overrides the embedding component. This keeps
-    the blast radius of the custom model swap minimal — if the fine-tuned
+    the blast radius of the custom model swap minimal - if the fine-tuned
     model degrades quality, switching back requires changing one argument.
     """
 

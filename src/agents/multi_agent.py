@@ -1380,12 +1380,12 @@ class VotingResolver:
 
         for agent_idx, agent in enumerate(self.agents):
             # Build scoring prompt
-            options_text = "\n".join([f"{i+1}. {opt}" for i, opt in enumerate(options)])
+            options_text = "\n".join([f"{i + 1}. {opt}" for i, opt in enumerate(options)])
 
             prompt = f"""Score each option from 1-10 based on feasibility, effectiveness, \
 and efficiency.
 
-Context: {context if context else 'No additional context provided'}
+Context: {context if context else "No additional context provided"}
 
 Options:
 {options_text}
@@ -1556,7 +1556,7 @@ class SupervisorResolver:
 
         prompt = f"""{self.supervisor_prompt}
 
-Context: {context if context else 'No additional context provided'}
+Context: {context if context else "No additional context provided"}
 
 Agent Recommendations:
 {recs_text}
@@ -1705,7 +1705,7 @@ class RoundRobinResolver:
 
                 prompt = f"""Problem: {problem}
 
-Context: {context if context else 'No additional context provided'}
+Context: {context if context else "No additional context provided"}
 
 {history_text}
 

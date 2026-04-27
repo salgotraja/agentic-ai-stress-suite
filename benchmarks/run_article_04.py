@@ -265,7 +265,7 @@ def run_benchmark(
         print(f"{'=' * 80}\n")
 
         for query_idx, query in enumerate(queries, 1):
-            print(f"[{query_idx}/{len(queries)}] {query['id']}: " f"{query['query'][:60]}...")
+            print(f"[{query_idx}/{len(queries)}] {query['id']}: {query['query'][:60]}...")
 
             # Run ReAct agent
             print("  - Running ReAct agent...", end=" ", flush=True)
@@ -282,8 +282,7 @@ def run_benchmark(
             all_results["plan_execute"].append(plan_result)
             status = "✓" if plan_result.success else "✗"
             print(
-                f"{status} ({plan_result.latency_ms:.0f}ms, "
-                f"{plan_result.tool_calls_count} tools)"
+                f"{status} ({plan_result.latency_ms:.0f}ms, {plan_result.tool_calls_count} tools)"
             )
 
     # Compute summaries
@@ -394,8 +393,7 @@ def run_benchmark(
     print(f"\nResults saved to: {output_path}")
     print("\nNext steps:")
     print(
-        "  1. Run Jupyter notebook: "
-        "jupyter nbconvert --execute notebooks/analysis_article_04.ipynb"
+        "  1. Run Jupyter notebook: jupyter nbconvert --execute notebooks/analysis_article_04.ipynb"
     )
     print("  2. View charts in: results/charts/article_04/")
 

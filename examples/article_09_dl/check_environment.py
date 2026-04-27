@@ -1,4 +1,4 @@
-"""DL environment check for Article 9 — task 5.1.
+"""DL environment check for Article 9 - task 5.1.
 
 Teaching note: WHY check hardware before fine-tuning?
   Fine-tuning an embedding model with 22M parameters (BGE-base-en-v1.5)

@@ -93,9 +93,7 @@ class TechDocsValidator:
 
         match = self.FILE_PATTERN.match(filename)
         if not match:
-            issues.append(
-                f"Invalid file naming: {filename} (expected format: 01_topic_name.md)"
-            )
+            issues.append(f"Invalid file naming: {filename} (expected format: 01_topic_name.md)")
             return False, issues
 
         number_str, slug = match.groups()
@@ -131,9 +129,7 @@ class TechDocsValidator:
 
         # 1. Validate word count
         if word_count < self.MIN_WORDS:
-            issues.append(
-                f"Too short: {word_count} words (minimum: {self.MIN_WORDS})"
-            )
+            issues.append(f"Too short: {word_count} words (minimum: {self.MIN_WORDS})")
         elif word_count > self.MAX_WORDS + self.WORD_COUNT_BUFFER:
             warnings.append(
                 f"Lengthy: {word_count} words (target: {self.MIN_WORDS}-{self.MAX_WORDS})"
@@ -153,25 +149,19 @@ class TechDocsValidator:
         if not section_headings:
             issues.append("Missing section headings (## Section)")
         elif self.verbose and len(section_headings) < 3:
-            warnings.append(
-                f"Few section headings: {len(section_headings)} (recommended: 3+)"
-            )
+            warnings.append(f"Few section headings: {len(section_headings)} (recommended: 3+)")
 
         # 3. Validate code examples
         code_blocks = re.findall(r"```(\w+)?\n", content)
         if not code_blocks:
             issues.append("Missing code examples")
         elif len(code_blocks) < 2 and self.verbose:
-            warnings.append(
-                f"Few code examples: {len(code_blocks)} (recommended: 2+)"
-            )
+            warnings.append(f"Few code examples: {len(code_blocks)} (recommended: 2+)")
 
         # Check for syntax highlighting in code blocks
         code_blocks_no_lang = re.findall(r"```\n", content)
         if code_blocks_no_lang and self.verbose:
-            warnings.append(
-                f"{len(code_blocks_no_lang)} code block(s) missing syntax highlighting"
-            )
+            warnings.append(f"{len(code_blocks_no_lang)} code block(s) missing syntax highlighting")
 
         # 4. Check for placeholder/template text
         placeholders = [
@@ -269,8 +259,8 @@ class TechDocsValidator:
             )
 
         # Validate content
-        content_valid, word_count, content_issues, content_warnings = (
-            self.validate_content(content, filename)
+        content_valid, word_count, content_issues, content_warnings = self.validate_content(
+            content, filename
         )
         issues.extend(content_issues)
         warnings.extend(content_warnings)
@@ -302,9 +292,9 @@ class TechDocsValidator:
             print(f"⚠️  Framework directory not found: {framework_dir}")
             return []
 
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print(f"Validating {framework.upper()} documentation")
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         results = []
         doc_files = sorted(framework_dir.glob("*.md"))
@@ -334,7 +324,9 @@ class TechDocsValidator:
 
         return results
 
-    def validate_all(self, frameworks: list[str] | None = None) -> dict[str, list[ValidationResult]]:
+    def validate_all(
+        self, frameworks: list[str] | None = None
+    ) -> dict[str, list[ValidationResult]]:
         """Validate documentation for all or specified frameworks.
 
         Args:
@@ -359,9 +351,9 @@ class TechDocsValidator:
         Args:
             all_results: Validation results by framework
         """
-        print(f"\n{'='*70}")
+        print(f"\n{'=' * 70}")
         print("VALIDATION SUMMARY")
-        print(f"{'='*70}\n")
+        print(f"{'=' * 70}\n")
 
         for framework, results in all_results.items():
             valid = sum(1 for r in results if r.valid)
@@ -379,9 +371,9 @@ class TechDocsValidator:
             else:
                 print()
 
-        print(f"{'='*70}")
-        print(f"OVERALL TOTALS")
-        print(f"{'='*70}")
+        print(f"{'=' * 70}")
+        print("OVERALL TOTALS")
+        print(f"{'=' * 70}")
         print(f"Total documents: {self.total_docs}")
         print(f"Valid documents: {self.valid_docs} ✅")
         print(f"Invalid documents: {self.invalid_docs} ❌")
@@ -389,9 +381,7 @@ class TechDocsValidator:
         if self.invalid_docs == 0:
             print(f"\n🎉 All {self.total_docs} documents passed validation!")
         else:
-            print(
-                f"\n⚠️  {self.invalid_docs} document(s) need attention"
-            )
+            print(f"\n⚠️  {self.invalid_docs} document(s) need attention")
 
     def export_results(
         self, all_results: dict[str, list[ValidationResult]], output_file: Path
@@ -412,9 +402,7 @@ class TechDocsValidator:
         }
 
         for framework, results in all_results.items():
-            export_data["frameworks"][framework] = [
-                asdict(result) for result in results
-            ]
+            export_data["frameworks"][framework] = [asdict(result) for result in results]
 
         output_file.write_text(json.dumps(export_data, indent=2))
         print(f"\n📊 Results exported to: {output_file}")
@@ -422,9 +410,7 @@ class TechDocsValidator:
 
 def main() -> int:
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Validate technical documentation quality"
-    )
+    parser = argparse.ArgumentParser(description="Validate technical documentation quality")
     parser.add_argument(
         "--framework",
         choices=["fastapi", "pydantic", "react", "spring"],

@@ -1,4 +1,4 @@
-"""Prepare training data for fine-tuning BGE-base-en-v1.5 — task 5.2.
+"""Prepare training data for fine-tuning BGE-base-en-v1.5 - task 5.2.
 
 Teaching note: WHY contrastive training pairs?
   Embedding models are trained with contrastive loss: given a query, the model
@@ -54,7 +54,7 @@ def build_bm25_index(docs: dict[str, str]) -> tuple[list[str], list[list[str]]]:
 
     Teaching note: We implement a lightweight BM25 here rather than importing
     rank_bm25 to avoid adding a dependency to this script. The tokenisation is
-    word-level lowercase split — good enough for hard-negative mining where we
+    word-level lowercase split - good enough for hard-negative mining where we
     just need approximate keyword overlap, not production-quality ranking.
     """
     doc_ids = list(docs.keys())
@@ -84,7 +84,7 @@ def bm25_top_k(
         for term in query_set:
             tf = counter.get(term, 0)
             if tf > 0:
-                # BM25 TF normalisation (skip IDF for speed — uniform across corpus)
+                # BM25 TF normalisation (skip IDF for speed - uniform across corpus)
                 tf_norm = tf * (k1 + 1) / (tf + k1 * (1 - b + b * doc_len / avg_len))
                 tf_sum += tf_norm
         scores.append(tf_sum)
@@ -107,13 +107,13 @@ def build_pairs(
     Teaching note on positive selection:
       We use expected_answer text as the positive rather than the raw source doc.
       This trains the model to align query representations with concise answer
-      text — useful because at inference time the LLM response (not the raw doc)
+      text - useful because at inference time the LLM response (not the raw doc)
       is what gets cached and reused via semantic cache (Article 6).
 
     Teaching note on hard_negative selection:
       We retrieve top-K BM25 docs for each query, then drop correct source docs.
       Each remaining candidate becomes a separate training triple with the same
-      (query, positive) — this multiplies the dataset size by negatives_per_query
+      (query, positive) - this multiplies the dataset size by negatives_per_query
       while keeping each negative distinct. Using multiple negatives per query is
       standard practice (MultipleNegativesRankingLoss uses all in-batch negatives
       simultaneously, but for simplicity we emit one-negative-per-example files).
@@ -136,7 +136,7 @@ def build_pairs(
         if not positive_text.strip():
             continue
 
-        # BM25 hard-negative mining — retrieve more candidates to pick N from
+        # BM25 hard-negative mining - retrieve more candidates to pick N from
         query_tokens = query_text.lower().split()
         candidates = bm25_top_k(query_tokens, doc_ids, tokenised_docs, k=20)
         hard_negatives = [c for c in candidates if c not in correct_sources]
@@ -183,7 +183,7 @@ def stratified_split(
 
     Teaching note: Stratification by difficulty would require keeping
     difficulty labels through the pipeline. Here we do a simple random
-    split after shuffling — acceptable because the dataset is synthesised
+    split after shuffling - acceptable because the dataset is synthesised
     and already balanced by construction (article_01.json was built with
     equal difficulty distribution).
     """

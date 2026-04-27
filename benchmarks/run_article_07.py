@@ -1,22 +1,22 @@
 """Security guardrail benchmark for Article 7.
 
-Teaching note — why measure false positive rate separately from block rate?
+Teaching note - why measure false positive rate separately from block rate?
     Block rate (true positive rate) measures how many actual attacks were caught.
     False positive rate measures how many legitimate queries were incorrectly blocked.
     These metrics pull in opposite directions: tightening guardrails increases both.
     Production guardrails must balance security coverage against user experience.
     A guardrail that blocks 100% of attacks but also 50% of legitimate queries is
-    not deployable — users route around it. Target: >90% TP rate, <5% FP rate.
+    not deployable - users route around it. Target: >90% TP rate, <5% FP rate.
 
-Teaching note — why does latency matter for guardrails?
+Teaching note - why does latency matter for guardrails?
     Guardrails sit synchronously in the hot path of every LLM request. A 50ms
     guardrail adds 50ms to every response, whether or not the request is blocked.
-    At 100 req/sec that is 5 full seconds of CPU per second — not a guardrail
+    At 100 req/sec that is 5 full seconds of CPU per second - not a guardrail
     problem, a scalability ceiling. Regex guardrails run in <1ms, which is why
     they are the first layer. Semantic classifiers (Llama-Guard, NeMo) add 200-500ms
     and are only invoked after the fast regex pass.
 
-Teaching note — why differentiate L1/L2/L3 block rates?
+Teaching note - why differentiate L1/L2/L3 block rates?
     L1 (naive, direct injection) should be blocked by regex alone.
     L2 (moderate, role-play, context injection) may bypass regex but hit semantic layers.
     L3 (advanced, encoded, indirect) requires NLP or LLM to catch.
@@ -44,7 +44,7 @@ from src.ops.security import GuardrailsManager  # noqa: E402
 _PROMPTS_CSV = PROJECT_ROOT / "datasets" / "red_team_prompts" / "red_team_prompts.csv"
 _OUTPUT_JSON = PROJECT_ROOT / "results" / "data" / "article_07_benchmarks.json"
 
-# Severity tiers present in the dataset (FR-5.2.1 — FR-5.2.3).
+# Severity tiers present in the dataset (FR-5.2.1 - FR-5.2.3).
 _SEVERITY_LEVELS = ("L1", "L2", "L3")
 
 
@@ -90,7 +90,7 @@ def run_security_benchmark(prompts: list[dict[str, str]]) -> dict[str, Any]:
     This deliberately isolates Layer 1 performance so we can quantify the
     regex coverage gap that motivates the semantic fallback layers.
     """
-    manager = GuardrailsManager()  # regex-only — no LLM or NER overhead
+    manager = GuardrailsManager()  # regex-only - no LLM or NER overhead
 
     latencies_ms: list[float] = []
     blocked_expected: list[dict[str, str]] = []  # expected_block == "true"
@@ -167,7 +167,7 @@ def print_summary(results: dict[str, Any]) -> None:
 
     print("Block Rate by Severity (attack rows only):")
     print(f"  {'Severity':<12} {'Block Rate':>12}  {'vs 90% target':>14}")
-    print(f"  {'-'*42}")
+    print(f"  {'-' * 42}")
     for level in _SEVERITY_LEVELS:
         rate = results["block_rate_by_severity"][level]
         delta = rate - 0.90

@@ -8,7 +8,7 @@ Teaching note: This script bridges CostForecast (which returns a 30-day total)
 with the operational need for a per-day forecast table. Budget owners want to
 see daily predictions (day 1: $0.55, day 2: $0.57 ...) not just a lump sum.
 The per-day breakdown is a straight-line projection from the linear regression
-trend — same math as CostForecast, exposed at finer granularity.
+trend - same math as CostForecast, exposed at finer granularity.
 """
 
 from __future__ import annotations

@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate docker-compose syntax
         run: docker compose -f infra/docker-compose.yml config --quiet
-      - name: Pull images (no start — avoids GPU/port requirements in CI)
+      - name: Pull images (no start - avoids GPU/port requirements in CI)
         run: docker compose -f infra/docker-compose.yml pull --quiet
 
   create-release:

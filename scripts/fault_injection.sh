@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fault injection scenarios for chaos engineering — task 4.28.
+# Fault injection scenarios for chaos engineering - task 4.28.
 #
 # Teaching note: WHY chaos engineering?
 #   Production systems fail in ways integration tests never catch:
@@ -76,14 +76,14 @@ scenario_db_failure() {
     start_ns="$(date +%s%N)"
 
     log_info "Chroma is down. Testing app resilience (polling ${APP_URL}/api/v1/heartbeat)..."
-    log_warn "Expect HTTP errors here — that is the point. Redis cache should absorb reads."
+    log_warn "Expect HTTP errors here - that is the point. Redis cache should absorb reads."
 
     local elapsed=0
     local poll_interval=2
     local app_responding=false
 
     # Poll the Chroma heartbeat endpoint to measure downtime window.
-    # We poll the Chroma port directly (8000) — this is the heartbeat, not an app endpoint.
+    # We poll the Chroma port directly (8000) - this is the heartbeat, not an app endpoint.
     while [ "$elapsed" -lt "$RECOVERY_TIMEOUT" ]; do
         local now_ns
         now_ns="$(date +%s%N)"
@@ -93,7 +93,7 @@ scenario_db_failure() {
             app_responding=true
             break
         fi
-        log_info "  [${elapsed}s elapsed] Chroma not yet responsive — restarting now if not already done..."
+        log_info "  [${elapsed}s elapsed] Chroma not yet responsive - restarting now if not already done..."
         sleep "$poll_interval"
     done
 
@@ -132,7 +132,7 @@ scenario_db_failure() {
     log_ok "Recovery time: ${total_elapsed}s (stop → healthy again)"
     log_info "Interpret results:"
     log_info "  - If recovery > 30s: HNSW index reload is the bottleneck; pre-warm on startup."
-    log_info "  - If app served errors: Redis cache miss — check cache TTL and warming strategy."
+    log_info "  - If app served errors: Redis cache miss - check cache TTL and warming strategy."
     log_info "  - Target recovery SLA: <60s for dev stack, <30s for production."
 }
 
@@ -142,7 +142,7 @@ scenario_db_failure() {
 #   LLM API calls in production cross the internet (50-300ms baseline).
 #   Adding 200ms of artificial latency tests whether timeout budgets,
 #   retry logic, and user-facing SLAs hold under realistic conditions.
-#   'tc' (traffic control) on Linux injects latency at the kernel level —
+#   'tc' (traffic control) on Linux injects latency at the kernel level -
 #   all sockets on the interface are affected, matching a real network event.
 #
 #   macOS alternative: Network Link Conditioner (System Preferences > Developer).
@@ -159,15 +159,15 @@ scenario_network_latency() {
     os="$(uname -s)"
 
     if [ "$os" = "Linux" ]; then
-        log_info "Detected Linux — using tc (traffic control) to inject 200ms latency on eth0."
+        log_info "Detected Linux - using tc (traffic control) to inject 200ms latency on eth0."
         log_warn "This affects ALL outbound traffic on eth0 for 30 seconds."
 
         # WHY eth0: default interface in Docker-based dev environments and most cloud VMs.
-        # On Kubernetes nodes the interface may differ (ens3, enp0s3, etc.) — adjust as needed.
+        # On Kubernetes nodes the interface may differ (ens3, enp0s3, etc.) - adjust as needed.
         tc qdisc add dev eth0 root netem delay 200ms
         log_ok "Latency injected: 200ms on eth0"
 
-        log_info "Sustaining latency for 30s — run your load test now:"
+        log_info "Sustaining latency for 30s - run your load test now:"
         log_info "  locust -f tests/load/locustfile.py --host $APP_URL"
         sleep 30
 
@@ -180,7 +180,7 @@ scenario_network_latency() {
         log_info "  - Zero timeout errors: timeout budgets are appropriate for real-world latency."
 
     elif [ "$os" = "Darwin" ]; then
-        log_warn "macOS detected — 'tc' (traffic control) is a Linux-only kernel feature."
+        log_warn "macOS detected - 'tc' (traffic control) is a Linux-only kernel feature."
         log_warn "On macOS, use Network Link Conditioner to inject latency manually:"
         echo ""
         echo "  Manual steps:"
@@ -194,7 +194,7 @@ scenario_network_latency() {
         echo ""
         log_info "Skipping automated injection on macOS."
     else
-        log_warn "Unknown OS '$os' — network latency injection not supported."
+        log_warn "Unknown OS '$os' - network latency injection not supported."
         log_info "Supported: Linux (tc), macOS (Network Link Conditioner manual)."
     fi
 }
@@ -208,7 +208,7 @@ scenario_network_latency() {
 #   This scenario verifies:
 #     1) The container restarts cleanly after an OOM kill.
 #     2) Health checks catch the downtime window (so load balancers can drain).
-#     3) No persistent corruption — the app serves correct results post-restart.
+#     3) No persistent corruption - the app serves correct results post-restart.
 #
 #   WHY show docker inspect limits: Operators often don't know what limits are
 #   set. Surfacing them here helps teams tune before a production OOM event.
@@ -216,7 +216,7 @@ scenario_memory_exhaustion() {
     log_section "Scenario: Memory Exhaustion (OOM simulation)"
 
     # Identify the app container. In this dev stack there is no dedicated 'app'
-    # service — the agent/RAG code runs as a Python process, not a container.
+    # service - the agent/RAG code runs as a Python process, not a container.
     # This scenario is most relevant when the stack includes a deployed app service.
     local container_id
     container_id="$(docker compose -f "$COMPOSE_FILE" ps -q app 2>/dev/null || echo "")"
@@ -274,7 +274,7 @@ scenario_memory_exhaustion() {
     mem_limit="$(docker inspect --format '{{.HostConfig.Memory}}' "$container_id" 2>/dev/null || echo "0")"
     if [ "$mem_limit" = "0" ]; then
         log_warn "No Docker memory limit set on the app container."
-        log_warn "Without a limit, OOM kills go to the host OS — containers keep running."
+        log_warn "Without a limit, OOM kills go to the host OS - containers keep running."
         log_warn "Set a memory limit in docker-compose.yml deploy.resources.limits.memory"
     else
         local mem_limit_mb=$(( mem_limit / 1024 / 1024 ))

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# K8s deployment smoke test — task 4.26.
+# K8s deployment smoke test - task 4.26.
 #
 # Teaching note: WHY test K8s manifests in CI with kind?
 #   kubectl apply --dry-run=client only validates YAML schema.
@@ -8,7 +8,7 @@
 #   - Does the HPA register correctly with the metrics server?
 #   - Can the Service reach the pod (kube-proxy rules wired up)?
 #   kind (Kubernetes-in-Docker) spins up a real single-node cluster in ~60s,
-#   costs no money, and is fully self-contained — perfect for CI.
+#   costs no money, and is fully self-contained - perfect for CI.
 #
 # Prerequisites:
 #   - kind (https://kind.sigs.k8s.io/) installed
@@ -170,7 +170,7 @@ EOF
 # ---------------------------------------------------------------------------
 # deploy_manifests: apply K8s manifests in dependency order.
 # Teaching note: order matters because the Deployment references the
-# ConfigMap and Secret via envFrom — if they don't exist yet, the pod spec
+# ConfigMap and Secret via envFrom - if they don't exist yet, the pod spec
 # is accepted but pods fail to start with "configmap not found". Applying
 # ConfigMap and Secret first guarantees pods can start immediately after the
 # Deployment is created. Ingress is applied last (and with || true) because
@@ -194,7 +194,7 @@ deploy_manifests() {
     # valid) but will have no effect. We log a note rather than failing.
     log "Applying Ingress (may be inactive without ingress controller)..."
     kubectl apply -f "$K8S_DIR/ingress.yaml" || \
-        log "WARNING: Ingress apply failed — NGINX controller likely not installed. Continuing."
+        log "WARNING: Ingress apply failed - NGINX controller likely not installed. Continuing."
 
     log "All manifests applied."
 }
@@ -231,7 +231,7 @@ wait_for_pods() {
 # ---------------------------------------------------------------------------
 # run_smoke_tests: port-forward the ClusterIP service and curl /health.
 # Teaching note: ClusterIP services are not reachable from the host network
-# by default (that is the point — they are cluster-internal). `kubectl
+# by default (that is the point - they are cluster-internal). `kubectl
 # port-forward` creates a tunnel from a local port to the service port via
 # the API server. We background it, wait briefly for the tunnel to open, run
 # the curl, then kill the tunnel to avoid port conflicts on re-runs.
@@ -255,7 +255,7 @@ run_smoke_tests() {
     log "Running smoke test: GET $health_url ..."
     if ! curl -sf --max-time 10 "$health_url" > /dev/null; then
         kill "$pf_pid" 2>/dev/null || true
-        log "ERROR: Smoke test failed — $health_url did not return 200."
+        log "ERROR: Smoke test failed - $health_url did not return 200."
         exit 1
     fi
 
@@ -267,14 +267,14 @@ run_smoke_tests() {
 # verify_hpa: confirm the HPA object is registered with the control plane.
 # Teaching note: in a bare kind cluster without the metrics-server add-on,
 # the HPA will show <unknown> for current CPU (it cannot scrape metrics).
-# That is expected and not a manifest defect — the resource is correctly
+# That is expected and not a manifest defect - the resource is correctly
 # defined and will function once metrics-server is installed. We log this
 # distinction so CI operators are not alarmed by the <unknown> output.
 # ---------------------------------------------------------------------------
 verify_hpa() {
     log "Verifying HPA registration..."
     if kubectl get hpa "${APP_LABEL}-hpa" --namespace "$NAMESPACE" -o wide 2>/dev/null; then
-        log "HPA registered. Note: CPU metrics show <unknown> without metrics-server add-on — expected in kind."
+        log "HPA registered. Note: CPU metrics show <unknown> without metrics-server add-on - expected in kind."
     else
         log "WARNING: HPA not found. Check hpa.yaml name matches deployment."
     fi

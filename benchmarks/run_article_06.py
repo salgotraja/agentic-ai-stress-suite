@@ -136,7 +136,7 @@ def run_router_benchmark(queries: list[dict[str, str]]) -> dict[str, Any]:
     - Typical production split: 70% simple, 30% complex → ~95% cost reduction
 
     The ComplexityRouter uses word count + keyword heuristics (no LLM call needed).
-    Misrouting a complex query to the small model degrades quality — not a crash.
+    Misrouting a complex query to the small model degrades quality - not a crash.
     Validate routing quality against golden set (Article 3) before deploying.
     """
     router = ComplexityRouter(simple_model=_SIMPLE_MODEL, complex_model=_COMPLEX_MODEL)

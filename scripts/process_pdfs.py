@@ -63,7 +63,9 @@ def main() -> int:
         print(f"No PDF files found in {args.input_dir}")
         return 1
 
-    print(f"Processing {len(pdf_files)} PDFs with {strategy.value} chunking (size={args.chunk_size})")
+    print(
+        f"Processing {len(pdf_files)} PDFs with {strategy.value} chunking (size={args.chunk_size})"
+    )
     print("=" * 70)
 
     total_chunks = 0

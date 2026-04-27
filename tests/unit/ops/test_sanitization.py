@@ -1,4 +1,4 @@
-"""Unit tests for sanitize_output — task 4.18.
+"""Unit tests for sanitize_output - task 4.18.
 
 Covers PII redaction ([REDACTED] replacement) and markdown code block
 stripping. All tests are pure-function (no LLM, no spaCy model load).
@@ -9,7 +9,7 @@ from __future__ import annotations
 from src.ops.security import sanitize_output
 
 # ---------------------------------------------------------------------------
-# PII redaction — email
+# PII redaction - email
 # ---------------------------------------------------------------------------
 
 
@@ -30,7 +30,7 @@ def test_multiple_emails_all_redacted() -> None:
 
 
 # ---------------------------------------------------------------------------
-# PII redaction — SSN
+# PII redaction - SSN
 # ---------------------------------------------------------------------------
 
 
@@ -42,7 +42,7 @@ def test_ssn_in_output_is_redacted() -> None:
 
 
 # ---------------------------------------------------------------------------
-# PII redaction — phone
+# PII redaction - phone
 # ---------------------------------------------------------------------------
 
 
@@ -64,7 +64,7 @@ def test_multiple_pii_types_all_redacted() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Clean text — no false positives
+# Clean text - no false positives
 # ---------------------------------------------------------------------------
 
 
@@ -116,7 +116,7 @@ def test_code_block_with_pii_stripped_not_redacted() -> None:
 
 def test_multiple_code_blocks_all_stripped() -> None:
     """Multiple fenced code blocks in the same response are all removed."""
-    text = "First:\n```python\nx = 1\n```\n" "Second:\n```js\nconsole.log(1)\n```\n" "End."
+    text = "First:\n```python\nx = 1\n```\nSecond:\n```js\nconsole.log(1)\n```\nEnd."
     result = sanitize_output(text)
     assert "```" not in result
     assert "x = 1" not in result

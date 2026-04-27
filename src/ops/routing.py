@@ -43,7 +43,7 @@ class LLMRouter:
     Teaching note: Fallback routing is about cost/reliability trade-offs.
     - Small models (8B): Cheap and fast, fail on complex tasks
     - Large models (70B): Better reasoning, moderate cost
-    - Premium APIs: Reliable, expensive — use only as last resort
+    - Premium APIs: Reliable, expensive - use only as last resort
     - Never expose fallback logic in API responses (security concern)
     """
 

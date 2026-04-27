@@ -12,7 +12,7 @@
 
 1. Extend `BaseTool` in `src/agents/tools/your_tool.py`
 2. Implement `execute()`, `mock_execute()`, and `describe()`
-3. `mock_execute()` must return a deterministic response — tests use this
+3. `mock_execute()` must return a deterministic response - tests use this
 4. Add unit tests with `mock=True` in `tests/unit/agents/tools/`
 5. Register the tool in `src/agents/single_agent.py`
 

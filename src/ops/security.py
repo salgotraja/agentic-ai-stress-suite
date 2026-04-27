@@ -53,6 +53,21 @@ class GuardResult:
     rail: str | None = None  # which rail triggered; None when allowed
 
 
+class GuardrailBlockedError(Exception):
+    """Raised when a guardrail rejects an LLM input pre-call.
+
+    Carries the originating GuardResult so callers can surface the blocking
+    rail and reason without re-running the check. Raised by UnifiedLLMClient
+    when guardrails are enabled and check_input() returns blocked=True.
+    """
+
+    def __init__(self, result: GuardResult) -> None:
+        self.result = result
+        rail = result.rail or "unknown"
+        reason = result.reason or "blocked by guardrail"
+        super().__init__(f"Guardrail '{rail}' blocked input: {reason}")
+
+
 # ---------------------------------------------------------------------------
 # Input rail: PII detection
 # Matches real PII patterns but excludes documentation placeholders

@@ -28,6 +28,7 @@ import openai
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from src.core.config import Settings, get_settings
+from src.ops.security import GuardrailBlockedError, GuardrailsManager
 
 
 class LLMProvider(str, Enum):
@@ -102,13 +103,22 @@ class UnifiedLLMClient:
     - Attempt 3: Wait 4s before retry
     """
 
-    def __init__(self, settings: Settings | None = None, enable_caching: bool = True) -> None:
+    def __init__(
+        self,
+        settings: Settings | None = None,
+        enable_caching: bool = True,
+        guardrails: GuardrailsManager | None = None,
+    ) -> None:
         """
         Initialize LLM client with configuration.
 
         Args:
             settings: Configuration settings (uses singleton if not provided)
             enable_caching: Enable provider-level caching (default: True)
+            guardrails: Optional GuardrailsManager for input checks. When None
+                and settings.enforce_guardrails is True, a regex-only
+                GuardrailsManager is constructed automatically. When None and
+                the flag is False, no guardrail is applied (existing behaviour).
 
         Teaching note: Provider caching significantly reduces costs:
         - Claude: 90% savings on cached input tokens
@@ -123,6 +133,15 @@ class UnifiedLLMClient:
         self.settings = settings or get_settings()
         self.errors: list[LLMError] = []
         self.enable_caching = enable_caching
+
+        # Default off: no guardrail unless caller passes one or settings opts in.
+        # Explicit injection always wins (tests, custom layered configs).
+        if guardrails is not None:
+            self._guardrails: GuardrailsManager | None = guardrails
+        elif self.settings.llm_enforce_guardrails:
+            self._guardrails = GuardrailsManager()
+        else:
+            self._guardrails = None
 
         # Declare client types
         self.groq_client: openai.OpenAI | None
@@ -696,11 +715,21 @@ class UnifiedLLMClient:
             LLMResponse with generated text and cache metrics
 
         Raises:
+            GuardrailBlockedError: If guardrails are enabled and the prompt is rejected
             Exception: If all providers fail
         """
         temperature = temperature or self.settings.default_llm_temperature
         max_tokens = max_tokens or self.settings.default_llm_max_tokens
         timeout = timeout or self.settings.llm_request_timeout
+
+        # Single chokepoint for input guardrails. Runs before any provider
+        # call to avoid leaking unsafe prompts to logs, billing, or caches.
+        # Only the user prompt is checked: system_prompt is operator-controlled,
+        # outputs have a separate audit pipeline (see BlockedQueriesLogger).
+        if self._guardrails is not None:
+            guard_result = self._guardrails.check_input(prompt)
+            if guard_result.blocked:
+                raise GuardrailBlockedError(guard_result)
 
         self.errors = []
         attempt = 0

@@ -156,6 +156,15 @@ class Settings(BaseSettings):  # type: ignore[misc]
         gt=0,
         description="LLM request timeout in seconds",
     )
+    llm_enforce_guardrails: bool = Field(
+        default=False,
+        description=(
+            "When True, UnifiedLLMClient applies regex-only GuardrailsManager "
+            "to prompts before any provider call and raises GuardrailBlocked "
+            "if input is rejected. Default off preserves existing behaviour; "
+            "set LLM_ENFORCE_GUARDRAILS=true to enable in production."
+        ),
+    )
 
     # Cost Management
     monthly_budget_usd: float = Field(

@@ -9,8 +9,52 @@
 # Install NGINX Ingress Controller (run once per cluster):
 #   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
 #
-# Install cert-manager for automatic TLS (optional, production only):
+# ---------------------------------------------------------------------------
+# Automatic TLS via cert-manager (optional; recommended for production)
+# ---------------------------------------------------------------------------
+#
+# This manifest ships with the TLS block AND the cert-manager annotation
+# COMMENTED OUT so the file stays apply-able on a fresh cluster without
+# pre-deployed dependencies. Production rollout is a three-step enable:
+#
+# Step 1 - Install cert-manager (once per cluster):
 #   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+#   kubectl wait --for=condition=Available --timeout=180s -n cert-manager deploy --all
+#
+# Step 2 - Create a ClusterIssuer (once per cluster, NOT in this file because
+#   ClusterIssuer is cluster-scoped and shared across namespaces). Save the
+#   YAML below to cluster-issuer.yaml and apply it:
+#
+#       apiVersion: cert-manager.io/v1
+#       kind: ClusterIssuer
+#       metadata:
+#         name: letsencrypt-prod
+#       spec:
+#         acme:
+#           server: https://acme-v02.api.letsencrypt.org/directory
+#           email: ops@yourdomain.com         # <- Let's Encrypt expiry alerts
+#           privateKeySecretRef:
+#             name: letsencrypt-prod-account  # cert-manager stores ACME account here
+#           solvers:
+#             - http01:
+#                 ingress:
+#                   class: nginx              # must match the controller above
+#
+#   Why letsencrypt-prod (not -staging): production issues real, browser-trusted
+#   certs but is rate-limited (50 certs/week per registered domain). Use the
+#   `letsencrypt-staging` issuer first to validate the wiring without burning
+#   the rate limit, then switch the annotation to letsencrypt-prod.
+#
+#   DNS prerequisite: api.yourdomain.com must resolve to the LoadBalancer IP
+#   of the ingress-nginx Service before cert-manager triggers issuance, or
+#   the HTTP-01 challenge will fail.
+#
+# Step 3 - Enable TLS on this Ingress:
+#   - Uncomment the `cert-manager.io/cluster-issuer:` annotation below.
+#   - Uncomment the `spec.tls` block below.
+#   - Replace `api.yourdomain.com` with the real hostname.
+#   - Re-apply: `kubectl apply -f ingress.yaml`
+#   - Watch issuance: `kubectl describe certificate rag-agent-tls`
 #
 # Why rate limit at 100 rps:
 #   LLM API calls are expensive. At 100 rps per IP, a single client can trigger

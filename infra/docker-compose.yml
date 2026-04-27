@@ -217,10 +217,15 @@ services:
     restart: unless-stopped
     ports:
       - "5432:5432"
+    # Credentials are required from the environment (typically via .env.local).
+    # The `${VAR:?msg}` pattern makes `docker compose config` fail fast if a
+    # variable is unset, so a missing secret never silently boots a default
+    # password into a dev or CI container. Set these in `.env.local`:
+    #   POSTGRES_USER=...   POSTGRES_PASSWORD=...   POSTGRES_DB=...
     environment:
-      - POSTGRES_USER=agentic_ai
-      - POSTGRES_PASSWORD=change_me_in_production
-      - POSTGRES_DB=agentic_ai
+      - POSTGRES_USER=${POSTGRES_USER:?set POSTGRES_USER in .env.local}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env.local}
+      - POSTGRES_DB=${POSTGRES_DB:?set POSTGRES_DB in .env.local}
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - postgres-data:/var/lib/postgresql/data
@@ -268,9 +273,14 @@ services:
     ports:
       - "7474:7474"  # HTTP (Browser UI)
       - "7687:7687"  # Bolt protocol
+    # NEO4J_AUTH must be supplied via the environment (see .env.local).
+    # Format is `username/password`. The `${VAR:?msg}` form fails
+    # `docker compose config` if unset so we never boot the documented
+    # default password into a dev container. Pick something you would
+    # never paste into a prod cluster either - this gets reused as muscle
+    # memory faster than you would think.
     environment:
-      # Authentication (change in production)
-      - NEO4J_AUTH=neo4j/changeme123
+      - "NEO4J_AUTH=${NEO4J_AUTH:?set NEO4J_AUTH (format user/password) in .env.local}"
       # Memory configuration (adjust for your dataset)
       - NEO4J_server_memory_heap_initial__size=512m
       - NEO4J_server_memory_heap_max__size=1G

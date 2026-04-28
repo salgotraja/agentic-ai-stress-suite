@@ -54,6 +54,7 @@ from typing import Any, Literal, TypedDict
 
 from langgraph.graph import END, StateGraph
 
+from src.agents.state_persistence import StateBackend
 from src.agents.tools.base import BaseTool
 from src.core.llm_client import UnifiedLLMClient
 from src.core.observability import generate_correlation_id, traced_generation
@@ -70,6 +71,14 @@ _IO_BOUND_TOOL_NAMES: frozenset[str] = frozenset(
 _CPU_BOUND_TOOL_NAMES: frozenset[str] = frozenset({"calculator", "code_execution"})
 
 PARALLEL_TOOL_TIMEOUT_SECONDS: int = 30
+
+# Tool-execution retry budget for transient provider failures. Three attempts
+# at 1s/2s/4s exponential backoff is the well-trodden default for HTTP retry
+# policy: short enough to bound user-visible latency, long enough that a
+# transient 503 or rate-limit window passes between attempts. Hoisted so the
+# ReAct and Plan-and-Execute call sites pick up the same value and a tuning
+# change touches one line, not three.
+_DEFAULT_TOOL_MAX_RETRIES: int = 3
 
 
 def execute_tools_parallel(
@@ -176,7 +185,7 @@ def execute_tools_parallel(
 def execute_tool_with_retry(
     tool: BaseTool,
     tool_input: str,
-    max_retries: int = 3,
+    max_retries: int = _DEFAULT_TOOL_MAX_RETRIES,
     correlation_id: str | None = None,
 ) -> tuple[str, list[str]]:
     """
@@ -345,6 +354,7 @@ class ReActAgent:
     llm_client: UnifiedLLMClient | None = None
     max_iterations: int = 10
     temperature: float = 0.0
+    state_backend: StateBackend | None = None
     graph: Any = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -632,7 +642,7 @@ Your response (JSON only, no other text):"""
         result, retry_errors = execute_tool_with_retry(
             tool=tool,
             tool_input=tool_input,
-            max_retries=3,
+            max_retries=_DEFAULT_TOOL_MAX_RETRIES,
             correlation_id=state.get("correlation_id"),
         )
 
@@ -682,13 +692,23 @@ Your response (JSON only, no other text):"""
             # finish or error
             return "end"
 
-    def run(self, query: str, correlation_id: str | None = None) -> dict[str, Any]:
+    def run(
+        self,
+        query: str,
+        correlation_id: str | None = None,
+        agent_id: str | None = None,
+    ) -> dict[str, Any]:
         """
         Run the ReAct agent on a query.
 
         Args:
             query: User question
             correlation_id: Optional correlation ID for tracing
+            agent_id: Optional conversation/agent identifier for state persistence.
+                When set together with self.state_backend, the final graph state is
+                persisted under the key "trajectory". correlation_id rotates per
+                turn; agent_id namespaces a conversation across turns - they are
+                deliberately distinct.
 
         Returns:
             Dictionary with:
@@ -726,6 +746,11 @@ Your response (JSON only, no other text):"""
         # Teaching note: graph.invoke() executes the graph until reaching END
         # It follows: START → reasoning → action → reasoning → ... → END
         final_state = self.graph.invoke(initial_state)
+
+        # Persist the trajectory only when caller supplied both a backend and an
+        # agent_id - otherwise we'd be guessing namespaces.
+        if self.state_backend is not None and agent_id is not None:
+            self.state_backend.save(agent_id, "trajectory", final_state)
 
         # Extract result
         return {
@@ -845,6 +870,7 @@ class PlanAndExecuteAgent:
     llm_client: UnifiedLLMClient | None = None
     max_steps: int = 10
     temperature: float = 0.0
+    state_backend: StateBackend | None = None
     graph: Any = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
@@ -1074,7 +1100,7 @@ Your plan (JSON array only, no other text):"""
         result, retry_errors = execute_tool_with_retry(
             tool=tool,
             tool_input=tool_input,
-            max_retries=3,
+            max_retries=_DEFAULT_TOOL_MAX_RETRIES,
             correlation_id=state.get("correlation_id"),
         )
 
@@ -1173,13 +1199,21 @@ Your answer:"""
             "final_answer": response.content.strip(),
         }
 
-    def run(self, query: str, correlation_id: str | None = None) -> dict[str, Any]:
+    def run(
+        self,
+        query: str,
+        correlation_id: str | None = None,
+        agent_id: str | None = None,
+    ) -> dict[str, Any]:
         """
         Run the Plan-and-Execute agent on a query.
 
         Args:
             query: User question
             correlation_id: Optional correlation ID for tracing
+            agent_id: Optional conversation/agent identifier for state persistence.
+                When set together with self.state_backend, the final graph state is
+                persisted under the key "trajectory".
 
         Returns:
             Dictionary with:
@@ -1211,6 +1245,9 @@ Your answer:"""
 
         # Run graph
         final_state = self.graph.invoke(initial_state)
+
+        if self.state_backend is not None and agent_id is not None:
+            self.state_backend.save(agent_id, "trajectory", final_state)
 
         return {
             "answer": final_state.get("final_answer", "No answer generated."),

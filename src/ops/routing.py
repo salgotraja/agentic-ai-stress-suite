@@ -1,3 +1,33 @@
+"""LLM provider routing with sequential fallback.
+
+Why sequential fallback (cheapest-first), not parallel hedging:
+- The chain is ordered by $ / 1M tokens ascending. The cheapest provider that
+  succeeds is the cheapest possible answer; falling back only when a provider
+  errors keeps the bill closest to the floor.
+- Parallel hedging (fire all providers, take the first response) would minimise
+  tail latency but multiplies cost by the number of hedged calls and burns
+  rate-limit budget on providers whose answer we throw away. For a budget of
+  $50-100 per article, hedging is the wrong knob.
+- The latency penalty of sequential fallback only matters when the head
+  provider is unhealthy. In steady state the head provider serves nearly
+  every request, so p50 latency tracks the head provider's p50; only failure
+  modes pay the fallback tail.
+
+Why this exact chain:
+- Groq Llama-3.1-8B at ~$0.05/1M heads the chain because development iteration
+  dominates request volume and quality is acceptable for most tasks.
+- Each subsequent link adds reasoning quality at higher cost - the order is
+  not arbitrary; it minimises expected $/request given the empirical failure
+  distribution we see in benchmarks (Groq rate-limits more than premium APIs).
+- GPT-4o is the final link, not the first, precisely because it is ~50x the
+  cost of the head: starting there would multiply spend by ~50x for ~5%
+  marginal quality on the queries the cheaper providers already handle well.
+
+Operational note: the chain is duplicated in `README.md` and
+`src/core/llm_client.py`. Keep all three in lockstep when retuning - mismatch
+silently breaks the cost-vs-quality contract.
+"""
+
 from __future__ import annotations
 
 import itertools

@@ -65,9 +65,11 @@ def test_l2_miss_when_no_similar_entry() -> None:
     mock_redis = MagicMock()
     mock_redis.get.return_value = None  # L1 miss
     mock_embed = MagicMock(return_value=[0.1, 0.2, 0.3])
-    mock_redis.keys.return_value = []  # no L2 entries
+    mock_redis.smembers.return_value = set()  # no L2 entries
     cache = SemanticCache(redis_client=mock_redis, embed_fn=mock_embed)
     assert cache.get("What is FastAPI?") is None
+    # Regression guard: production-toxic `KEYS l2:*` scan must not be issued.
+    mock_redis.keys.assert_not_called()
 
 
 def test_l2_hit_when_cosine_above_threshold() -> None:
@@ -86,9 +88,9 @@ def test_l2_hit_when_cosine_above_threshold() -> None:
         }
     ).encode()
 
-    mock_redis.keys.return_value = [b"l2:abc123"]
-    # First get() call: L1 miss (returns None). Second get() call: L2 entry fetch.
-    mock_redis.get.side_effect = [None, stored_entry]
+    mock_redis.get.return_value = None  # L1 miss
+    mock_redis.smembers.return_value = {b"l2:abc123"}
+    mock_redis.mget.return_value = [stored_entry]
 
     def mock_embed_fn(text: str) -> list[float]:
         return query_emb
@@ -96,6 +98,40 @@ def test_l2_hit_when_cosine_above_threshold() -> None:
     cache = SemanticCache(redis_client=mock_redis, embed_fn=mock_embed_fn, l2_threshold=0.95)
     result = cache.get("What is FastAPI?")
     assert result == "FastAPI is a web framework"
+    mock_redis.keys.assert_not_called()
+
+
+def test_l2_get_issues_single_mget_regardless_of_registry_size() -> None:
+    """L2 lookup batches all entry fetches into one MGET round-trip."""
+    mock_redis = MagicMock()
+    mock_redis.get.return_value = None  # L1 miss
+    # 50 stale registry members - the round-trip count must stay constant.
+    members = {f"l2:key{i}".encode() for i in range(50)}
+    mock_redis.smembers.return_value = members
+    mock_redis.mget.return_value = [None] * 50
+
+    cache = SemanticCache(redis_client=mock_redis, embed_fn=lambda _q: [0.1, 0.2, 0.3])
+    cache.get("What is FastAPI?")
+
+    assert mock_redis.mget.call_count == 1
+    mock_redis.keys.assert_not_called()
+    # Stale members are pruned in a single batched SREM.
+    assert mock_redis.srem.call_count == 1
+
+
+def test_l2_set_pipelines_setex_and_sadd() -> None:
+    """L2 write atomically populates entry plus index registry via pipeline."""
+    mock_redis = MagicMock()
+    cache = SemanticCache(redis_client=mock_redis, embed_fn=lambda _q: [0.1, 0.2, 0.3])
+    cache.set("What is FastAPI?", "FastAPI is a web framework")
+
+    pipeline = mock_redis.pipeline.return_value
+    assert pipeline.setex.call_count == 1
+    assert pipeline.sadd.call_count == 1
+    pipeline.execute.assert_called_once()
+    # Registry SADD must reference the L2 index key.
+    sadd_args = pipeline.sadd.call_args
+    assert sadd_args[0][0] == "l2:index"
 
 
 def test_zipfian_generator_produces_skewed_distribution() -> None:

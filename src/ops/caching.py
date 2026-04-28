@@ -19,6 +19,14 @@ _CACHE_KEY_PREFIX = "l1:"
 
 _L2_KEY_PREFIX = "l2:"
 
+# Registry of currently-live L2 keys. Maintained as a Redis SET so reads can
+# enumerate L2 entries via SMEMBERS instead of the production-toxic
+# `KEYS l2:*` scan (which is O(N) and blocks the Redis event loop). The
+# registry self-heals: TTL expiry on an L2 entry leaves a stale member here
+# until the next L2 read, which lazy-prunes via SREM. No separate cleanup
+# task required.
+_L2_INDEX_KEY = "l2:index"
+
 # L2 threshold: 0.95 for technical documentation queries.
 # Why 0.95?
 # - Tech docs have precise, consistent vocabulary ("Spring Boot autoconfiguration")
@@ -97,27 +105,40 @@ class SemanticCache:
     def _l2_get(self, query: str) -> str | None:
         """Scan L2 embedding entries for a semantically similar cached response.
 
-        Scans all l2:* keys in Redis, deserialises each embedding, and returns
-        the first response whose cosine similarity to the query embedding meets
-        the threshold.
+        Enumerates the L2 index registry via SMEMBERS (non-blocking) instead of
+        `KEYS l2:*` (which is O(N) and blocks the Redis event loop). Entry
+        payloads are batched into one MGET so the round-trip count is constant
+        regardless of registry size; the cosine sweep itself is still O(N)
+        client-side and is only sound at small scale (<10k entries) - replace
+        with a vector index (e.g. Qdrant) beyond that.
 
-        Trade-off: O(n) scan over all L2 keys. Acceptable at small scale (<10k
-        entries); replace with a vector index (e.g. Qdrant) at larger scale.
+        Stale registry members (TTL-expired entries that left a dangling
+        SET reference) are pruned with a single batched SREM.
         """
         query_emb = self._embed_fn(query)  # type: ignore[misc]
-        keys = self._redis.keys(f"{_L2_KEY_PREFIX}*")
-        for key in keys:
-            raw = self._redis.get(key)
+        members = self._redis.smembers(_L2_INDEX_KEY)
+        if not members:
+            return None
+        keys = list(members)
+        raws = self._redis.mget(keys)
+        stale: list[Any] = []
+        match: str | None = None
+        for key, raw in zip(keys, raws, strict=False):
             if raw is None:
+                stale.append(key)
+                continue
+            if match is not None:
                 continue
             try:
                 entry = json.loads(raw.decode() if isinstance(raw, bytes) else raw)
                 similarity = self._cosine_similarity(query_emb, entry["embedding"])
                 if similarity >= self._l2_threshold:
-                    return str(entry["response"])
+                    match = str(entry["response"])
             except (json.JSONDecodeError, KeyError, ValueError):
                 continue
-        return None
+        if stale:
+            self._redis.srem(_L2_INDEX_KEY, *stale)
+        return match
 
     def get(self, query: str) -> str | None:
         """Look up query in L1 then L2 cache.
@@ -142,7 +163,12 @@ class SemanticCache:
         return None
 
     def set(self, query: str, response: str) -> None:
-        """Store query→response in L1. Also stores L2 entry if embed_fn is set."""
+        """Store query→response in L1. Also stores L2 entry if embed_fn is set.
+
+        L2 writes are pipelined: SETEX of the entry plus SADD into the index
+        registry execute as a single round-trip, so a reader can never observe
+        a registry member whose payload doesn't exist yet.
+        """
         key = self._make_key(query)
         self._redis.setex(key, self._ttl, response)
 
@@ -150,7 +176,10 @@ class SemanticCache:
             embedding = self._embed_fn(query)
             l2_key = self._make_l2_key(query)
             payload = json.dumps({"embedding": embedding, "response": response})
-            self._redis.setex(l2_key, self._ttl, payload)
+            pipeline = self._redis.pipeline()
+            pipeline.setex(l2_key, self._ttl, payload)
+            pipeline.sadd(_L2_INDEX_KEY, l2_key)
+            pipeline.execute()
 
     def stats(self) -> dict[str, Any]:
         """Return cache performance metrics."""

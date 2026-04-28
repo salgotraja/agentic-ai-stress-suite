@@ -325,7 +325,19 @@ class Settings(BaseSettings):  # type: ignore[misc]
                 raise ValueError("Production Redis URL must not be localhost")
 
 
-# Singleton instance for application-wide access
+# Singleton instance for application-wide access.
+#
+# Concurrency note: this is a module-level singleton without a lock. Safe
+# under the single-process CLI / notebook usage that this project targets,
+# where get_settings() is invoked at import time and the cache is warm by
+# the time any benchmark thread fans out. Under a multi-threaded server
+# (e.g., uvicorn workers sharing the process) the first concurrent callers
+# could race past the `is None` check and each construct their own Settings;
+# the last writer wins and earlier instances are discarded, which is
+# benign except for the wasted env-file parses. If this module is ever
+# imported from a multi-worker server, wrap the assignment in a
+# threading.Lock() (or move to functools.lru_cache(maxsize=1)) before
+# relying on instance identity.
 _settings: Settings | None = None
 
 

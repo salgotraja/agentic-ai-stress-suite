@@ -36,12 +36,15 @@ Trade-off summary:
 from __future__ import annotations
 
 import hashlib
+import logging
 import os
 import re
 import sqlite3
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
+
+_logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -208,9 +211,13 @@ class LlamaGuardClassifier:
         prompt = _LLAMA_GUARD_PROMPT_TEMPLATE.format(text=text)
         try:
             response = self._llm_fn(prompt).strip().lower()
-        except Exception:
+        except Exception as exc:
+            # Broad on purpose: llm_fn is an injected callable (Groq, local
+            # Ollama, mock) and each backend raises a different exception
+            # hierarchy. We log here because failing open silently would
+            # otherwise hide a degraded safety rail in production.
+            _logger.warning("Llama-Guard LLM call failed: %s", exc)
             if self._fail_open:
-                # Degrade gracefully: let the request through, log elsewhere.
                 return GuardResult(blocked=False)
             return GuardResult(
                 blocked=True,

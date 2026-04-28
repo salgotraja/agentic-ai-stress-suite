@@ -30,6 +30,7 @@ LangFuse integration (Article 6+):
 from __future__ import annotations
 
 import functools
+import logging
 import os as _os
 import time
 import uuid
@@ -45,6 +46,8 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import Status, StatusCode
 
 from src.core.config import get_settings
+
+logger = logging.getLogger(__name__)
 
 try:
     from langfuse import Langfuse as _Langfuse
@@ -382,8 +385,12 @@ def traced_generation(func: F) -> F:
                                 "correlation_id": correlation_id,
                             },
                         )
-                    except Exception:
-                        pass
+                    except Exception as exc:
+                        # Broad on purpose: Langfuse is an optional sidecar
+                        # exporter. Network errors, schema mismatches, or auth
+                        # failures must never break the wrapped LLM call -
+                        # but we log so silent telemetry loss is detectable.
+                        logger.debug("Langfuse trace export failed: %s", exc)
 
                 return result
 

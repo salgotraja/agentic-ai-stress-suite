@@ -24,9 +24,12 @@ Metal (Apple Silicon) specifics:
 
 from __future__ import annotations
 
+import logging
 import platform
 import subprocess
 from enum import Enum
+
+logger = logging.getLogger(__name__)
 
 
 class GPUBackend(str, Enum):
@@ -94,8 +97,12 @@ def _check_cuda_available() -> tuple[bool, str, int]:
             return True, device_name, device_count
     except ImportError:
         pass
-    except Exception:
-        pass
+    except Exception as exc:
+        # Broad on purpose: torch.cuda probing can raise driver-specific
+        # errors (RuntimeError on missing libs, OSError on permission). The
+        # nvidia-smi fallback below covers the same signal, so we log at
+        # debug and keep going rather than fail hardware detection.
+        logger.debug("torch.cuda probe failed: %s", exc)
 
     # Fallback: check nvidia-smi
     try:
@@ -108,8 +115,13 @@ def _check_cuda_available() -> tuple[bool, str, int]:
         if result.returncode == 0 and result.stdout.strip():
             gpus = result.stdout.strip().split("\n")
             return True, gpus[0], len(gpus)
-    except (FileNotFoundError, subprocess.TimeoutExpired, Exception):
+    except (FileNotFoundError, subprocess.TimeoutExpired):
         pass
+    except Exception as exc:
+        # Broad on purpose: subprocess.run can surface OSError variants
+        # depending on platform/libc. Hardware detection must never crash
+        # the application - log and degrade to "no CUDA".
+        logger.debug("nvidia-smi probe failed: %s", exc)
 
     return False, "CUDA", 0
 
@@ -145,14 +157,18 @@ def _check_metal_available() -> tuple[bool, str, int]:
                     timeout=5,
                 )
                 chip_name = result.stdout.strip() if result.returncode == 0 else "Apple Silicon"
-            except Exception:
+            except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
+                logger.debug("sysctl chip probe failed: %s", exc)
                 chip_name = "Apple Silicon"
 
             return True, chip_name, 1
     except ImportError:
         pass
-    except Exception:
-        pass
+    except Exception as exc:
+        # Broad on purpose: torch.backends.mps probing has changed shape
+        # across PyTorch versions and can raise AttributeError or RuntimeError
+        # on older builds. Fall through to the no-PyTorch sysctl path.
+        logger.debug("torch MPS probe failed: %s", exc)
 
     # Even without PyTorch, Metal is available on Apple Silicon
     # Just mark as available but note PyTorch MPS not installed
@@ -167,8 +183,8 @@ def _check_metal_available() -> tuple[bool, str, int]:
         # Check for M-series chip
         if any(m in chip_name.upper() for m in ["M1", "M2", "M3", "M4"]):
             return True, chip_name, 1
-    except Exception:
-        pass
+    except (FileNotFoundError, subprocess.TimeoutExpired) as exc:
+        logger.debug("sysctl Apple-Silicon detection failed: %s", exc)
 
     return False, "Metal", 0
 

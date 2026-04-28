@@ -195,6 +195,10 @@ Your response:"""
                     result = tool.execute(query)
                     findings = f"Research findings for '{query}':\n\n{result}"
                 except Exception as e:
+                    # Broad on purpose: tools may be search APIs, RAG, code
+                    # exec - their failure modes span network, parsing, and
+                    # subprocess errors. Researcher must surface failure to
+                    # writer rather than crash the workflow.
                     findings = f"Error during research: {str(e)}"
             else:
                 findings = (
@@ -1020,6 +1024,10 @@ Your response:"""
                 "error": None,
             }
         except Exception as e:
+            # Broad on purpose: specialist work calls into LLM clients +
+            # tool stack; failures span provider errors, timeouts, and
+            # tool exceptions. The orchestrator inspects success/error
+            # and aggregates partial results from sibling specialists.
             return {
                 "specialty": self.specialty,
                 "findings": "",
@@ -1150,7 +1158,10 @@ class ParallelOrchestrator:
                     result = future.result()
                     specialist_results.append(result)
                 except Exception as e:
-                    # Individual specialist failure
+                    # Broad on purpose: future.result() re-raises whatever
+                    # the specialist worker threw - LLM errors, tool
+                    # failures, network. One failure must not abort sibling
+                    # specialists, so we record and aggregate downstream.
                     specialist_results.append(
                         {
                             "specialty": specialist.specialty,
@@ -2194,6 +2205,10 @@ class AsyncToolExecutor:
                         }
                     )
                 except Exception as e:
+                    # Broad on purpose: parallel tool dispatch covers any
+                    # registered BaseTool, so the failure mode set is the
+                    # union of every tool's failure modes. We record per-
+                    # future success and let the caller aggregate.
                     results.append(
                         {
                             "tool": tool.__class__.__name__,

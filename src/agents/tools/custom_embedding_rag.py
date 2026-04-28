@@ -28,11 +28,14 @@ Mock mode:
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from src.agents.tools.base import BaseTool
 from src.core.observability import traced_tool_call
+
+logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from src.rag.naive_rag import NaiveRAGPipeline
@@ -115,8 +118,12 @@ class CustomEmbeddingRAGTool(BaseTool):
             nodes = self._pipeline.retrieve(input, top_k=self._top_k)
             answer = self._pipeline.generate(query=input, context_nodes=nodes)
             return f"{answer}\n\n[Retrieved with fine-tuned BGE embedder]"
-        except Exception:
-            # Graceful degradation: fall back to default pipeline query
+        except Exception as exc:
+            # Broad on purpose: pipeline.retrieve/generate composes a vector
+            # store + LLM call, so failures span connection errors, missing
+            # indices, model load issues, etc. We fall back to query() rather
+            # than propagate, but log so silent degradation is observable.
+            logger.debug("Custom-embedding retrieve/generate failed, falling back: %s", exc)
             result = self._pipeline.query(input, top_k=self._top_k)
             return str(result.get("answer", "No answer found."))
 

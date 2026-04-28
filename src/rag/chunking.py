@@ -45,11 +45,14 @@ Overlap trade-offs:
 
 from __future__ import annotations
 
+import logging
 import re
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Any
+
+logger = logging.getLogger(__name__)
 
 
 class ChunkingStrategy(str, Enum):
@@ -454,8 +457,12 @@ class PDFProcessor:
                                 "rows": table_data,
                             }
                         )
-            except Exception:
-                pass  # Table extraction not available in all PyMuPDF versions
+            except Exception as exc:
+                # Broad on purpose: PyMuPDF's table API surface varies across
+                # versions (find_tables missing pre-1.23, extract() raising on
+                # malformed cells). Tables are an optional enrichment, so skip
+                # the page rather than fail document processing.
+                logger.debug("Table extraction skipped on page %d: %s", page_num + 1, exc)
 
         doc.close()
 

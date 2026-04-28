@@ -734,6 +734,13 @@ class UnifiedLLMClient:
         self.errors = []
         attempt = 0
 
+        # Each provider block below catches Exception broadly on purpose:
+        # the six SDKs (groq, deepseek, anthropic, google, openai, plus
+        # litellm fallbacks) raise non-overlapping exception hierarchies
+        # for the same conceptual failure (rate limit, auth, timeout, 5xx).
+        # Narrowing here would silently leak a new SDK error type and
+        # break the cost-optimised fallback chain. Failures are captured
+        # in self.errors so callers can audit which providers were tried.
         # Try Groq 8B
         if self.groq_client:
             attempt += 1

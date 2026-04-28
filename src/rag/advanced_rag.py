@@ -33,6 +33,7 @@ When to use:
 
 from __future__ import annotations
 
+import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
@@ -42,6 +43,8 @@ from llama_index.core.node_parser import SentenceSplitter
 
 from src.core.llm_client import UnifiedLLMClient
 from src.core.observability import traced_generation, traced_retrieval
+
+logger = logging.getLogger(__name__)
 
 
 class AdvancedRAGPipeline:
@@ -423,14 +426,20 @@ Sub-queries:"""
 
                 # Collect results as they complete
                 for future in as_completed(future_to_query):
+                    sub_query = future_to_query[future]
                     try:
                         results = future.result()
                         all_results.extend(results)
-                    except Exception:
-                        # Log error but continue with other results
-                        # In production: structured logging
-                        # print(f"[Decomposition] Error retrieving for sub-query: {err}")
-                        pass
+                    except Exception as exc:
+                        # Broad on purpose: future.result() re-raises whatever
+                        # the worker threw - vector store timeouts, embedding
+                        # errors, malformed sub-queries from HyDE. We continue
+                        # so partial results from sibling sub-queries survive.
+                        logger.warning(
+                            "Sub-query retrieval failed (%r): %s",
+                            sub_query,
+                            exc,
+                        )
 
             # Deduplicate and sort by score
             seen_texts = set()

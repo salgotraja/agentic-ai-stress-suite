@@ -3,7 +3,7 @@
 [![CI](https://github.com/salgotraja/agentic-ai-stress-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/salgotraja/agentic-ai-stress-suite/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-![Coverage](https://img.shields.io/badge/coverage-70%25-green)
+![Coverage](https://img.shields.io/badge/coverage-77%25-green)
 
 Production-grade proof-of-concept demonstrating empirical trade-offs in
 RAG-to-agent workflows. 9 articles, reproducible benchmarks, ~25,000 lines
@@ -35,8 +35,9 @@ git clone <repository-url>
 cd agentic-ai-stress-suite
 uv sync
 
-# Copy env template and add your API keys
-cp .env.example .env
+# Copy env template and add your API keys (.env.local is gitignored;
+# .env holds team defaults committed to the repo)
+cp .env.example .env.local
 
 # Start local services (Redis, Chroma, Phoenix observability)
 docker-compose -f infra/docker-compose.yml up -d
@@ -49,30 +50,22 @@ open http://localhost:6006  # Phoenix traces
 **Prerequisites**: Python 3.11+, Docker, `uv`, API keys for at least one LLM
 provider (Groq is cheapest for development).
 
-[//]: # (## Articles and Code)
+## Articles and Code
 
-[//]: # ()
-[//]: # (| # | Title | Key File | Blog Post |)
+Each article is implemented in production-grade code with teaching comments,
+benchmarks, and runnable demos. Long-form blog posts are published separately.
 
-[//]: # (|---|-------|----------|-----------|)
-
-[//]: # (| 1 | State-Aware RAG | `src/rag/advanced_rag.py` | [Article 1]&#40;docs/blog/article_01_state_aware_rag.md&#41; |)
-
-[//]: # (| 2 | Advanced Retrieval | `src/rag/hybrid_search.py` | [Article 2]&#40;docs/blog/article_02_advanced_retrieval.md&#41; |)
-
-[//]: # (| 3 | Evaluation Framework | `src/rag/evaluation/` | [Article 3]&#40;docs/blog/article_03_evaluation_framework.md&#41; |)
-
-[//]: # (| 4 | Single-Agent | `src/agents/single_agent.py` | [Article 4]&#40;docs/blog/article_04_single_agent.md&#41; |)
-
-[//]: # (| 5 | Multi-Agent | `src/agents/multi_agent.py` | [Article 5]&#40;docs/blog/article_05_multi_agent.md&#41; |)
-
-[//]: # (| 6 | LLM Ops | `src/ops/caching.py`, `routing.py` | [Article 6]&#40;docs/blog/article_06_llm_ops.md&#41; |)
-
-[//]: # (| 7 | Security | `src/ops/security.py` | [Article 7]&#40;docs/blog/article_07_security.md&#41; |)
-
-[//]: # (| 8 | Scaling | `src/ops/deployment/k8s/` | [Article 8]&#40;docs/blog/article_08_scaling.md&#41; |)
-
-[//]: # (| 9 | Deep Learning | `examples/article_09_dl/` | [Article 9]&#40;docs/blog/article_09_deep_learning.md&#41; |)
+| # | Title | Key Code |
+|---|-------|----------|
+| 1 | State-Aware RAG (HyDE, query decomposition, graph RAG) | `src/rag/advanced_rag.py`, `graph_rag.py` |
+| 2 | Advanced Retrieval (BM25+RRF, reranking, metadata filtering, chunking) | `src/rag/hybrid_search.py`, `reranking.py`, `metadata_filter.py`, `chunking.py` |
+| 3 | Evaluation Framework (RAGAS, DeepEval, LLM-judge, drift, A/B) | `src/rag/evaluation/` |
+| 4 | Single-Agent (ReAct, Plan-and-Execute, parallel tool dispatch) | `src/agents/single_agent.py`, `src/agents/tools/` |
+| 5 | Multi-Agent (sequential, critic loop, parallel fan-out, conflict resolution) | `src/agents/multi_agent.py` |
+| 6 | LLM Ops (tiered cache, fallback router, cost tracking) | `src/ops/caching.py`, `src/ops/routing.py`, `src/core/cost_logger.py` |
+| 7 | Security (guardrails, Llama-Guard, PII scanner, red-team) | `src/ops/security.py` |
+| 8 | Scaling (parallel dispatch, K8s manifests, Locust load test) | `src/ops/deployment/k8s/`, `src/ops/deployment/load_test.py` |
+| 9 | Deep Learning (BGE fine-tune, torch.compile, INT8, JAX vs PyTorch) | `examples/article_09_dl/`, `benchmarks/run_article_09.py` |
 
 ## Architecture
 

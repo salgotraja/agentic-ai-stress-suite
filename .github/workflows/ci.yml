@@ -32,12 +32,23 @@ jobs:
       - name: No em-dashes (project rule)
         # Project rule forbids U+2014. The datasets/ tree is third-party
         # scraped tech docs (test corpus) and is excluded so benchmarks
-        # stay reproducible. The em-dash byte sequence (\xe2\x80\x94 in
-        # UTF-8) is built at runtime via printf to keep this file
-        # ASCII-only and portable across BSD and GNU grep.
+        # stay reproducible. We check two encodings:
+        #   1. Raw UTF-8 bytes for U+2014 - built via printf so this
+        #      workflow file stays ASCII-only and portable across BSD/GNU grep.
+        #   2. The JSON escape form Jupyter writes by default
+        #      (ensure_ascii=True), so em-dashes inside notebook cell
+        #      source appear as a six-char escape rather than UTF-8 bytes
+        #      and slip past the byte grep alone. Pattern is built from
+        #      pieces so ci.yml does not contain the literal escape and
+        #      cannot self-match.
         run: |
           EMDASH=$(printf '\xe2\x80\x94')
-          if git ls-files -- ':!:datasets/**' ':!:results/data/**' | xargs grep -l "$EMDASH" 2>/dev/null; then
+          ESC_PATTERN='\'"u2014"
+          BYTE_HITS=$(git ls-files -- ':!:datasets/**' ':!:results/data/**' | xargs grep -lF "$EMDASH" 2>/dev/null || true)
+          ESC_HITS=$(git ls-files -- ':!:datasets/**' ':!:results/data/**' | xargs grep -lF "$ESC_PATTERN" 2>/dev/null || true)
+          if [ -n "$BYTE_HITS$ESC_HITS" ]; then
+            [ -n "$BYTE_HITS" ] && echo "Raw U+2014 in: $BYTE_HITS"
+            [ -n "$ESC_HITS" ] && echo "Escaped em-dash in: $ESC_HITS"
             echo "::error::U+2014 (em-dash) detected in tracked file(s). Replace with hyphen (-) per project rule."
             exit 1
           fi

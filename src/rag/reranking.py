@@ -39,7 +39,9 @@ Production recommendation:
 
 from __future__ import annotations
 
+import hashlib
 import time
+from collections import OrderedDict
 from typing import Any, Protocol, cast
 
 from llama_index.core.schema import NodeWithScore
@@ -311,6 +313,109 @@ class CohereReranker:
         latency_ms = (end - start) * 1000
 
         return reranked_docs, latency_ms
+
+
+class CachingReranker:
+    """LRU cache wrapper around any RerankerBackend.
+
+    Reranking is the most expensive step in hybrid retrieval (cross-encoder
+    inference at 100-200ms locally, or a network round-trip for cloud).
+    Repeat queries within a session - or repeat tool calls in an agent
+    trajectory that fans out and re-converges on the same candidate set -
+    pay this cost every time. Caching keyed on (query, candidate IDs, top_k)
+    lets the second hit return instantly.
+
+    Cache key contract:
+    - Query text exactly (no normalisation; cross-encoders are sensitive
+      to wording, so collapsing case or whitespace would silently change
+      relevance scores).
+    - Ordered tuple of candidate identifiers - `node_id` for
+      `NodeWithScore`, an explicit `id`/`document_id` for Haystack dicts,
+      MD5 of the content as a fallback. Order matters: the cache contract
+      is "same input -> same output", and we do not assume the underlying
+      backend is order-invariant.
+    - `top_k` int (different `top_k` produces a different slice of the
+      same reranked list).
+
+    Returned `latency_ms` is 0.0 on a cache hit so callers can attribute
+    the saved time when reporting reranking cost.
+    """
+
+    def __init__(self, backend: RerankerBackend, maxsize: int = 128) -> None:
+        self._backend = backend
+        self._maxsize = maxsize
+        self._cache: OrderedDict[
+            tuple[Any, ...], list[NodeWithScore] | list[dict[str, Any]]
+        ] = OrderedDict()
+        self._hits = 0
+        self._misses = 0
+
+    def rerank(
+        self,
+        query: str,
+        documents: list[NodeWithScore] | list[dict[str, Any]],
+        top_k: int = 5,
+    ) -> tuple[list[NodeWithScore] | list[dict[str, Any]], float]:
+        """Return cached rerank result if present, else delegate and cache."""
+        if not documents:
+            return documents, 0.0
+
+        cache_key = self._make_key(query, documents, top_k)
+        if cache_key in self._cache:
+            self._cache.move_to_end(cache_key)
+            self._hits += 1
+            # Return a shallow copy so callers cannot mutate the cached list
+            # in place and corrupt subsequent hits. Each entry is homogeneous
+            # (NodeWithScore-only or dict-only), so the cast is sound.
+            cached = self._cache[cache_key]
+            return cast("list[NodeWithScore] | list[dict[str, Any]]", list(cached)), 0.0
+
+        result, latency_ms = self._backend.rerank(query, documents, top_k)
+        self._cache[cache_key] = cast("list[NodeWithScore] | list[dict[str, Any]]", list(result))
+        self._misses += 1
+        if len(self._cache) > self._maxsize:
+            # popitem(last=False) is the LRU eviction (oldest first).
+            self._cache.popitem(last=False)
+        return result, latency_ms
+
+    @staticmethod
+    def _doc_id(doc: NodeWithScore | dict[str, Any]) -> str:
+        """Stable identifier for a candidate document.
+
+        NodeWithScore exposes ``node_id``. Haystack dicts vary: prefer an
+        explicit ``id``/``document_id`` field, and fall back to an MD5 of
+        the content so two docs with identical text collapse to one cache
+        member (correct: rerank() would score them identically anyway).
+        """
+        if isinstance(doc, NodeWithScore):
+            return str(doc.node.node_id)
+        if isinstance(doc, dict):
+            for field in ("id", "document_id"):
+                value = doc.get(field)
+                if value:
+                    return str(value)
+            content = str(doc.get("content", ""))
+            return hashlib.md5(content.encode()).hexdigest()
+        return str(id(doc))
+
+    def _make_key(
+        self,
+        query: str,
+        documents: list[NodeWithScore] | list[dict[str, Any]],
+        top_k: int,
+    ) -> tuple[Any, ...]:
+        ids = tuple(self._doc_id(doc) for doc in documents)
+        return (query, ids, top_k)
+
+    def stats(self) -> dict[str, Any]:
+        """Cache hit/miss telemetry for benchmarks and observability."""
+        total = self._hits + self._misses
+        return {
+            "hits": self._hits,
+            "misses": self._misses,
+            "hit_rate": self._hits / total if total > 0 else 0.0,
+            "size": len(self._cache),
+        }
 
 
 def create_reranker(

@@ -54,7 +54,7 @@ from rank_bm25 import BM25Okapi
 from src.core.config import Settings
 from src.core.llm_client import UnifiedLLMClient
 from src.core.observability import traced_generation, traced_retrieval
-from src.rag.reranking import FlashRankReranker, create_reranker
+from src.rag.reranking import CachingReranker, FlashRankReranker, create_reranker
 
 # Reciprocal Rank Fusion damping constant. The 60 originates from Cormack et
 # al.'s 2009 paper introducing RRF; subsequent benchmarks (TREC, BEIR) found
@@ -172,15 +172,16 @@ class HybridSearchPipeline:
         self._bm25: BM25Okapi | None = None
         self._chunks: list[BaseNode] = []  # Store chunks for BM25 retrieval
 
-        # Initialize reranker if enabled
+        # Initialize reranker if enabled. Wrap in CachingReranker so repeat
+        # queries against the same RRF candidate set skip the cross-encoder
+        # round-trip (rerank is the dominant cost in hybrid retrieval).
         self._reranker: FlashRankReranker | None = None
         if self.settings.use_reranking:
-            reranker = create_reranker(
+            base_reranker = create_reranker(
                 backend=self.settings.reranking_backend,
                 settings=self.settings,
             )
-            # Store as base type for the pipeline's internal use
-            self._reranker = reranker  # type: ignore[assignment]
+            self._reranker = CachingReranker(base_reranker)  # type: ignore[assignment]
 
     def _parse_chroma_host(self) -> str:
         """Extract host from Chroma URL."""

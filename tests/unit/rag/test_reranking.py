@@ -14,6 +14,7 @@ Focus areas:
 
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import MagicMock
 
 import pytest
@@ -431,3 +432,183 @@ class TestTeachingComments:
         assert "Cohere" in docstring
         assert "cost" in docstring.lower()
         assert "latency" in docstring.lower()
+
+
+def _make_node(text: str, node_id: str) -> Any:
+    """Build a NodeWithScore with a stable node_id for cache-key tests."""
+    from llama_index.core.schema import NodeWithScore, TextNode
+
+    return NodeWithScore(node=TextNode(text=text, id_=node_id), score=0.5)
+
+
+class _RecordingBackend:
+    """Reranker stub that counts calls and returns deterministic results."""
+
+    def __init__(self) -> None:
+        self.calls: int = 0
+
+    def rerank(
+        self,
+        query: str,
+        documents: Any,
+        top_k: int = 5,
+    ) -> tuple[Any, float]:
+        self.calls += 1
+        # Trim to top_k so callers can verify slicing semantics.
+        return list(documents)[:top_k], 12.5
+
+
+class TestCachingReranker:
+    """Test the LRU cache wrapper around RerankerBackend implementations."""
+
+    def test_first_call_misses_and_delegates(self) -> None:
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend)
+        docs = [_make_node("alpha", "a"), _make_node("beta", "b")]
+
+        result, latency = cache.rerank("q", docs, top_k=2)
+
+        assert backend.calls == 1
+        assert latency == 12.5
+        assert len(result) == 2
+        stats = cache.stats()
+        assert stats["hits"] == 0
+        assert stats["misses"] == 1
+
+    def test_repeat_call_hits_cache(self) -> None:
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend)
+        docs = [_make_node("alpha", "a"), _make_node("beta", "b")]
+
+        cache.rerank("q", docs, top_k=2)
+        result, latency = cache.rerank("q", docs, top_k=2)
+
+        assert backend.calls == 1, "second call must not delegate"
+        assert latency == 0.0, "cache hit reports zero latency"
+        assert len(result) == 2
+        stats = cache.stats()
+        assert stats["hits"] == 1
+        assert stats["misses"] == 1
+        assert stats["hit_rate"] == 0.5
+
+    def test_different_query_misses(self) -> None:
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend)
+        docs = [_make_node("alpha", "a")]
+
+        cache.rerank("first", docs, top_k=1)
+        cache.rerank("second", docs, top_k=1)
+
+        assert backend.calls == 2
+
+    def test_different_top_k_misses(self) -> None:
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend)
+        docs = [_make_node("alpha", "a"), _make_node("beta", "b")]
+
+        cache.rerank("q", docs, top_k=1)
+        cache.rerank("q", docs, top_k=2)
+
+        assert backend.calls == 2
+
+    def test_different_candidate_set_misses(self) -> None:
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend)
+
+        cache.rerank("q", [_make_node("alpha", "a")], top_k=1)
+        cache.rerank("q", [_make_node("beta", "b")], top_k=1)
+
+        assert backend.calls == 2
+
+    def test_candidate_order_matters(self) -> None:
+        """Reordered candidates miss cache: contract is same input -> same output."""
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend)
+        a, b = _make_node("alpha", "a"), _make_node("beta", "b")
+
+        cache.rerank("q", [a, b], top_k=2)
+        cache.rerank("q", [b, a], top_k=2)
+
+        assert backend.calls == 2
+
+    def test_haystack_dict_with_id_field(self) -> None:
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend)
+        docs = [
+            {"id": "doc-1", "content": "alpha"},
+            {"id": "doc-2", "content": "beta"},
+        ]
+
+        cache.rerank("q", docs, top_k=2)
+        cache.rerank("q", docs, top_k=2)
+
+        assert backend.calls == 1, "explicit id field should anchor the cache key"
+
+    def test_haystack_dict_falls_back_to_content_hash(self) -> None:
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend)
+        docs = [{"content": "alpha"}, {"content": "beta"}]
+
+        cache.rerank("q", docs, top_k=2)
+        cache.rerank("q", docs, top_k=2)
+
+        assert backend.calls == 1, "content-hash fallback must produce stable keys"
+
+    def test_lru_eviction(self) -> None:
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend, maxsize=2)
+
+        cache.rerank("q1", [_make_node("a", "1")], top_k=1)
+        cache.rerank("q2", [_make_node("a", "1")], top_k=1)
+        cache.rerank("q3", [_make_node("a", "1")], top_k=1)
+        # q1 should now be evicted.
+        cache.rerank("q1", [_make_node("a", "1")], top_k=1)
+
+        assert backend.calls == 4
+        assert cache.stats()["size"] == 2
+
+    def test_cached_list_is_isolated_from_caller_mutation(self) -> None:
+        """Mutating a returned list must not corrupt the cached copy."""
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend)
+        docs = [_make_node("alpha", "a"), _make_node("beta", "b")]
+
+        first, _ = cache.rerank("q", docs, top_k=2)
+        first.clear()
+        second, _ = cache.rerank("q", docs, top_k=2)
+
+        assert len(second) == 2
+
+    def test_empty_documents_short_circuits(self) -> None:
+        """Empty input should not consume a cache slot or call the backend."""
+        from src.rag.reranking import CachingReranker
+
+        backend = _RecordingBackend()
+        cache = CachingReranker(backend)
+
+        result, latency = cache.rerank("q", [], top_k=5)
+
+        assert result == []
+        assert latency == 0.0
+        assert backend.calls == 0
+        assert cache.stats()["size"] == 0

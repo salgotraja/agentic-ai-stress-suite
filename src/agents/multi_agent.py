@@ -175,16 +175,7 @@ Your response:"""
             max_tokens=300,
         )
 
-        # Parse response to extract tool and query
-        lines = response.content.strip().split("\n")
-        tool_name = None
-        query = None
-
-        for line in lines:
-            if line.startswith("TOOL:"):
-                tool_name = line.replace("TOOL:", "").strip()
-            elif line.startswith("QUERY:"):
-                query = line.replace("QUERY:", "").strip()
+        tool_name, query = self._parse_research_directive(response.content)
 
         # Execute tool if found
         findings = ""
@@ -213,6 +204,30 @@ Your response:"""
             "current_agent": "writer",
             "iteration_count": state["iteration_count"] + 1,
         }
+
+    @staticmethod
+    def _parse_research_directive(
+        response_content: str,
+    ) -> tuple[str | None, str | None]:
+        """
+        Parse the LLM directive into (tool_name, query).
+
+        Expected line-based format:
+            TOOL: <tool name>
+            QUERY: <query text>
+            REASONING: <ignored>
+
+        Returns (None, None) when either field is missing so callers can
+        fall through to the unable-to-determine branch.
+        """
+        tool_name: str | None = None
+        query: str | None = None
+        for line in response_content.strip().split("\n"):
+            if line.startswith("TOOL:"):
+                tool_name = line.replace("TOOL:", "").strip()
+            elif line.startswith("QUERY:"):
+                query = line.replace("QUERY:", "").strip()
+        return tool_name, query
 
 
 @dataclass

@@ -393,68 +393,16 @@ Sub-queries:"""
         if self.index is None:
             raise ValueError("Index not built. Call build_index() first.")
 
-        # Query decomposition: Split into sub-queries, retrieve in parallel
         if self.use_decomposition:
             sub_queries = self._decompose_query(
                 query=query,
                 correlation_id=correlation_id,
             )
-
-            # Teaching note: Parallel retrieval using ThreadPoolExecutor
-            # Each sub-query is retrieved independently and simultaneously
-            all_results: list[dict[str, Any]] = []
-
-            with ThreadPoolExecutor(max_workers=4) as executor:
-                # Submit all sub-query retrievals
-                future_to_query = {}
-                for sub_query in sub_queries:
-                    # Apply HyDE to each sub-query if enabled
-                    processed_query = sub_query
-                    if self.use_hyde:
-                        processed_query = self._generate_hypothetical_document(
-                            query=sub_query,
-                            correlation_id=correlation_id,
-                        )
-
-                    # Submit retrieval task
-                    future = executor.submit(
-                        self._retrieve_single,
-                        processed_query,
-                        top_k,
-                    )
-                    future_to_query[future] = sub_query
-
-                # Collect results as they complete
-                for future in as_completed(future_to_query):
-                    sub_query = future_to_query[future]
-                    try:
-                        results = future.result()
-                        all_results.extend(results)
-                    except Exception as exc:
-                        # Broad on purpose: future.result() re-raises whatever
-                        # the worker threw - vector store timeouts, embedding
-                        # errors, malformed sub-queries from HyDE. We continue
-                        # so partial results from sibling sub-queries survive.
-                        logger.warning(
-                            "Sub-query retrieval failed (%r): %s",
-                            sub_query,
-                            exc,
-                        )
-
-            # Deduplicate and sort by score
-            seen_texts = set()
-            unique_results = []
-            for result in all_results:
-                text = result["text"]
-                if text not in seen_texts:
-                    seen_texts.add(text)
-                    unique_results.append(result)
-
-            # Sort by score (descending)
-            unique_results.sort(key=lambda x: x["score"], reverse=True)
-
-            # Return top_k
-            return unique_results[:top_k]
+            return self._retrieve_with_decomposition(
+                sub_queries=sub_queries,
+                top_k=top_k,
+                correlation_id=correlation_id,
+            )
 
         # Standard retrieval (with optional HyDE)
         processed_query = query
@@ -465,6 +413,71 @@ Sub-queries:"""
             )
 
         return self._retrieve_single(processed_query, top_k)
+
+    def _retrieve_with_decomposition(
+        self,
+        sub_queries: list[str],
+        top_k: int,
+        correlation_id: str | None,
+    ) -> list[dict[str, Any]]:
+        """
+        Fan out parallel retrieval across sub-queries, then merge globally.
+
+        Teaching note: Parallel retrieval using ThreadPoolExecutor
+        - Each sub-query is retrieved independently and simultaneously
+        - I/O-bound (network calls to embedding service): threads beat processes
+        - max_workers=4 balances parallelism vs resource usage
+
+        Dedup invariant: seen_texts is shared across the merged result set
+        from all sub-queries (not per-sub-query). Sub-queries often hit the
+        same chunks, so the global set keeps each chunk's best score once.
+        Order: collect all -> dedupe global -> sort by score -> slice top_k.
+        """
+        all_results: list[dict[str, Any]] = []
+
+        with ThreadPoolExecutor(max_workers=4) as executor:
+            future_to_query = {}
+            for sub_query in sub_queries:
+                processed_query = sub_query
+                if self.use_hyde:
+                    processed_query = self._generate_hypothetical_document(
+                        query=sub_query,
+                        correlation_id=correlation_id,
+                    )
+
+                future = executor.submit(
+                    self._retrieve_single,
+                    processed_query,
+                    top_k,
+                )
+                future_to_query[future] = sub_query
+
+            for future in as_completed(future_to_query):
+                sub_query = future_to_query[future]
+                try:
+                    results = future.result()
+                    all_results.extend(results)
+                except Exception as exc:
+                    # Broad on purpose: future.result() re-raises whatever
+                    # the worker threw - vector store timeouts, embedding
+                    # errors, malformed sub-queries from HyDE. We continue
+                    # so partial results from sibling sub-queries survive.
+                    logger.warning(
+                        "Sub-query retrieval failed (%r): %s",
+                        sub_query,
+                        exc,
+                    )
+
+        seen_texts: set[str] = set()
+        unique_results: list[dict[str, Any]] = []
+        for result in all_results:
+            text = result["text"]
+            if text not in seen_texts:
+                seen_texts.add(text)
+                unique_results.append(result)
+
+        unique_results.sort(key=lambda x: x["score"], reverse=True)
+        return unique_results[:top_k]
 
     @traced_generation
     def generate(

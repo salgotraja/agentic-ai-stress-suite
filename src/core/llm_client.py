@@ -30,6 +30,18 @@ from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_ex
 from src.core.config import Settings, get_settings
 from src.ops.security import GuardrailBlockedError, GuardrailsManager
 
+# Retry policy shared by every per-provider call site.
+# - 3 attempts: first call + two retries. More than three burns budget on
+#   providers that are genuinely down (next link in the fallback chain
+#   takes over instead).
+# - Exponential wait 1s -> 2s -> 4s (multiplier=1, capped at 4s):
+#   matches the schedule documented in the class docstring and the
+#   project's spec (3 retries at 1s, 2s, 4s).
+_RETRY_MAX_ATTEMPTS = 3
+_RETRY_WAIT_MULTIPLIER = 1
+_RETRY_WAIT_MIN_SECONDS = 1
+_RETRY_WAIT_MAX_SECONDS = 4
+
 
 class LLMProvider(str, Enum):
     """Supported LLM providers."""
@@ -285,8 +297,12 @@ class UnifiedLLMClient:
 
     @retry(
         retry=retry_if_exception_type((openai.RateLimitError, openai.APITimeoutError)),
-        wait=wait_exponential(multiplier=1, min=1, max=4),
-        stop=stop_after_attempt(3),
+        wait=wait_exponential(
+            multiplier=_RETRY_WAIT_MULTIPLIER,
+            min=_RETRY_WAIT_MIN_SECONDS,
+            max=_RETRY_WAIT_MAX_SECONDS,
+        ),
+        stop=stop_after_attempt(_RETRY_MAX_ATTEMPTS),
     )
     def _call_groq(
         self,
@@ -335,8 +351,12 @@ class UnifiedLLMClient:
 
     @retry(
         retry=retry_if_exception_type((openai.RateLimitError, openai.APITimeoutError)),
-        wait=wait_exponential(multiplier=1, min=1, max=4),
-        stop=stop_after_attempt(3),
+        wait=wait_exponential(
+            multiplier=_RETRY_WAIT_MULTIPLIER,
+            min=_RETRY_WAIT_MIN_SECONDS,
+            max=_RETRY_WAIT_MAX_SECONDS,
+        ),
+        stop=stop_after_attempt(_RETRY_MAX_ATTEMPTS),
     )
     def _call_deepseek(
         self,
@@ -379,8 +399,12 @@ class UnifiedLLMClient:
 
     @retry(
         retry=retry_if_exception_type((anthropic.RateLimitError, anthropic.APITimeoutError)),
-        wait=wait_exponential(multiplier=1, min=1, max=4),
-        stop=stop_after_attempt(3),
+        wait=wait_exponential(
+            multiplier=_RETRY_WAIT_MULTIPLIER,
+            min=_RETRY_WAIT_MIN_SECONDS,
+            max=_RETRY_WAIT_MAX_SECONDS,
+        ),
+        stop=stop_after_attempt(_RETRY_MAX_ATTEMPTS),
     )
     def _call_anthropic(
         self,
@@ -516,8 +540,12 @@ class UnifiedLLMClient:
 
     @retry(
         retry=retry_if_exception_type((httpx.TimeoutException, httpx.HTTPStatusError)),
-        wait=wait_exponential(multiplier=1, min=1, max=4),
-        stop=stop_after_attempt(3),
+        wait=wait_exponential(
+            multiplier=_RETRY_WAIT_MULTIPLIER,
+            min=_RETRY_WAIT_MIN_SECONDS,
+            max=_RETRY_WAIT_MAX_SECONDS,
+        ),
+        stop=stop_after_attempt(_RETRY_MAX_ATTEMPTS),
     )
     def _call_google(
         self,
@@ -575,8 +603,12 @@ class UnifiedLLMClient:
 
     @retry(
         retry=retry_if_exception_type((openai.RateLimitError, openai.APITimeoutError)),
-        wait=wait_exponential(multiplier=1, min=1, max=4),
-        stop=stop_after_attempt(3),
+        wait=wait_exponential(
+            multiplier=_RETRY_WAIT_MULTIPLIER,
+            min=_RETRY_WAIT_MIN_SECONDS,
+            max=_RETRY_WAIT_MAX_SECONDS,
+        ),
+        stop=stop_after_attempt(_RETRY_MAX_ATTEMPTS),
     )
     def _call_openai(
         self,

@@ -32,19 +32,22 @@ repos:
       - id: isort
         name: isort (python)
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.7.1
-    hooks:
-      - id: mypy
-        additional_dependencies:
-          - types-redis
-          - types-PyYAML
-          - pydantic
-        args: [--ignore-missing-imports, --strict]
-        exclude: ^(tests/|examples/|scripts/)
-
   - repo: local
     hooks:
+      # Run mypy through the project venv so it sees the same dependency
+      # graph CI does (uv run mypy src/). The mirrors-mypy hook runs in an
+      # isolated env with hand-pinned additional_dependencies, which drifts
+      # from pyproject.toml and produces ignore-comment errors that
+      # contradict the venv. Strictness is configured in pyproject.toml,
+      # not here, so both gates agree.
+      - id: mypy
+        name: mypy
+        entry: bash -c 'export PATH="$HOME/.local/bin:$PATH" && uv run mypy src/'
+        language: system
+        types: [python]
+        pass_filenames: false
+        files: ^src/
+
       - id: pytest-check
         name: pytest-check
         entry: bash -c 'export PATH="$HOME/.local/bin:$PATH" && uv run pytest tests/unit/ -v || true'

@@ -110,3 +110,33 @@ jobs:
           assert '4' in result, f'Expected 4, got {result}'
           print(f'Calculator smoke test passed: {result}')
           "
+
+  benchmark-smoke:
+    name: Benchmark Smoke (article_${{ matrix.article }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    needs: unit-tests
+    strategy:
+      fail-fast: false
+      matrix:
+        article: ["01", "02", "04", "05", "06", "07", "08", "09"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+      - name: Install dependencies
+        run: uv sync --frozen
+      # Per-article smoke run: SMOKE_TEST=1 makes each benchmark exit 0 right
+      # after imports + module-level setup. Catches drift in benchmark entry
+      # points (broken imports, missing deps, top-level errors) without
+      # spinning up infrastructure (Redis, Chroma, Phoenix) or hitting LLMs.
+      # OBSERVABILITY_ENABLED=false suppresses OTLP exporter noise (B2.4).
+      - name: Smoke run benchmarks/run_article_${{ matrix.article }}.py
+        run: uv run python benchmarks/run_article_${{ matrix.article }}.py
+        env:
+          SMOKE_TEST: "1"
+          ENVIRONMENT: test
+          OBSERVABILITY_ENABLED: "false"
+          GROQ_API_KEY: mock-key
+          OPENAI_API_KEY: mock-key

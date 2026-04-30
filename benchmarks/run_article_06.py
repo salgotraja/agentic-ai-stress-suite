@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import sys
 import time
 from pathlib import Path
 from typing import Any
@@ -181,6 +183,12 @@ def run_router_benchmark(queries: list[dict[str, str]]) -> dict[str, Any]:
 
 
 if __name__ == "__main__":
+    # SMOKE_TEST guard: CI matrix runs each benchmark with SMOKE_TEST=1 to verify
+    # imports and module-level setup without spinning up infrastructure or LLMs.
+    if os.getenv("SMOKE_TEST"):
+        print(f"[smoke] {Path(__file__).stem}: imports OK, exiting early")
+        sys.exit(0)
+
     queries_file = PROJECT_ROOT / "datasets" / "synthetic_queries" / "article_06.json"
     queries: list[dict[str, str]] = json.loads(queries_file.read_text())
 

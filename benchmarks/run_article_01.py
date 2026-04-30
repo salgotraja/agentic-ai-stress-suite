@@ -14,6 +14,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -27,6 +28,12 @@ from src.rag.naive_rag import NaiveRAGPipeline
 
 def main() -> int:
     """Main entry point."""
+    # SMOKE_TEST guard: CI matrix runs each benchmark with SMOKE_TEST=1 to verify
+    # imports and module-level setup without spinning up infrastructure or LLMs.
+    if os.getenv("SMOKE_TEST"):
+        print(f"[smoke] {Path(__file__).stem}: imports OK, exiting early")
+        return 0
+
     parser = argparse.ArgumentParser(description="Run Article 1 benchmarks for Naive RAG pipeline")
     parser.add_argument(
         "--dataset",

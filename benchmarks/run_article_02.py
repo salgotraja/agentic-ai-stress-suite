@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import random
 import sys
 from dataclasses import dataclass
@@ -125,6 +126,12 @@ def run_config_benchmark(
 
 def main() -> int:
     """Main entry point."""
+    # SMOKE_TEST guard: CI matrix runs each benchmark with SMOKE_TEST=1 to verify
+    # imports and module-level setup without spinning up infrastructure or LLMs.
+    if os.getenv("SMOKE_TEST"):
+        print(f"[smoke] {Path(__file__).stem}: imports OK, exiting early")
+        return 0
+
     parser = argparse.ArgumentParser(description="Run Article 2 benchmarks for Advanced Retrieval")
     parser.add_argument(
         "--dataset",
@@ -266,7 +273,7 @@ def main() -> int:
         }
 
         for config in configs:
-            name = config["name"]
+            name = str(config["name"])
             recall_m, mrr_m, lat_m = profiles.get(name, (0.60, 0.55, 150.0))
 
             recall_runs = [round(recall_m + rng.gauss(0, 0.02), 3) for _ in range(args.runs)]
@@ -274,11 +281,12 @@ def main() -> int:
             lat_runs = [round(lat_m + rng.gauss(0, lat_m * 0.05), 1) for _ in range(args.runs)]
 
             def _mean(vals: list[float]) -> float:
-                return sum(vals) / len(vals)
+                return float(sum(vals) / len(vals))
 
             def _std(vals: list[float]) -> float:
                 m = _mean(vals)
-                return (sum((v - m) ** 2 for v in vals) / max(len(vals) - 1, 1)) ** 0.5
+                diffs: list[float] = [(v - m) ** 2 for v in vals]
+                return float((sum(diffs) / max(len(vals) - 1, 1)) ** 0.5)
 
             results.append(
                 {

@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -259,6 +260,12 @@ def print_summary(summaries: list[FrameworkSummary]) -> None:
 
 def main() -> None:
     """Main benchmark execution."""
+    # SMOKE_TEST guard: CI matrix runs each benchmark with SMOKE_TEST=1 to verify
+    # imports and module-level setup without spinning up infrastructure or LLMs.
+    if os.getenv("SMOKE_TEST"):
+        print(f"[smoke] {Path(__file__).stem}: imports OK, exiting early")
+        return
+
     parser = argparse.ArgumentParser(description="Run Article 5 multi-agent benchmarks")
     parser.add_argument(
         "--dataset",

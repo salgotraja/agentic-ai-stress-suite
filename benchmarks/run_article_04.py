@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from collections import Counter
@@ -401,6 +402,12 @@ def run_benchmark(
 
 def main() -> int:
     """Main entry point."""
+    # SMOKE_TEST guard: CI matrix runs each benchmark with SMOKE_TEST=1 to verify
+    # imports and module-level setup without spinning up infrastructure or LLMs.
+    if os.getenv("SMOKE_TEST"):
+        print(f"[smoke] {Path(__file__).stem}: imports OK, exiting early")
+        return 0
+
     parser = argparse.ArgumentParser(
         description="Run Article 4 benchmarks comparing ReAct vs Plan-and-Execute agents"
     )

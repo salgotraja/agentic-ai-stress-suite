@@ -194,6 +194,12 @@ def print_summary(results: dict[str, Any]) -> None:
 
 
 if __name__ == "__main__":
+    # SMOKE_TEST guard: CI matrix runs each benchmark with SMOKE_TEST=1 to verify
+    # imports and module-level setup without spinning up infrastructure or LLMs.
+    if os.getenv("SMOKE_TEST"):
+        print(f"[smoke] {Path(__file__).stem}: imports OK, exiting early")
+        sys.exit(0)
+
     prompts = load_prompts(_PROMPTS_CSV)
     results = run_security_benchmark(prompts)
 

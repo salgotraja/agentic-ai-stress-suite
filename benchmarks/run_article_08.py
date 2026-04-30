@@ -34,6 +34,7 @@ from __future__ import annotations
 import json
 import os
 import random
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -280,6 +281,12 @@ def print_summary(results: dict[str, Any]) -> None:
 
 
 def main() -> None:
+    # SMOKE_TEST guard: CI matrix runs each benchmark with SMOKE_TEST=1 to verify
+    # imports and module-level setup without spinning up infrastructure or LLMs.
+    if os.getenv("SMOKE_TEST"):
+        print(f"[smoke] {Path(__file__).stem}: imports OK, exiting early")
+        sys.exit(0)
+
     # Fixed seed ensures every reader of this benchmark produces identical charts,
     # which is essential for a teaching resource: readers can reproduce figures
     # without running a live K8s cluster or Locust workers.

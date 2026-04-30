@@ -377,7 +377,11 @@ def traced_generation(func: F) -> F:
                 # Failures are silenced so LangFuse never breaks the main path.
                 if langfuse_client is not None:
                     try:
-                        langfuse_client.trace(
+                        # SDK drift: .trace() exists on Langfuse v2 client but
+                        # not on the v3 typed surface that ships in stubs;
+                        # we keep the v2 call path for backwards compatibility
+                        # and silence the static check.
+                        langfuse_client.trace(  # type: ignore[attr-defined]
                             name=span_name,
                             input=prompt[:1000] if isinstance(prompt, str) else None,
                             metadata={

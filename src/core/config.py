@@ -44,7 +44,7 @@ class Environment(str, Enum):
     PROD = "prod"
 
 
-class Settings(BaseSettings):  # type: ignore[misc]
+class Settings(BaseSettings):
     """
     Application settings with hierarchical configuration loading.
 

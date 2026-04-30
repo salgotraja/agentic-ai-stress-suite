@@ -476,7 +476,11 @@ class UnifiedLLMClient:
             if system_prompt:
                 request_params["system"] = system_prompt
 
-        response = self.anthropic_client.messages.create(**request_params)
+        # SDK boundary: request_params is built dynamically (cache vs no-cache
+        # branches above), so its inferred type is dict[str, object] which
+        # the anthropic SDK overloads don't accept. The runtime keys are
+        # always valid; the type system can't see that through the dict.
+        response = self.anthropic_client.messages.create(**request_params)  # type: ignore[call-overload]
 
         latency = time.time() - start_time
 
@@ -648,14 +652,17 @@ class UnifiedLLMClient:
         model = "gpt-4o"
 
         # Build messages with optional system prompt
-        messages = []
+        messages: list[dict[str, str]] = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
 
+        # SDK boundary: openai's typed ChatCompletionMessageParam is a Union
+        # of TypedDicts; plain dict[str, str] is structurally valid at runtime
+        # but the static type checker can't narrow it.
         response = self.openai_client.chat.completions.create(
             model=model,
-            messages=messages,
+            messages=messages,  # type: ignore[arg-type]
             temperature=temperature,
             max_tokens=max_tokens,
             timeout=timeout,

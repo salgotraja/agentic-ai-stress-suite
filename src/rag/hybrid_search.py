@@ -845,7 +845,7 @@ class HaystackHybridSearchPipeline:
             model="BAAI/bge-base-en-v1.5",
             device=ComponentDevice.from_str("cpu"),
         )
-        self._document_embedder.warm_up()
+        self._document_embedder.warm_up()  # type: ignore[no-untyped-call]  # haystack: warm_up has no return annotation
 
         # Pipeline storage (type annotation using Any due to deferred import)
         self._retrieval_pipeline: Any = None

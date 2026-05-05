@@ -45,7 +45,15 @@ from src.agents.single_agent import PlanAndExecuteAgent, ReActAgent  # noqa: E40
 from src.agents.tools.calculator import CalculatorTool  # noqa: E402
 from src.agents.tools.code_exec import CodeExecutionTool  # noqa: E402
 from src.agents.tools.db_lookup import DatabaseLookupTool  # noqa: E402
+from src.agents.tools.rag import RAGTool  # noqa: E402
 from src.agents.tools.search import SearchTool  # noqa: E402
+
+# Categories included in the published benchmark.
+# multi_framework + failure_scenarios are intentionally excluded: they exercise
+# DuckDuckGo (rate-limited, noisy) and timeout/error paths whose latency variance
+# would dominate aggregate metrics. Both code paths still ship in the agent
+# implementation; the prose calls them "implementation present, not benchmarked here".
+DEFAULT_CATEGORIES = ("rag_calculation", "database_analysis", "code_execution")
 
 
 @dataclass
@@ -205,6 +213,8 @@ def run_benchmark(
     runs: int = 3,
     use_mock: bool = False,
     max_queries: int | None = None,
+    categories: tuple[str, ...] = DEFAULT_CATEGORIES,
+    docs_dir: Path | None = None,
 ) -> None:
     """Run full benchmark suite comparing ReAct vs Plan-Execute.
 
@@ -214,6 +224,8 @@ def run_benchmark(
         runs: Number of times to run each query (for statistical validity)
         use_mock: If True, use mock tool execution (fast, no API calls)
         max_queries: If set, only run first N queries (for quick testing)
+        categories: Query categories to include (filters dataset)
+        docs_dir: Path to tech docs directory (required for non-mock RAG)
     """
     print("=" * 80)
     print("Article 4: Single-Agent Benchmark (ReAct vs Plan-and-Execute)")
@@ -221,11 +233,20 @@ def run_benchmark(
     print(f"Dataset: {dataset_path}")
     print(f"Runs per query: {runs}")
     print(f"Mock tools: {use_mock}")
+    print(f"Categories: {list(categories) if categories else 'all'}")
     print()
 
     # Load dataset
     dataset = load_dataset(dataset_path)
     queries = dataset["queries"]
+
+    # Filter by category. The dataset ships 28 queries across 5 categories;
+    # the published benchmark scopes to 3 stable categories (~21 queries).
+    if categories:
+        before = len(queries)
+        queries = [q for q in queries if q.get("category") in categories]
+        print(f"Category filter: {before} -> {len(queries)} queries")
+
     if max_queries:
         queries = queries[:max_queries]
         print(f"Running on first {max_queries} queries only (quick test mode)")
@@ -235,7 +256,7 @@ def run_benchmark(
 
     # Initialize tools
     print("Initializing tools...")
-    tools = [
+    tools: list[Any] = [
         SearchTool(),
         CalculatorTool(),
         DatabaseLookupTool(db_path=str(PROJECT_ROOT / "datasets" / "tech_docs.db")),
@@ -243,10 +264,34 @@ def run_benchmark(
         CodeExecutionTool(enabled=True),
     ]
 
-    # RAGTool requires a pipeline - skip for now in mock mode
-    # TODO: Add RAGTool initialization for non-mock runs
-    if not use_mock:
-        print("WARNING: RAGTool not initialized - queries requiring RAG will fail")
+    # Wire RAGTool. For non-mock runs we build a real Chroma-backed index over
+    # the tech-docs corpus; mock runs use a stub pipeline so RAGTool.mock_execute
+    # still has a valid object to bind to.
+    if use_mock:
+        # Stub pipeline: never invoked because tool.execute is swapped to
+        # mock_execute by run_agent_on_query when use_mock=True.
+        class _StubPipeline:
+            def query(self, query_str: str, top_k: int = 5) -> dict[str, Any]:
+                return {"answer": "stub", "context_nodes": [], "metadata": {}}
+
+        tools.append(RAGTool(rag_pipeline=_StubPipeline(), top_k=5))  # type: ignore[arg-type]
+        print("Initialized RAGTool with stub pipeline (mock mode)")
+    else:
+        from src.rag.naive_rag import NaiveRAGPipeline
+
+        if docs_dir is None:
+            docs_dir = PROJECT_ROOT / "datasets" / "tech_docs"
+
+        print("Initializing RAGTool: building/reusing Chroma collection 'a04'...")
+        rag_pipeline = NaiveRAGPipeline(collection_name="a04", top_k=5)
+        # build_index is idempotent at the Chroma level: if the collection
+        # already exists with the same docs, this re-embeds but doesn't
+        # corrupt. For repeated runs the user can comment out build_index.
+        documents = rag_pipeline.load_documents(docs_dir)
+        print(f"  Loaded {len(documents)} documents from {docs_dir}")
+        rag_pipeline.build_index(documents)
+        tools.append(RAGTool(rag_pipeline=rag_pipeline, top_k=5))
+        print("RAGTool wired to NaiveRAGPipeline (collection='a04')")
 
     print(f"Initialized {len(tools)} tools: {[t.__class__.__name__ for t in tools]}")
     print()
@@ -333,6 +378,7 @@ def run_benchmark(
             "runs": runs,
             "total_queries": len(queries),
             "use_mock": use_mock,
+            "categories": list(categories) if categories else [],
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
         },
         "summaries": {
@@ -439,8 +485,25 @@ def main() -> int:
         type=int,
         help="Only run first N queries (for quick testing)",
     )
+    parser.add_argument(
+        "--categories",
+        nargs="+",
+        default=list(DEFAULT_CATEGORIES),
+        help=(
+            "Query categories to include (default: rag_calculation database_analysis "
+            "code_execution). Use 'all' to include every category in the dataset."
+        ),
+    )
+    parser.add_argument(
+        "--docs-dir",
+        type=Path,
+        default=PROJECT_ROOT / "datasets" / "tech_docs",
+        help="Path to tech docs directory for RAG indexing (non-mock runs)",
+    )
 
     args = parser.parse_args()
+
+    categories: tuple[str, ...] = () if args.categories == ["all"] else tuple(args.categories)
 
     try:
         run_benchmark(
@@ -449,6 +512,8 @@ def main() -> int:
             runs=args.runs,
             use_mock=args.mock_tools,
             max_queries=args.max_queries,
+            categories=categories,
+            docs_dir=args.docs_dir,
         )
         return 0
     except KeyboardInterrupt:

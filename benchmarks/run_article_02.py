@@ -39,7 +39,7 @@ import random
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
 sys.path.insert(0, str(PROJECT_ROOT))
@@ -187,6 +187,11 @@ def main() -> int:
     # Teaching note: Configuration matrix
     # Each config represents a point on the accuracy-latency-cost Pareto frontier.
     # The goal is to find the best trade-off for your specific use case.
+    #
+    # Pipeline types map to a constructible pipeline in src/rag/. The two
+    # metadata_* types currently have no per-query filter plumbing through
+    # HybridSearchPipeline, so the real-run path skips them with a clear
+    # message; they remain runnable in --dry-run for visualization work.
     configs = [
         {
             "name": "dense_only",
@@ -249,6 +254,18 @@ def main() -> int:
                 "cost_per_1k": 1.0,
             }
         )
+
+    # Restrict configs to those with implemented pipelines for real runs.
+    # Dry-run keeps the full matrix so chart layouts stay stable.
+    runnable_types = {"naive", "hybrid"}
+    if not args.dry_run:
+        skipped_unimplemented = [
+            c["name"] for c in configs if c["pipeline_type"] not in runnable_types
+        ]
+        configs = [c for c in configs if c["pipeline_type"] in runnable_types]
+        if skipped_unimplemented:
+            print(f"\nSkipping configs without real-run pipeline support: {skipped_unimplemented}")
+            print("  (metadata pre/post-filter need per-query filter plumbing)")
 
     print(f"\nBenchmarking {len(configs)} configurations ({args.runs} runs each):")
     for config in configs:
@@ -317,9 +334,86 @@ def main() -> int:
 
         print("\n[dry-run] Synthetic results generated (seed=42)")
     else:
-        print("\nNote: Full benchmarks require running infrastructure.")
-        print("Use 'docker-compose -f infra/docker-compose.yml up -d' first.")
-        print("For reranker-only comparison: python benchmarks/compare_rerankers.py")
+        # Real-run path: instantiate each pipeline against the live Docker
+        # stack (Chroma + text-embeddings-inference) and run the same
+        # BenchmarkRunner used by Article 1. Per-config Settings overlays
+        # toggle reranking without mutating the shared singleton.
+        from src.rag.hybrid_search import HybridSearchPipeline
+        from src.rag.naive_rag import NaiveRAGPipeline
+
+        # Cache shared documents so we only read from disk once even though
+        # each pipeline rebuilds its own Chroma collection.
+        documents_cache: list[Any] | None = None
+
+        for config in configs:
+            name = str(config["name"])
+            pipeline_type = config["pipeline_type"]
+            settings_override = cast(dict[str, Any], config["settings_override"])
+            cfg_settings = settings.model_copy(update=settings_override)
+
+            print(f"\n{'=' * 70}")
+            print(f"Running: {name}")
+            print(f"  {config['description']}")
+            print(f"{'=' * 70}")
+
+            collection = f"a02_{name}"
+            pipeline: Any
+            if pipeline_type == "naive":
+                pipeline = NaiveRAGPipeline(
+                    collection_name=collection,
+                    top_k=args.top_k,
+                    settings=cfg_settings,
+                )
+            elif pipeline_type == "hybrid":
+                pipeline = HybridSearchPipeline(
+                    collection_name=collection,
+                    top_k=args.top_k,
+                    settings=cfg_settings,
+                )
+            else:
+                # Defensive: unreachable because we filtered configs above,
+                # but keeps the dispatcher honest if someone adds a new type.
+                print(f"  Unknown pipeline_type {pipeline_type!r}, skipping")
+                continue
+
+            if documents_cache is None:
+                print(f"  Loading documents from {args.docs_dir}...")
+                documents_cache = pipeline.load_documents(args.docs_dir)
+                print(f"  Loaded {len(documents_cache)} documents")
+            else:
+                print(f"  Reusing {len(documents_cache)} documents from cache")
+
+            print("  Building index (first build embeds entire corpus, may take minutes)...")
+            pipeline.build_index(documents_cache)
+
+            cfg_result = run_config_benchmark(
+                name=name,
+                description=str(config["description"]),
+                pipeline=pipeline,
+                queries=queries,
+                num_runs=args.runs,
+                top_k=args.top_k,
+                cost_per_1k=float(cast(float, config["cost_per_1k"])),
+            )
+
+            results.append(
+                {
+                    "name": cfg_result.name,
+                    "description": cfg_result.description,
+                    "recall_at_k": cfg_result.recall_at_k,
+                    "mrr": cfg_result.mrr,
+                    "latency_ms": cfg_result.latency_ms,
+                    "cost_per_1k_queries": cfg_result.cost_per_1k_queries,
+                }
+            )
+
+            recall_mean = cfg_result.recall_at_k.get("mean", 0.0)
+            mrr_mean = cfg_result.mrr.get("mean", 0.0)
+            lat_mean = cfg_result.latency_ms.get("mean", 0.0)
+            print(
+                f"  -> Recall@{args.top_k}={recall_mean:.3f}, "
+                f"MRR={mrr_mean:.3f}, Latency={lat_mean:.1f}ms"
+            )
 
     output = {
         "benchmark": "article_02_advanced_retrieval",

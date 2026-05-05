@@ -18,8 +18,8 @@ of annotated production code.
 | Full retrieval pipeline (hybrid + rerank + filter + chunking) | Recall@5 | 0.723 → 0.862 (+19%) |
 | Hybrid search alone (BM25+RRF) | Recall@5 | 0.723 → 0.781 (+8%) |
 | BGE fine-tuning (regression) | Recall@5 | 0.729 → 0.622 (-11%) |
-| Semantic cache (alone) | LLM cost on 100-query workload | $0.375 → $0.229 (39%) |
-| Complexity routing (alone) | LLM cost on 100-query workload | $0.375 → $0.003 (99.2%) |
+| Semantic cache (alone) | LLM cost on 100-query workload (vs uncached Groq-8B) | $0.001272 → $0.000769 (39.6%) |
+| Complexity routing (alone) | LLM cost on 100-query workload (vs all-GPT-4o reprice) | $0.1935 → $0.00228 (98.8%) |
 | Parallel tool execution | Latency | 297ms → 114ms (2.62×) |
 | INT8 quantisation (BGE) | Model size | 438MB → 110MB (4× smaller); slower on M4 (QNNPACK has no ARM speedup) |
 | torch.compile (BGE on MPS) | Embed latency | 28.3ms → 28.7ms (0.99×, no win on Apple Silicon) |

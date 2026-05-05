@@ -1,0 +1,530 @@
+{
+  "config": {
+    "threshold": 0.5,
+    "prompt_guard_model": "meta-llama/llama-prompt-guard-2-86m",
+    "prompt_guard_enabled": true,
+    "n_runs": 5,
+    "n_warmup_runs": 1,
+    "per_run_pause_s": 60.0
+  },
+  "dataset": {
+    "by_severity": {
+      "L1": 33,
+      "L2": 41,
+      "L3": 30
+    },
+    "by_expected_block": {
+      "true": 99,
+      "false": 5
+    },
+    "total": 104
+  },
+  "regex_only": {
+    "runs": [
+      {
+        "label": "regex_only",
+        "block_rate_by_severity": {
+          "L1": 0.3333,
+          "L2": 0.1026,
+          "L3": 0.1667
+        },
+        "overall_true_positive_rate": 0.1919,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 0.0059,
+        "latency_p95_ms": 0.0083,
+        "latency_p99_ms": 0.0098,
+        "latency_mean_ms": 0.0054,
+        "block_rate_by_category": {
+          "jailbreak": 0.08,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.1379,
+          "rag_attack": 0.1429,
+          "system_prompt_reveal": 0.1613
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 19,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      },
+      {
+        "label": "regex_only",
+        "block_rate_by_severity": {
+          "L1": 0.3333,
+          "L2": 0.1026,
+          "L3": 0.1667
+        },
+        "overall_true_positive_rate": 0.1919,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 0.0057,
+        "latency_p95_ms": 0.0074,
+        "latency_p99_ms": 0.008,
+        "latency_mean_ms": 0.005,
+        "block_rate_by_category": {
+          "jailbreak": 0.08,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.1379,
+          "rag_attack": 0.1429,
+          "system_prompt_reveal": 0.1613
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 19,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      },
+      {
+        "label": "regex_only",
+        "block_rate_by_severity": {
+          "L1": 0.3333,
+          "L2": 0.1026,
+          "L3": 0.1667
+        },
+        "overall_true_positive_rate": 0.1919,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 0.0058,
+        "latency_p95_ms": 0.0075,
+        "latency_p99_ms": 0.0079,
+        "latency_mean_ms": 0.0051,
+        "block_rate_by_category": {
+          "jailbreak": 0.08,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.1379,
+          "rag_attack": 0.1429,
+          "system_prompt_reveal": 0.1613
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 19,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      },
+      {
+        "label": "regex_only",
+        "block_rate_by_severity": {
+          "L1": 0.3333,
+          "L2": 0.1026,
+          "L3": 0.1667
+        },
+        "overall_true_positive_rate": 0.1919,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 0.0056,
+        "latency_p95_ms": 0.0073,
+        "latency_p99_ms": 0.0078,
+        "latency_mean_ms": 0.005,
+        "block_rate_by_category": {
+          "jailbreak": 0.08,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.1379,
+          "rag_attack": 0.1429,
+          "system_prompt_reveal": 0.1613
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 19,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      },
+      {
+        "label": "regex_only",
+        "block_rate_by_severity": {
+          "L1": 0.3333,
+          "L2": 0.1026,
+          "L3": 0.1667
+        },
+        "overall_true_positive_rate": 0.1919,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 0.0056,
+        "latency_p95_ms": 0.0073,
+        "latency_p99_ms": 0.0078,
+        "latency_mean_ms": 0.005,
+        "block_rate_by_category": {
+          "jailbreak": 0.08,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.1379,
+          "rag_attack": 0.1429,
+          "system_prompt_reveal": 0.1613
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 19,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      }
+    ],
+    "warmup": [
+      {
+        "label": "regex_only",
+        "block_rate_by_severity": {
+          "L1": 0.3333,
+          "L2": 0.1026,
+          "L3": 0.1667
+        },
+        "overall_true_positive_rate": 0.1919,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 0.006,
+        "latency_p95_ms": 0.0085,
+        "latency_p99_ms": 0.0117,
+        "latency_mean_ms": 0.0056,
+        "block_rate_by_category": {
+          "jailbreak": 0.08,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.1379,
+          "rag_attack": 0.1429,
+          "system_prompt_reveal": 0.1613
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 19,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      }
+    ],
+    "summary": {
+      "label": "regex_only",
+      "block_rate_by_severity": {
+        "L1": {
+          "mean": 0.3333,
+          "std": 0.0
+        },
+        "L2": {
+          "mean": 0.1026,
+          "std": 0.0
+        },
+        "L3": {
+          "mean": 0.1667,
+          "std": 0.0
+        }
+      },
+      "overall_true_positive_rate_mean": 0.1919,
+      "overall_true_positive_rate_std": 0.0,
+      "false_positive_rate_mean": 0.0,
+      "false_positive_rate_std": 0.0,
+      "latency_p50_ms_mean": 0.00572,
+      "latency_p50_ms_std": 0.00013,
+      "latency_p95_ms_mean": 0.00756,
+      "latency_p95_ms_std": 0.000422,
+      "latency_p99_ms_mean": 0.00826,
+      "latency_p99_ms_std": 0.000865,
+      "latency_mean_ms_mean": 0.0051,
+      "latency_mean_ms_std": 0.000173,
+      "block_rate_by_category": {
+        "jailbreak": {
+          "mean": 0.08,
+          "std": 0.0
+        },
+        "pii_extraction": {
+          "mean": 1.0,
+          "std": 0.0
+        },
+        "prompt_injection": {
+          "mean": 0.1379,
+          "std": 0.0
+        },
+        "rag_attack": {
+          "mean": 0.1429,
+          "std": 0.0
+        },
+        "system_prompt_reveal": {
+          "mean": 0.1613,
+          "std": 0.0
+        }
+      },
+      "block_rail_breakdown": {
+        "input_jailbreak": {
+          "mean": 12.0,
+          "std": 0.0
+        },
+        "input_pii": {
+          "mean": 7.0,
+          "std": 0.0
+        }
+      },
+      "total_prompts_mean": 104.0,
+      "total_prompts_std": 0.0,
+      "prompts_blocked_mean": 19.0,
+      "prompts_blocked_std": 0.0,
+      "prompts_expected_blocked_mean": 99.0,
+      "prompts_expected_blocked_std": 0.0,
+      "prompts_expected_passthrough_mean": 5.0,
+      "prompts_expected_passthrough_std": 0.0
+    }
+  },
+  "regex_plus_prompt_guard": {
+    "runs": [
+      {
+        "label": "regex_plus_prompt_guard",
+        "block_rate_by_severity": {
+          "L1": 0.7333,
+          "L2": 0.641,
+          "L3": 0.7
+        },
+        "overall_true_positive_rate": 0.6869,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 123.2189,
+        "latency_p95_ms": 132.8251,
+        "latency_p99_ms": 311.2818,
+        "latency_mean_ms": 106.2512,
+        "block_rate_by_category": {
+          "jailbreak": 0.64,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.7586,
+          "rag_attack": 0.8571,
+          "system_prompt_reveal": 0.5484
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "prompt_guard": 49,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 68,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      },
+      {
+        "label": "regex_plus_prompt_guard",
+        "block_rate_by_severity": {
+          "L1": 0.7333,
+          "L2": 0.641,
+          "L3": 0.7
+        },
+        "overall_true_positive_rate": 0.6869,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 123.5084,
+        "latency_p95_ms": 136.5436,
+        "latency_p99_ms": 148.8912,
+        "latency_mean_ms": 102.9885,
+        "block_rate_by_category": {
+          "jailbreak": 0.64,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.7586,
+          "rag_attack": 0.8571,
+          "system_prompt_reveal": 0.5484
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "prompt_guard": 49,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 68,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      },
+      {
+        "label": "regex_plus_prompt_guard",
+        "block_rate_by_severity": {
+          "L1": 0.7333,
+          "L2": 0.641,
+          "L3": 0.7
+        },
+        "overall_true_positive_rate": 0.6869,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 122.7448,
+        "latency_p95_ms": 136.4876,
+        "latency_p99_ms": 139.2028,
+        "latency_mean_ms": 103.5614,
+        "block_rate_by_category": {
+          "jailbreak": 0.64,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.7586,
+          "rag_attack": 0.8571,
+          "system_prompt_reveal": 0.5484
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "prompt_guard": 49,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 68,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      },
+      {
+        "label": "regex_plus_prompt_guard",
+        "block_rate_by_severity": {
+          "L1": 0.7333,
+          "L2": 0.641,
+          "L3": 0.7
+        },
+        "overall_true_positive_rate": 0.6869,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 128.0786,
+        "latency_p95_ms": 142.4186,
+        "latency_p99_ms": 157.1554,
+        "latency_mean_ms": 106.9506,
+        "block_rate_by_category": {
+          "jailbreak": 0.64,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.7586,
+          "rag_attack": 0.8571,
+          "system_prompt_reveal": 0.5484
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "prompt_guard": 49,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 68,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      },
+      {
+        "label": "regex_plus_prompt_guard",
+        "block_rate_by_severity": {
+          "L1": 0.7333,
+          "L2": 0.641,
+          "L3": 0.7
+        },
+        "overall_true_positive_rate": 0.6869,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 121.8919,
+        "latency_p95_ms": 127.8881,
+        "latency_p99_ms": 146.5568,
+        "latency_mean_ms": 101.0801,
+        "block_rate_by_category": {
+          "jailbreak": 0.64,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.7586,
+          "rag_attack": 0.8571,
+          "system_prompt_reveal": 0.5484
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "prompt_guard": 49,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 68,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      }
+    ],
+    "warmup": [
+      {
+        "label": "regex_plus_prompt_guard",
+        "block_rate_by_severity": {
+          "L1": 0.7333,
+          "L2": 0.641,
+          "L3": 0.7
+        },
+        "overall_true_positive_rate": 0.6869,
+        "false_positive_rate": 0.0,
+        "latency_p50_ms": 121.6404,
+        "latency_p95_ms": 128.9802,
+        "latency_p99_ms": 143.3468,
+        "latency_mean_ms": 101.4064,
+        "block_rate_by_category": {
+          "jailbreak": 0.64,
+          "pii_extraction": 1.0,
+          "prompt_injection": 0.7586,
+          "rag_attack": 0.8571,
+          "system_prompt_reveal": 0.5484
+        },
+        "block_rail_breakdown": {
+          "input_jailbreak": 12,
+          "prompt_guard": 49,
+          "input_pii": 7
+        },
+        "total_prompts": 104,
+        "prompts_blocked": 68,
+        "prompts_expected_blocked": 99,
+        "prompts_expected_passthrough": 5
+      }
+    ],
+    "summary": {
+      "label": "regex_plus_prompt_guard",
+      "block_rate_by_severity": {
+        "L1": {
+          "mean": 0.7333,
+          "std": 0.0
+        },
+        "L2": {
+          "mean": 0.641,
+          "std": 0.0
+        },
+        "L3": {
+          "mean": 0.7,
+          "std": 0.0
+        }
+      },
+      "overall_true_positive_rate_mean": 0.6869,
+      "overall_true_positive_rate_std": 0.0,
+      "false_positive_rate_mean": 0.0,
+      "false_positive_rate_std": 0.0,
+      "latency_p50_ms_mean": 123.88852,
+      "latency_p50_ms_std": 2.420963,
+      "latency_p95_ms_mean": 135.2326,
+      "latency_p95_ms_std": 5.354206,
+      "latency_p99_ms_mean": 180.6176,
+      "latency_p99_ms_std": 73.323762,
+      "latency_mean_ms_mean": 104.16636,
+      "latency_mean_ms_std": 2.417482,
+      "block_rate_by_category": {
+        "jailbreak": {
+          "mean": 0.64,
+          "std": 0.0
+        },
+        "pii_extraction": {
+          "mean": 1.0,
+          "std": 0.0
+        },
+        "prompt_injection": {
+          "mean": 0.7586,
+          "std": 0.0
+        },
+        "rag_attack": {
+          "mean": 0.8571,
+          "std": 0.0
+        },
+        "system_prompt_reveal": {
+          "mean": 0.5484,
+          "std": 0.0
+        }
+      },
+      "block_rail_breakdown": {
+        "input_jailbreak": {
+          "mean": 12.0,
+          "std": 0.0
+        },
+        "input_pii": {
+          "mean": 7.0,
+          "std": 0.0
+        },
+        "prompt_guard": {
+          "mean": 49.0,
+          "std": 0.0
+        }
+      },
+      "total_prompts_mean": 104.0,
+      "total_prompts_std": 0.0,
+      "prompts_blocked_mean": 68.0,
+      "prompts_blocked_std": 0.0,
+      "prompts_expected_blocked_mean": 99.0,
+      "prompts_expected_blocked_std": 0.0,
+      "prompts_expected_passthrough_mean": 5.0,
+      "prompts_expected_passthrough_std": 0.0
+    }
+  }
+}

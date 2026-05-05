@@ -196,6 +196,7 @@ class UnifiedLLMClient:
             LLMProvider.OPENAI: {
                 # OpenAI prompt caching: write 1x, read 0.5x
                 "gpt-4o": (2.50, 10.00, 2.50, 1.25),
+                "gpt-4o-mini": (0.15, 0.60, 0.15, 0.075),
             },
         }
 
@@ -621,6 +622,7 @@ class UnifiedLLMClient:
         max_tokens: int,
         timeout: int,
         system_prompt: str | None = None,
+        model: str = "gpt-4o",
     ) -> LLMResponse:
         """Call OpenAI API with automatic prompt caching.
 
@@ -649,7 +651,6 @@ class UnifiedLLMClient:
             raise ValueError("OpenAI API key not configured")
 
         start_time = time.time()
-        model = "gpt-4o"
 
         # Build messages with optional system prompt
         messages: list[dict[str, str]] = []
@@ -721,6 +722,8 @@ class UnifiedLLMClient:
         max_tokens: int | None = None,
         timeout: int | None = None,
         system_prompt: str | None = None,
+        preferred_provider: LLMProvider | None = None,
+        preferred_model: str | None = None,
     ) -> LLMResponse:
         """
         Generate text with automatic fallback chain and prompt caching.
@@ -772,6 +775,24 @@ class UnifiedLLMClient:
 
         self.errors = []
         attempt = 0
+
+        # When the caller pins a provider (e.g. LLMJudge wanting reliable JSON
+        # via gpt-4o-mini), bypass the cost-optimised fallback chain and call
+        # that provider directly. preferred_model is forwarded only where the
+        # provider call exposes a model override; today that is OpenAI only.
+        if preferred_provider is not None:
+            if preferred_provider == LLMProvider.OPENAI and self.openai_client:
+                return self._call_openai(
+                    prompt,
+                    temperature,
+                    max_tokens,
+                    timeout,
+                    system_prompt,
+                    model=preferred_model or "gpt-4o",
+                )
+            raise ValueError(
+                f"preferred_provider={preferred_provider} not supported or client not configured"
+            )
 
         # Each provider block below catches Exception broadly on purpose:
         # the six SDKs (groq, deepseek, anthropic, google, openai, plus

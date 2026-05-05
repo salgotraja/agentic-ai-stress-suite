@@ -169,7 +169,19 @@ class RAGASEvaluator:
         dataset = self._samples_to_dataset(samples)
         metrics = self._get_metrics()
 
-        result = ragas_evaluate(dataset=dataset, metrics=metrics)
+        # Pin the judge LLM when caller specified one. RAGAS otherwise falls
+        # back to its hard-coded default (gpt-4o-mini in 0.4.x), which is fine
+        # for cost but invisible to the run config; explicit > implicit.
+        evaluate_kwargs: dict[str, Any] = {"dataset": dataset, "metrics": metrics}
+        if self.llm_model:
+            from langchain_openai import ChatOpenAI
+            from ragas.llms import LangchainLLMWrapper
+
+            evaluate_kwargs["llm"] = LangchainLLMWrapper(
+                ChatOpenAI(model=self.llm_model, temperature=0.0)
+            )
+
+        result = ragas_evaluate(**evaluate_kwargs)
 
         # RAGAS returns a Result object with a .to_pandas() or direct dataset access.
         # The result dataset has per-row scores for each metric.

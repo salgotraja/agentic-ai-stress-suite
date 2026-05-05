@@ -51,7 +51,7 @@ from typing import Any
 import numpy as np
 from scipy import stats
 
-from src.core.llm_client import LLMResponse, UnifiedLLMClient
+from src.core.llm_client import LLMProvider, LLMResponse, UnifiedLLMClient
 from src.rag.evaluation import EvalResult, EvalSample
 
 logger = logging.getLogger(__name__)
@@ -307,8 +307,12 @@ class LLMJudge:
         llm_client: UnifiedLLMClient,
         persist: bool = False,
         db_path: str | Path = "results/evaluations.db",
+        preferred_provider: LLMProvider | None = None,
+        preferred_model: str | None = None,
     ) -> None:
         self._client = llm_client
+        self._preferred_provider = preferred_provider
+        self._preferred_model = preferred_model
         self._persistence: EvalPersistence | None = None
         if persist:
             self._persistence = EvalPersistence(db_path=db_path)
@@ -329,6 +333,8 @@ class LLMJudge:
             system_prompt=JUDGE_SYSTEM_PROMPT,
             temperature=0.0,
             max_tokens=512,
+            preferred_provider=self._preferred_provider,
+            preferred_model=self._preferred_model,
         )
 
         parsed = _parse_judge_response(response.content)
@@ -400,6 +406,8 @@ class LLMJudge:
                 correlations[dim] = 0.0
             else:
                 r, _ = stats.pearsonr(golden_scores, judge_scores)
-                correlations[dim] = float(r)
+                # scipy's PearsonRResult unpacks to objects in stub typing;
+                # the runtime value is a numpy float and float() handles it.
+                correlations[dim] = float(r)  # type: ignore[arg-type]
 
         return correlations

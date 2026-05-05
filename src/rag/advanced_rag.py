@@ -333,27 +333,22 @@ Sub-queries:"""
         if self.index is None:
             raise ValueError("Index not built. Call build_index() first.")
 
-        # Retrieve using query engine
-        query_engine = self.index.as_query_engine(
-            similarity_top_k=top_k,
-            response_mode="no_text",
-        )
+        # as_retriever() over as_query_engine(): the query-engine path resolves
+        # llama_index.core.Settings.llm even with response_mode="no_text", which
+        # defaults to OpenAI and crashes when OPENAI_API_KEY is unset. We only
+        # consume source_nodes, so the retriever layer is sufficient and avoids
+        # a hard dependency on any single LLM provider for retrieval-only runs.
+        retriever = self.index.as_retriever(similarity_top_k=top_k)
+        nodes = retriever.retrieve(query)
 
-        response = query_engine.query(query)
-
-        # Extract nodes and scores
-        retrieved_nodes = []
-        if hasattr(response, "source_nodes"):
-            for node in response.source_nodes:
-                retrieved_nodes.append(
-                    {
-                        "text": node.node.get_content(),
-                        "score": node.score if hasattr(node, "score") else 0.0,
-                        "metadata": node.node.metadata,
-                    }
-                )
-
-        return retrieved_nodes
+        return [
+            {
+                "text": node.node.get_content(),
+                "score": node.score if hasattr(node, "score") else 0.0,
+                "metadata": node.node.metadata,
+            }
+            for node in nodes
+        ]
 
     @traced_retrieval
     def retrieve(

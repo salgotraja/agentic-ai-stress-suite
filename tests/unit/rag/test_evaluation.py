@@ -207,10 +207,20 @@ class TestRAGASEvaluator:
         mock_ragas_module = MagicMock()
         mock_ragas_module.evaluate.return_value = mock_result
         mock_ds_module = MagicMock()
+        # When llm_model is set the evaluator lazy-imports langchain_openai and
+        # ragas.llms to build a LangchainLLMWrapper. Mock both so the test does
+        # not pull the real (heavy) dependencies through transitive imports.
+        mock_ragas_llms = MagicMock()
+        mock_langchain_openai = MagicMock()
 
         with patch.dict(
             sys.modules,
-            {"ragas": mock_ragas_module, "datasets": mock_ds_module},
+            {
+                "ragas": mock_ragas_module,
+                "ragas.llms": mock_ragas_llms,
+                "datasets": mock_ds_module,
+                "langchain_openai": mock_langchain_openai,
+            },
         ):
             results = evaluator.evaluate(sample_eval_samples)
 
@@ -505,10 +515,7 @@ class TestLLMJudge:
 
     def test_parse_valid_json_response(self) -> None:
         """Test parsing a well-formed JSON response from the judge."""
-        from src.rag.evaluation.llm_judge import (
-            _extract_scores,
-            _parse_judge_response,
-        )
+        from src.rag.evaluation.llm_judge import _extract_scores, _parse_judge_response
 
         response = """{
             "correctness": {"score": 4, "justification": "Good"},
@@ -527,10 +534,7 @@ class TestLLMJudge:
 
     def test_parse_json_with_markdown_fences(self) -> None:
         """Test parsing JSON wrapped in markdown code fences."""
-        from src.rag.evaluation.llm_judge import (
-            _extract_scores,
-            _parse_judge_response,
-        )
+        from src.rag.evaluation.llm_judge import _extract_scores, _parse_judge_response
 
         response = """```json
 {
@@ -547,10 +551,7 @@ class TestLLMJudge:
 
     def test_parse_flat_scores(self) -> None:
         """Test parsing when LLM returns flat number scores."""
-        from src.rag.evaluation.llm_judge import (
-            _extract_scores,
-            _parse_judge_response,
-        )
+        from src.rag.evaluation.llm_judge import _extract_scores, _parse_judge_response
 
         response = """{
             "correctness": 3,
@@ -566,10 +567,7 @@ class TestLLMJudge:
 
     def test_parse_invalid_response_returns_empty(self) -> None:
         """Test that malformed LLM responses produce empty parsed dict."""
-        from src.rag.evaluation.llm_judge import (
-            _extract_scores,
-            _parse_judge_response,
-        )
+        from src.rag.evaluation.llm_judge import _extract_scores, _parse_judge_response
 
         parsed = _parse_judge_response("This is not valid JSON")
         scores = _extract_scores(parsed)
@@ -577,10 +575,7 @@ class TestLLMJudge:
 
     def test_parse_out_of_range_scores_clamped(self) -> None:
         """Test that scores outside 0-5 are clamped."""
-        from src.rag.evaluation.llm_judge import (
-            _extract_scores,
-            _parse_judge_response,
-        )
+        from src.rag.evaluation.llm_judge import _extract_scores, _parse_judge_response
 
         response = """{
             "correctness": {"score": 10, "justification": "Over"},

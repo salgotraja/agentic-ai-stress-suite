@@ -153,19 +153,17 @@ class TestRetrievalWithHyDE:
         """
         mock_llm = MagicMock()
 
-        # Mock index and query engine
-        mock_query_engine = MagicMock()
-        mock_response = Mock()
-        mock_response.source_nodes = [
+        # Mock index and retriever
+        mock_retriever = MagicMock()
+        mock_retriever.retrieve.return_value = [
             Mock(
                 node=Mock(get_content=lambda: "FastAPI is a web framework", metadata={}),
                 score=0.95,
             )
         ]
-        mock_query_engine.query.return_value = mock_response
 
         mock_index = MagicMock()
-        mock_index.as_query_engine.return_value = mock_query_engine
+        mock_index.as_retriever.return_value = mock_retriever
 
         pipeline = AdvancedRAGPipeline(llm_client=mock_llm, use_hyde=False)
         pipeline.index = mock_index
@@ -176,8 +174,8 @@ class TestRetrievalWithHyDE:
         # LLM should NOT be called (no hypothetical generation)
         assert not mock_llm.generate.called
 
-        # Query engine should be called with original query
-        mock_query_engine.query.assert_called_once_with("What is FastAPI?")
+        # Retriever should be called with original query
+        mock_retriever.retrieve.assert_called_once_with("What is FastAPI?")
 
         # Results should be returned
         assert len(results) == 1
@@ -197,10 +195,9 @@ class TestRetrievalWithHyDE:
             content="FastAPI is a modern Python web framework for building APIs."
         )
 
-        # Mock index and query engine
-        mock_query_engine = MagicMock()
-        mock_response = Mock()
-        mock_response.source_nodes = [
+        # Mock index and retriever
+        mock_retriever = MagicMock()
+        mock_retriever.retrieve.return_value = [
             Mock(
                 node=Mock(
                     get_content=lambda: "FastAPI documentation: async support",
@@ -209,10 +206,9 @@ class TestRetrievalWithHyDE:
                 score=0.92,
             )
         ]
-        mock_query_engine.query.return_value = mock_response
 
         mock_index = MagicMock()
-        mock_index.as_query_engine.return_value = mock_query_engine
+        mock_index.as_retriever.return_value = mock_retriever
 
         pipeline = AdvancedRAGPipeline(llm_client=mock_llm, use_hyde=True)
         pipeline.index = mock_index
@@ -223,9 +219,9 @@ class TestRetrievalWithHyDE:
         # LLM should be called to generate hypothetical document
         assert mock_llm.generate.called
 
-        # Query engine should be called with HYPOTHETICAL document, not original query
-        mock_query_engine.query.assert_called_once()
-        call_args = mock_query_engine.query.call_args[0][0]
+        # Retriever should be called with HYPOTHETICAL document, not original query
+        mock_retriever.retrieve.assert_called_once()
+        call_args = mock_retriever.retrieve.call_args[0][0]
         assert "FastAPI is a modern Python web framework" in call_args
         assert call_args != "What is FastAPI?"  # Not the original query
 
@@ -267,9 +263,8 @@ class TestEndToEndQuery:
         ]
 
         # Mock retrieval
-        mock_query_engine = MagicMock()
-        mock_response = Mock()
-        mock_response.source_nodes = [
+        mock_retriever = MagicMock()
+        mock_retriever.retrieve.return_value = [
             Mock(
                 node=Mock(
                     get_content=lambda: "FastAPI uses Python type hints",
@@ -278,10 +273,9 @@ class TestEndToEndQuery:
                 score=0.90,
             )
         ]
-        mock_query_engine.query.return_value = mock_response
 
         mock_index = MagicMock()
-        mock_index.as_query_engine.return_value = mock_query_engine
+        mock_index.as_retriever.return_value = mock_retriever
 
         pipeline = AdvancedRAGPipeline(llm_client=mock_llm, use_hyde=True)
         pipeline.index = mock_index
@@ -318,18 +312,16 @@ class TestEndToEndQuery:
         mock_llm.generate.return_value = Mock(content="FastAPI is a Python web framework.")
 
         # Mock retrieval
-        mock_query_engine = MagicMock()
-        mock_response = Mock()
-        mock_response.source_nodes = [
+        mock_retriever = MagicMock()
+        mock_retriever.retrieve.return_value = [
             Mock(
                 node=Mock(get_content=lambda: "FastAPI documentation", metadata={}),
                 score=0.88,
             )
         ]
-        mock_query_engine.query.return_value = mock_response
 
         mock_index = MagicMock()
-        mock_index.as_query_engine.return_value = mock_query_engine
+        mock_index.as_retriever.return_value = mock_retriever
 
         pipeline = AdvancedRAGPipeline(llm_client=mock_llm, use_hyde=False)
         pipeline.index = mock_index
@@ -358,13 +350,11 @@ class TestHyDEComparison:
         - Benefit: Better retrieval accuracy for vocabulary mismatch
         """
         # Mock retrieval (shared between both tests)
-        mock_query_engine = MagicMock()
-        mock_response = Mock()
-        mock_response.source_nodes = []
-        mock_query_engine.query.return_value = mock_response
+        mock_retriever = MagicMock()
+        mock_retriever.retrieve.return_value = []
 
         mock_index = MagicMock()
-        mock_index.as_query_engine.return_value = mock_query_engine
+        mock_index.as_retriever.return_value = mock_retriever
 
         # Test with HyDE enabled (needs 2 LLM calls: HyDE + generation)
         mock_llm_hyde = MagicMock()
@@ -529,16 +519,14 @@ class TestRetrievalWithDecomposition:
         )
 
         # Mock retrieval results
-        mock_query_engine = MagicMock()
-        mock_response1 = Mock()
-        mock_response1.source_nodes = [
+        mock_retriever = MagicMock()
+        nodes_1 = [
             Mock(
                 node=Mock(get_content=lambda: "FastAPI is a web framework", metadata={}),
                 score=0.95,
             )
         ]
-        mock_response2 = Mock()
-        mock_response2.source_nodes = [
+        nodes_2 = [
             Mock(
                 node=Mock(get_content=lambda: "Async allows concurrent execution", metadata={}),
                 score=0.92,
@@ -546,10 +534,10 @@ class TestRetrievalWithDecomposition:
         ]
 
         # Return different results for each sub-query
-        mock_query_engine.query.side_effect = [mock_response1, mock_response2]
+        mock_retriever.retrieve.side_effect = [nodes_1, nodes_2]
 
         mock_index = MagicMock()
-        mock_index.as_query_engine.return_value = mock_query_engine
+        mock_index.as_retriever.return_value = mock_retriever
 
         pipeline = AdvancedRAGPipeline(llm_client=mock_llm, use_decomposition=True, use_hyde=False)
         pipeline.index = mock_index
@@ -560,8 +548,8 @@ class TestRetrievalWithDecomposition:
         # Verify LLM was called for decomposition
         assert mock_llm.generate.called
 
-        # Verify query engine was called for each sub-query
-        assert mock_query_engine.query.call_count == 2
+        # Verify retriever was called for each sub-query
+        assert mock_retriever.retrieve.call_count == 2
 
         # Results should be aggregated
         assert len(results) == 2
@@ -575,18 +563,16 @@ class TestRetrievalWithDecomposition:
         mock_llm.generate.return_value = Mock(content="1. Query 1\n2. Query 2")
 
         # Mock retrieval: both sub-queries return same document
-        mock_query_engine = MagicMock()
-        mock_response = Mock()
-        mock_response.source_nodes = [
+        mock_retriever = MagicMock()
+        mock_retriever.retrieve.return_value = [
             Mock(
                 node=Mock(get_content=lambda: "Duplicate document", metadata={}),
                 score=0.90,
             )
         ]
-        mock_query_engine.query.return_value = mock_response
 
         mock_index = MagicMock()
-        mock_index.as_query_engine.return_value = mock_query_engine
+        mock_index.as_retriever.return_value = mock_retriever
 
         pipeline = AdvancedRAGPipeline(llm_client=mock_llm, use_decomposition=True)
         pipeline.index = mock_index
@@ -604,26 +590,24 @@ class TestRetrievalWithDecomposition:
         mock_llm.generate.return_value = Mock(content="1. Query 1\n2. Query 2")
 
         # Mock retrieval: different scores
-        mock_query_engine = MagicMock()
-        mock_response1 = Mock()
-        mock_response1.source_nodes = [
+        mock_retriever = MagicMock()
+        nodes_low = [
             Mock(
                 node=Mock(get_content=lambda: "Lower score doc", metadata={}),
                 score=0.80,
             )
         ]
-        mock_response2 = Mock()
-        mock_response2.source_nodes = [
+        nodes_high = [
             Mock(
                 node=Mock(get_content=lambda: "Higher score doc", metadata={}),
                 score=0.95,
             )
         ]
 
-        mock_query_engine.query.side_effect = [mock_response1, mock_response2]
+        mock_retriever.retrieve.side_effect = [nodes_low, nodes_high]
 
         mock_index = MagicMock()
-        mock_index.as_query_engine.return_value = mock_query_engine
+        mock_index.as_retriever.return_value = mock_retriever
 
         pipeline = AdvancedRAGPipeline(llm_client=mock_llm, use_decomposition=True)
         pipeline.index = mock_index
@@ -663,15 +647,13 @@ class TestHyDEWithDecomposition:
         ]
 
         # Mock retrieval
-        mock_query_engine = MagicMock()
-        mock_response = Mock()
-        mock_response.source_nodes = [
+        mock_retriever = MagicMock()
+        mock_retriever.retrieve.return_value = [
             Mock(node=Mock(get_content=lambda: "Result", metadata={}), score=0.9)
         ]
-        mock_query_engine.query.return_value = mock_response
 
         mock_index = MagicMock()
-        mock_index.as_query_engine.return_value = mock_query_engine
+        mock_index.as_retriever.return_value = mock_retriever
 
         pipeline = AdvancedRAGPipeline(llm_client=mock_llm, use_hyde=True, use_decomposition=True)
         pipeline.index = mock_index
@@ -682,9 +664,9 @@ class TestHyDEWithDecomposition:
         assert mock_llm.generate.call_count == 3
 
         # Should have retrieved with hypothetical documents, not original sub-queries
-        assert mock_query_engine.query.call_count == 2
+        assert mock_retriever.retrieve.call_count == 2
         # Verify hypothetical documents were used
-        call_args_list = mock_query_engine.query.call_args_list
+        call_args_list = mock_retriever.retrieve.call_args_list
         assert "Hypothetical answer" in call_args_list[0][0][0]
         assert "Hypothetical answer" in call_args_list[1][0][0]
 

@@ -65,6 +65,10 @@ dmypy.json
 .env.local
 .env.*.local
 .env
+# .env.k8s holds API keys consumed by `kubectl create secret --from-env-file`
+# for the in-cluster rag-agent-api Deployment (Article 8). Never committed.
+# Only the schema (.env.k8s.example) is checked in.
+.env.k8s
 
 # Results and outputs
 results/

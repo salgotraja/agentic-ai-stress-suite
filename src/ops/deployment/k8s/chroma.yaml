@@ -1,0 +1,135 @@
+# Chroma: in-cluster vector DB for Article 8 throughput/HPA measurement.
+#
+# Why a Deployment + PVC (not StatefulSet): per D4, Chroma is PVC-backed but
+# we only run a single replica. A Deployment + PVC with
+# accessModes=[ReadWriteOnce] is enough; the Deployment's recreate strategy
+# guarantees the old pod releases the volume before the new pod attaches.
+# StatefulSet would buy us stable network IDs and ordered rollouts that we
+# don't need.
+#
+# Why hostPath via the default StorageClass (Docker Desktop):
+#   `kubectl get storageclass` on Docker Desktop K8s shows `hostpath
+#   (default)` which provisions a hostPath volume on the node automatically.
+#   No extra StorageClass or PV objects required.
+#
+# Why no auth: the host-side compose Chroma uses CHROMA_SERVER_AUTHN_*
+# because it's exposed on the public localhost interface. In-cluster Chroma
+# is ClusterIP-only (not reachable from outside), and the app's
+# `chromadb.HttpClient(host=..., port=...)` call passes no auth headers,
+# so enabling token auth here would make the app fail to connect.
+#
+# strategy=Recreate (not RollingUpdate): RWO PVC means only one pod can
+# attach at a time. Rolling would deadlock waiting for the new pod to
+# attach. Recreate kills the old pod first, then creates the new one.
+# Acceptable for our demo since chroma traffic gates /ready and the
+# rag-agent-api lifespan reattaches when /ready flips back.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chroma-data
+  namespace: default
+  labels:
+    app: chroma
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      # 5Gi headroom for the tech_docs corpus + BGE-base embeddings (~768 dims
+      # x 4 bytes x ~10K chunks = ~30MB at the high end). Docker Desktop
+      # hostpath provisioner is generous, so 5Gi is just a safe ceiling.
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chroma
+  namespace: default
+  labels:
+    app: chroma
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: chroma
+  template:
+    metadata:
+      labels:
+        app: chroma
+    spec:
+      containers:
+        - name: chroma
+          image: chromadb/chroma:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            # IS_PERSISTENT defaults to TRUE in recent chromadb/chroma images
+            # but we set it explicitly for clarity and to avoid surprises if
+            # the upstream default changes.
+            #
+            # NOTE: PERSIST_DIRECTORY is documented but **not honored** by the
+            # chromadb/chroma:latest image at the time of writing. The server
+            # hardcodes the persist root to `/data/` (verified by
+            # `kubectl exec deploy/chroma -- find / -name chroma.sqlite3`,
+            # which finds it at `/data/chroma.sqlite3` regardless of this
+            # env var). The PVC is therefore mounted at `/data`, not at the
+            # path PERSIST_DIRECTORY would suggest. Re-test if you bump the
+            # image tag.
+            - name: IS_PERSISTENT
+              value: "TRUE"
+          # Resource sizing: Chroma is light at 10K-chunk scale. 256Mi covers
+          # the index in-memory; the limit doubles that for headroom under
+          # query bursts. CPU 500m is plenty since embedding work happens in
+          # the rag-agent-api pods, not Chroma itself.
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          # Liveness: TCP socket open on 8000. Chroma's /api/v1/heartbeat
+          # endpoint moved between versions; the TCP probe is version-stable.
+          # Matches the docker-compose healthcheck approach for the same
+          # reason.
+          livenessProbe:
+            tcpSocket:
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            failureThreshold: 3
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: chroma-data
+---
+# Service: stable DNS name `chroma-service` matching configmap.yaml CHROMA_URL.
+apiVersion: v1
+kind: Service
+metadata:
+  name: chroma-service
+  namespace: default
+  labels:
+    app: chroma
+spec:
+  type: ClusterIP
+  selector:
+    app: chroma
+  ports:
+    - name: http
+      port: 8000
+      targetPort: 8000
+      protocol: TCP

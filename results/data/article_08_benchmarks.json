@@ -1,0 +1,543 @@
+{
+  "mode": "measured",
+  "methodology": {
+    "cluster": "Docker Desktop Kubernetes (kubeadm provisioner)",
+    "node_count": 1,
+    "host_hardware": "Apple M4 Pro, 16GB RAM",
+    "transport": "NodePort 30080 (Service-level kube-proxy LB across replicas)",
+    "llm": "Groq llama-3.1-8b-instant (cloud) for /query and /agent",
+    "embedding_model": "BAAI/bge-base-en-v1.5",
+    "embedding_device": "cpu (Linux containers cannot use the host MPS backend)",
+    "vector_db": "Chroma in-cluster, PVC-backed (5Gi RWO hostpath), naive_rag (338 chunks)",
+    "cache": "Redis 7-alpine in-cluster, no persistence (cache miss degrades to L3 LLM call)",
+    "endpoints": {
+      "/query": "naive RAG, single dense retriever, top_k=5",
+      "/agent": "LangChain ReAct, max_iterations=5",
+      "/health": "no external dependencies"
+    },
+    "load_pattern": {
+      "task_weights": {
+        "/query [rag]": 7,
+        "/agent": 2,
+        "/health": 1
+      },
+      "wait_time_between_requests_s": [
+        0.5,
+        2.5
+      ]
+    },
+    "resources_per_pod": {
+      "requests": {
+        "cpu": "500m",
+        "memory": "1Gi"
+      },
+      "limits": {
+        "cpu": "1500m",
+        "memory": "2Gi"
+      }
+    },
+    "probes": {
+      "liveness": {
+        "path": "/health",
+        "periodSeconds": 15,
+        "timeoutSeconds": 5,
+        "failureThreshold": 5
+      },
+      "readiness": {
+        "path": "/ready",
+        "periodSeconds": 5,
+        "timeoutSeconds": 3,
+        "failureThreshold": 3
+      }
+    },
+    "hpa": "disabled (D5: fixed-replica scenarios r=2 and r=5; HPA reaction time is future work)",
+    "single_node_caveat": "All replicas run on a single node; numbers move on a real multi-node cluster where pod scheduling, network distribution, and node-level failures change the picture. The point of these runs is to expose the bottlenecks of the stack itself, not to publish production capacity numbers."
+  },
+  "scenarios": {
+    "rampup_r2": {
+      "config": {
+        "users": 100,
+        "spawn_rate": 5,
+        "duration_s": 300,
+        "replicas": 2
+      },
+      "aggregate": {
+        "requests": 1357,
+        "failures": 0,
+        "rps": 4.538233395863184,
+        "failures_per_sec": 0.0,
+        "p50_ms": 14000.0,
+        "p95_ms": 60000.0,
+        "p99_ms": 94000.0,
+        "max_ms": 117000.0,
+        "avg_ms": 18147.01
+      },
+      "by_endpoint": {
+        "/agent": {
+          "requests": 267,
+          "failures": 0,
+          "rps": 0.8929316998492778,
+          "failures_per_sec": 0.0,
+          "p50_ms": 24000.0,
+          "p95_ms": 94000.0,
+          "p99_ms": 107000.0,
+          "max_ms": 117000.0,
+          "avg_ms": 35534.96
+        },
+        "/health": {
+          "requests": 146,
+          "failures": 0,
+          "rps": 0.4882697684569085,
+          "failures_per_sec": 0.0,
+          "p50_ms": 1300.0,
+          "p95_ms": 7200.0,
+          "p99_ms": 9100.0,
+          "max_ms": 9600.0,
+          "avg_ms": 2265.13
+        },
+        "/query [rag]": {
+          "requests": 944,
+          "failures": 0,
+          "rps": 3.1570319275569974,
+          "failures_per_sec": 0.0,
+          "p50_ms": 15000.0,
+          "p95_ms": 28000.0,
+          "p99_ms": 32000.0,
+          "max_ms": 34000.0,
+          "avg_ms": 15685.33
+        }
+      },
+      "failures_breakdown": []
+    },
+    "sustained_r2": {
+      "config": {
+        "users": 50,
+        "spawn_rate": 10,
+        "duration_s": 300,
+        "replicas": 2
+      },
+      "aggregate": {
+        "requests": 1090,
+        "failures": 0,
+        "rps": 3.6417994518620245,
+        "failures_per_sec": 0.0,
+        "p50_ms": 10000.0,
+        "p95_ms": 43000.0,
+        "p99_ms": 69000.0,
+        "max_ms": 92000.0,
+        "avg_ms": 11403.2
+      },
+      "by_endpoint": {
+        "/agent": {
+          "requests": 224,
+          "failures": 0,
+          "rps": 0.7484064928597188,
+          "failures_per_sec": 0.0,
+          "p50_ms": 16000.0,
+          "p95_ms": 68000.0,
+          "p99_ms": 80000.0,
+          "max_ms": 92000.0,
+          "avg_ms": 25152.9
+        },
+        "/health": {
+          "requests": 119,
+          "failures": 0,
+          "rps": 0.3975909493317256,
+          "failures_per_sec": 0.0,
+          "p50_ms": 3.0,
+          "p95_ms": 14.0,
+          "p99_ms": 51.0,
+          "max_ms": 71.0,
+          "avg_ms": 5.37
+        },
+        "/query [rag]": {
+          "requests": 747,
+          "failures": 0,
+          "rps": 2.49580200967058,
+          "failures_per_sec": 0.0,
+          "p50_ms": 10000.0,
+          "p95_ms": 19000.0,
+          "p99_ms": 23000.0,
+          "max_ms": 27000.0,
+          "avg_ms": 9095.85
+        }
+      },
+      "failures_breakdown": []
+    },
+    "spike_r2": {
+      "config": {
+        "users": 200,
+        "spawn_rate": 50,
+        "duration_s": 120,
+        "replicas": 2
+      },
+      "aggregate": {
+        "requests": 4359,
+        "failures": 3724,
+        "rps": 36.50028840024813,
+        "failures_per_sec": 31.18308648830558,
+        "p50_ms": 2.0,
+        "p95_ms": 30000.0,
+        "p99_ms": 50000.0,
+        "max_ms": 92000.0,
+        "avg_ms": 3951.49
+      },
+      "by_endpoint": {
+        "/agent": {
+          "requests": 886,
+          "failures": 768,
+          "rps": 7.418962037765507,
+          "failures_per_sec": 6.430883572239175,
+          "p50_ms": 2.0,
+          "p95_ms": 48000.0,
+          "p99_ms": 76000.0,
+          "max_ms": 92000.0,
+          "avg_ms": 5475.91
+        },
+        "/health": {
+          "requests": 430,
+          "failures": 369,
+          "rps": 3.6006249167484965,
+          "failures_per_sec": 3.089838591349291,
+          "p50_ms": 2.0,
+          "p95_ms": 23000.0,
+          "p99_ms": 26000.0,
+          "max_ms": 28000.0,
+          "avg_ms": 2256.79
+        },
+        "/query [rag]": {
+          "requests": 3043,
+          "failures": 2587,
+          "rps": 25.480701445734127,
+          "failures_per_sec": 21.662364324717117,
+          "p50_ms": 3.0,
+          "p95_ms": 30000.0,
+          "p99_ms": 45000.0,
+          "max_ms": 51000.0,
+          "avg_ms": 3747.12
+        }
+      },
+      "failures_breakdown": [
+        {
+          "method": "POST",
+          "endpoint": "/agent",
+          "error": "RemoteDisconnected('Remote end closed connection without response')",
+          "occurrences": 742
+        },
+        {
+          "method": "POST",
+          "endpoint": "/query [rag]",
+          "error": "RemoteDisconnected('Remote end closed connection without response')",
+          "occurrences": 2522
+        },
+        {
+          "method": "GET",
+          "endpoint": "/health",
+          "error": "RemoteDisconnected('Remote end closed connection without response')",
+          "occurrences": 369
+        },
+        {
+          "method": "POST",
+          "endpoint": "/agent",
+          "error": "ConnectionResetError(54, 'Connection reset by peer')",
+          "occurrences": 26
+        },
+        {
+          "method": "POST",
+          "endpoint": "/query [rag]",
+          "error": "ConnectionResetError(54, 'Connection reset by peer')",
+          "occurrences": 65
+        }
+      ]
+    },
+    "sustained_r5": {
+      "config": {
+        "users": 50,
+        "spawn_rate": 10,
+        "duration_s": 300,
+        "replicas": 5
+      },
+      "aggregate": {
+        "requests": 1174,
+        "failures": 0,
+        "rps": 3.9274484282551034,
+        "failures_per_sec": 0.0,
+        "p50_ms": 10000.0,
+        "p95_ms": 38000.0,
+        "p99_ms": 67000.0,
+        "max_ms": 90000.0,
+        "avg_ms": 10532.28
+      },
+      "by_endpoint": {
+        "/agent": {
+          "requests": 230,
+          "failures": 0,
+          "rps": 0.769431974871102,
+          "failures_per_sec": 0.0,
+          "p50_ms": 12000.0,
+          "p95_ms": 67000.0,
+          "p99_ms": 78000.0,
+          "max_ms": 90000.0,
+          "avg_ms": 22177.36
+        },
+        "/health": {
+          "requests": 128,
+          "failures": 0,
+          "rps": 0.4282056207978307,
+          "failures_per_sec": 0.0,
+          "p50_ms": 3.0,
+          "p95_ms": 9.0,
+          "p99_ms": 14.0,
+          "max_ms": 22.0,
+          "avg_ms": 4.04
+        },
+        "/query [rag]": {
+          "requests": 816,
+          "failures": 0,
+          "rps": 2.7298108325861707,
+          "failures_per_sec": 0.0,
+          "p50_ms": 10000.0,
+          "p95_ms": 19000.0,
+          "p99_ms": 22000.0,
+          "max_ms": 26000.0,
+          "avg_ms": 8901.45
+        }
+      },
+      "failures_breakdown": []
+    }
+  },
+  "throughput_curve": [
+    {
+      "concurrency": 5.0,
+      "rps": 0.0,
+      "p50_ms": 0.0,
+      "p95_ms": 0.0,
+      "p99_ms": 0.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 10.0,
+      "rps": 0.0,
+      "p50_ms": 1200.0,
+      "p95_ms": 1900.0,
+      "p99_ms": 1900.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 15.0,
+      "rps": 0.0,
+      "p50_ms": 1500.0,
+      "p95_ms": 2400.0,
+      "p99_ms": 2400.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 20.0,
+      "rps": 0.0,
+      "p50_ms": 1200.0,
+      "p95_ms": 2400.0,
+      "p99_ms": 2400.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 25.0,
+      "rps": 2.33,
+      "p50_ms": 1300.0,
+      "p95_ms": 2200.0,
+      "p99_ms": 2400.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 30.0,
+      "rps": 3.75,
+      "p50_ms": 1500.0,
+      "p95_ms": 2400.0,
+      "p99_ms": 2500.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 35.0,
+      "rps": 3.4,
+      "p50_ms": 1500.0,
+      "p95_ms": 2300.0,
+      "p99_ms": 2500.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 40.0,
+      "rps": 4.17,
+      "p50_ms": 1300.0,
+      "p95_ms": 2500.0,
+      "p99_ms": 2700.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 45.0,
+      "rps": 5.43,
+      "p50_ms": 1500.0,
+      "p95_ms": 2500.0,
+      "p99_ms": 4900.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 50.0,
+      "rps": 6.12,
+      "p50_ms": 1500.0,
+      "p95_ms": 2700.0,
+      "p99_ms": 8500.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 55.0,
+      "rps": 6.56,
+      "p50_ms": 1500.0,
+      "p95_ms": 2600.0,
+      "p99_ms": 4900.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 60.0,
+      "rps": 7.4,
+      "p50_ms": 1500.0,
+      "p95_ms": 2700.0,
+      "p99_ms": 4900.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 65.0,
+      "rps": 9.0,
+      "p50_ms": 1500.0,
+      "p95_ms": 2700.0,
+      "p99_ms": 4900.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 70.0,
+      "rps": 10.9,
+      "p50_ms": 1500.0,
+      "p95_ms": 3100.0,
+      "p99_ms": 8500.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 75.0,
+      "rps": 11.5,
+      "p50_ms": 1500.0,
+      "p95_ms": 3300.0,
+      "p99_ms": 8500.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 80.0,
+      "rps": 11.3,
+      "p50_ms": 1500.0,
+      "p95_ms": 3700.0,
+      "p99_ms": 8500.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 85.0,
+      "rps": 11.8,
+      "p50_ms": 1500.0,
+      "p95_ms": 4000.0,
+      "p99_ms": 8500.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 90.0,
+      "rps": 11.8,
+      "p50_ms": 1500.0,
+      "p95_ms": 4000.0,
+      "p99_ms": 8500.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 95.0,
+      "rps": 11.8,
+      "p50_ms": 1500.0,
+      "p95_ms": 4000.0,
+      "p99_ms": 8500.0,
+      "n_samples_s": 1
+    },
+    {
+      "concurrency": 100.0,
+      "rps": 4.4,
+      "p50_ms": 11009.8,
+      "p95_ms": 41972.1,
+      "p99_ms": 72946.7,
+      "n_samples_s": 276
+    }
+  ],
+  "replica_comparison": {
+    "two_replicas": {
+      "throughput_rps": 3.6417994518620245,
+      "p50_ms": 10000.0,
+      "p95_ms": 43000.0,
+      "p99_ms": 69000.0,
+      "failures": 0,
+      "from_scenario": "sustained_r2"
+    },
+    "five_replicas": {
+      "throughput_rps": 3.9274484282551034,
+      "p50_ms": 10000.0,
+      "p95_ms": 38000.0,
+      "p99_ms": 67000.0,
+      "failures": 0,
+      "from_scenario": "sustained_r5"
+    },
+    "throughput_gain_ratio": 1.078,
+    "load_at_test_users": 50,
+    "interpretation": "5x replicas at sustained 50 users delivered 8% extra throughput. Both runs posted zero failures, so neither was capacity-bound; this measures behaviour BELOW the saturation cliff, not at it. Whether r=5 raises the cliff (the 200-user spike that broke r=2) is unmeasured here -- see future_work in this JSON."
+  },
+  "saturation_cliff": {
+    "scenario": "spike_r2",
+    "users_at_peak": 200,
+    "duration_s": 120,
+    "replicas": 2,
+    "requests": 4359,
+    "failures": 3724,
+    "failure_rate": 0.8543,
+    "primary_error": "RemoteDisconnected",
+    "errors_by_type": {
+      "RemoteDisconnected": 3633,
+      "ConnectionResetError": 91
+    },
+    "post_test_observation": "Both pods were SIGKILLed by the kubelet liveness probe at t~110s (5 consecutive failed /health probes inside the 75s window). The Deployment self-healed -- both pods restarted cleanly without operator intervention. p50=2ms is the connection-drop signature, not a real latency."
+  },
+  "event_loop_contention": {
+    "comparison": "rampup_r2 (peak 100 users) vs sustained_r2 (50 users), both r=2",
+    "high_load_health_p95_ms": 7200.0,
+    "medium_load_health_p95_ms": 14.0,
+    "ratio": 514.3,
+    "explanation": "Same code, same replica count; only concurrent user count changes. /health has zero external dependencies so its tail latency is a direct measure of FastAPI event-loop pressure. BGE embedding runs synchronously inside async handlers, blocking the loop while a /query is mid-embed. Halving the offered load frees the loop."
+  },
+  "memory_behavior": {
+    "phase_2_sustained_r2_5min": {
+      "users_per_pod": 25,
+      "vsf4c_creep_mi": 204,
+      "f4dcr_creep_mi": 9,
+      "asymmetric": true
+    },
+    "phase_5_sustained_r5_5min": {
+      "users_per_pod": 10,
+      "avg_creep_mi_across_5_pods": 27,
+      "asymmetric": false
+    },
+    "interpretation": "What looked like a Phase 2 leak (one pod gaining 204Mi over 5min while its peer gained 9Mi) was load-proportional working-set growth: at one third the per-pod load in Phase 5 (10 users/pod vs 25), the creep dropped roughly 7x. Python does not aggressively return memory to the OS under steady load; this is the expected RSS shape, not a leak.",
+    "source": "kubectl top samples captured at 30s cadence during the runs"
+  },
+  "key_findings": [
+    "5x replicas at sustained 50 users delivered 8% extra throughput. Both runs were below the cliff (zero failures), so this measures scaling efficiency, not capacity. Cloud-LLM round-trip latency, not pod CPU, was the gating factor at this load.",
+    "/health p95 tracks FastAPI event-loop pressure: 7200ms at peak 100 concurrent users, 14ms at sustained 50 users (same code, same r=2). Sync embedding inference inside async handlers is the cause.",
+    "The 2-replica setup hits a saturation cliff at 200 users: 85% RemoteDisconnected failures, both pods SIGKILLed by liveness probe at t~110s, cluster self-heals cleanly without operator intervention.",
+    "Default 1s liveness-probe timeout SIGKILLs busy-but-healthy pods. Tuned 5s timeout / failureThreshold=5 (75s window) absorbs realistic LLM-bound bursts while still killing genuinely stalled pods.",
+    "Apparent memory creep at 25 users/pod (+204Mi/5min on one pod) vanishes at 10 users/pod (+27Mi/5min). Working-set growth, not a leak.",
+    "Pod CPU was never the bottleneck: 79% peak during the spike, 25-30% steady at sustained 50 users. Adding pods does not relieve an LLM-egress-bound queue."
+  ],
+  "future_work": [
+    "spike_r5: rerun the 200-user spike against the 5-replica deployment to test whether more pods raise the saturation cliff or just multiply the queue depth at the same throughput ceiling.",
+    "hpa_enabled: re-run rampup with HPA at 70% CPU. Per D5 the current run uses fixed replicas; the autoscaler reaction-time story is unmeasured.",
+    "30min sustained: extend sustained_r2 from 5min to 30min to confirm the working-set plateau with a longer time horizon.",
+    "multi-node: repeat on a 3+ node cluster (kind, k3s, or cloud) to separate scheduling-bound from network-bound effects."
+  ]
+}

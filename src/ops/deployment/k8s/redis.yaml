@@ -1,0 +1,86 @@
+# Redis: in-cluster cache and ephemeral state for the rag-agent-api pods.
+#
+# Why a Deployment (not StatefulSet): Article 8 measures throughput and HPA
+# behaviour, not Redis durability. The cache is allowed to lose data on pod
+# restart -- semantic cache misses degrade gracefully to L3 (LLM call). A
+# StatefulSet + PVC would add complexity (stable network ID, ordered rollout)
+# we don't need for a single-replica demo cache.
+#
+# Why no persistence (no PVC): keeps the manifest minimal. Restoring the
+# host-side compose stack uses a volume, but in-cluster we accept that
+# `kubectl delete pod` resets the cache. If A06 cache-hit ratio measurement
+# moves into the cluster later, swap to a StatefulSet with a 1-2Gi PVC.
+#
+# Image: redis:7-alpine matches infra/docker-compose.yml so behaviour is
+# identical to the host-side stack. The `--appendonly yes --maxmemory 1gb
+# --maxmemory-policy allkeys-lru` args are dropped because they only matter
+# with persistence; defaults (in-memory, no eviction limit until pod limit)
+# are fine for the demo.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: default
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 6379
+              name: redis
+          # Resource sizing: 64Mi/100m requests covers Redis idle + small cache.
+          # 256Mi limit prevents runaway growth; allkeys-lru would evict before
+          # OOM kill if we re-enable eviction. For the load test, 256Mi is more
+          # than enough for the cache miss path being measured.
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          # Liveness: redis-cli ping is a cheap RTT probe, no auth needed.
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            failureThreshold: 3
+---
+# Service: stable DNS name `redis-service` matching configmap.yaml REDIS_URL.
+# ClusterIP (default): in-cluster only, not exposed to host. Locust drives the
+# load test via the rag-agent-api Service, not Redis directly.
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-service
+  namespace: default
+  labels:
+    app: redis
+spec:
+  type: ClusterIP
+  selector:
+    app: redis
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: 6379
+      protocol: TCP

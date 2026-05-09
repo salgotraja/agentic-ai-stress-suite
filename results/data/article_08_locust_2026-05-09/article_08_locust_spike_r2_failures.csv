@@ -1,0 +1,6 @@
+Method,Name,Error,Occurrences
+POST,/agent,RemoteDisconnected('Remote end closed connection without response'),742
+POST,/query [rag],RemoteDisconnected('Remote end closed connection without response'),2522
+GET,/health,RemoteDisconnected('Remote end closed connection without response'),369
+POST,/agent,"ConnectionResetError(54, 'Connection reset by peer')",26
+POST,/query [rag],"ConnectionResetError(54, 'Connection reset by peer')",65

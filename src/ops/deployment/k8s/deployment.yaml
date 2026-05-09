@@ -4,12 +4,19 @@
 #   with zero downtime and absorb moderate traffic spikes.
 #   HPA (hpa.yaml) auto-scales beyond 2 based on CPU pressure.
 #
-# Why this resource sizing (250m/512Mi requests, 1000m/1Gi limits):
-#   The RAG pipeline is primarily I/O-bound (Redis, Chroma, LLM API calls).
-#   CPU-bound work is minimal (embedding inference runs on CPU at low throughput).
-#   512Mi is enough for the Python process + model artifacts in memory.
-#   1Gi limit prevents OOM kill under concurrent request bursts.
-#   Adjust limits upward if BGE-base-en-v1.5 is loaded in-process (adds ~200MB).
+# Why this resource sizing (500m/1Gi requests, 1500m/2Gi limits):
+#   The RAG pipeline is primarily I/O-bound (Redis, Chroma, LLM API calls)
+#   except for BGE-base-en-v1.5 embedding inference, which runs in-process and
+#   resides ~700-1000Mi of model + framework state at idle (torch + sentence-
+#   transformers + numpy + the BGE weights baked into the image). Empirically
+#   (kubectl top after rollout, no load): 1016Mi and 1022Mi for the two
+#   replicas. The original 1Gi limit put both pods at 99% of cap before any
+#   request, guaranteeing OOMKill on first concurrent embedding burst.
+#
+#   2Gi limit gives ~1Gi of headroom for transient allocations (per-request
+#   query encoding, top-K retrieval working set, intermediate generation
+#   buffers). 1Gi request matches observed baseline so the scheduler never
+#   places more than 8 pods on the 8Gi-headroom Docker Desktop node.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -52,11 +59,11 @@ spec:
           # CPU limits are not enforced via OOM kill but via throttling.
           resources:
             requests:
-              cpu: "250m"
-              memory: "512Mi"
-            limits:
-              cpu: "1000m"
+              cpu: "500m"
               memory: "1Gi"
+            limits:
+              cpu: "1500m"
+              memory: "2Gi"
           # Load non-sensitive config from ConfigMap and secrets from Secret.
           # envFrom injects all keys as environment variables - matches how
           # Pydantic BaseSettings reads config (case-insensitive env var lookup).
@@ -69,21 +76,35 @@ spec:
           # Why /health: lightweight endpoint with no external dependencies.
           # initialDelaySeconds=30: give the app time to load the embedding model
           # and warm up the LLM client before first health check.
+          #
+          # Why timeoutSeconds=5 (default is 1s):
+          #   The pod runs BGE-base-en-v1.5 inference in-process on the same
+          #   thread pool as /health. Under CPU saturation (1500m pinned by
+          #   query+embed), /health can take 2-4s to respond even though the
+          #   pod is healthy. Article 8 Phase 1 caught this: a working pod
+          #   serving real RAG load got SIGKILLed (Exit 137) at t=30s because
+          #   the default 1s timeout fired during embedding bursts. Bumping to
+          #   5s and failureThreshold=5 (75s of sustained unresponsiveness
+          #   before kill) leaves room for a busy-but-alive pod to recover.
           livenessProbe:
             httpGet:
               path: /health
               port: 8000
             initialDelaySeconds: 30
-            periodSeconds: 10
-            failureThreshold: 3
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 5
           # Readiness probe: only route traffic when the pod is fully warm.
           # /ready checks that Redis connection and Chroma client are established.
           # Without readiness, load balancer may send traffic to pods mid-startup
           # that return errors (especially during rolling updates).
+          # timeoutSeconds=3: same reasoning as liveness, but readiness only
+          # withholds traffic temporarily (no kill), so a tighter budget is fine.
           readinessProbe:
             httpGet:
               path: /ready
               port: 8000
             initialDelaySeconds: 10
             periodSeconds: 5
+            timeoutSeconds: 3
             failureThreshold: 3

@@ -79,6 +79,8 @@ dependencies = [
     "spacy>=3.8.11",
     "en-core-web-sm",
     "locust>=2.43.3",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
     "qdrant-client>=1.16.2",
     "torch>=2.9.1",
     "torchvision>=0.24.1",

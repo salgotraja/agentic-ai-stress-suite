@@ -1,0 +1,47 @@
+# Service (NodePort): load-test-only transport for Article 8 benchmarks.
+#
+# WHY A SECOND SERVICE INSTEAD OF MUTATING service.yaml:
+#   The production-style Service (service.yaml) is ClusterIP + Ingress per
+#   the standard "single TLS termination + path routing" pattern. Switching
+#   it to NodePort would either bypass that story or force the article to
+#   abandon Ingress entirely. Keeping a sibling NodePort Service makes the
+#   intent explicit: this exists ONLY for in-host load testing.
+#
+# WHY NODEPORT (NOT kubectl port-forward):
+#   Article 8 Phase 1 ran into two methodology bugs with port-forward:
+#     1. `kubectl port-forward svc/...` opens a single TCP stream to ONE pod.
+#        Even with 2+ replicas behind the Service, the proxy never load
+#        balances. We measured ~5 RPS on one pod while the other stayed at
+#        4m CPU the entire run -- the multi-replica scaling story was a lie.
+#     2. When that single pod restarts (e.g., liveness kill), the orphaned
+#        port-forward returns ConnectionRefused for every subsequent
+#        request. 17,667 of our 17,817 Phase 1 requests were that signature.
+#   NodePort traffic flows through kube-proxy -> Service endpoints -> kubelet
+#   iptables LB across all Ready pods, exactly like production traffic does.
+#
+# WHY localhost:30080 WORKS ON DOCKER DESKTOP:
+#   Docker Desktop's K8s integration forwards the NodePort range
+#   (30000-32767) from the host loopback to the single-node cluster. So
+#   `curl http://localhost:30080/health` reaches kube-proxy and gets LB'd
+#   across both rag-agent-api pods. No extra ingress controller needed for
+#   benchmarking. Production still uses ingress.yaml + the ClusterIP service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-agent-loadtest
+  namespace: default
+  labels:
+    app: rag-agent-api
+    purpose: loadtest
+spec:
+  type: NodePort
+  selector:
+    app: rag-agent-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8000
+      # nodePort pinned so the load test script can hardcode localhost:30080
+      # rather than scraping `kubectl get svc -o jsonpath`. Range 30000-32767.
+      nodePort: 30080
+      protocol: TCP

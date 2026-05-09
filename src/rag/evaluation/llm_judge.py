@@ -406,8 +406,6 @@ class LLMJudge:
                 correlations[dim] = 0.0
             else:
                 r, _ = stats.pearsonr(golden_scores, judge_scores)
-                # scipy's PearsonRResult unpacks to objects in stub typing;
-                # the runtime value is a numpy float and float() handles it.
-                correlations[dim] = float(r)  # type: ignore[arg-type]
+                correlations[dim] = float(r)
 
         return correlations

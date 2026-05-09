@@ -252,7 +252,7 @@ def get_pytorch_device() -> str:
         >>> device = get_pytorch_device()
         >>> model = model.to(device)
     """
-    gpu_info = detect_gpu()
+    gpu_info = get_gpu_info()
 
     if gpu_info.backend == GPUBackend.CUDA:
         return "cuda"
@@ -279,7 +279,7 @@ def get_text_embeddings_inference_device() -> str:
         >>> device = get_text_embeddings_inference_device()
         >>> # Use in Docker: text-embeddings-inference --device metal
     """
-    gpu_info = detect_gpu()
+    gpu_info = get_gpu_info()
     return gpu_info.backend.value  # Returns "cuda", "metal", or "cpu"
 
 

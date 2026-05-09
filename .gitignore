@@ -61,14 +61,13 @@ dmypy.json
 .pytype/
 
 # Environment variables
-# .env.local contains local overrides and is NOT committed
-.env.local
-.env.*.local
+# Never commit secrets. Only schema files (.env.example, .env.k8s.example)
+# are tracked; the broad .env.* rule keeps every other variant gitignored
+# (e.g. .env, .env.local, .env.docker, .env.k8s, .env.<anything>).
 .env
-# .env.k8s holds API keys consumed by `kubectl create secret --from-env-file`
-# for the in-cluster rag-agent-api Deployment (Article 8). Never committed.
-# Only the schema (.env.k8s.example) is checked in.
-.env.k8s
+.env.*
+!.env.example
+!.env.k8s.example
 
 # Results and outputs
 results/

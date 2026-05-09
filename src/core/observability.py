@@ -377,6 +377,15 @@ def traced_generation(func: F) -> F:
                 # Failures are silenced so LangFuse never breaks the main path.
                 if langfuse_client is not None:
                     try:
+                        # Mirror the response extraction the Phoenix span uses
+                        # above so both backends see the same payload shape.
+                        if hasattr(result, "content"):
+                            lf_output: str | None = str(result.content)[:1000]
+                        elif isinstance(result, str):
+                            lf_output = result[:1000]
+                        else:
+                            lf_output = None
+
                         # SDK drift: .trace() exists on Langfuse v2 client but
                         # not on the v3 typed surface that ships in stubs;
                         # we keep the v2 call path for backwards compatibility
@@ -384,6 +393,7 @@ def traced_generation(func: F) -> F:
                         langfuse_client.trace(  # type: ignore[attr-defined]
                             name=span_name,
                             input=prompt[:1000] if isinstance(prompt, str) else None,
+                            output=lf_output,
                             metadata={
                                 "latency_ms": latency_ms,
                                 "correlation_id": correlation_id,

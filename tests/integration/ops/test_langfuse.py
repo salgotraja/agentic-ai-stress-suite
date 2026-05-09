@@ -16,3 +16,8 @@ def test_langfuse_trace_is_created_on_generation() -> None:
         result = dummy_generate("test prompt")
         assert result == "response"
         mock_lf.trace.assert_called_once()
+        # The output payload must mirror the response so cost-attribution
+        # and prompt-versioning queries in LangFuse are non-empty.
+        kwargs = mock_lf.trace.call_args.kwargs
+        assert kwargs.get("output") == "response"
+        assert kwargs.get("input") == "test prompt"

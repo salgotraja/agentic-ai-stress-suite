@@ -21,8 +21,8 @@ of annotated production code.
 | Semantic cache (alone) | LLM cost on 100-query workload (vs uncached Groq-8B) | $0.001272 → $0.000769 (39.6%) |
 | Complexity routing (alone) | LLM cost on 100-query workload (vs all-GPT-4o reprice) | $0.1935 → $0.00228 (98.8%) |
 | INT8 quantisation (BGE) | Model size | 438MB → 110MB (4× smaller); slower on M4 (QNNPACK has no ARM speedup) |
-| torch.compile (BGE on MPS) | Embed latency | 28.3ms → 28.7ms (0.99×, no win on Apple Silicon) |
-| Custom cross-encoder reranker | NDCG@5 / latency | 0.761 → 0.874 (+15%) and 339ms → 112ms (3× faster) vs FlashRank |
+| torch.compile (BGE on MPS) | Embed latency | 23.97 ms → 26.12 ms (0.92×, no win on Apple Silicon) |
+| Custom cross-encoder reranker | NDCG@5 / latency | 0.761 → 0.874 (+15%) and 341 ms → 121 ms (2.82× faster) vs FlashRank |
 | K8s replica scaling (LLM-bound) | Throughput at sustained 50 users | r=2 → r=5 (2.5× pods) = 3.64 → 3.93 rps (+8%); cloud-LLM RTT is the gating factor |
 | K8s saturation cliff | Spike to 200 users at r=2 | 85.4% `RemoteDisconnected`; both pods SIGKILLed by liveness; cluster self-heals |
 | Guardrails (regex + Llama-Prompt-Guard-2-86m on Groq) | Overall block rate on 99-prompt red team | 68/99 blocked, 0% false positives on 5 benign queries; per-call p50 latency ~124 ms |

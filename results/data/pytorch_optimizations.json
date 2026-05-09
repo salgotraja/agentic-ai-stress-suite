@@ -1,13 +1,13 @@
 {
   "compile": {
-    "eager_ms": 28.32,
-    "compiled_ms": 28.66,
-    "speedup": 0.99
+    "eager_ms": 23.97,
+    "compiled_ms": 26.12,
+    "speedup": 0.92
   },
   "quantization": {
-    "fp32_ms": 25.63,
-    "int8_ms": 46.4,
-    "speedup": 0.55,
+    "fp32_ms": 23.49,
+    "int8_ms": 48.95,
+    "speedup": 0.48,
     "fp32_size_mb": 437.9,
     "int8_size_mb": 109.5,
     "size_reduction": 4.0,

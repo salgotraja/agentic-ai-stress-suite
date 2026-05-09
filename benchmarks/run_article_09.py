@@ -2,9 +2,9 @@
 
 Teaching note: WHY subprocess isolation?
   Each Article 9 benchmark loads 400MB+ ML models (BGE-base-en-v1.5, PyTorch,
-  JAX). Running them sequentially in the same process would exhaust 16GB RAM
-  on the M4. Subprocesses isolate memory: each step loads its models, runs,
-  and releases memory on exit before the next step begins.
+  JAX). Running them sequentially in the same process would compete for the
+  M4 unified-memory pool. Subprocesses isolate memory: each step loads its
+  models, runs, and releases memory on exit before the next step begins.
 """
 
 from __future__ import annotations
@@ -59,7 +59,10 @@ def run_step(label: str, cmd: list[str], *, skip: bool = False) -> StepResult:
         return StepResult(label=label, passed=True, skipped=True, elapsed=elapsed)
 
     print(f"  [RUN ] {label}: {' '.join(cmd)}")
-    result = subprocess.run(cmd, check=False)  # noqa: S603
+    # cwd=PROJECT_ROOT so the called scripts' relative paths (results/data/,
+    # models/, datasets/) resolve regardless of where the orchestrator was
+    # invoked from.
+    result = subprocess.run(cmd, check=False, cwd=PROJECT_ROOT)  # noqa: S603
     elapsed = time.perf_counter() - t0
     passed = result.returncode == 0
     status = "PASS" if passed else "FAIL"
@@ -104,7 +107,10 @@ def main(*, force: bool = False, quick: bool = False) -> int:
     steps: list[tuple[str, list[str], Path]] = [
         (
             "train_embedder",
-            [sys.executable, str(PROJECT_ROOT / "scripts" / "train_custom_embedder.py")],
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "examples" / "article_09_dl" / "train_custom_embedder.py"),
+            ],
             _STEP_OUTPUTS["train"],
         ),
         (
@@ -118,16 +124,18 @@ def main(*, force: bool = False, quick: bool = False) -> int:
         ),
         (
             "pytorch_optimizations",
-            [sys.executable, str(PROJECT_ROOT / "benchmarks" / "pytorch_optimizations.py")],
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "examples" / "article_09_dl" / "pytorch_optimizations.py"),
+            ],
             _STEP_OUTPUTS["optimizations"],
         ),
         (
             "custom_reranker",
             [
                 sys.executable,
-                str(PROJECT_ROOT / "benchmarks" / "custom_reranker.py"),
+                str(PROJECT_ROOT / "examples" / "article_09_dl" / "custom_reranker.py"),
                 "--eval",
-                "--no-train",
             ],
             _STEP_OUTPUTS["reranker"],
         ),

@@ -26,11 +26,15 @@ Trade-offs in evaluation:
 from __future__ import annotations
 
 import json
+import logging
+import math
 import statistics
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any, Protocol
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -223,9 +227,14 @@ class BenchmarkRunner:
         - Doesn't measure ranking quality (position of relevant docs)
         - Assumes expected_docs is complete (may miss other relevant docs)
         - Binary relevance (doc is relevant or not, no degrees)
+
+        Empty expected_docs:
+        - Returns NaN (not 1.0) so the query is excluded from aggregation
+          rather than silently inflating mean recall. Aggregation uses
+          math.isnan to filter; a NaN-only run reports 0.0 with a warning.
         """
         if not expected_docs:
-            return 1.0
+            return math.nan
 
         # Normalize document paths for comparison
         expected_set = {self._normalize_doc_path(doc) for doc in expected_docs}
@@ -262,9 +271,13 @@ class BenchmarkRunner:
         - Complements Recall@K (which ignores position)
 
         MRR is averaged across all queries to get Mean Reciprocal Rank.
+
+        Empty expected_docs returns NaN for the same reason as
+        _calculate_recall_at_k: the query has no ground truth, so it is
+        excluded from aggregation rather than counted as a perfect rank.
         """
         if not expected_docs:
-            return 1.0
+            return math.nan
 
         expected_set = {self._normalize_doc_path(doc) for doc in expected_docs}
 
@@ -432,15 +445,31 @@ class BenchmarkRunner:
                 total_queries=0,
             )
 
-        recalls = [r.recall_at_k for r in results]
-        mrrs = [r.reciprocal_rank for r in results]
+        # Filter NaN before stats - queries without ground-truth source_docs
+        # produce NaN recall/mrr (see _calculate_recall_at_k) and must not be
+        # mixed into the mean. statistics.mean over a list containing NaN
+        # silently propagates NaN to the aggregate, which is worse than the
+        # pre-fix 1.0-inflation since downstream JSON consumers can't filter
+        # numerically. Skip them here and warn once if any were dropped.
+        recalls = [r.recall_at_k for r in results if not math.isnan(r.recall_at_k)]
+        mrrs = [r.reciprocal_rank for r in results if not math.isnan(r.reciprocal_rank)]
         latencies = [r.latency_ms for r in results]
         tokens = [r.tokens_used for r in results]
 
+        skipped = len(results) - len(recalls)
+        if skipped > 0:
+            logger.warning(
+                "Benchmark aggregation skipped %d/%d queries with no ground-truth "
+                "source_docs (NaN recall/mrr). Mean is over the %d evaluated queries.",
+                skipped,
+                len(results),
+                len(recalls),
+            )
+
         return BenchmarkMetrics(
-            mean_recall_at_k=statistics.mean(recalls),
+            mean_recall_at_k=statistics.mean(recalls) if recalls else 0.0,
             std_recall_at_k=statistics.stdev(recalls) if len(recalls) > 1 else 0.0,
-            mean_mrr=statistics.mean(mrrs),
+            mean_mrr=statistics.mean(mrrs) if mrrs else 0.0,
             std_mrr=statistics.stdev(mrrs) if len(mrrs) > 1 else 0.0,
             mean_latency_ms=statistics.mean(latencies),
             std_latency_ms=statistics.stdev(latencies) if len(latencies) > 1 else 0.0,

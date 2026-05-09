@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import tempfile
 from pathlib import Path
 from typing import Any
@@ -187,14 +188,63 @@ def test_calculate_recall_no_match() -> None:
     assert recall == 0.0
 
 
-def test_calculate_recall_empty_expected() -> None:
-    """Test Recall@K calculation with empty expected docs."""
+def test_calculate_recall_empty_expected_returns_nan() -> None:
+    """Empty expected docs returns NaN so the query is skipped in aggregation
+    rather than silently inflating mean recall to 1.0."""
     pipeline = MockRAGPipeline()
     runner = BenchmarkRunner(pipeline)
 
     recall = runner._calculate_recall_at_k([], ["doc1.md"])
 
-    assert recall == 1.0
+    assert math.isnan(recall)
+
+
+def test_calculate_mrr_empty_expected_returns_nan() -> None:
+    """Empty expected docs returns NaN for MRR for the same reason."""
+    pipeline = MockRAGPipeline()
+    runner = BenchmarkRunner(pipeline)
+
+    mrr = runner._calculate_mrr([], ["doc1.md"])
+
+    assert math.isnan(mrr)
+
+
+def test_calculate_metrics_filters_nan_recall_and_mrr() -> None:
+    """Aggregate must drop NaN entries so a single ground-truth-less query
+    can't poison the mean."""
+    pipeline = MockRAGPipeline()
+    runner = BenchmarkRunner(pipeline)
+
+    results = [
+        QueryResult(
+            query_id="q1",
+            query_text="Q1",
+            answer="",
+            retrieved_docs=[],
+            latency_ms=10.0,
+            tokens_used=0,
+            recall_at_k=1.0,
+            reciprocal_rank=1.0,
+        ),
+        QueryResult(
+            query_id="q2",
+            query_text="Q2",
+            answer="",
+            retrieved_docs=[],
+            latency_ms=20.0,
+            tokens_used=0,
+            recall_at_k=math.nan,
+            reciprocal_rank=math.nan,
+        ),
+    ]
+
+    metrics = runner._calculate_metrics(results)
+
+    # Mean is taken over the 1 evaluated query, not poisoned by NaN.
+    assert metrics.mean_recall_at_k == 1.0
+    assert metrics.mean_mrr == 1.0
+    # total_queries reflects observed queries, not eval-eligible ones.
+    assert metrics.total_queries == 2
 
 
 def test_calculate_mrr_first_position() -> None:

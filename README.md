@@ -3,7 +3,7 @@
 [![CI](https://github.com/salgotraja/agentic-ai-stress-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/salgotraja/agentic-ai-stress-suite/actions/workflows/ci.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-![Coverage](https://img.shields.io/badge/coverage-77%25-green)
+![Coverage](https://img.shields.io/badge/coverage-75%25-green)
 
 Production-grade proof-of-concept demonstrating empirical trade-offs in
 RAG-to-agent workflows. 9 articles, reproducible benchmarks, ~25,000 lines
@@ -15,8 +15,8 @@ of annotated production code.
 
 | Technique | Metric | Improvement |
 |-----------|--------|-------------|
-| Full retrieval pipeline (hybrid + rerank + filter + chunking) | Recall@5 | 0.723 → 0.862 (+19%) |
-| Hybrid search alone (BM25+RRF) | Recall@5 | 0.723 → 0.781 (+8%) |
+| Hybrid (BM25+dense+RRF) vs dense baseline (30q / 211 chunks) | Recall@5 / MRR | dense 0.761 / 0.739 → hybrid 0.761 / 0.648 (no recall lift; MRR drops on rank noise) |
+| + FlashRank reranking on top-20 candidates | Recall@5 / MRR | 0.683 / 0.769 (cross-encoder recovers ranking quality but mispredicts on edge cases; trade-off, not pure win) |
 | BGE fine-tuning (regression) | Recall@5 | 0.729 → 0.622 (-11%) |
 | Semantic cache (alone) | LLM cost on 100-query workload (vs uncached Groq-8B) | $0.001272 → $0.000769 (39.6%) |
 | Complexity routing (alone) | LLM cost on 100-query workload (vs all-GPT-4o reprice) | $0.1935 → $0.00228 (98.8%) |

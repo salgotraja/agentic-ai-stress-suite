@@ -44,6 +44,20 @@ spec:
       labels:
         app: rag-agent-api
     spec:
+      # Pod-level securityContext: enforces non-root regardless of what the
+      # image's USER directive happens to say. The Dockerfile already sets
+      # USER appuser (uid 1000), so this is defense-in-depth: if a future
+      # image swap drops that USER line (or pulls a malicious base image),
+      # the kubelet refuses to start the pod instead of running as root.
+      # seccompProfile=RuntimeDefault enables the standard syscall filter
+      # (blocks ~50 dangerous syscalls; matches Docker's default).
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: rag-agent-api
           image: rag-agent-api:latest
@@ -53,6 +67,20 @@ spec:
           ports:
             - containerPort: 8000
               name: http
+          # Container-level securityContext: drops every Linux capability
+          # (we don't need NET_BIND_SERVICE because port 8000 is non-privileged)
+          # and refuses privilege escalation via setuid binaries.
+          # readOnlyRootFilesystem is intentionally OFF: sentence-transformers
+          # writes lock files into HF_HOME (/home/appuser/.cache/huggingface)
+          # at model-load time, and the BGE weights are baked into that path
+          # in the image layer. Mounting an emptyDir over /home/appuser/.cache
+          # would hide the baked weights; bake-to-different-path + writable
+          # cache is left as a follow-up.
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           # Resource limits: prevent one pod from starving others on the node.
           # requests: guaranteed allocation (scheduler uses this for pod placement).
           # limits: hard ceiling (pod is OOM-killed if memory limit is exceeded).

@@ -1,0 +1,106 @@
+# NetworkPolicies: default-deny ingress + explicit allow rules per app.
+#
+# Why default-deny:
+#   Without NetworkPolicies, every pod in the namespace can talk to every
+#   other pod and to the cluster's metadata service (169.254.169.254 on
+#   most cloud providers). A single RCE in any one pod (rag-agent-api,
+#   redis, chroma, or anything else later deployed into `default`) gets
+#   lateral access to all neighbours and to cloud metadata.
+#
+#   The pattern below: deny everything ingress, then opt back in per-app.
+#   Egress is left unrestricted because rag-agent-api needs to reach
+#   external LLM providers (Groq, OpenAI, Anthropic) at variable IPs and
+#   restricting egress without a policy-aware DNS solution is brittle.
+#   Egress restriction is left as a future hardening item; the higher-
+#   value lateral-movement defence comes from ingress restriction.
+#
+# Prerequisite: the cluster's CNI must enforce NetworkPolicy. Calico,
+#   Cilium, and Weave do; the kube-proxy default doesn't on Docker
+#   Desktop, so this manifest is a no-op there. Real production targets
+#   (EKS+Calico, GKE Dataplane V2, AKS+Calico) all enforce.
+---
+# 1) Default-deny: every pod in `default` rejects unsolicited ingress.
+#    Each app below opts back in via its own allow policy.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: default
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+---
+# 2) rag-agent-api: accept ingress only from ingress-nginx (external
+#    traffic via the Ingress resource) and from same-app peers (so the
+#    HPA-scaled replicas can health-check each other if that ever lands).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-rag-agent-api-ingress
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: rag-agent-api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        # Standard label set written by the upstream ingress-nginx Helm
+        # chart. If you installed the controller with a different
+        # namespace label, update this selector.
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+        - podSelector:
+            matchLabels:
+              app: rag-agent-api
+      ports:
+        - protocol: TCP
+          port: 8000
+---
+# 3) redis: only rag-agent-api can connect. Locks down the cache to its
+#    one consumer; an attacker who pops a sidecar in another pod can't
+#    flush keys or read cached completions.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-redis-from-rag-agent
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: redis
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: rag-agent-api
+      ports:
+        - protocol: TCP
+          port: 6379
+---
+# 4) chroma: same shape as redis. The vector store holds the indexed
+#    tech-docs corpus; only the API pods need read/write access.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-chroma-from-rag-agent
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      app: chroma
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: rag-agent-api
+      ports:
+        - protocol: TCP
+          port: 8000

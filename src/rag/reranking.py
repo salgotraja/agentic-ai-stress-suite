@@ -344,9 +344,9 @@ class CachingReranker:
     def __init__(self, backend: RerankerBackend, maxsize: int = 128) -> None:
         self._backend = backend
         self._maxsize = maxsize
-        self._cache: OrderedDict[
-            tuple[Any, ...], list[NodeWithScore] | list[dict[str, Any]]
-        ] = OrderedDict()
+        self._cache: OrderedDict[tuple[Any, ...], list[NodeWithScore] | list[dict[str, Any]]] = (
+            OrderedDict()
+        )
         self._hits = 0
         self._misses = 0
 

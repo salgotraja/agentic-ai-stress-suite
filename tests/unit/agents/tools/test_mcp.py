@@ -13,7 +13,7 @@ invalidates every downstream agent test until containers spin up.
 
 import json
 
-from src.agents.tools.mcp_tools import MCPAPICallTool, MCPFileReadTool
+from src.agents.tools.mcp_tools import MCPAPICallTool, MCPFileReadTool, _validate_url_against_ssrf
 
 
 class TestMCPFileReadToolInit:
@@ -168,6 +168,68 @@ class TestMCPAPICallToolMockExecute:
         parsed = json.loads(result)
         assert parsed["status_code"] == 200
         assert "POST" in parsed["body"]
+
+
+class TestSSRFGuard:
+    """Bypasses the old substring blocklist would have allowed.
+
+    Each case below is a real SSRF technique seen in the wild. The point
+    of these tests is to lock in coverage so a future refactor of the
+    URL guard can't silently regress to a substring check.
+    """
+
+    def test_blocks_loopback_canonical(self) -> None:
+        ok, reason = _validate_url_against_ssrf("http://127.0.0.1/")
+        assert not ok
+        assert "non-routable" in reason
+
+    def test_blocks_loopback_short_form(self) -> None:
+        # 127.1 collapses to 127.0.0.1 per inet_aton semantics. The old
+        # substring check let this through.
+        ok, _ = _validate_url_against_ssrf("http://127.1/")
+        assert not ok
+
+    def test_blocks_loopback_decimal_int(self) -> None:
+        # 2130706433 == 0x7f000001 == 127.0.0.1.
+        ok, _ = _validate_url_against_ssrf("http://2130706433/")
+        assert not ok
+
+    def test_blocks_ipv6_loopback(self) -> None:
+        ok, _ = _validate_url_against_ssrf("http://[::1]/")
+        assert not ok
+
+    def test_blocks_rfc1918_10_8(self) -> None:
+        ok, _ = _validate_url_against_ssrf("http://10.0.0.1/")
+        assert not ok
+
+    def test_blocks_rfc1918_192_168(self) -> None:
+        ok, _ = _validate_url_against_ssrf("http://192.168.1.1/")
+        assert not ok
+
+    def test_blocks_rfc1918_172_16(self) -> None:
+        ok, _ = _validate_url_against_ssrf("http://172.16.0.1/")
+        assert not ok
+
+    def test_blocks_aws_imds(self) -> None:
+        # 169.254.169.254 - link-local, the EC2 metadata endpoint.
+        ok, _ = _validate_url_against_ssrf("http://169.254.169.254/latest/meta-data/")
+        assert not ok
+
+    def test_blocks_unsupported_scheme(self) -> None:
+        ok, reason = _validate_url_against_ssrf("file:///etc/passwd")
+        assert not ok
+        assert "scheme" in reason
+
+    def test_blocks_unresolvable_host(self) -> None:
+        # .invalid is reserved for non-resolution per RFC 2606.
+        ok, reason = _validate_url_against_ssrf("http://nonexistent.invalid/")
+        assert not ok
+        assert "DNS" in reason
+
+    def test_allows_public_dns(self) -> None:
+        # 1.1.1.1 is Cloudflare's public resolver - guaranteed routable.
+        ok, _ = _validate_url_against_ssrf("http://1.1.1.1/")
+        assert ok
 
 
 class TestBaseToolContract:

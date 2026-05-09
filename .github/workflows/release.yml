@@ -5,6 +5,12 @@ on:
     tags:
       - "v*"
 
+# Workflow-level default is read-only. The create-release job opts into
+# `contents: write` for the GitHub Release creation step. Other jobs
+# (generate-charts, docker-compose-test) don't need write access.
+permissions:
+  contents: read
+
 jobs:
   generate-charts:
     name: Generate Charts
@@ -12,7 +18,7 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
+      - uses: astral-sh/setup-uv@38f3f104447c67c051c4a08e39b64a148898af3a # v4
         with:
           version: "latest"
       - name: Install dependencies
@@ -66,7 +72,8 @@ jobs:
         run: |
           tar -czf results-charts.tar.gz release-charts/
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        # SHA-pinned (resolves to v2.x); see ci.yml for rationale.
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
         with:
           files: results-charts.tar.gz
           generate_release_notes: true

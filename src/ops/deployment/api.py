@@ -25,7 +25,7 @@ from contextlib import asynccontextmanager
 from typing import Any, Literal
 
 import redis
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from llama_index.core import Settings as LlamaIndexSettings
 from llama_index.core import StorageContext, VectorStoreIndex
 from llama_index.vector_stores.chroma import ChromaVectorStore
@@ -36,6 +36,7 @@ from src.agents.tools.calculator import CalculatorTool
 from src.agents.tools.rag import RAGTool
 from src.core.config import Settings, get_settings
 from src.core.llm_client import UnifiedLLMClient
+from src.ops.deployment.auth import verify_api_key
 from src.rag.naive_rag import NaiveRAGPipeline
 
 logger = logging.getLogger(__name__)
@@ -105,7 +106,7 @@ def _build_state(settings: Settings) -> dict[str, Any]:
     except Exception as exc:
         logger.warning("api.lifespan.pipeline_init_failed: %s: %s", type(exc).__name__, exc)
 
-    redis_client = redis.from_url(settings.redis_url, socket_timeout=2)  # type: ignore[no-untyped-call]
+    redis_client = redis.from_url(settings.redis_url, socket_timeout=2)
 
     return {
         "settings": settings,
@@ -164,7 +165,7 @@ def ready() -> dict[str, Any]:
     return {"status": "ready"}
 
 
-@app.post("/query", response_model=QueryResponse)
+@app.post("/query", response_model=QueryResponse, dependencies=[Depends(verify_api_key)])
 def query(request: QueryRequest) -> QueryResponse:
     """Naive RAG: embed -> retrieve top-K -> generate. Single retriever path per D2."""
     pipeline: NaiveRAGPipeline | None = app.state.svc["pipeline"]
@@ -180,7 +181,7 @@ def query(request: QueryRequest) -> QueryResponse:
     return QueryResponse(answer=str(result["answer"]), docs=docs, latency_ms=latency_ms)
 
 
-@app.post("/agent", response_model=AgentResponse)
+@app.post("/agent", response_model=AgentResponse, dependencies=[Depends(verify_api_key)])
 def agent(request: AgentRequest) -> AgentResponse:
     """ReAct agent with 5-step max per D3. Tools: RAG, Calculator."""
     react: ReActAgent | None = app.state.svc["agent"]

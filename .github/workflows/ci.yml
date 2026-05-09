@@ -11,6 +11,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Least-privilege GITHUB_TOKEN. Default scope is "write-all" on push events,
+# which lets a compromised step push commits, open PRs, edit issues, etc.
+# Read-only is enough for lint/test/smoke; jobs that need writes opt in
+# explicitly at job level (none do today).
+permissions:
+  contents: read
+
 jobs:
   lint:
     name: Lint
@@ -18,7 +25,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
+      # SHA-pinned (resolves to v4). Floating tags are mutable; a tag-retag
+      # supply-chain swap (cf. tj-actions/changed-files, March 2025) would
+      # otherwise execute attacker code with access to repo secrets.
+      - uses: astral-sh/setup-uv@38f3f104447c67c051c4a08e39b64a148898af3a # v4
         with:
           version: "latest"
       - name: Install dependencies
@@ -59,7 +69,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
+      # SHA-pinned (resolves to v4). Floating tags are mutable; a tag-retag
+      # supply-chain swap (cf. tj-actions/changed-files, March 2025) would
+      # otherwise execute attacker code with access to repo secrets.
+      - uses: astral-sh/setup-uv@38f3f104447c67c051c4a08e39b64a148898af3a # v4
         with:
           version: "latest"
       - name: Install dependencies
@@ -73,7 +86,10 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
+      # SHA-pinned (resolves to v4). Floating tags are mutable; a tag-retag
+      # supply-chain swap (cf. tj-actions/changed-files, March 2025) would
+      # otherwise execute attacker code with access to repo secrets.
+      - uses: astral-sh/setup-uv@38f3f104447c67c051c4a08e39b64a148898af3a # v4
         with:
           version: "latest"
       - name: Install dependencies
@@ -89,6 +105,59 @@ jobs:
           GROQ_API_KEY: mock-key
           OPENAI_API_KEY: mock-key
 
+  pip-audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@38f3f104447c67c051c4a08e39b64a148898af3a # v4
+        with:
+          version: "latest"
+      - name: Install dependencies
+        run: uv sync --frozen
+      # CVE gate: fail PRs that introduce known vulnerabilities into the
+      # locked dependency set. Runs against the actual venv (not a hash-only
+      # requirements file) so transitive pins are audited too.
+      #
+      # --skip-editable: this project's own package is editable; PyPI doesn't
+      #   know about it and that's fine.
+      #
+      # --ignore-vuln entries are residuals we cannot eliminate via
+      # `uv lock --upgrade` and are accepted with the rationale below.
+      # Re-evaluate each on every dependency bump (delete the line if the
+      # underlying package is no longer in the lockfile, or if a fix lands
+      # upstream).
+      #
+      #   CVE-2025-69872 (diskcache 5.6.3): no fixed version published.
+      #     Pulled transitively by ragas. Local on-disk cache only -- not
+      #     exposed to untrusted input. Accepts pickle deserialization risk
+      #     bounded to the cache directory under the service account.
+      #
+      #   CVE-2026-41488 (langchain-openai 1.1.10): fix at 1.1.14 is
+      #     blocked by a three-way resolver conflict. crewai>=1.6.1 pins
+      #     tokenizers<0.22 (via its own deps), litellm>=1.83.7 requires
+      #     tokenizers==0.22.2, and langchain-openai>=1.1.14 requires
+      #     openai>=2.26 which clashes with litellm 1.83.9's openai==2.24.0
+      #     pin. Lifting any constraint pulls back a worse CVE set
+      #     (litellm 1.83.0 ships 5 CVEs). Re-test on each crewai or
+      #     litellm bump; lift the ignore the moment the trinity resolves.
+      #
+      #   CVE-2026-6587 (ragas 0.4.3): no fixed version published. We are
+      #     on the latest ragas. Track upstream and remove this line when
+      #     a patched release ships.
+      - name: pip-audit
+        # No --strict: it would fail on the editable skip of this project's
+        # own package (always present, always skipped). Without --strict,
+        # pip-audit exits non-zero only when unignored vulnerabilities exist,
+        # which is exactly the gate we want.
+        run: |
+          uv run --with pip-audit pip-audit \
+            --skip-editable \
+            --ignore-vuln CVE-2025-69872 \
+            --ignore-vuln CVE-2026-41488 \
+            --ignore-vuln CVE-2026-6587
+
   smoke-test:
     name: Smoke Test
     runs-on: ubuntu-latest
@@ -96,7 +165,10 @@ jobs:
     needs: unit-tests
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
+      # SHA-pinned (resolves to v4). Floating tags are mutable; a tag-retag
+      # supply-chain swap (cf. tj-actions/changed-files, March 2025) would
+      # otherwise execute attacker code with access to repo secrets.
+      - uses: astral-sh/setup-uv@38f3f104447c67c051c4a08e39b64a148898af3a # v4
         with:
           version: "latest"
       - name: Install dependencies
@@ -133,7 +205,10 @@ jobs:
         article: ["01", "02", "04", "05", "06", "07", "08", "09"]
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v4
+      # SHA-pinned (resolves to v4). Floating tags are mutable; a tag-retag
+      # supply-chain swap (cf. tj-actions/changed-files, March 2025) would
+      # otherwise execute attacker code with access to repo secrets.
+      - uses: astral-sh/setup-uv@38f3f104447c67c051c4a08e39b64a148898af3a # v4
         with:
           version: "latest"
       - name: Install dependencies

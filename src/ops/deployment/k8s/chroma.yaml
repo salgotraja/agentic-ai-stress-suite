@@ -59,10 +59,24 @@ spec:
       labels:
         app: chroma
     spec:
+      # chromadb/chroma:latest does not document a non-root USER, so we
+      # don't enforce runAsNonRoot here (would CrashLoopBackOff on some
+      # image versions). The capability drop + privilege-escalation guard
+      # still cuts most of the post-RCE attack surface. Re-test after
+      # any image tag bump and tighten if upstream commits to a non-root
+      # default.
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: chroma
           image: chromadb/chroma:latest
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 8000
               name: http

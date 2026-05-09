@@ -7,25 +7,34 @@ repos:
       - id: check-yaml
         args: ['--allow-multiple-documents']
       - id: check-added-large-files
-        args: ['--maxkb=1000']
+        # 2000 KB accommodates uv.lock (~1.7 MB once the full superset
+        # of dependencies for all 9 articles resolves). Raising to 2 MB
+        # still catches genuinely-oversized binaries while letting the
+        # lockfile through.
+        args: ['--maxkb=2000']
       - id: check-json
       - id: check-toml
       - id: check-merge-conflict
       - id: debug-statements
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.1.8
+    # Pinned to match the ruff floor in pyproject.toml ([dependency-groups].dev).
+    # The previous 0.1.8 pin predated rules added in 0.4+ (e.g. UP042) so
+    # a project-side `[tool.ruff.lint] ignore = ["UP042"]` was rejected
+    # as an unknown selector. Keep this tag and the pyproject floor in
+    # sync; otherwise the hook and CI's `uv run ruff check` disagree.
+    rev: v0.15.12
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
       - id: ruff-format
 
-  - repo: https://github.com/psf/black
-    rev: 23.12.1
-    hooks:
-      - id: black
-        language_version: python3.11
-
+  # black removed: it competes with ruff format on the same files and
+  # makes different line-break choices around long parenthesised
+  # expressions. CI's gate is `ruff format --check`, so the black hook
+  # was creating commit-time churn that the CI gate then rejected. The
+  # `[tool.black]` block in pyproject.toml is left for backwards-compat
+  # with editor integrations; it is no longer enforced.
   - repo: https://github.com/pycqa/isort
     rev: 5.13.2
     hooks:

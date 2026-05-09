@@ -88,6 +88,17 @@ class Settings(BaseSettings):
     openai_api_key: str | None = Field(default=None, description="OpenAI API key")
     cohere_api_key: str | None = Field(default=None, description="Cohere API key for reranking")
 
+    # FastAPI bearer-token auth for /query and /agent (Article 8 deployment).
+    # Why a separate token (not reusing an LLM provider key): provider keys
+    # are operator credentials with billing impact; this token is what the
+    # caller presents. Different blast radius -> different rotation cadence
+    # -> different secret. Minimum 32 random bytes recommended; generate
+    # with `openssl rand -hex 32`. When unset, the API refuses all auth.
+    api_auth_token: str | None = Field(
+        default=None,
+        description="Shared secret for Authorization: Bearer <token> on /query and /agent.",
+    )
+
     # GPU Configuration (auto-detected, can be overridden)
     # Teaching note: GPU backend is auto-detected at startup: CUDA > Metal > CPU
     # Override via GPU_BACKEND environment variable if needed (for testing or forcing CPU)

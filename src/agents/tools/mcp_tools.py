@@ -47,15 +47,65 @@ Trade-offs:
 
 from __future__ import annotations
 
+import ipaddress
 import json
 import logging
+import socket
 from pathlib import Path
+from urllib.parse import urlparse
 
 import httpx
 
 from src.agents.tools.base import BaseTool
 
 logger = logging.getLogger(__name__)
+
+
+def _validate_url_against_ssrf(url: str) -> tuple[bool, str]:
+    """Reject URLs that resolve to private, loopback, or metadata IPs.
+
+    Why this matters: a substring blocklist (`"localhost" in url`) is
+    trivially bypassed by IPv6 (`[::1]`), dotted-decimal collapse
+    (`127.1`), hex (`0x7f.0.0.1`), decimal (`2130706433`), RFC1918
+    ranges (`10.0.0.1`), in-cluster DNS (`redis-service.default.svc`),
+    or DNS rebinding (public IP at validate-time, private IP at
+    connect-time). The right primitive is `ipaddress.ip_address(...)`
+    after DNS resolution, against the whole space of
+    private/loopback/link-local/multicast/reserved IPs.
+
+    Returns (ok, reason). reason is "" when ok=True.
+    """
+    parsed = urlparse(url)
+    if parsed.scheme not in {"http", "https"}:
+        return False, f"unsupported scheme '{parsed.scheme}'"
+    if not parsed.hostname:
+        return False, "missing hostname"
+
+    try:
+        # getaddrinfo returns every A/AAAA record. Reject if ANY of them
+        # is private; this defends against split-horizon DNS where the
+        # first record is public but a later one is internal.
+        infos = socket.getaddrinfo(parsed.hostname, None)
+    except socket.gaierror as exc:
+        return False, f"DNS resolution failed: {exc}"
+
+    for family, _type, _proto, _canon, sockaddr in infos:
+        ip_str = sockaddr[0]
+        try:
+            ip = ipaddress.ip_address(ip_str)
+        except ValueError:
+            return False, f"unparseable address '{ip_str}'"
+        if (
+            ip.is_private
+            or ip.is_loopback
+            or ip.is_link_local
+            or ip.is_multicast
+            or ip.is_reserved
+            or ip.is_unspecified
+        ):
+            return False, f"resolves to non-routable address {ip}"
+
+    return True, ""
 
 
 class MCPFileReadTool(BaseTool):
@@ -293,16 +343,19 @@ class MCPAPICallTool(BaseTool):
             if not url or not url.startswith("http"):
                 return "Error: Invalid URL. Must start with http:// or https://"
 
-            # Security: Block localhost/internal IPs (prevent SSRF)
-            # Why: Prevent accessing internal services (databases, admin panels)
-            if any(
-                blocked in url.lower()
-                for blocked in ["localhost", "127.0.0.1", "0.0.0.0", "169.254"]
-            ):
-                return "Error: Cannot access localhost or internal IPs"
+            # SSRF guard: resolve the host and reject private/loopback/
+            # link-local/metadata addresses. See _validate_url_against_ssrf
+            # for the full rationale; the substring blocklist this replaces
+            # was bypassable by ~10 different encodings.
+            ok, reason = _validate_url_against_ssrf(url)
+            if not ok:
+                return f"Error: Cannot access internal/blocked URL ({reason})"
 
-            # Make request
-            with httpx.Client(timeout=self.timeout) as client:
+            # follow_redirects=False prevents a public 302 -> 169.254.169.254
+            # (or any other private redirect target) from bypassing the
+            # validation above. If a caller genuinely needs redirects, the
+            # right place to add support is a re-validation loop here.
+            with httpx.Client(timeout=self.timeout, follow_redirects=False) as client:
                 if method == "GET":
                     response = client.get(url, headers=headers)
                 else:  # POST

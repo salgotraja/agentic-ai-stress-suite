@@ -460,9 +460,9 @@ def test_parallel_vs_sequential_timing(rag_tool: RAGTool) -> None:
 
     # Parallel should be faster (or at least not much slower)
     # Allow 20% margin due to executor overhead
-    assert (
-        parallel_time < sequential_time * 1.2
-    ), f"Parallel ({parallel_time:.0f}ms) not faster than sequential ({sequential_time:.0f}ms)"
+    assert parallel_time < sequential_time * 1.2, (
+        f"Parallel ({parallel_time:.0f}ms) not faster than sequential ({sequential_time:.0f}ms)"
+    )
 
     # Verify all succeeded
     assert all(r["success"] for r in seq_results)

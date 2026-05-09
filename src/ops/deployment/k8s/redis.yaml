@@ -33,10 +33,26 @@ spec:
       labels:
         app: redis
     spec:
+      # redis:7-alpine ships with a `redis` user at uid 999. Forcing
+      # runAsNonRoot + runAsUser prevents a future image bump from
+      # silently running redis-server as root.
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: redis
           image: redis:7-alpine
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
           ports:
             - containerPort: 6379
               name: redis

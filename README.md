@@ -6,10 +6,33 @@
 ![Coverage](https://img.shields.io/badge/coverage-75%25-green)
 
 Production-grade proof-of-concept demonstrating empirical trade-offs in
-RAG-to-agent workflows. 9 articles, reproducible benchmarks, ~25,000 lines
-of annotated production code.
+RAG-to-agent workflows. ~25,000 lines of annotated production code with
+reproducible benchmarks across retrieval, agents, LLM ops, security,
+scaling, and custom embeddings.
 
 **Target audience**: Senior engineers transitioning to applied AI.
+
+## What This Is
+
+A reproducible empirical study of where production RAG-to-agent stacks
+actually break. ~25,000 lines of annotated production code, one harness,
+one corpus, one set of frameworks, organized as 9 self-contained
+experiments (state-aware RAG, advanced retrieval, evaluation,
+single-agent, multi-agent, LLM ops, security, scaling, custom embeddings).
+Each experiment isolates a specific design decision (HyDE vs
+decomposition, dense vs hybrid, ReAct vs Plan-and-Execute, INT8 vs FP32,
+kill-the-provider vs poison-the-corpus) and measures the trade-off in
+cost, latency, accuracy, and resilience.
+
+## How to Read These Results
+
+Every row in the tables below comes from a runner under `benchmarks/`,
+writes JSON to `results/data/`, and renders a chart via Jupyter. The
+"Key Results" table reports happy-path measurements; "Stress Test
+Results" reports the same code under chaos injection (`--chaos` flag).
+Numbers are mean over 3 runs unless noted. We publish the numbers that
+lost too: BGE fine-tune regressed -11%, hybrid recall tied dense, INT8
+on Apple Silicon was a wash.
 
 ## Key Results
 
@@ -128,7 +151,7 @@ to premium models only when quality comparison is the point. Local embeddings
 
 Fallback chain: `Groq-8B → Groq-70B → DeepSeek → Claude → Gemini → OpenAI`
 
-Total spend across all 9 articles: **<$12**.
+Total spend to reproduce every benchmark in this repo: **<$12**.
 
 ## Running Benchmarks
 

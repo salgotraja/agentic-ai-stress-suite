@@ -50,22 +50,36 @@ open http://localhost:6006  # Phoenix traces
 **Prerequisites**: Python 3.11+, Docker, `uv`, API keys for at least one LLM
 provider (Groq is cheapest for development).
 
-## Articles and Code
+[//]: # ()
+[//]: # (## Articles and Code)
 
-Each article is implemented in production-grade code with teaching comments,
-benchmarks, and runnable demos. Long-form blog posts are published separately.
+[//]: # ()
+[//]: # (Each article is implemented in production-grade code with teaching comments,)
 
-| # | Title | Key Code |
-|---|-------|----------|
-| 1 | State-Aware RAG (HyDE, query decomposition, graph RAG) | `src/rag/advanced_rag.py`, `graph_rag.py` |
-| 2 | Advanced Retrieval (BM25+RRF, reranking, metadata filtering, chunking) | `src/rag/hybrid_search.py`, `reranking.py`, `metadata_filter.py`, `chunking.py` |
-| 3 | Evaluation Framework (RAGAS, DeepEval, LLM-judge, drift, A/B) | `src/rag/evaluation/` |
-| 4 | Single-Agent (ReAct, Plan-and-Execute, parallel tool dispatch) | `src/agents/single_agent.py`, `src/agents/tools/` |
-| 5 | Multi-Agent (sequential, critic loop, parallel fan-out, conflict resolution) | `src/agents/multi_agent.py` |
-| 6 | LLM Ops (tiered cache, fallback router, cost tracking) | `src/ops/caching.py`, `src/ops/routing.py`, `src/core/cost_logger.py` |
-| 7 | Security (guardrails, Llama-Guard, PII scanner, red-team) | `src/ops/security.py` |
-| 8 | Scaling (parallel dispatch, K8s manifests, Locust load test) | `src/ops/deployment/k8s/`, `src/ops/deployment/load_test.py` |
-| 9 | Deep Learning (BGE fine-tune, torch.compile, INT8, JAX vs PyTorch) | `examples/article_09_dl/`, `benchmarks/run_article_09.py` |
+[//]: # (benchmarks, and runnable demos. Long-form blog posts are published separately.)
+
+[//]: # ()
+[//]: # (| # | Title | Key Code |)
+
+[//]: # (|---|-------|----------|)
+
+[//]: # (| 1 | State-Aware RAG &#40;HyDE, query decomposition, graph RAG&#41; | `src/rag/advanced_rag.py`, `graph_rag.py` |)
+
+[//]: # (| 2 | Advanced Retrieval &#40;BM25+RRF, reranking, metadata filtering, chunking&#41; | `src/rag/hybrid_search.py`, `reranking.py`, `metadata_filter.py`, `chunking.py` |)
+
+[//]: # (| 3 | Evaluation Framework &#40;RAGAS, DeepEval, LLM-judge, drift, A/B&#41; | `src/rag/evaluation/` |)
+
+[//]: # (| 4 | Single-Agent &#40;ReAct, Plan-and-Execute, parallel tool dispatch&#41; | `src/agents/single_agent.py`, `src/agents/tools/` |)
+
+[//]: # (| 5 | Multi-Agent &#40;sequential, critic loop, parallel fan-out, conflict resolution&#41; | `src/agents/multi_agent.py` |)
+
+[//]: # (| 6 | LLM Ops &#40;tiered cache, fallback router, cost tracking&#41; | `src/ops/caching.py`, `src/ops/routing.py`, `src/core/cost_logger.py` |)
+
+[//]: # (| 7 | Security &#40;guardrails, Llama-Guard, PII scanner, red-team&#41; | `src/ops/security.py` |)
+
+[//]: # (| 8 | Scaling &#40;parallel dispatch, K8s manifests, Locust load test&#41; | `src/ops/deployment/k8s/`, `src/ops/deployment/load_test.py` |)
+
+[//]: # (| 9 | Deep Learning &#40;BGE fine-tune, torch.compile, INT8, JAX vs PyTorch&#41; | `examples/article_09_dl/`, `benchmarks/run_article_09.py` |)
 
 ## Architecture
 

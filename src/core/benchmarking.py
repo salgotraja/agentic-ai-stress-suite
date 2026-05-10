@@ -52,7 +52,13 @@ class Query:
 
 @dataclass
 class QueryResult:
-    """Results for a single query execution."""
+    """Results for a single query execution.
+
+    cost_usd and provider are optional. They default to zero/empty so existing
+    pipelines that only populate metadata["tokens_used"] keep working unchanged.
+    The chaos benchmarks read both via metadata to chart per-provider cost
+    redistribution under fallback (Article 6 stress demo).
+    """
 
     query_id: str
     query_text: str
@@ -62,11 +68,19 @@ class QueryResult:
     tokens_used: int
     recall_at_k: float
     reciprocal_rank: float
+    cost_usd: float = 0.0
+    provider: str = ""
 
 
 @dataclass
 class BenchmarkMetrics:
-    """Aggregated metrics across all queries."""
+    """Aggregated metrics across all queries.
+
+    cost_usd and provider_calls are additive optional fields with defaults so
+    JSON consumers reading older article_NN_benchmarks.json (no cost field)
+    still load. Producers that don't surface cost - the canonical pre-chaos
+    pipelines - emit cost_usd=0.0 and provider_calls={} unchanged.
+    """
 
     mean_recall_at_k: float
     std_recall_at_k: float
@@ -77,6 +91,8 @@ class BenchmarkMetrics:
     total_tokens: int
     mean_tokens_per_query: float
     total_queries: int
+    cost_usd: float = 0.0
+    provider_calls: dict[str, int] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
@@ -369,6 +385,13 @@ class BenchmarkRunner:
         metadata = result.get("metadata", {})
         tokens = metadata.get("tokens_used", 0)
 
+        # Cost and provider are pulled from the same metadata dict the
+        # pipeline already owns. Pipelines that don't surface them (the
+        # canonical RAG path on Articles 1-3) get the field defaults
+        # (0.0, "") and aggregate to cost_usd=0 and provider_calls={}.
+        cost = float(metadata.get("cost_usd", 0.0))
+        provider = str(metadata.get("provider", ""))
+
         return QueryResult(
             query_id=query.id,
             query_text=query.query,
@@ -378,6 +401,8 @@ class BenchmarkRunner:
             tokens_used=tokens,
             recall_at_k=recall,
             reciprocal_rank=mrr,
+            cost_usd=cost,
+            provider=provider,
         )
 
     def run_benchmark(self, queries: list[Query]) -> list[BenchmarkRun]:
@@ -466,6 +491,15 @@ class BenchmarkRunner:
                 len(recalls),
             )
 
+        # Provider distribution: count queries served by each provider so the
+        # chaos chart can show "Groq dropped to 0, DeepSeek absorbed the load".
+        # Empty provider strings (the canonical pre-chaos path) are skipped so
+        # they don't pollute the count with a "" key.
+        provider_calls: dict[str, int] = {}
+        for r in results:
+            if r.provider:
+                provider_calls[r.provider] = provider_calls.get(r.provider, 0) + 1
+
         return BenchmarkMetrics(
             mean_recall_at_k=statistics.mean(recalls) if recalls else 0.0,
             std_recall_at_k=statistics.stdev(recalls) if len(recalls) > 1 else 0.0,
@@ -476,6 +510,8 @@ class BenchmarkRunner:
             total_tokens=sum(tokens),
             mean_tokens_per_query=statistics.mean(tokens) if tokens else 0.0,
             total_queries=len(results),
+            cost_usd=sum(r.cost_usd for r in results),
+            provider_calls=provider_calls,
         )
 
     def get_aggregate_metrics(self) -> dict[str, Any]:

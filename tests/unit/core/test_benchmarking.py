@@ -451,6 +451,105 @@ def test_save_results(
         output_path.unlink()
 
 
+def test_run_single_query_extracts_cost_and_provider() -> None:
+    """Pipeline metadata cost_usd and provider flow into QueryResult."""
+    pipeline = MockRAGPipeline(
+        mock_results=[
+            {
+                "answer": "ans",
+                "context_nodes": [],
+                "metadata": {"tokens_used": 50, "cost_usd": 0.0042, "provider": "groq"},
+            }
+        ]
+    )
+    runner = BenchmarkRunner(pipeline)
+    query = Query(
+        id="q1",
+        query="q?",
+        expected_answer="a",
+        source_docs=[],
+        difficulty="simple",
+        category="simple",
+    )
+
+    result = runner.run_single_query(query)
+
+    assert result.cost_usd == 0.0042
+    assert result.provider == "groq"
+
+
+def test_calculate_metrics_aggregates_cost_and_provider_calls() -> None:
+    """Per-query cost sums to total; provider strings count by occurrence."""
+    pipeline = MockRAGPipeline()
+    runner = BenchmarkRunner(pipeline)
+    results = [
+        QueryResult(
+            query_id="q1",
+            query_text="q1",
+            answer="a",
+            retrieved_docs=["d.md"],
+            latency_ms=10.0,
+            tokens_used=50,
+            recall_at_k=1.0,
+            reciprocal_rank=1.0,
+            cost_usd=0.001,
+            provider="groq",
+        ),
+        QueryResult(
+            query_id="q2",
+            query_text="q2",
+            answer="a",
+            retrieved_docs=["d.md"],
+            latency_ms=10.0,
+            tokens_used=50,
+            recall_at_k=1.0,
+            reciprocal_rank=1.0,
+            cost_usd=0.002,
+            provider="deepseek",
+        ),
+        QueryResult(
+            query_id="q3",
+            query_text="q3",
+            answer="a",
+            retrieved_docs=["d.md"],
+            latency_ms=10.0,
+            tokens_used=50,
+            recall_at_k=1.0,
+            reciprocal_rank=1.0,
+            cost_usd=0.003,
+            provider="deepseek",
+        ),
+    ]
+
+    metrics = runner._calculate_metrics(results)
+
+    assert metrics.cost_usd == pytest.approx(0.006)
+    assert metrics.provider_calls == {"groq": 1, "deepseek": 2}
+
+
+def test_calculate_metrics_default_cost_and_provider_for_legacy_pipeline() -> None:
+    """Pipelines that don't populate cost/provider keep emitting cost=0, providers={}."""
+    pipeline = MockRAGPipeline()
+    runner = BenchmarkRunner(pipeline)
+    results = [
+        QueryResult(
+            query_id="q1",
+            query_text="q1",
+            answer="a",
+            retrieved_docs=["d.md"],
+            latency_ms=10.0,
+            tokens_used=50,
+            recall_at_k=1.0,
+            reciprocal_rank=1.0,
+        )
+    ]
+
+    metrics = runner._calculate_metrics(results)
+
+    assert metrics.cost_usd == 0.0
+    assert metrics.provider_calls == {}
+
+
 def test_benchmark_metrics_to_dict() -> None:
     """Test BenchmarkMetrics conversion to dictionary."""
     metrics = BenchmarkMetrics(

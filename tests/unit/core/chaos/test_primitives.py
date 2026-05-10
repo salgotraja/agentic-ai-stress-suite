@@ -147,17 +147,16 @@ class TestProviderKillSwitch:
             client = UnifiedLLMClient()
             client.groq_client = MagicMock()
 
-        attempts = {"n": 0}
-        with ProviderKillSwitch(client, "groq", 0):
-            patched = client.__dict__["_call_groq"]
-            try:
-                patched()
-            except ProviderKilledError:
-                attempts["n"] += 1
-        # Class-level @retry would have produced 3 attempts before raising;
-        # since the patched function isn't a retried exception type, exactly
-        # one invocation should raise.
-        assert attempts["n"] == 1
+        # Go through normal attribute lookup so CPython's descriptor protocol
+        # resolves to the instance-dict shadow rather than the class-level
+        # @retry-decorated method. If shadowing failed, tenacity would burn
+        # 3 attempts and the patched function's call counter would advance
+        # past 1 before ProviderKilledError surfaced.
+        with ProviderKillSwitch(client, "groq", 0) as ks:
+            with pytest.raises(ProviderKilledError) as exc_info:
+                client._call_groq()  # type: ignore[call-arg]  # shadow ignores args
+        assert exc_info.value.count == 1
+        assert ks._call_count == 1
 
     # 9. DESCRIPTOR-INTERACTION: instance attr shadows class-level descriptor
     def test_instance_attr_shadows_class_method(self) -> None:

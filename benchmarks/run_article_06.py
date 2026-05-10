@@ -33,11 +33,13 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import statistics
 import sys
 import time
 from collections import Counter
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
@@ -56,7 +58,10 @@ from dotenv import load_dotenv  # noqa: E402
 
 load_dotenv(PROJECT_ROOT / ".env.local", override=True)
 
+from src.core.benchmarking import Query, run_under_chaos  # noqa: E402
+from src.core.chaos.primitives import ChaosPreconditionError  # noqa: E402
 from src.core.config import get_settings  # noqa: E402
+from src.core.llm_client import UnifiedLLMClient  # noqa: E402
 from src.ops.caching import SemanticCache  # noqa: E402
 from src.ops.routing import ComplexityRouter  # noqa: E402
 
@@ -379,6 +384,230 @@ def _print_summary(output: dict[str, Any]) -> None:
     )
 
 
+# ---------------------------------------------------------------------------
+# Fallback-chain chaos demo (Article 6 stress section)
+#
+# Question answered: when Groq is killed mid-run and DeepSeek absorbs the
+# overflow with degraded latency, what does the cost / latency / provider
+# distribution look like vs the happy path? This is intentionally separate
+# from the cache+router benchmark above — different question, different
+# narrative, different output file (article_06_stress.json).
+# ---------------------------------------------------------------------------
+
+# Short prompts intentionally span domains the fallback chain serves well:
+# RAG terminology, framework comparisons, infra primitives. Keeping them
+# under ~15 tokens each keeps per-call cost predictable and the run cheap.
+_FALLBACK_GOLDEN: list[str] = [
+    "What is dependency injection?",
+    "Compare async vs sync in FastAPI.",
+    "Explain Python decorators in one paragraph.",
+    "When would you choose Redis over Postgres?",
+    "What does HyDE stand for in retrieval?",
+    "Why use tenacity for retries?",
+    "What is BGE-base-en-v1.5 used for?",
+    "Compare LlamaIndex and Haystack briefly.",
+    "When does ProcessPoolExecutor beat threads?",
+    "What is semantic caching?",
+]
+
+
+class _LLMClientAsRAGPipeline:
+    """Adapter exposing UnifiedLLMClient.generate() through the RAGPipeline Protocol.
+
+    The fallback-chain demo doesn't retrieve — it just exercises the provider
+    chain. BenchmarkRunner expects a pipeline.query() that returns
+    {answer, context_nodes, metadata}; this adapter forwards the prompt to
+    generate() and lifts cost/provider/tokens into metadata so the existing
+    aggregation in BenchmarkRunner picks them up unchanged.
+
+    Failure handling: when every provider in the chain raises, generate()
+    raises Exception. We catch and emit an empty result with provider="failed"
+    so the run completes and the chart can show the failure rate; surfacing
+    the exception would abort the whole BenchmarkRunner pass.
+    """
+
+    def __init__(self, client: UnifiedLLMClient) -> None:
+        self.client = client
+
+    def query(self, query_str: str, top_k: int | None = None) -> dict[str, Any]:
+        # top_k is part of the Protocol but unused here — no retrieval step.
+        del top_k
+        try:
+            resp = self.client.generate(query_str)
+        except Exception:
+            return {
+                "answer": "",
+                "context_nodes": [],
+                "metadata": {"tokens_used": 0, "cost_usd": 0.0, "provider": "failed"},
+            }
+        return {
+            "answer": resp.content,
+            "context_nodes": [],
+            "metadata": {
+                "tokens_used": resp.total_tokens,
+                "cost_usd": resp.cost_usd,
+                "provider": resp.provider.value,
+            },
+        }
+
+
+def _golden_to_queries(prompts: list[str]) -> list[Query]:
+    """Wrap raw prompts in Query objects.
+
+    expected_answer/source_docs are empty: this demo measures provider
+    behaviour, not retrieval quality. BenchmarkMetrics.recall/mrr will be
+    NaN by construction (zero source_docs), which is the correct signal —
+    the chart caption notes that recall is undefined for this section.
+    """
+    return [
+        Query(
+            id=f"fb_{i:03d}",
+            query=prompt,
+            expected_answer="",
+            source_docs=[],
+            difficulty="simple",
+            category="fallback_chain",
+        )
+        for i, prompt in enumerate(prompts)
+    ]
+
+
+def _sanitize_nan(obj: Any) -> Any:
+    """Replace NaN floats with None recursively for strict-JSON consumers.
+
+    Recall/MRR are NaN by construction here (zero source_docs), and
+    json.dumps emits literal "NaN" — non-standard JSON that breaks strict
+    parsers (notebooks, jq, browser fetch). One pass over the whole
+    payload before serialization keeps the artifact portable.
+    """
+    if isinstance(obj, float) and math.isnan(obj):
+        return None
+    if isinstance(obj, dict):
+        return {k: _sanitize_nan(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize_nan(v) for v in obj]
+    return obj
+
+
+def _cost_by_provider(runs: list[Any]) -> dict[str, float]:
+    """Sum cost_usd grouped by provider across every QueryResult in every run.
+
+    BenchmarkMetrics aggregates total cost and per-provider call counts but
+    not cost-per-provider. The Article 6 chart needs per-provider $ to show
+    that DeepSeek absorbed N% of the spend after Groq was killed; counts
+    alone hide the price asymmetry between the two providers.
+    """
+    by_provider: dict[str, float] = {}
+    for run in runs:
+        for result in run.query_results:
+            if not result.provider:
+                continue
+            by_provider[result.provider] = by_provider.get(result.provider, 0.0) + result.cost_usd
+    return by_provider
+
+
+def run_chaos_section(
+    client: UnifiedLLMClient,
+    *,
+    n_queries: int,
+    n_runs: int,
+    kill_after: int,
+    deepseek_p50_ms: float,
+    deepseek_p99_ms: float,
+) -> dict[str, Any]:
+    """Run the degraded_groq scenario against the fallback golden set.
+
+    Returns a JSON-ready dict with happy/chaos aggregates, raw runs, the
+    delta_pct table, and the per-provider cost decomposition.
+    """
+    if client.deepseek_client is None:
+        raise ChaosPreconditionError(
+            "fallback chaos demo requires DeepSeek configured (set DEEPSEEK_API_KEY in .env.local)."
+        )
+
+    prompts = _FALLBACK_GOLDEN[:n_queries]
+    queries = _golden_to_queries(prompts)
+    pipeline = _LLMClientAsRAGPipeline(client)
+
+    result = run_under_chaos(
+        pipeline,
+        client,
+        queries,
+        scenario="degraded_groq",
+        num_runs=n_runs,
+        kill_after=kill_after,
+        deepseek_p50_ms=deepseek_p50_ms,
+        deepseek_p99_ms=deepseek_p99_ms,
+    )
+
+    return {
+        "scenario": result.scenario,
+        "primitive_config": {
+            "kill_after": kill_after,
+            "deepseek_p50_ms": deepseek_p50_ms,
+            "deepseek_p99_ms": deepseek_p99_ms,
+        },
+        "n_queries": len(queries),
+        "n_runs_per_condition": n_runs,
+        "happy_aggregate": result.happy_aggregate,
+        "chaos_aggregate": result.chaos_aggregate,
+        "delta_pct": result.delta_pct,
+        "cost_by_provider": {
+            "happy": _cost_by_provider(result.happy_runs),
+            "chaos": _cost_by_provider(result.chaos_runs),
+        },
+        "happy_runs": [asdict(r) for r in result.happy_runs],
+        "chaos_runs": [asdict(r) for r in result.chaos_runs],
+    }
+
+
+def _fmt_delta(value: float | None) -> str:
+    if value is None or (isinstance(value, float) and math.isnan(value)):
+        return "n/a"
+    return f"{value:+.1f}%"
+
+
+def _print_chaos_summary(output: dict[str, Any]) -> None:
+    cfg = output["primitive_config"]
+    happy = output["happy_aggregate"]
+    chaos = output["chaos_aggregate"]
+    delta = output["delta_pct"]
+    cost = output["cost_by_provider"]
+
+    print("\n=== Article 6: Fallback-Chain Chaos Demo ===")
+    print(f"Scenario: {output['scenario']}")
+    print(
+        f"Config:   kill_after={cfg['kill_after']}  "
+        f"deepseek p50={cfg['deepseek_p50_ms']:.0f}ms / p99={cfg['deepseek_p99_ms']:.0f}ms"
+    )
+    print(
+        f"Queries:  {output['n_queries']}  Runs:  {output['n_runs_per_condition']} per condition\n"
+    )
+
+    print("                       happy            chaos            delta")
+    print(
+        f"  latency p50 ms       "
+        f"{happy['latency_ms']['mean']:>8.1f}        "
+        f"{chaos['latency_ms']['mean']:>8.1f}        "
+        f"{_fmt_delta(delta['latency_ms'])}"
+    )
+    print(
+        f"  cost USD             "
+        f"{happy['cost_usd']['mean']:>8.6f}        "
+        f"{chaos['cost_usd']['mean']:>8.6f}        "
+        f"{_fmt_delta(delta['cost_usd'])}"
+    )
+    print(
+        f"  tokens / query       "
+        f"{happy['tokens_per_query']['mean']:>8.1f}        "
+        f"{chaos['tokens_per_query']['mean']:>8.1f}        "
+        f"{_fmt_delta(delta['tokens_per_query'])}"
+    )
+    print(f"\nProvider call counts (chaos run): {chaos['provider_calls']}")
+    print(f"Cost by provider (happy):  {cost['happy']}")
+    print(f"Cost by provider (chaos):  {cost['chaos']}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Article 6: LLM Ops benchmark (cache + router).")
     parser.add_argument("--runs", type=int, default=3, help="Number of timed runs.")
@@ -402,11 +631,56 @@ def main() -> None:
         default=None,
         help="Override Redis URL (defaults to settings.redis_url).",
     )
+    # --chaos is mutually exclusive with the cache+router path: the two
+    # benchmarks answer different questions (cost optimization vs
+    # resilience under provider failure) and writing both into one run
+    # would spend API budget on a comparison no caller asked for.
+    parser.add_argument(
+        "--chaos",
+        action="store_true",
+        help="Run the fallback-chain chaos demo (skips cache+router; writes article_06_stress.json).",
+    )
+    parser.add_argument(
+        "--quick",
+        action="store_true",
+        help="Use a 5-prompt subset of the chaos golden set. Only relevant with --chaos.",
+    )
     args = parser.parse_args()
 
     if os.getenv("SMOKE_TEST"):
         print(f"[smoke] {Path(__file__).stem}: imports OK, exiting early")
         sys.exit(0)
+
+    if args.chaos:
+        if args.no_llm:
+            print("ERROR: --chaos requires real LLM calls; remove --no-llm.", file=sys.stderr)
+            sys.exit(2)
+        n_queries = 5 if args.quick else 10
+        print("Initializing UnifiedLLMClient (Groq + DeepSeek required)...")
+        try:
+            client = UnifiedLLMClient()
+        except Exception as e:
+            print(f"ERROR: failed to initialize LLM client: {e}", file=sys.stderr)
+            sys.exit(2)
+        try:
+            chaos_output = run_chaos_section(
+                client,
+                n_queries=n_queries,
+                n_runs=args.runs,
+                kill_after=3,
+                deepseek_p50_ms=4000.0,
+                deepseek_p99_ms=16000.0,
+            )
+        except ChaosPreconditionError as e:
+            print(f"ERROR: chaos precondition unmet: {e}", file=sys.stderr)
+            sys.exit(2)
+
+        out_path = PROJECT_ROOT / "results" / "data" / "article_06_stress.json"
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(json.dumps(_sanitize_nan(chaos_output), indent=2))
+        _print_chaos_summary(chaos_output)
+        print(f"\nResults saved to: {out_path}")
+        return
 
     settings = get_settings()
     redis_url = args.redis_url or settings.redis_url

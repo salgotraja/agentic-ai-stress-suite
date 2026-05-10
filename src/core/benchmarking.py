@@ -32,7 +32,10 @@ import statistics
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
+
+if TYPE_CHECKING:
+    from src.core.llm_client import UnifiedLLMClient
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +55,13 @@ class Query:
 
 @dataclass
 class QueryResult:
-    """Results for a single query execution."""
+    """Results for a single query execution.
+
+    cost_usd and provider are optional. They default to zero/empty so existing
+    pipelines that only populate metadata["tokens_used"] keep working unchanged.
+    The chaos benchmarks read both via metadata to chart per-provider cost
+    redistribution under fallback (Article 6 stress demo).
+    """
 
     query_id: str
     query_text: str
@@ -62,11 +71,19 @@ class QueryResult:
     tokens_used: int
     recall_at_k: float
     reciprocal_rank: float
+    cost_usd: float = 0.0
+    provider: str = ""
 
 
 @dataclass
 class BenchmarkMetrics:
-    """Aggregated metrics across all queries."""
+    """Aggregated metrics across all queries.
+
+    cost_usd and provider_calls are additive optional fields with defaults so
+    JSON consumers reading older article_NN_benchmarks.json (no cost field)
+    still load. Producers that don't surface cost - the canonical pre-chaos
+    pipelines - emit cost_usd=0.0 and provider_calls={} unchanged.
+    """
 
     mean_recall_at_k: float
     std_recall_at_k: float
@@ -77,6 +94,8 @@ class BenchmarkMetrics:
     total_tokens: int
     mean_tokens_per_query: float
     total_queries: int
+    cost_usd: float = 0.0
+    provider_calls: dict[str, int] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
@@ -369,6 +388,13 @@ class BenchmarkRunner:
         metadata = result.get("metadata", {})
         tokens = metadata.get("tokens_used", 0)
 
+        # Cost and provider are pulled from the same metadata dict the
+        # pipeline already owns. Pipelines that don't surface them (the
+        # canonical RAG path on Articles 1-3) get the field defaults
+        # (0.0, "") and aggregate to cost_usd=0 and provider_calls={}.
+        cost = float(metadata.get("cost_usd", 0.0))
+        provider = str(metadata.get("provider", ""))
+
         return QueryResult(
             query_id=query.id,
             query_text=query.query,
@@ -378,6 +404,8 @@ class BenchmarkRunner:
             tokens_used=tokens,
             recall_at_k=recall,
             reciprocal_rank=mrr,
+            cost_usd=cost,
+            provider=provider,
         )
 
     def run_benchmark(self, queries: list[Query]) -> list[BenchmarkRun]:
@@ -466,6 +494,15 @@ class BenchmarkRunner:
                 len(recalls),
             )
 
+        # Provider distribution: count queries served by each provider so the
+        # chaos chart can show "Groq dropped to 0, DeepSeek absorbed the load".
+        # Empty provider strings (the canonical pre-chaos path) are skipped so
+        # they don't pollute the count with a "" key.
+        provider_calls: dict[str, int] = {}
+        for r in results:
+            if r.provider:
+                provider_calls[r.provider] = provider_calls.get(r.provider, 0) + 1
+
         return BenchmarkMetrics(
             mean_recall_at_k=statistics.mean(recalls) if recalls else 0.0,
             std_recall_at_k=statistics.stdev(recalls) if len(recalls) > 1 else 0.0,
@@ -476,6 +513,8 @@ class BenchmarkRunner:
             total_tokens=sum(tokens),
             mean_tokens_per_query=statistics.mean(tokens) if tokens else 0.0,
             total_queries=len(results),
+            cost_usd=sum(r.cost_usd for r in results),
+            provider_calls=provider_calls,
         )
 
     def get_aggregate_metrics(self) -> dict[str, Any]:
@@ -560,3 +599,141 @@ class BenchmarkRunner:
 
         with open(filepath, "w") as f:
             json.dump(output, f, indent=2)
+
+
+@dataclass
+class ChaosBenchmarkResult:
+    """Result of running a benchmark twice — happy path and under chaos.
+
+    Why a dedicated dataclass instead of two BenchmarkRun lists:
+    - Captures the chaos scenario name (chart titles / JSON consumers)
+    - Pre-computes delta_pct so notebooks don't recompute per-cell
+    - Keeps both run lists for full transparency (raw data > derived stats)
+    """
+
+    scenario: str
+    happy_runs: list[BenchmarkRun]
+    chaos_runs: list[BenchmarkRun]
+    happy_aggregate: dict[str, Any]
+    chaos_aggregate: dict[str, Any]
+    delta_pct: dict[str, float]
+
+
+def _aggregate_chaos_runs(runs: list[BenchmarkRun]) -> dict[str, Any]:
+    """Aggregate per-run BenchmarkMetrics including cost_usd and provider_calls.
+
+    BenchmarkRunner.get_aggregate_metrics() exposes recall/mrr/latency/tokens
+    only. Chaos charts also need cost_usd (per-run mean) and provider_calls
+    (summed across runs). Aggregating inline here avoids bloating
+    get_aggregate_metrics for one consumer.
+    """
+    if not runs:
+        return {}
+
+    recalls = [r.metrics.mean_recall_at_k for r in runs if r.metrics]
+    mrrs = [r.metrics.mean_mrr for r in runs if r.metrics]
+    latencies = [r.metrics.mean_latency_ms for r in runs if r.metrics]
+    token_means = [r.metrics.mean_tokens_per_query for r in runs if r.metrics]
+    costs = [r.metrics.cost_usd for r in runs if r.metrics]
+
+    merged_providers: dict[str, int] = {}
+    for r in runs:
+        if r.metrics:
+            for provider, count in r.metrics.provider_calls.items():
+                merged_providers[provider] = merged_providers.get(provider, 0) + count
+
+    def _stat(values: list[float]) -> dict[str, float]:
+        return {
+            "mean": statistics.mean(values) if values else 0.0,
+            "std": statistics.stdev(values) if len(values) > 1 else 0.0,
+        }
+
+    return {
+        "recall_at_k": _stat(recalls),
+        "mrr": _stat(mrrs),
+        "latency_ms": _stat(latencies),
+        "tokens_per_query": _stat(token_means),
+        "cost_usd": _stat(costs),
+        "provider_calls": merged_providers,
+        "num_runs": len(runs),
+    }
+
+
+def _compute_delta_pct(
+    happy: dict[str, Any],
+    chaos: dict[str, Any],
+) -> dict[str, float]:
+    """Compute % delta of chaos vs happy with NaN guard for zero baseline.
+
+    delta_pct[m] = 100 * (chaos[m].mean - happy[m].mean) / happy[m].mean
+
+    When the happy baseline is 0.0, returns NaN. Silent division-by-zero
+    would mask "this metric is meaningless under this baseline" — notebooks
+    should either skip NaN rows or annotate them explicitly.
+    """
+    fields = ("recall_at_k", "mrr", "latency_ms", "tokens_per_query", "cost_usd")
+    deltas: dict[str, float] = {}
+    for name in fields:
+        baseline = happy.get(name, {}).get("mean", 0.0)
+        observed = chaos.get(name, {}).get("mean", 0.0)
+        if baseline == 0.0:
+            deltas[name] = math.nan
+        else:
+            deltas[name] = 100.0 * (observed - baseline) / baseline
+    return deltas
+
+
+def run_under_chaos(
+    pipeline: RAGPipeline,
+    client: UnifiedLLMClient,
+    queries: list[Query],
+    scenario: str,
+    *,
+    num_runs: int = 3,
+    top_k: int = 5,
+    **scenario_overrides: Any,
+) -> ChaosBenchmarkResult:
+    """Run a benchmark twice: happy-path, then under a named chaos scenario.
+
+    Why two BenchmarkRunner instances (not one runner reused):
+    - BenchmarkRunner.run_benchmark appends to self.runs; get_aggregate_metrics
+      averages cumulatively. One reused runner would mix happy + chaos runs
+      into the same aggregate, masking the delta this helper exists to surface.
+    - The design (line 64) says "runner is constructed by the caller"; the
+      eng-review Architecture #2 clarifies that for chaos benchmarks the
+      caller hands us a *pipeline* and we construct two runners. This helper
+      is that caller-of-runner; users pass pipeline + client.
+
+    Args:
+        pipeline: Object satisfying the RAGPipeline Protocol.
+        client: UnifiedLLMClient instance — chaos primitives monkey-patch
+            its `_call_<provider>` methods per-instance.
+        queries: Query list (caller pre-loads from JSON or builds in tests).
+        scenario: Named chaos scenario (see chaos.list_scenarios()).
+        num_runs: Per-condition run count.
+        top_k: Retrieval depth, forwarded to both runners.
+        **scenario_overrides: Forwarded to the chaos_scenario builder
+            (e.g., kill_after, p50_ms, p99_ms).
+    """
+    # Local import: chaos.scenarios doesn't import benchmarking, but keeping
+    # the dependency direction explicit avoids future circular-import drift.
+    from src.core.chaos.scenarios import chaos_scenario
+
+    happy = BenchmarkRunner(pipeline, num_runs=num_runs, top_k=top_k)
+    happy.run_benchmark(queries)
+
+    chaos = BenchmarkRunner(pipeline, num_runs=num_runs, top_k=top_k)
+    with chaos_scenario(scenario, client, **scenario_overrides):
+        chaos.run_benchmark(queries)
+
+    happy_aggregate = _aggregate_chaos_runs(happy.runs)
+    chaos_aggregate = _aggregate_chaos_runs(chaos.runs)
+
+    return ChaosBenchmarkResult(
+        scenario=scenario,
+        happy_runs=happy.runs,
+        chaos_runs=chaos.runs,
+        happy_aggregate=happy_aggregate,
+        chaos_aggregate=chaos_aggregate,
+        delta_pct=_compute_delta_pct(happy_aggregate, chaos_aggregate),
+    )

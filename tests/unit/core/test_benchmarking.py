@@ -451,6 +451,256 @@ def test_save_results(
         output_path.unlink()
 
 
+def test_run_single_query_extracts_cost_and_provider() -> None:
+    """Pipeline metadata cost_usd and provider flow into QueryResult."""
+    pipeline = MockRAGPipeline(
+        mock_results=[
+            {
+                "answer": "ans",
+                "context_nodes": [],
+                "metadata": {"tokens_used": 50, "cost_usd": 0.0042, "provider": "groq"},
+            }
+        ]
+    )
+    runner = BenchmarkRunner(pipeline)
+    query = Query(
+        id="q1",
+        query="q?",
+        expected_answer="a",
+        source_docs=[],
+        difficulty="simple",
+        category="simple",
+    )
+
+    result = runner.run_single_query(query)
+
+    assert result.cost_usd == 0.0042
+    assert result.provider == "groq"
+
+
+def test_calculate_metrics_aggregates_cost_and_provider_calls() -> None:
+    """Per-query cost sums to total; provider strings count by occurrence."""
+    pipeline = MockRAGPipeline()
+    runner = BenchmarkRunner(pipeline)
+    results = [
+        QueryResult(
+            query_id="q1",
+            query_text="q1",
+            answer="a",
+            retrieved_docs=["d.md"],
+            latency_ms=10.0,
+            tokens_used=50,
+            recall_at_k=1.0,
+            reciprocal_rank=1.0,
+            cost_usd=0.001,
+            provider="groq",
+        ),
+        QueryResult(
+            query_id="q2",
+            query_text="q2",
+            answer="a",
+            retrieved_docs=["d.md"],
+            latency_ms=10.0,
+            tokens_used=50,
+            recall_at_k=1.0,
+            reciprocal_rank=1.0,
+            cost_usd=0.002,
+            provider="deepseek",
+        ),
+        QueryResult(
+            query_id="q3",
+            query_text="q3",
+            answer="a",
+            retrieved_docs=["d.md"],
+            latency_ms=10.0,
+            tokens_used=50,
+            recall_at_k=1.0,
+            reciprocal_rank=1.0,
+            cost_usd=0.003,
+            provider="deepseek",
+        ),
+    ]
+
+    metrics = runner._calculate_metrics(results)
+
+    assert metrics.cost_usd == pytest.approx(0.006)
+    assert metrics.provider_calls == {"groq": 1, "deepseek": 2}
+
+
+def test_calculate_metrics_default_cost_and_provider_for_legacy_pipeline() -> None:
+    """Pipelines that don't populate cost/provider keep emitting cost=0, providers={}."""
+    pipeline = MockRAGPipeline()
+    runner = BenchmarkRunner(pipeline)
+    results = [
+        QueryResult(
+            query_id="q1",
+            query_text="q1",
+            answer="a",
+            retrieved_docs=["d.md"],
+            latency_ms=10.0,
+            tokens_used=50,
+            recall_at_k=1.0,
+            reciprocal_rank=1.0,
+        )
+    ]
+
+    metrics = runner._calculate_metrics(results)
+
+    assert metrics.cost_usd == 0.0
+    assert metrics.provider_calls == {}
+
+
+class _ChaosStubClient:
+    """Stub UnifiedLLMClient mirroring the shape chaos primitives expect.
+
+    `deepseek_client` is non-None so the `degraded_groq` precondition passes,
+    and `_call_<provider>` are class-level so per-instance monkey-patching
+    by the chaos primitives can shadow then unshadow them cleanly.
+    """
+
+    def __init__(self) -> None:
+        self.deepseek_client = MagicMock()
+        self.groq_client = MagicMock()
+
+    def _call_groq(self, *args: Any, **kwargs: Any) -> str:
+        return "groq-ok"
+
+    def _call_deepseek(self, *args: Any, **kwargs: Any) -> str:
+        return "deepseek-ok"
+
+
+def _build_cost_pipeline(
+    *,
+    cost_per_call: float,
+    provider: str,
+    n: int = 100,
+) -> MockRAGPipeline:
+    """MockRAGPipeline emitting cost_usd + provider on every call."""
+    return MockRAGPipeline(
+        [
+            {
+                "answer": "ans",
+                "context_nodes": [],
+                "metadata": {
+                    "tokens_used": 50,
+                    "cost_usd": cost_per_call,
+                    "provider": provider,
+                },
+            }
+            for _ in range(n)
+        ]
+    )
+
+
+def test_run_under_chaos_two_runner_isolation(sample_queries: list[Query]) -> None:
+    """Happy and chaos runs land in separate BenchmarkRunner.runs lists."""
+    from src.core.benchmarking import run_under_chaos
+
+    pipeline = _build_cost_pipeline(cost_per_call=0.001, provider="groq")
+    client = _ChaosStubClient()
+
+    result = run_under_chaos(
+        pipeline,
+        client,  # type: ignore[arg-type]
+        sample_queries,
+        "tail_latency_spike",
+        num_runs=2,
+        p50_ms=0.0,
+        p99_ms=0.0,
+    )
+
+    assert len(result.happy_runs) == 2
+    assert len(result.chaos_runs) == 2
+    assert result.scenario == "tail_latency_spike"
+
+
+def test_run_under_chaos_delta_pct_includes_cost(
+    sample_queries: list[Query],
+) -> None:
+    """delta_pct['cost_usd'] is computed from per-run mean cost."""
+    from src.core.benchmarking import run_under_chaos
+
+    pipeline = _build_cost_pipeline(cost_per_call=0.001, provider="groq")
+    client = _ChaosStubClient()
+
+    result = run_under_chaos(
+        pipeline,
+        client,  # type: ignore[arg-type]
+        sample_queries,
+        "tail_latency_spike",
+        num_runs=2,
+        p50_ms=0.0,
+        p99_ms=0.0,
+    )
+
+    expected_per_run_cost = len(sample_queries) * 0.001
+    assert result.happy_aggregate["cost_usd"]["mean"] == pytest.approx(expected_per_run_cost)
+    assert result.chaos_aggregate["cost_usd"]["mean"] == pytest.approx(expected_per_run_cost)
+    # MockRAGPipeline emits identical cost regardless of chaos -> delta is 0%
+    assert result.delta_pct["cost_usd"] == pytest.approx(0.0)
+
+
+def test_run_under_chaos_forwards_scenario_overrides(
+    sample_queries: list[Query],
+) -> None:
+    """**scenario_overrides reach the chaos_scenario builder."""
+    from contextlib import nullcontext
+    from unittest.mock import patch as mock_patch
+
+    from src.core.benchmarking import run_under_chaos
+
+    pipeline = _build_cost_pipeline(cost_per_call=0.001, provider="groq")
+    client = _ChaosStubClient()
+
+    captured: dict[str, Any] = {}
+
+    def fake_chaos_scenario(name: str, _client: Any, **overrides: Any) -> Any:
+        captured["name"] = name
+        captured["overrides"] = overrides
+        return nullcontext()
+
+    with mock_patch("src.core.chaos.scenarios.chaos_scenario", fake_chaos_scenario):
+        run_under_chaos(
+            pipeline,
+            client,  # type: ignore[arg-type]
+            sample_queries,
+            "degraded_groq",
+            num_runs=1,
+            kill_after=7,
+        )
+
+    assert captured["name"] == "degraded_groq"
+    assert captured["overrides"] == {"kill_after": 7}
+
+
+def test_compute_delta_pct_nan_for_zero_baseline() -> None:
+    """When happy mean is 0, delta_pct returns NaN (not div-zero)."""
+    from src.core.benchmarking import _compute_delta_pct
+
+    happy = {
+        "recall_at_k": {"mean": 0.0},
+        "mrr": {"mean": 0.5},
+        "latency_ms": {"mean": 100.0},
+        "tokens_per_query": {"mean": 50.0},
+        "cost_usd": {"mean": 0.001},
+    }
+    chaos = {
+        "recall_at_k": {"mean": 0.3},
+        "mrr": {"mean": 0.6},
+        "latency_ms": {"mean": 200.0},
+        "tokens_per_query": {"mean": 50.0},
+        "cost_usd": {"mean": 0.002},
+    }
+
+    delta = _compute_delta_pct(happy, chaos)
+
+    assert math.isnan(delta["recall_at_k"])
+    assert delta["mrr"] == pytest.approx(20.0)
+    assert delta["latency_ms"] == pytest.approx(100.0)
+    assert delta["tokens_per_query"] == pytest.approx(0.0)
+    assert delta["cost_usd"] == pytest.approx(100.0)
+
+
 def test_benchmark_metrics_to_dict() -> None:
     """Test BenchmarkMetrics conversion to dictionary."""
     metrics = BenchmarkMetrics(

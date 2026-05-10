@@ -128,9 +128,11 @@ class LatencyInjector(AbstractContextManager["LatencyInjector"]):
     """Sleep before delegating to `client._call_<provider>`.
 
     Sample uniform in `[p50_ms, p99_ms]` and `time.sleep(sample / 1000)`,
-    then call the original method. This compounds across tenacity retries
-    inside the wrapped `_call_<provider>` — each retry pays the sleep —
-    which mirrors real tail latency and is the v1.0 documented behavior.
+    then call the original method. The original is the @retry-wrapped
+    bound method captured at __enter__ time, so the sleep is paid ONCE
+    per outer provider attempt — tenacity retries inside _call_<provider>
+    run after the sleep, not before each retry. This approximates a slow
+    first-byte from the provider rather than a retry storm.
     """
 
     def __init__(

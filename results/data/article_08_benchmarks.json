@@ -3,7 +3,7 @@
   "methodology": {
     "cluster": "Docker Desktop Kubernetes (kubeadm provisioner)",
     "node_count": 1,
-    "host_hardware": "Apple M4 Pro, 16GB RAM",
+    "host_hardware": "Apple M4 Pro, 48GB RAM",
     "transport": "NodePort 30080 (Service-level kube-proxy LB across replicas)",
     "llm": "Groq llama-3.1-8b-instant (cloud) for /query and /agent",
     "embedding_model": "BAAI/bge-base-en-v1.5",

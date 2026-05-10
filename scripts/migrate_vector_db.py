@@ -190,14 +190,16 @@ def _chroma_id_to_qdrant_id(str_id: str) -> int:
     """Convert a Chroma string ID to a Qdrant-compatible integer ID.
 
     Qdrant point IDs must be unsigned 64-bit integers or UUIDs.
-    Chroma uses arbitrary strings. We use the first 8 hex chars of the MD5
-    digest to get a stable 32-bit integer. Collision probability over 500k
-    documents is negligible (~0.06% for 32-bit space at 500k entries).
+    We take the first 16 hex chars of the MD5 digest (64 bits) so the
+    full Qdrant ID space is used. Birthday-paradox collision probability
+    at 500k docs is roughly n^2 / (2 * 2^64) ~= 6.8e-9, i.e. effectively
+    zero. An earlier version of this helper sliced [:8] (32 bits) and
+    would have hit ~29 expected collisions at 500k docs; do not regress.
 
-    For production use cases with >10M vectors, switch to UUID IDs:
+    For deployments that prefer string identity, switch to UUID5:
         import uuid; uuid.uuid5(uuid.NAMESPACE_DNS, str_id)
     """
-    return int(hashlib.md5(str_id.encode()).hexdigest()[:8], 16)
+    return int(hashlib.md5(str_id.encode()).hexdigest()[:16], 16)
 
 
 def migrate_batch(

@@ -197,7 +197,7 @@ def _build_methodology() -> dict[str, Any]:
     return {
         "cluster": "Docker Desktop Kubernetes (kubeadm provisioner)",
         "node_count": 1,
-        "host_hardware": "Apple M4 Pro, 16GB RAM",
+        "host_hardware": "Apple M4 Pro, 48GB RAM",
         "transport": "NodePort 30080 (Service-level kube-proxy LB across replicas)",
         "llm": "Groq llama-3.1-8b-instant (cloud) for /query and /agent",
         "embedding_model": "BAAI/bge-base-en-v1.5",
@@ -414,7 +414,7 @@ def build_measured_results(csv_dir: Path) -> dict[str, Any]:
         prefix_path = csv_dir / prefix
         if not (csv_dir / (prefix + "_stats.csv")).exists():
             raise FileNotFoundError(
-                f"missing locust output for scenario '{name}': " f"expected {prefix_path}_stats.csv"
+                f"missing locust output for scenario '{name}': expected {prefix_path}_stats.csv"
             )
         ingested = _ingest_stats(prefix_path)
         scenarios[name] = {

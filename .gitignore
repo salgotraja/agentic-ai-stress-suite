@@ -101,11 +101,12 @@ docker-compose.override.yml
 
 # uv / poetry
 .uv/
-# uv.lock IS committed: deployable apps need a pinned lockfile so the
-# image built by infra/Dockerfile (which runs `uv sync --frozen`) is
-# byte-reproducible from a fresh clone. Library projects would gitignore
-# this; this repo ships a FastAPI app to K8s, so it doesn't.
 poetry.lock
+
+# Regenerable Article 9 training data: reproduce with
+# scripts/prepare_dl_training_data.py --output datasets/dl_training/
 datasets/dl_training/
 models/
-TODOS.md
+
+CLAUDE.local.md
+.claude/settings.local.json

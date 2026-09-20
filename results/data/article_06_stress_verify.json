@@ -1,0 +1,931 @@
+{
+  "scenario": "degraded_groq",
+  "primitive_config": {
+    "kill_after": 3,
+    "deepseek_p50_ms": 4000.0,
+    "deepseek_p99_ms": 16000.0
+  },
+  "n_queries": 10,
+  "n_runs_per_condition": 3,
+  "happy_aggregate": {
+    "recall_at_k": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "mrr": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "latency_ms": {
+      "mean": 1175.414554065598,
+      "std": 76.36296977874436
+    },
+    "tokens_per_query": {
+      "mean": 442.3666666666667,
+      "std": 18.61782300198745
+    },
+    "cost_usd": {
+      "mean": 0.00034096333333333333,
+      "std": 1.4894258401589961e-05
+    },
+    "provider_calls": {
+      "groq": 30
+    },
+    "num_runs": 3
+  },
+  "chaos_aggregate": {
+    "recall_at_k": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "mrr": {
+      "mean": 0.0,
+      "std": 0.0
+    },
+    "latency_ms": {
+      "mean": 15106.820331867979,
+      "std": 2695.1563286433684
+    },
+    "tokens_per_query": {
+      "mean": 713.1333333333333,
+      "std": 50.76281447411414
+    },
+    "cost_usd": {
+      "mean": 0.007196536666666667,
+      "std": 0.0012215464764114927
+    },
+    "provider_calls": {
+      "groq": 3,
+      "deepseek": 27
+    },
+    "num_runs": 3
+  },
+  "delta_pct": {
+    "recall_at_k": null,
+    "mrr": null,
+    "latency_ms": 1185.2333910291954,
+    "tokens_per_query": 61.208650440810786,
+    "cost_usd": 2010.6482612988689
+  },
+  "cost_by_provider": {
+    "happy": {
+      "groq": 0.00102289
+    },
+    "chaos": {
+      "groq": 0.0001267,
+      "deepseek": 0.02146291
+    }
+  },
+  "happy_runs": [
+    {
+      "run_id": 1,
+      "timestamp": "2026-06-07T13:53:42.428734",
+      "query_results": [
+        {
+          "query_id": "fb_000",
+          "query_text": "What is dependency injection?",
+          "answer": "**Dependency Injection (DI)**\n=====================================\n\nDependency Injection is a software design pattern that allows components to be loosely coupled, making it easier to test, maintain, and extend the system. It's a technique where one component (the **dependent**) receives another component (the **dependency**) that it needs to function, rather than creating the dependency itself.\n\n**Key Concepts:**\n\n1. **Dependent**: The component that needs a dependency to function.\n2. **Dependency**: The component that the dependent needs to function.\n3. **Injector**: The component that provides the dependency to the dependent.\n\n**How Dependency Injection Works:**\n-----------------------------------\n\n1. The dependent component declares a dependency through an interface or a specific type.\n2. The injector creates an instance of the dependency and passes it to the dependent component.\n3. The dependent component uses the dependency to function.\n\n**Benefits of Dependency Injection:**\n\n1. **Loose Coupling**: Components are not tightly coupled, making it easier to change or replace dependencies without affecting the dependent component.\n2. **Easier Testing**: Dependencies can be easily mocked or stubbed for testing purposes.\n3. **Improved Flexibility**: New dependencies can be easily added or removed without modifying the dependent component.\n4. **Better Code Organization**: Dependencies are separated from the dependent component, making the code easier to read and maintain.\n\n**Example in Java:**\n```java\n// Dependent component\npublic class UserService {\n    private UserRepository userRepository;\n\n    public UserService(UserRepository userRepository) {\n        this.userRepository = userRepository;\n    }\n\n    public List<User> getUsers() {\n        return userRepository.getUsers();\n    }\n}\n\n// Dependency\npublic interface UserRepository {\n    List<User> getUsers();\n}\n\n// Injector\npublic class UserInjector {\n    public UserRepository getUserRepository() {\n        return new UserRepositoryImpl();\n    }\n}\n\n// Dependency implementation\npublic class UserRepositoryImpl implements UserRepository {\n    @Override\n    public List<User> getUsers() {\n        // implementation\n    }\n}\n```\nIn this example, `UserService` is the dependent component, `UserRepository` is the dependency, and `UserInjector` is the injector.\n\n**Conclusion:**\nDependency Injection is a powerful technique that promotes loose coupling, flexibility, and maintainability in software systems. By using dependency injection, you can write more modular, testable, and scalable code.",
+          "retrieved_docs": [],
+          "latency_ms": 870.8912080037408,
+          "tokens_used": 512,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 3.976e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_001",
+          "query_text": "Compare async vs sync in FastAPI.",
+          "answer": "**Async vs Sync in FastAPI**\n=====================================\n\nFastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.7+ based on standard Python type hints. When it comes to handling requests and responses, FastAPI provides two main modes: synchronous (sync) and asynchronous (async). In this comparison, we'll explore the differences between these two modes and discuss their use cases.\n\n### Synchronous (Sync) Mode\n\nIn synchronous mode, FastAPI uses the `starlette` library under the hood, which is a synchronous web framework. When a request comes in, the application blocks until the response is generated. This is the traditional way of handling requests and responses in web development.\n\n**Pros of Sync Mode:**\n\n*   Easy to understand and implement for developers familiar with synchronous programming.\n*   Less overhead in terms of memory usage and CPU usage.\n\n**Cons of Sync Mode:**\n\n*   Can lead to performance issues if the application is handling a large number of concurrent requests.\n*   May cause the application to appear unresponsive or slow if the response time is lengthy.\n\n### Asynchronous (Async) Mode\n\nIn asynchronous mode, FastAPI uses the `aiohttp` library under the hood, which is an asynchronous HTTP client and server engine. When a request comes in, the application does not block and can handle other requests concurrently. This is ideal for applications with high concurrency or those that require handling long-running tasks.\n\n**Pros of Async Mode:**\n\n*   Can handle a large number of concurrent requests, making it suitable for high-traffic applications.\n*   Can improve the overall performance and responsiveness of the application.\n\n**Cons of Async Mode:**\n\n*   Requires a good understanding of asynchronous programming concepts and techniques.\n*   May have higher memory usage and CPU usage compared to synchronous mode.\n\n### Example Use Cases\n\n**Synchronous Mode:**\n\n*   Small-scale applications with low concurrency requirements.\n*   Applications with simple or short-running tasks.\n\n**Asynchronous Mode:**\n\n*   High-traffic applications with high concurrency requirements.\n*   Applications with long-running tasks or those that require handling multiple tasks concurrently.\n\n**Example Code:**\n\nHere's an example of how to use synchronous and asynchronous modes in FastAPI:\n\n```python\nfrom fastapi import FastAPI\nimport time\n\napp = FastAPI()\n\n# Synchronous mode\n@app.get(\"/sync\")\nasync def read_sync():\n    # Simulate a long-running task\n    time.sleep(5)\n    return {\"message\": \"Sync response\"}\n\n# Asynchronous mode\n@app.get(\"/async\")\nasync def read_async():\n    # Simulate a long-running task\n    await asyncio.sleep(5)\n    return {\"message\": \"Async response\"}\n```\n\nIn this example, the `read_sync` function uses the synchronous mode, while the `read_async` function uses the asynchronous mode.\n\n**Conclusion:**\n\nIn conclusion, asynchronous mode in FastAPI is ideal for high-traffic applications with high concurrency requirements, while synchronous mode is suitable for small-scale applications with low concurrency requirements. Understanding the pros and cons of each mode is essential for choosing the correct approach for your application.\n\n**Best Practices:**\n\n*   Use asynchronous mode for high-traffic applications or those with long-running tasks.\n*   Use synchronous mode for small-scale applications or those with low concurrency requirements.\n*   Use asynchronous programming concepts and techniques when using asynchronous mode.\n*   Optimize your application's performance by minimizing blocking operations and using efficient data structures.",
+          "retrieved_docs": [],
+          "latency_ms": 1650.1197920006234,
+          "tokens_used": 752,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 5.887e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_002",
+          "query_text": "Explain Python decorators in one paragraph.",
+          "answer": "Python decorators are a design pattern that allows programmers to modify the behavior of a function or a class without permanently changing its implementation. A decorator is essentially a small function that takes another function as an argument and returns a new function that \"wraps\" the original function. The new function produced by the decorator is then called instead of the original function when it's invoked. Decorators provide a way to add additional functionality to functions, such as logging, authentication, or error handling, without altering the original function's code. They are typically denoted by the `@` symbol followed by the decorator function name, and can be applied to both functions and classes to extend their behavior in a flexible and reusable way.",
+          "retrieved_docs": [],
+          "latency_ms": 353.1089580064872,
+          "tokens_used": 185,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 1.3510000000000001e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_003",
+          "query_text": "When would you choose Redis over Postgres?",
+          "answer": "Here are some scenarios where you might choose Redis over Postgres:\n\n1. **Cache Layer**: Redis is a great choice as a cache layer in front of your database. It's fast, in-memory, and can handle high traffic. By caching frequently accessed data, you can reduce the load on your database and improve performance.\n2. **Real-time Data Processing**: Redis is designed for real-time data processing and can handle high-throughput, low-latency operations. It's a good choice for applications that require real-time analytics, gaming, or chat systems.\n3. **Queues and Message Brokers**: Redis has built-in support for queues and message brokers, making it a good choice for applications that require message passing between services.\n4. **Session Management**: Redis can be used as a session store for web applications, providing a fast and scalable way to store user sessions.\n5. **Leaderboard and Rankings**: Redis is a good choice for building leaderboards and rankings, as it can handle high-throughput, low-latency operations and provides atomic increments.\n6. **Content Delivery Network (CDN)**: Redis can be used as a CDN, caching frequently accessed content and reducing the load on your origin servers.\n7. **High-Performance Computing**: Redis is designed for high-performance computing and can handle large-scale computations and data processing.\n8. **Low-Latency Data Storage**: If you need to store data with very low latency, Redis may be a better choice than Postgres. Redis stores data in RAM, which provides much faster access times than disk-based storage.\n9. **Event Sourcing**: Redis can be used as a store for event sourcing, where every action in the application is stored as an event.\n10. **Microservices Architecture**: In a microservices architecture, Redis can be used as a communication bus between services, providing a lightweight and scalable way to exchange data.\n\nWhen choosing between Redis and Postgres, consider the following factors:\n\n* **Data complexity**: If your data is complex and requires relationships, Postgres may be a better choice. If your data is simple and doesn't require relationships, Redis may be sufficient.\n* **Scalability**: If you expect high traffic or large amounts of data, Redis may be a better choice due to its in-memory design and horizontal scaling capabilities.\n* **Data persistence**: Postgres provides strong data persistence, while Redis has a more relaxed data persistence model. If data persistence is critical, Postgres may be a better choice.\n* **Query complexity**: If you need to perform complex queries, Postgres may be a better choice due to its support for SQL and query optimization.\n\nUltimately, the choice between Redis and Postgres depends on your specific use case and requirements.",
+          "retrieved_docs": [],
+          "latency_ms": 1160.9482079948066,
+          "tokens_used": 596,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 4.6359999999999997e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_004",
+          "query_text": "What does HyDE stand for in retrieval?",
+          "answer": "I couldn't find any widely known retrieval concept that is represented by the acronym \"HyDE\".",
+          "retrieved_docs": [],
+          "latency_ms": 1123.5292079945793,
+          "tokens_used": 64,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 3.8e-06,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_005",
+          "query_text": "Why use tenacity for retries?",
+          "answer": "**Why Use Tenacity for Retries?**\n\nTenacity is a popular, flexible, and easy-to-use library for implementing retries in Java. Here are some key reasons why you should use Tenacity for retries:\n\n### 1. **Flexible Retry Policies**\n\nTenacity allows you to define custom retry policies based on your specific use case. You can specify the number of retries, the delay between retries, and even the maximum delay. This flexibility makes it easy to adapt to different error scenarios.\n\n### 2. **Automatic Exponential Backoff**\n\nTenacity includes an exponential backoff strategy that increases the delay between retries. This helps prevent overwhelming the system with retries and reduces the likelihood of further errors.\n\n### 3. **Support for Multiple Exceptions**\n\nYou can specify multiple exceptions that trigger retries, allowing you to handle different error types. This helps ensure that your application remains resilient in the face of various exceptions.\n\n### 4. **Integration with Spring Boot**\n\nTenacity seamlessly integrates with Spring Boot, making it easy to implement retries in your Spring-based applications.\n\n### 5. **Simple API**\n\nThe Tenacity API is simple and easy to use, making it a great choice for developers who want to implement retries without a steep learning curve.\n\n### 6. **Thread-Safe**\n\nTenacity is thread-safe, ensuring that retries are executed correctly even in multi-threaded environments.\n\n### Example Use Case\n\nHere's an example of using Tenacity to implement retries in a simple service:\n\n```java\nimport org.springframework.stereotype.Service;\n\nimport com.github.benmanes.caffeine.cache.Cache;\nimport com.github.benmanes.caffeine.cache.Ticker;\nimport io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;\nimport io.github.resilience4j.retry.Retry;\nimport io.github.resilience4j.retry.RetryConfig;\nimport io.github.resilience4j.retry.RetryRegistry;\n\n@Service\npublic class MyService {\n\n    @CircuitBreaker(name = \"my-service\", fallbackMethod = \"fallback\")\n    public String myMethod() {\n        // Simulate an exception\n        throw new RuntimeException(\"Something went wrong\");\n    }\n\n    public String fallback() {\n        return \"My service is currently unavailable\";\n    }\n\n    @Bean\n    public RetryConfig myRetryConfig() {\n        return RetryConfig.custom()\n            .maxAttempts(3)\n            .waitDurationInMilliseconds(100)\n            .build();\n    }\n\n    @Bean\n    public RetryRegistry myRetryRegistry(RetryConfig config) {\n        return RetryRegistry.of(config);\n    }\n}\n```\n\nIn this example, the `myMethod()` service is annotated with `@CircuitBreaker`, which triggers a retry when an exception occurs. The `myRetryConfig()` method defines the retry policy, and the `myRetryRegistry()` method creates a retry registry based on the config.\n\nBy using Tenacity, you can simplify your retry logic and make your applications more resilient to errors.",
+          "retrieved_docs": [],
+          "latency_ms": 2404.10754099139,
+          "tokens_used": 648,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 5.0579999999999993e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_006",
+          "query_text": "What is BGE-base-en-v1.5 used for?",
+          "answer": "I couldn't find any information about 'BGE-base-en-v1.5'. It's possible that this term is related to a specific project or software. However, based on the name, I'm going to make an educated guess.\n\n'BGE' typically stands for 'Blender Game Engine', which was a built-in game engine in Blender, a popular 3D creation software. 'Base-en' might indicate that it's an English language base for the game engine, and 'v1.5' suggests that it's version 1.5 of the base.\n\nWithout more context or information, it's difficult to provide a precise answer. If you could provide more details or clarify what BGE-base-en-v1.5 is used for, I'd be happy to help further.",
+          "retrieved_docs": [],
+          "latency_ms": 438.2904999947641,
+          "tokens_used": 209,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 1.528e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_007",
+          "query_text": "Compare LlamaIndex and Haystack briefly.",
+          "answer": "LlamaIndex and Haystack are both artificial intelligence (AI) and natural language processing (NLP) platforms. Here's a brief comparison:\n\n1. **Purpose**:\n   - LlamaIndex: It's a large language model index that allows indexing and querying large-scale language models. It's designed to improve the efficiency and scalability of AI models.\n   - Haystack: Haystack is an open-source framework that enables building and deploying search applications with NLP capabilities. It's designed for search and question-answering tasks.\n\n2. **Features**:\n   - LlamaIndex: Offers efficient indexing and querying of large language models, allowing for fast and accurate responses.\n   - Haystack: Includes features such as document ranking, entity recognition, and question-answering, making it suitable for various NLP applications.\n\n3. **Architecture**:\n   - LlamaIndex: Built on top of a distributed architecture, allowing for scalable and efficient processing of large amounts of data.\n   - Haystack: Uses a modular architecture, making it flexible and customizable for a wide range of NLP tasks and applications.\n\n4. **Licensing**:\n   - LlamaIndex: Details about its licensing model are not publicly available.\n   - Haystack: Open-source under the Apache-2.0 license, allowing for free use, modification, and distribution.\n\n5. **Ease of Use**:\n   - LlamaIndex: Provides a simple API for querying language models, making it relatively easy to use for developers.\n   - Haystack: Offers a more complex architecture, requiring a good understanding of NLP concepts and programming skills to set up and customize the framework.\n\nIn summary, LlamaIndex is focused on efficient indexing and querying of large language models, while Haystack is a comprehensive framework for building and deploying search applications with NLP capabilities. The choice between the two depends on the specific requirements of your project.",
+          "retrieved_docs": [],
+          "latency_ms": 1648.5544589959318,
+          "tokens_used": 432,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 3.324e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_008",
+          "query_text": "When does ProcessPoolExecutor beat threads?",
+          "answer": "**ProcessPoolExecutor vs Threads: When to Choose ProcessPoolExecutor**\n\nIn Python, `ProcessPoolExecutor` and threads are two ways to achieve concurrent execution of tasks. While threads are often the default choice due to their simplicity, `ProcessPoolExecutor` can offer better performance in certain situations. Here's when `ProcessPoolExecutor` beats threads:\n\n### 1. **CPU-bound tasks**\n\nWhen tasks are computationally intensive and spend most of their time executing CPU instructions, `ProcessPoolExecutor` is a better choice. This is because Python's Global Interpreter Lock (GIL) prevents multiple threads from executing Python bytecodes at once. In contrast, `ProcessPoolExecutor` creates separate processes, which can execute CPU instructions concurrently without the GIL restriction.\n\n### 2. **Tasks that consume significant memory**\n\nIf tasks consume a large amount of memory, using threads can lead to memory fragmentation and increased memory usage. In this case, `ProcessPoolExecutor` is a better choice because each process has its own memory space, which reduces memory fragmentation and makes it easier to manage memory usage.\n\n### 3. **Tasks that block or sleep for extended periods**\n\nWhen tasks block or sleep for extended periods, threads can be less efficient due to the overhead of context switching between threads. In contrast, `ProcessPoolExecutor` can take advantage of the fact that processes can run in parallel, reducing the overhead of context switching.\n\n### 4. **Large numbers of tasks with short execution times**\n\nIf you have a large number of tasks with short execution times, `ProcessPoolExecutor` can be more efficient due to the fact that processes can run in parallel. This is because the overhead of creating and managing processes is relatively low compared to the overhead of context switching between threads.\n\n### Example Use Case: CPU-bound Task\n\n```python\nfrom concurrent.futures import ProcessPoolExecutor\nimport time\nimport math\n\ndef cpu_bound_task(n):\n    result = 0\n    for i in range(n):\n        result += math.sin(i)\n    return result\n\nif __name__ == '__main__':\n    with ProcessPoolExecutor(max_workers=4) as executor:\n        futures = [executor.submit(cpu_bound_task, 1000000) for _ in range(4)]\n        results = [future.result() for future in futures]\n\n    print(results)\n```\n\nIn this example, we use `ProcessPoolExecutor` to execute four CPU-bound tasks concurrently. Each task uses a large loop to simulate computationally intensive work. By using processes, we can take advantage of multiple CPU cores to execute the tasks in parallel, resulting in significant performance improvements.\n\n### Conclusion\n\nIn summary, `ProcessPoolExecutor` beats threads when:\n\n* Tasks are CPU-bound and require concurrent execution.\n* Tasks consume significant memory and require efficient memory management.\n* Tasks block or sleep for extended periods, reducing context switching overhead.\n* Large numbers of tasks with short execution times require parallel execution.\n\nHowever, threads are still a good choice when tasks are I/O-bound, require shared state, or have a high overhead of creating and managing processes.",
+          "retrieved_docs": [],
+          "latency_ms": 1269.7753329994157,
+          "tokens_used": 667,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 5.207e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_009",
+          "query_text": "What is semantic caching?",
+          "answer": "Semantic caching is a technique used in databases and data storage systems to improve performance by caching frequently accessed data and its associated metadata. The main difference between semantic caching and traditional caching is that semantic caching also caches the context or metadata associated with the data, such as the query or the query parameters.\n\nIn traditional caching, only the actual data is cached, without any information about how or why it was requested. This can lead to issues such as:\n\n1. Caching irrelevant data: If the cached data is not relevant to the current query, it may lead to incorrect results or slow down the system.\n2. Caching data with outdated metadata: If the metadata associated with the cached data becomes outdated, it may lead to incorrect results or slow down the system.\n\nSemantic caching addresses these issues by caching the context or metadata associated with the data, such as:\n\n1. Query parameters: The parameters used to query the data, such as filters, sorting, and pagination.\n2. Query structure: The structure of the query, such as the columns used and the aggregation functions applied.\n3. User context: The user's session, location, and preferences.\n\nBy caching the context or metadata, semantic caching can provide several benefits, including:\n\n1. Improved performance: By caching frequently accessed data and its associated metadata, semantic caching can reduce the number of database queries and improve system performance.\n2. Reduced data retrieval: By caching the metadata associated with the data, semantic caching can reduce the amount of data that needs to be retrieved from the database.\n3. More accurate results: By caching the context or metadata associated with the data, semantic caching can ensure that the results are accurate and relevant to the current query.\n\nSemantic caching is commonly used in databases, data warehouses, and data lakes, and is particularly useful in applications where data is frequently accessed with varying parameters, such as e-commerce websites, financial systems, and business intelligence platforms.\n\nHere's an example of how semantic caching can work in a simple e-commerce application:\n\n1. A user searches for products by price range and category.\n2. The application caches the result along with the query parameters (price range and category).\n3. When the same user searches for products again with the same price range and category, the application can retrieve the cached result instead of re-executing the query.\n4. If the user searches for products with different parameters, the application can retrieve the cached result if it exists, or re-execute the query if not.\n\nIn summary, semantic caching is a technique that caches frequently accessed data and its associated metadata to improve system performance, reduce data retrieval, and provide more accurate results.",
+          "retrieved_docs": [],
+          "latency_ms": 1636.4070830022683,
+          "tokens_used": 569,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 4.4319999999999996e-05,
+          "provider": "groq"
+        }
+      ],
+      "metrics": {
+        "mean_recall_at_k": 0.0,
+        "std_recall_at_k": 0.0,
+        "mean_mrr": 0.0,
+        "std_mrr": 0.0,
+        "mean_latency_ms": 1255.5732289984007,
+        "std_latency_ms": 617.4527442421868,
+        "total_tokens": 4634,
+        "mean_tokens_per_query": 463.4,
+        "total_queries": 10,
+        "cost_usd": 0.00035779,
+        "provider_calls": {
+          "groq": 10
+        }
+      }
+    },
+    {
+      "run_id": 2,
+      "timestamp": "2026-06-07T13:53:54.985816",
+      "query_results": [
+        {
+          "query_id": "fb_000",
+          "query_text": "What is dependency injection?",
+          "answer": "Dependency Injection (DI) is a software design pattern that allows components to be loosely coupled, making it easier to test, maintain, and extend software systems. It involves decoupling the dependent object from the object that it depends on, and instead, providing the dependent object with its dependencies.\n\n**Key Concepts:**\n\n1. **Dependency:** A dependent object relies on another object to function.\n2. **Dependency Injection Container:** A central component that manages the creation and injection of dependencies.\n3. **Service Locator:** A pattern that allows components to locate and retrieve dependencies without knowing their implementation details.\n\n**How Dependency Injection Works:**\n\n1. **Decouple the dependent object:** Remove the hard-coded dependency from the dependent object.\n2. **Register dependencies with the container:** The container is informed about the dependencies required by the dependent object.\n3. **Inject dependencies:** The container provides the dependent object with its dependencies.\n\n**Benefits of Dependency Injection:**\n\n1. **Loose Coupling:** Reduced dependence between objects makes it easier to modify or replace individual components without affecting other parts of the system.\n2. **Reusability:** Components can be reused in different contexts, reducing code duplication.\n3. **Testability:** Dependencies can be easily mocked or stubbed, making it easier to test individual components in isolation.\n4. **Flexibility:** New dependencies can be added or replaced without affecting the dependent object.\n\n**Common Examples of Dependency Injection:**\n\n1. **Database Connection:** A data access object (DAO) depends on a database connection to retrieve data.\n2. **Logger:** A service object depends on a logger to log events.\n3. **Payment Gateway:** A payment processing service depends on a payment gateway to process transactions.\n\n**Example Code (Python):**\n\n```python\nclass Logger:\n    def log(self, message):\n        print(message)\n\nclass Service:\n    def __init__(self, logger):\n        self.logger = logger\n\n    def process(self):\n        self.logger.log(\"Processing...\")\n        # Process some data\n\n# Create a logger instance\nlogger = Logger()\n\n# Create a service instance and inject the logger\nservice = Service(logger)\n\n# Use the service\nservice.process()\n```\n\nIn this example, the `Service` class depends on a `Logger` instance. The `Logger` instance is created and injected into the `Service` instance, demonstrating dependency injection.",
+          "retrieved_docs": [],
+          "latency_ms": 1306.7172079900047,
+          "tokens_used": 520,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 4.0400000000000006e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_001",
+          "query_text": "Compare async vs sync in FastAPI.",
+          "answer": "**Async vs Sync in FastAPI**\n=====================================\n\nFastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.7+ based on standard Python type hints. In this comparison, we will explore the differences between asynchronous and synchronous code in FastAPI.\n\n**Synchronous Code (Sync)**\n---------------------------\n\nSynchronous code executes one task at a time, waiting for each task to complete before moving on to the next one. In FastAPI, you can use synchronous functions to handle requests, but this approach can lead to:\n\n*   Blocking the server: When a synchronous function is executed, the server thread is blocked, preventing it from handling other requests.\n*   Performance issues: Synchronous code can lead to performance bottlenecks, as each request is handled sequentially.\n\n**Asynchronous Code (Async)**\n---------------------------\n\nAsynchronous code, on the other hand, allows for multiple tasks to run concurrently without blocking. In FastAPI, you can use asynchronous functions (defined with the `async` keyword) to handle requests. This approach has several benefits:\n\n*   Non-blocking server: Asynchronous functions do not block the server thread, allowing it to handle multiple requests concurrently.\n*   Improved performance: Asynchronous code can significantly improve the performance of your API, as multiple requests can be handled simultaneously.\n\n**Comparison Example**\n---------------------\n\nHere's a simple example that demonstrates the difference between synchronous and asynchronous code in FastAPI:\n\n### Synchronous Code (Sync)\n\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\ndef slow_function():\n    # Simulate a time-consuming operation\n    import time\n    time.sleep(2)\n    return \"Result\"\n\n@app.get(\"/\")\ndef read_root():\n    result = slow_function()\n    return {\"message\": result}\n```\n\n### Asynchronous Code (Async)\n\n```python\nfrom fastapi import FastAPI\nimport asyncio\n\napp = FastAPI()\n\nasync def slow_function():\n    # Simulate a time-consuming operation\n    await asyncio.sleep(2)\n    return \"Result\"\n\n@app.get(\"/\")\nasync def read_root():\n    result = await slow_function()\n    return {\"message\": result}\n```\n\n**Best Practices**\n------------------\n\nTo take full advantage of asynchronous code in FastAPI:\n\n*   Use the `async` keyword to define asynchronous functions.\n*   Use `await` to wait for the completion of asynchronous operations.\n*   Avoid mixing synchronous and asynchronous code in the same function.\n*   Use libraries like `asyncio` to perform asynchronous operations.\n\n**Conclusion**\n--------------\n\nIn conclusion, asynchronous code is generally preferred in FastAPI due to its non-blocking nature and improved performance. By using asynchronous functions and awaiting the completion of operations, you can create high-performance APIs that handle multiple requests concurrently.",
+          "retrieved_docs": [],
+          "latency_ms": 1005.0557909999043,
+          "tokens_used": 604,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 4.7029999999999995e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_002",
+          "query_text": "Explain Python decorators in one paragraph.",
+          "answer": "Python decorators are a powerful feature that allows programmers to modify or extend the behavior of existing functions or classes without permanently changing their implementation. They are essentially functions that wrap around other functions, allowing you to change their behavior or add new functionality without permanently modifying the original code. A decorator is typically defined using the `@` symbol followed by the decorator function name, and it takes a function as an argument. The decorator function then returns a new function that \"wraps\" the original function, allowing you to modify its behavior or add new functionality before or after it is executed. This can be useful for tasks such as logging, error handling, authentication, or caching, and can make code more modular, reusable, and easier to maintain.",
+          "retrieved_docs": [],
+          "latency_ms": 830.7006249960978,
+          "tokens_used": 190,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 1.3909999999999999e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_003",
+          "query_text": "When would you choose Redis over Postgres?",
+          "answer": "Here are some scenarios where you might choose Redis over Postgres:\n\n1. **In-Memory Data Store**: Redis is an in-memory data store, which means it stores data in RAM, making it much faster than Postgres. You would choose Redis when you need to store small to medium-sized datasets that are frequently accessed and updated.\n\n2. **Cache Layer**: Redis can be used as a cache layer, which is a pattern where you store frequently accessed data in Redis and retrieve it from there instead of querying the database directly. This can improve performance by reducing the load on the database.\n\n3. **Real-Time Data Processing**: Redis has built-in support for real-time data processing through its Publish-Subscribe model. You would choose Redis when you need to process real-time data streams, such as social media feeds or financial market data.\n\n4. **Session Management**: Redis is often used for session management, as it provides a simple way to store and retrieve session data.\n\n5. **Leaderboards and Rankings**: Redis has built-in support for leaderboards and rankings, which makes it a great fit for applications that require real-time leaderboard updates.\n\n6. **High-Frequency Data Updates**: Redis is designed for high-frequency data updates, making it a great fit for applications that require rapid data updates, such as live scores, auction sites, or financial exchanges.\n\n7. **Distributed Locks and Queues**: Redis provides built-in support for distributed locks and queues, which makes it a great fit for applications that require concurrent access to shared resources.\n\n8. **Microservices Communication**: Redis can be used as a message broker for microservices communication, allowing services to communicate with each other in real-time.\n\nIn general, you would choose Redis over Postgres when you need:\n\n- Fast data access and updates\n- In-memory data storage\n- Real-time data processing\n- Session management\n- Leaderboards and rankings\n- High-frequency data updates\n- Distributed locks and queues\n- Microservices communication\n\nHowever, keep in mind that Redis is not a replacement for Postgres. You can use both Redis and Postgres together to take advantage of their respective strengths. For example, you can use Redis as a cache layer in front of a Postgres database.",
+          "retrieved_docs": [],
+          "latency_ms": 1339.5844170008786,
+          "tokens_used": 496,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 3.836e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_004",
+          "query_text": "What does HyDE stand for in retrieval?",
+          "answer": "In retrieval, HyDE stands for 'Hierarchy Descent' but it's more likely to be 'Hierarchy Descent'  or possibly 'Hierarchy Depth' but actually  it is more commonly associated with 'Hierarchy Depth' or 'Hierarchy Descent' but actually  'HyDE' is more accurately 'Hierarchy Descent'",
+          "retrieved_docs": [],
+          "latency_ms": 918.6974999902304,
+          "tokens_used": 110,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 7.48e-06,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_005",
+          "query_text": "Why use tenacity for retries?",
+          "answer": "**Why Use Tenacity for Retries?**\n\nTenacity is a lightweight, flexible, and easy-to-use library for implementing retries and exponential backoff in Java and Kotlin. Here are some reasons why you might want to use tenacity for retries:\n\n### 1. **Easy to Use**\n\nTenacity provides a simple and intuitive API for implementing retries and exponential backoff. It eliminates the need to write boilerplate code for handling retries and backoff.\n\n### 2. **Configurable**\n\nTenacity allows you to configure retries and backoff strategies to suit your specific use case. You can adjust the number of retries, the backoff strategy, and the exponential backoff factor.\n\n### 3. **Exponential Backoff**\n\nTenacity provides built-in support for exponential backoff, which is a common strategy for handling transient failures. Exponential backoff helps prevent overwhelming the system with retries in the event of a prolonged failure.\n\n### 4. **Retry Policies**\n\nTenacity supports various retry policies, including:\n\n* **Exponential Backoff**: retries with an increasingly larger delay between attempts\n* **Linear Backoff**: retries with a fixed delay between attempts\n* **Constant Backoff**: retries with a fixed delay between attempts\n\n### 5. **Automatic Retry Handling**\n\nTenacity allows you to handle retries automatically, without the need for manual intervention. This makes it easier to write robust and fault-tolerant code.\n\n### 6. **Integration with Popular Libraries**\n\nTenacity integrates well with popular libraries such as Spring Boot, Micronaut, and Quarkus, making it easy to use in a variety of applications.\n\n### Example Use Case\n\nHere's an example of how to use tenacity to implement retries and exponential backoff in a Java application:\n```java\nimport io.github.resilience4j.ratelimiter.RetryWithBackoff;\n\npublic class MyService {\n    @RetryWithBackoff(name = \"my-retry-policy\",\n            retries = 3,\n            failureThresholdDuration = Duration.ofSeconds(30),\n            exponentialBackoffFirstRetryDuration = Duration.ofMillis(100),\n            exponentialBackoffNextRetryDuration = Duration.ofMillis(200))\n    public void myMethod() {\n        // code to call an external service\n    }\n}\n```\nIn this example, the `myMethod` method is wrapped with a retry policy that will attempt to call the external service up to 3 times, with an increasingly larger delay between attempts.\n\n### Conclusion\n\nTenacity provides a lightweight and easy-to-use library for implementing retries and exponential backoff in Java and Kotlin. Its configurable and flexible API makes it a great choice for a variety of applications, from simple services to complex distributed systems.",
+          "retrieved_docs": [],
+          "latency_ms": 1640.7574170007138,
+          "tokens_used": 591,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 4.6019999999999996e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_006",
+          "query_text": "What is BGE-base-en-v1.5 used for?",
+          "answer": "I couldn't find any specific information about \"BGE-base-en-v1.5\". It's possible that it's a proprietary or internal term, or it might be a part of a larger project.\n\nHowever, I found that \"BGE\" can refer to \"Blender Game Engine\", which was a game engine that was part of the Blender software. Blender is a free and open-source 3D creation software that can be used for modeling, rendering, animation, and more.\n\nIf \"BGE-base-en-v1.5\" is related to the Blender Game Engine, it might be a specific version or configuration of the game engine. Without more context or information, I couldn't determine exactly what it's used for.",
+          "retrieved_docs": [],
+          "latency_ms": 559.19229099527,
+          "tokens_used": 196,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 1.4240000000000001e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_007",
+          "query_text": "Compare LlamaIndex and Haystack briefly.",
+          "answer": "LlamaIndex and Haystack are both open-source, cloud-based knowledge management platforms. Here's a brief comparison:\n\n**Similarities:**\n\n1. Both are built to manage and retrieve knowledge from large datasets, including text, images, and other media.\n2. They use AI-powered search and retrieval algorithms to provide accurate results.\n3. Both platforms can be integrated with various data sources and applications.\n\n**Differences:**\n\n1. **Data Source**: LlamaIndex is trained on a large dataset of text from various sources, including books, articles, and websites. Haystack, on the other hand, can be trained on a wide range of data sources, including documents, databases, and APIs.\n2. **Training Method**: LlamaIndex uses a pre-trained model, while Haystack allows users to train their own models on their specific data.\n3. **Search Functionality**: LlamaIndex has a more basic search functionality, while Haystack has a more advanced search interface with features like faceted search and filtering.\n4. **Customization**: Haystack is generally more customizable than LlamaIndex, with a larger community and more documentation available.\n\nIn summary, both LlamaIndex and Haystack are powerful knowledge management platforms, but Haystack is more flexible and customizable, while LlamaIndex is a more straightforward, pre-trained model.",
+          "retrieved_docs": [],
+          "latency_ms": 856.0638749913778,
+          "tokens_used": 315,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 2.388e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_008",
+          "query_text": "When does ProcessPoolExecutor beat threads?",
+          "answer": "ProcessPoolExecutor generally beats threads in the following scenarios:\n\n1. **CPU-bound tasks**: If your tasks are computationally intensive and spend most of their time executing CPU instructions, ProcessPoolExecutor is a better choice than threads. This is because creating a new process is faster than creating a new thread, and processes can run on multiple CPU cores simultaneously, increasing overall throughput.\n\n2. **Memory-intensive tasks**: When tasks require a lot of memory or have large memory allocations, ProcessPoolExecutor can be a better choice because each process has its own memory space, avoiding memory contention between threads.\n\n3. **I/O-bound tasks with network access**: If your tasks involve network I/O, ProcessPoolExecutor can be a better choice because each process has its own network socket, reducing the overhead of thread synchronization and improving overall throughput.\n\n4. **Tasks with unpredictable execution times**: If the execution time of tasks is highly variable and unpredictable, ProcessPoolExecutor can be a better choice because processes can be dynamically created and terminated, allowing for more efficient resource usage.\n\n5. **Tasks that require restarting**: If tasks need to be restarted due to failures or other reasons, ProcessPoolExecutor can be a better choice because processes can be terminated and recreated, whereas threads may require more complex synchronization to restart.\n\nHowever, threads are generally a better choice when:\n\n1. **Tasks are I/O-bound**: If tasks spend most of their time waiting for I/O operations, such as reading from disk or waiting for database queries, threads can be a better choice because they can overlap I/O operations and improve overall throughput.\n\n2. **Memory usage is limited**: If memory usage is limited and tasks need to share memory, threads can be a better choice because they can share memory and reduce memory overhead.\n\n3. **Task communication is simple**: If tasks need to communicate with each other, threads can be a better choice because they can use shared memory and synchronization primitives to communicate.\n\nIn summary, ProcessPoolExecutor is generally a better choice than threads when tasks are CPU-bound, memory-intensive, or involve network I/O, while threads are a better choice when tasks are I/O-bound, memory usage is limited, or task communication is simple.\n\nHere's an example of how you can use ProcessPoolExecutor and ThreadPoolExecutor in Python:\n\n```python\nimport concurrent.futures\nimport time\n\ndef cpu_bound_task(n):\n    result = 0\n    for i in range(n):\n        result += i\n    return result\n\ndef io_bound_task(n):\n    time.sleep(n)\n    return n\n\ndef main():\n    # CPU-bound tasks\n    with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:\n        start_time = time.time()\n        futures = [executor.submit(cpu_bound_task, 10**7) for _ in range(4)]\n        results = [future.result() for future in futures]\n        print(f\"CPU-bound tasks took {time.time() - start_time} seconds\")\n\n    # I/O-bound tasks\n    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:\n        start_time = time.time()\n        futures = [executor.submit(io_bound_task, 1) for _ in range(4)]\n        results = [future.result() for future in futures]\n        print(f\"I/O-bound tasks took {time.time() - start_time} seconds\")\n\nif __name__ == \"__main__\":\n    main()\n```\n\nIn this example, we use ProcessPoolExecutor for CPU-bound tasks and ThreadPoolExecutor for I/O-bound tasks. The results show that ProcessPoolExecutor is faster for CPU-bound tasks and ThreadPoolExecutor is faster for I/O-bound tasks.",
+          "retrieved_docs": [],
+          "latency_ms": 1454.0954999974929,
+          "tokens_used": 779,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 6.103e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_009",
+          "query_text": "What is semantic caching?",
+          "answer": "Semantic caching is a technique used to improve the performance of query execution in databases and information retrieval systems. It involves storing the results of frequently executed queries or the intermediate results of complex queries in a cache, so that they can be quickly retrieved when the same query is executed again in the future.\n\nThe key difference between semantic caching and traditional caching is that semantic caching stores the meaning or the result of the query, rather than just the raw data. This allows the cache to be used not just for simple queries, but also for complex queries that involve multiple joins, aggregations, and filtering operations.\n\nSemantic caching systems typically use a combination of techniques such as:\n\n1. **Query analysis**: Analyzing the query to identify the relevant data and the operations that need to be performed.\n2. **Query optimization**: Optimizing the query to reduce the amount of data that needs to be processed.\n3. **Cache storage**: Storing the results of the query in a cache, along with metadata that describes the query and the results.\n4. **Cache retrieval**: Retrieving the results of the query from the cache when the same query is executed again.\n\nSemantic caching can provide several benefits, including:\n\n1. **Improved performance**: By reducing the need for repeated query execution, semantic caching can improve the performance of database queries and information retrieval systems.\n2. **Reduced latency**: By providing quick access to cached results, semantic caching can reduce the latency of query execution.\n3. **Increased scalability**: By reducing the load on the database or information retrieval system, semantic caching can help to improve scalability and support larger volumes of data.\n\nHowever, semantic caching also has some challenges and limitations, including:\n\n1. **Cache management**: Managing the cache to ensure that it remains up-to-date and relevant.\n2. **Cache invalidation**: Ensuring that the cache is updated when the underlying data changes.\n3. **Query complexity**: Handling complex queries that involve multiple joins, aggregations, and filtering operations.\n\nTo address these challenges, various techniques have been proposed, such as:\n\n1. **Cache partitioning**: Partitioning the cache into smaller, independent caches that can be managed and updated separately.\n2. **Cache expiration**: Implementing a cache expiration mechanism that ensures that the cache is updated periodically.\n3. **Query rewriting**: Rewriting complex queries to simplify them and make them more cache-friendly.\n\nOverall, semantic caching is a powerful technique for improving the performance of query execution in databases and information retrieval systems. However, it requires careful management and optimization to ensure that it remains effective and relevant.",
+          "retrieved_docs": [],
+          "latency_ms": 1124.3298329936806,
+          "tokens_used": 556,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 4.328e-05,
+          "provider": "groq"
+        }
+      ],
+      "metrics": {
+        "mean_recall_at_k": 0.0,
+        "std_recall_at_k": 0.0,
+        "mean_mrr": 0.0,
+        "std_mrr": 0.0,
+        "mean_latency_ms": 1103.519445695565,
+        "std_latency_ms": 330.7882746503096,
+        "total_tokens": 4357,
+        "mean_tokens_per_query": 435.7,
+        "total_queries": 10,
+        "cost_usd": 0.00033562999999999996,
+        "provider_calls": {
+          "groq": 10
+        }
+      }
+    },
+    {
+      "run_id": 3,
+      "timestamp": "2026-06-07T13:54:06.021902",
+      "query_results": [
+        {
+          "query_id": "fb_000",
+          "query_text": "What is dependency injection?",
+          "answer": "**Dependency Injection (DI)**\n==========================\n\nDependency injection is a software design pattern that allows components to be loosely coupled, making it easier to test, maintain, and extend the system. It involves separating the creation of a component's dependencies from its usage, enabling components to be decoupled from their dependencies.\n\n**What is a Dependency?**\n-------------------------\n\nA dependency is an object or service that a component relies on to function. In traditional object-oriented programming, a component would create its dependencies internally. However, with dependency injection, the component receives its dependencies from an external source, rather than creating them itself.\n\n**Key Benefits of Dependency Injection**\n----------------------------------------\n\n1. **Loose Coupling**: Decouples components from their dependencies, making it easier to modify or replace dependencies without affecting the component.\n2. **Testability**: Easier to test components in isolation, as dependencies can be easily mocked or stubbed.\n3. **Flexibility**: Allows for greater flexibility in component design, as components can be easily configured to use different dependencies.\n4. **Reusability**: Encourages code reuse, as components can be easily reused across different contexts.\n\n**Types of Dependency Injection**\n----------------------------------\n\n1. **Constructor Injection**: Dependencies are injected through a component's constructor.\n2. **Setter Injection**: Dependencies are injected through setter methods.\n3. **Interface Injection**: Dependencies are injected through an interface.\n\n**Example in Java**\n```java\n// Traditional approach (no DI)\npublic class UserService {\n    private Database database;\n\n    public UserService() {\n        this.database = new Database();\n    }\n\n    public void createUser(User user) {\n        database.saveUser(user);\n    }\n}\n\n// Dependency injection approach\npublic class UserService {\n    private final Database database;\n\n    public UserService(Database database) {\n        this.database = database;\n    }\n\n    public void createUser(User user) {\n        database.saveUser(user);\n    }\n}\n\n// Example usage\npublic class Main {\n    public static void main(String[] args) {\n        Database database = new Database();\n        UserService userService = new UserService(database);\n        userService.createUser(new User(\"John\"));\n    }\n}\n```\nIn this example, the `UserService` component is decoupled from its dependency (`Database`) through constructor injection. The `Database` instance is created and passed to the `UserService` constructor, rather than being created internally.\n\n**Best Practices**\n------------------\n\n1. **Use constructor injection**: This is the most common and recommended approach.\n2. **Use interfaces**: Use interfaces to define dependencies, rather than concrete implementations.\n3. **Use a dependency injection framework**: Consider using a framework like Spring or Guice to manage dependencies.\n4. **Keep dependencies simple**: Avoid complex dependencies and focus on simple, single-purpose dependencies.\n5. **Test your components**: Write unit tests for your components to ensure they work correctly with their dependencies.",
+          "retrieved_docs": [],
+          "latency_ms": 865.399709000485,
+          "tokens_used": 617,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 4.8160000000000006e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_001",
+          "query_text": "Compare async vs sync in FastAPI.",
+          "answer": "**Async vs Sync in FastAPI**\n=====================================\n\nFastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.7+ based on standard Python type hints. When it comes to handling requests, FastAPI supports both synchronous and asynchronous approaches.\n\n### Synchronous Code\n\nSynchronous code executes one task at a time, blocking the execution of other tasks until the current task is completed. In FastAPI, you can write synchronous code using the `@app.get` or `@app.post` decorators.\n\n**Example: Synchronous Route**\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\nasync def long_running_function():\n    # Simulate a long-running task\n    await asyncio.sleep(5)\n    return \"Task completed\"\n\n@app.get(\"/sync\")\ndef sync_route():\n    result = long_running_function()\n    return result\n```\nIn this example, the `long_running_function` is executed synchronously, blocking the execution of other tasks until it completes.\n\n### Asynchronous Code\n\nAsynchronous code executes multiple tasks concurrently, using mechanisms like coroutines and async/await syntax. In FastAPI, you can write asynchronous code using the `async def` syntax and the `@app.get` or `@app.post` decorators with the `async` parameter.\n\n**Example: Asynchronous Route**\n```python\nfrom fastapi import FastAPI\nfrom asyncio import sleep\n\napp = FastAPI()\n\nasync def long_running_function():\n    # Simulate a long-running task\n    await sleep(5)\n    return \"Task completed\"\n\n@app.get(\"/async\")\nasync def async_route():\n    result = await long_running_function()\n    return result\n```\nIn this example, the `long_running_function` is executed asynchronously, allowing other tasks to execute concurrently.\n\n### Performance Comparison\n\nAsynchronous code can improve performance in FastAPI by:\n\n*   **Handling multiple requests concurrently**: Asynchronous code allows FastAPI to handle multiple requests at the same time, improving throughput and responsiveness.\n*   **Reducing blocking I/O**: Asynchronous code reduces blocking I/O operations, allowing other tasks to execute while waiting for I/O completion.\n*   **Improving resource utilization**: Asynchronous code can improve resource utilization by reusing system resources, such as file descriptors and network connections.\n\nHowever, asynchronous code can also introduce additional complexity and require careful handling of coroutines, callbacks, and synchronization primitives.\n\n### Choosing between Synchronous and Asynchronous Code\n\nWhen deciding between synchronous and asynchronous code in FastAPI, consider the following factors:\n\n*   **Task duration**: If tasks are short-lived and don't block, synchronous code may be sufficient. However, if tasks are long-running or block frequently, asynchronous code is recommended.\n*   **Concurrency requirements**: If you need to handle multiple requests concurrently, asynchronous code is a better choice.\n*   **Resource constraints**: If system resources are limited, asynchronous code can help improve resource utilization.\n\nIn general, FastAPI recommends using asynchronous code for most use cases, as it provides better performance, scalability, and maintainability.\n\n### Best Practices\n\nWhen writing asynchronous code in FastAPI, follow these best practices:\n\n*   **Use async/await syntax**: The async/await syntax makes asynchronous code more readable and easier to maintain.\n*   **Use async def functions**: Define functions using the `async def` syntax to ensure they can be executed asynchronously.\n*   **Avoid blocking I/O**: Reduce blocking I/O operations by using asynchronous I/O primitives, such as `asyncio.sleep`.\n*   **Use proper synchronization**: Use synchronization primitives, such as locks and semaphores, to ensure thread safety and prevent data corruption.\n\nBy following these guidelines and best practices, you can write efficient, scalable, and maintainable asynchronous code in FastAPI.",
+          "retrieved_docs": [],
+          "latency_ms": 2306.4343330042902,
+          "tokens_used": 812,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 6.367e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_002",
+          "query_text": "Explain Python decorators in one paragraph.",
+          "answer": "In Python, a decorator is a special type of function that can modify or extend the behavior of another function without permanently modifying it. A decorator is a small function that takes another function as an argument and returns a new function that \"wraps\" the original function. This new function produced by the decorator is then called instead of the original function when it's invoked. Decorators are typically used to implement cross-cutting concerns such as logging, authentication, caching, and error handling, allowing developers to separate these concerns from the main logic of the function. By using decorators, developers can add functionality to existing functions without changing their source code, making code more modular, reusable, and maintainable.",
+          "retrieved_docs": [],
+          "latency_ms": 409.912750008516,
+          "tokens_used": 182,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 1.327e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_003",
+          "query_text": "When would you choose Redis over Postgres?",
+          "answer": "Here are some scenarios where you might choose Redis over Postgres:\n\n1. **High-performance caching**: Redis is optimized for fast, in-memory data storage and retrieval. It's ideal for caching frequently accessed data, such as user sessions, API results, or frequently accessed query results.\n2. **Real-time analytics**: Redis supports pub/sub messaging and has built-in support for message queues like Redis Streams. This makes it suitable for real-time analytics, where you need to process and analyze data as it arrives.\n3. **Leaderboard or ranking systems**: Redis's sorted sets make it easy to implement leaderboard or ranking systems, where you need to keep track of the top N items or users.\n4. **High-traffic, high-concurrency applications**: Redis is designed for high-performance, concurrent access. It's a good choice when you need to handle a large number of requests or connections per second.\n5. **Session storage**: Redis is a common choice for session storage, as it supports session persistence and can handle a large number of concurrent connections.\n6. **Message queues and job queues**: Redis supports pub/sub messaging and message queues like Redis Streams, making it suitable for message queueing and job queueing systems.\n7. **Predictive analytics and recommendations**: Redis's support for data structures like sets, hashes, and lists makes it suitable for predictive analytics and recommendation systems.\n8. **High-availability, low-latency systems**: Redis supports master-slave replication, which makes it suitable for high-availability, low-latency systems where data consistency and availability are critical.\n9. **Geo-distributed data**: Redis supports geographic distribution of data, which makes it suitable for applications with a global user base.\n10. **In-memory analytics**: Redis is designed for in-memory data storage, making it suitable for analytics workloads that require fast data access and processing.\n\nIn general, Redis is a good choice when you need:\n\n* High-performance data storage and retrieval\n* Real-time analytics and processing\n* Leaderboard or ranking systems\n* High-traffic, high-concurrency applications\n* Session storage and message queuing\n* Predictive analytics and recommendation systems\n\nOn the other hand, Postgres is a good choice when you need:\n\n* Relational database capabilities (e.g., transactions, joins)\n* ACID compliance\n* Complex queries and joins\n* Data warehousing and business intelligence\n* Data archiving and historical records\n\nUltimately, the choice between Redis and Postgres depends on the specific requirements of your application and the trade-offs you're willing to make between performance, complexity, and data consistency.",
+          "retrieved_docs": [],
+          "latency_ms": 2146.6212079976685,
+          "tokens_used": 569,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 4.42e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_004",
+          "query_text": "What does HyDE stand for in retrieval?",
+          "answer": "In information retrieval, the HYDE method stands for 'Hierarchy, Yarn, Description, and Elements'.",
+          "retrieved_docs": [],
+          "latency_ms": 182.84804199356586,
+          "tokens_used": 66,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 3.96e-06,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_005",
+          "query_text": "Why use tenacity for retries?",
+          "answer": "**Using Tenacity for Retries**\n\nTenacity is a popular Python library used for retrying functions or methods with backoff. It's particularly useful in situations where network requests, database operations, or other I/O-bound tasks may fail temporarily due to various reasons such as network connectivity issues, server overload, or API rate limits.\n\n**Why Tenacity is Preferred over Manual Retry Logic**\n\n1. **Simplifies Retry Logic**: Tenacity abstracts away the retry logic, allowing you to focus on the business logic of your code. You don't need to worry about implementing the retry mechanism yourself, which can be complex and prone to errors.\n2. **Flexible Backoff Strategies**: Tenacity provides various backoff strategies, such as exponential backoff, fixed backoff, and fibonacci backoff, allowing you to choose the best approach for your use case.\n3. **Automatic Retry with Jitter**: Tenacity adds a random jitter to the backoff time, which helps prevent a \"thundering herd\" problem where multiple clients retry at the same time, overwhelming the server.\n4. **Retry Contextualization**: Tenacity allows you to capture and propagate exceptions, errors, and other contextual information across retries, enabling more effective logging and debugging.\n5. **Testability**: Tenacity makes it easier to test your code, as you can easily mock out the retry behavior in your unit tests.\n\n**Example Usage**\n\nHere's an example of using Tenacity to retry a function:\n```python\nimport tenacity\n\n@tenacity.retry(wait=tenacity.wait_exponential(multiplier=1, min=4, max=10))\ndef get_data(url):\n    try:\n        # Simulate a network request\n        import requests\n        response = requests.get(url)\n        response.raise_for_status()\n        return response.json()\n    except requests.RequestException as e:\n        raise\n\nurl = \"https://example.com/api/data\"\ntry:\n    data = get_data(url)\n    print(data)\nexcept tenacity.RetryError as e:\n    print(f\"Retry failed after {e.attempts} attempts\")\n```\nIn this example, the `get_data` function is decorated with the `@tenacity.retry` decorator, which specifies the backoff strategy and other retry options. The `get_data` function is then called with the specified URL, and Tenacity handles the retry logic for us.\n\n**Best Practices**\n\n1. **Use Tenacity for I/O-bound tasks**: Tenacity is particularly useful for I/O-bound tasks like network requests, database operations, or API calls.\n2. **Choose the right backoff strategy**: Select a backoff strategy that suits your use case, such as exponential backoff for network requests or fixed backoff for database operations.\n3. **Monitor and adjust**: Monitor your retry behavior and adjust the backoff strategy or other retry options as needed to optimize performance and prevent excessive retries.",
+          "retrieved_docs": [],
+          "latency_ms": 2217.8193330037175,
+          "tokens_used": 632,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 4.93e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_006",
+          "query_text": "What is BGE-base-en-v1.5 used for?",
+          "answer": "I couldn't find any information about \"BGE-base-en-v1.5\". It's possible that it's a specific version of a software or a document, but without more context, I'm unable to provide any information.\n\nHowever, I can suggest a few possibilities:\n\n1. It could be a version of the Blade Game Engine (BGE) documentation or a specific game engine asset.\n2. It could be a reference to a specific version of a game or simulation.\n3. It could be a typo or a misspelling.\n\nIf you could provide more context or information about what BGE-base-en-v1.5 is, I'd be happy to try and help you further. \n\nAfter a little bit of additional research, I did find that BGE stands for Blender Game Engine, and it's a game engine that was developed by the Blender community.",
+          "retrieved_docs": [],
+          "latency_ms": 573.6342080053873,
+          "tokens_used": 224,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 1.648e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_007",
+          "query_text": "Compare LlamaIndex and Haystack briefly.",
+          "answer": "LlamaIndex and Haystack are both open-source enterprise-level knowledge graph search engines. \n\n- **Similarities:**\n  - Both support multiple search indices, including Wikipedia, books, and user-created content.\n  - Support for various natural language processing (NLP) tasks such as entity recognition and question answering.\n  - Allow users to integrate custom knowledge sources and models.\n\n- **Differences:**\n  - **Architecture:** LlamaIndex is built on top of the Elasticsearch framework, while Haystack uses a more modular architecture.\n  - **Scalability:** Haystack is designed to scale better, with more flexible and efficient architecture.\n  - **Integration:** Haystack provides better support for integration with various NLP tools and frameworks.\n  - **Customizability:** Both platforms can be customized, but LlamaIndex has a more extensive set of pre-built features and integrations.",
+          "retrieved_docs": [],
+          "latency_ms": 515.2482920093462,
+          "tokens_used": 224,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 1.66e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_008",
+          "query_text": "When does ProcessPoolExecutor beat threads?",
+          "answer": "**ProcessPoolExecutor vs Threads: When to Use Each**\n\nIn Python, `concurrent.futures` provides two types of executors: `ThreadPoolExecutor` and `ProcessPoolExecutor`. Both are used to manage a pool of worker threads or processes, but they differ in how they handle tasks and their suitability for various use cases.\n\n**When to Use ProcessPoolExecutor over Threads:**\n\n1. **CPU-bound tasks**: When tasks are computationally intensive and require significant CPU resources, `ProcessPoolExecutor` is often a better choice. This is because creating a new process is faster than creating a new thread, and processes can run in parallel on multiple CPU cores.\n2. **Tasks that release the Global Interpreter Lock (GIL)**: If tasks release the GIL, which is the case for many I/O-bound tasks (e.g., file I/O, network I/O, or database operations), threads can still be useful. However, if tasks hold the GIL for an extended period, using processes can provide better concurrency.\n3. **Memory-intensive tasks**: When tasks require significant memory, using processes can help prevent memory leaks and other issues that can arise when using threads.\n4. **Tasks that require isolation**: If tasks need to run in isolation from each other, using processes can help prevent issues like shared state corruption or unexpected interactions between tasks.\n\n**Example Use Case:**\n```python\nimport concurrent.futures\nimport time\n\ndef cpu_bound_task(n):\n    result = 0\n    for i in range(n * 10**8):\n        result += i\n    return result\n\nwith ProcessPoolExecutor() as executor:\n    futures = [executor.submit(cpu_bound_task, 10) for _ in range(4)]\n    results = [future.result() for future in futures]\n\nprint(results)\n```\nIn this example, using `ProcessPoolExecutor` allows each worker process to utilize multiple CPU cores, resulting in improved performance for CPU-bound tasks.\n\n**Conclusion:**\n\nWhile threads are suitable for many use cases, `ProcessPoolExecutor` is a better choice when tasks are CPU-bound, memory-intensive, or require isolation. By leveraging multiple CPU cores and processes, you can achieve better concurrency and performance in these scenarios.",
+          "retrieved_docs": [],
+          "latency_ms": 1326.7735830013407,
+          "tokens_used": 495,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 3.831e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_009",
+          "query_text": "What is semantic caching?",
+          "answer": "Semantic caching is a technique used in computer science to improve the performance of systems by caching frequently accessed data that is relevant to the user's intent or context, rather than just caching the data itself. It focuses on the meaning (semantics) of the data rather than its literal representation.\n\nIn traditional caching, data is stored in a cache based on its physical or literal representation, such as a URL or a database key. In contrast, semantic caching stores data based on its meaning or intent, such as the context of a query, the user's preferences, or the relationships between data entities.\n\nSemantic caching can be applied in various domains, including:\n\n1. **Web search**: caching search results based on user queries, rather than just caching the results themselves.\n2. **Database querying**: caching query results based on the query semantics, rather than just caching the query string.\n3. **Recommendation systems**: caching recommendations based on user preferences and behavior, rather than just caching the recommended items.\n4. **Knowledge graphs**: caching entities and relationships in a graph-based data structure, rather than just caching individual data points.\n\nThe benefits of semantic caching include:\n\n1. **Improved performance**: by reducing the number of queries or requests needed to retrieve relevant data.\n2. **Better relevance**: by caching data that is more relevant to the user's context or intent.\n3. **Reduced latency**: by providing faster access to relevant data.\n4. **Enhanced user experience**: by providing more accurate and personalized results.\n\nHowever, semantic caching also introduces new challenges, such as:\n\n1. **Complexity**: due to the need to understand and interpret the meaning of data.\n2. **Scalability**: as the amount of cached data grows, it can become increasingly difficult to manage and maintain.\n3. **Maintenance**: as the structure and meaning of data change over time, the cached data may need to be updated or invalidated.\n\nOverall, semantic caching is a powerful technique for improving system performance and user experience, but it requires careful consideration of the underlying data semantics and the challenges associated with it.",
+          "retrieved_docs": [],
+          "latency_ms": 1126.8184170039603,
+          "tokens_used": 459,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 3.552e-05,
+          "provider": "groq"
+        }
+      ],
+      "metrics": {
+        "mean_recall_at_k": 0.0,
+        "std_recall_at_k": 0.0,
+        "mean_mrr": 0.0,
+        "std_mrr": 0.0,
+        "mean_latency_ms": 1167.1509875028278,
+        "std_latency_ms": 802.6964057699316,
+        "total_tokens": 4280,
+        "mean_tokens_per_query": 428,
+        "total_queries": 10,
+        "cost_usd": 0.00032947,
+        "provider_calls": {
+          "groq": 10
+        }
+      }
+    }
+  ],
+  "chaos_runs": [
+    {
+      "run_id": 1,
+      "timestamp": "2026-06-07T13:54:17.694536",
+      "query_results": [
+        {
+          "query_id": "fb_000",
+          "query_text": "What is dependency injection?",
+          "answer": "**Dependency Injection**\n=======================\n\nDependency injection (DI) is a software design pattern that allows components to be loosely coupled, making it easier to test, maintain, and extend software systems.\n\n**What is Decoupling?**\n----------------------\n\nDecoupling refers to the process of reducing the dependencies between components in a system. In traditional programming, components often rely on each other directly, creating tight coupling. This makes it difficult to change or replace individual components without affecting the entire system.\n\n**How Does Dependency Injection Work?**\n---------------------------------------\n\nIn dependency injection, components are designed to be decoupled from each other. Instead of relying on each other directly, components receive their dependencies through a third-party component, called an injector. The injector is responsible for providing dependencies to the components that need them.\n\nHere's an example:\n\n```java\n// Traditional approach (tight coupling)\nclass PaymentProcessor {\n    private PaymentGateway paymentGateway;\n\n    public PaymentProcessor() {\n        this.paymentGateway = new PaymentGateway();\n    }\n\n    public void processPayment(Payment payment) {\n        paymentGateway.chargeCard(payment);\n    }\n}\n\nclass PaymentGateway {\n    public void chargeCard(Payment payment) {\n        // implementation\n    }\n}\n```\n\nIn this example, the `PaymentProcessor` component is tightly coupled to the `PaymentGateway` component. If we want to replace the `PaymentGateway` component with a different one, we would need to modify the `PaymentProcessor` component.\n\n**Dependency Injection Approach**\n--------------------------------\n\nNow, let's apply dependency injection to the same example:\n\n```java\n// Dependency injection approach (loose coupling)\ninterface PaymentGateway {\n    void chargeCard(Payment payment);\n}\n\nclass PaymentProcessor {\n    private PaymentGateway paymentGateway;\n\n    public PaymentProcessor(PaymentGateway paymentGateway) {\n        this.paymentGateway = paymentGateway;\n    }\n\n    public void processPayment(Payment payment) {\n        paymentGateway.chargeCard(payment);\n    }\n}\n\nclass ConcretePaymentGateway implements PaymentGateway {\n    public void chargeCard(Payment payment) {\n        // implementation\n    }\n}\n```\n\nIn this example, the `PaymentProcessor` component no longer relies directly on the `PaymentGateway` component. Instead, it receives a `PaymentGateway` instance through its constructor. This allows us to decouple the `PaymentProcessor` component from the `PaymentGateway` component.\n\n**Benefits of Dependency Injection**\n-----------------------------------------\n\n1.  **Loose Coupling**: Dependency injection helps to reduce coupling between components, making it easier to change or replace individual components without affecting the entire system.\n2.  **Improved Testability**: With dependency injection, components become easier to test in isolation, as dependencies can be easily mocked or replaced.\n3.  **Easier Maintenance**: Dependency injection makes it easier to maintain and extend software systems, as components are less dependent on each other.\n4.  **Increased Flexibility**: Dependency injection allows for greater flexibility in designing software systems, as components can be easily swapped out or replaced.\n\n**Example Use Cases**\n----------------------\n\n1.  **Database Connections**: Dependency injection can be used to provide database connections to components that need them.\n2.  **API Clients**: Dependency injection can be used to provide API clients to components that need to interact with external services.\n3.  **Logging Mechanisms**: Dependency injection can be used to provide logging mechanisms to components that need to log events.\n\nIn summary, dependency injection is a powerful software design pattern that helps to create loosely coupled, maintainable, and testable software systems. By decoupling components from each other, dependency injection makes it easier to change or replace individual components without affecting the entire system.",
+          "retrieved_docs": [],
+          "latency_ms": 1797.2308750031516,
+          "tokens_used": 777,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 6.0960000000000006e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_001",
+          "query_text": "Compare async vs sync in FastAPI.",
+          "answer": "**Async vs Sync in FastAPI**\n================================\n\nIn FastAPI, asynchronous code (async) is the default. It's highly recommended to use asynchronous code for building web applications, especially when dealing with I/O-bound operations such as database queries or API calls. Here's a comparison of async and sync code in FastAPI:\n\n### Sync Code\n\nSync code uses the `asyncio.run()` function to run the application. However, using `asyncio.run()` directly is discouraged in FastAPI, as it's not thread-safe. Instead, FastAPI uses the `asyncio.DatagramTransport` under the hood.\n\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get(\"/\")\ndef read_root():\n    # Synchronous operation\n    result = do_something_expensive()\n    return {\"result\": result}\n\ndef do_something_expensive():\n    # Simulate a long-running operation\n    import time\n    time.sleep(5)\n    return \"done\"\n```\n\n### Async Code\n\nAsync code uses the `async` and `await` keywords to define asynchronous functions. This allows your application to handle multiple requests concurrently, improving performance.\n\n```python\nfrom fastapi import FastAPI\nimport asyncio\n\napp = FastAPI()\n\n@app.get(\"/\")\nasync def read_root():\n    # Asynchronous operation\n    result = await do_something_expensive()\n    return {\"result\": result}\n\nasync def do_something_expensive():\n    # Simulate a long-running operation\n    await asyncio.sleep(5)\n    return \"done\"\n```\n\n**Advantages of Async Code**\n\n1.  **Concurrency**: Async code can handle multiple requests concurrently, improving performance and responsiveness.\n2.  **Scalability**: Async code is more scalable, as it can handle a large number of requests without increasing memory usage.\n3.  **Better Resource Utilization**: Async code can utilize system resources more efficiently, reducing the risk of resource bottlenecks.\n\n**When to Use Sync Code**\n\n1.  **CPU-bound Operations**: If your application performs CPU-bound operations, such as scientific computing or data compression, sync code may be more suitable.\n2.  **Legacy Code**: If you're working with legacy code that's not asynchronous, it might be easier to stick with sync code.\n\n**Best Practices**\n\n1.  **Use Async Code by Default**: Unless you have a specific reason to use sync code, stick with async code for building web applications.\n2.  **Avoid Blocking Operations**: Avoid using blocking operations in async code, as they can prevent the event loop from running and reduce performance.\n3.  **Use `asyncio.run()` with Caution**: While `asyncio.run()` is supported in FastAPI, it's not thread-safe and should be used with caution.\n\nBy following these best practices and using async code by default, you can build high-performance web applications with FastAPI.",
+          "retrieved_docs": [],
+          "latency_ms": 1683.5806669987505,
+          "tokens_used": 631,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 4.9189999999999995e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_002",
+          "query_text": "Explain Python decorators in one paragraph.",
+          "answer": "Python decorators are a powerful tool that allows programmers to modify the behavior of a function or class without changing its source code. A decorator is a small function that takes another function as an argument and returns a new function that \"wraps\" the original function. When the new function is called, it executes the original function and can also perform additional actions before or after the function is executed. Decorators are typically used to perform tasks such as logging, authentication, caching, or error handling, and can be composed together to create complex behaviors. They are defined using the `@` symbol followed by the name of the decorator function, and are applied to a function or class by placing the `@` symbol before the function or class definition. For example, `@my_decorator` above a function definition is equivalent to `def my_function(...): ...; my_function = my_decorator(my_function)`.",
+          "retrieved_docs": [],
+          "latency_ms": 407.6491660089232,
+          "tokens_used": 223,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 1.6550000000000002e-05,
+          "provider": "groq"
+        },
+        {
+          "query_id": "fb_003",
+          "query_text": "When would you choose Redis over Postgres?",
+          "answer": "This is a great question because it gets at the fundamental trade-offs between specialized tools and general-purpose databases. You would choose **Redis** over **PostgreSQL** when your primary requirement is **speed and specific data structures** at the cost of durability, complexity, or query flexibility.\n\nHere are the specific scenarios where Redis wins:\n\n### 1. You Need Sub-Millisecond Latency (Caching & Session Stores)\nThis is the most common use case. Redis stores data **in-memory** (RAM), while Postgres reads from disk (even with SSDs, the overhead is significant).\n- **Example:** Storing user sessions for a high-traffic web app. Every page load checks the session. Postgres would introduce 5-50ms latency; Redis gives you <1ms.\n- **Why not Postgres?** Postgres can cache hot data in memory, but it still has to parse SQL, manage connections, and handle disk I/O for writes/checkpoints.\n\n### 2. You Need Real-Time, Ephemeral Data (Time-To-Live / TTL)\nRedis has a native **TTL (Time-To-Live)** feature that automatically expires keys. This is a first-class citizen.\n- **Example:** Rate limiting (e.g., \"allow 100 requests per minute per IP\"). You set a key with a 60-second TTL. Postgres would require a cron job or a complex `WHERE timestamp > NOW() - INTERVAL '1 minute'` query that you must clean up periodically.\n- **Why not Postgres?** Postgres can do this, but it requires manual cleanup (VACUUM) and the queries are slower under high write loads.\n\n### 3. You Need Atomic Operations on Complex Data Structures (Counters, Queues, Sets)\nRedis provides atomic operations on data structures that Postgres cannot match without application-level locking or transactions.\n- **Example:** A leaderboard (Sorted Set). You want to `ZINCRBY leaderboard 1 \"user123\"` to increment a score and immediately get the rank. This is a single, atomic Redis command.\n- **Example:** A message queue (List). You use `LPUSH` and `BRPOP` for blocking, reliable queues.\n- **Why not Postgres?** In Postgres, you'd write `UPDATE leaderboard SET score = score + 1 WHERE user_id = '123'` and then a separate `SELECT RANK() OVER...` query. This is slower and requires a transaction to be atomic.\n\n### 4. You Need Pub/Sub or Real-Time Messaging\nRedis has a built-in **Pub/Sub** (Publish/Subscribe) pattern that is extremely lightweight and fast.\n- **Example:** A chat application where messages are broadcast to all connected clients. Redis can push messages instantly.\n- **Why not Postgres?** Postgres has `LISTEN/NOTIFY`, but it's more limited (no payload filtering, no pattern matching on channels) and is not designed for high-throughput real-time streaming.\n\n### 5. You Need a Distributed Lock\nRedis (with Redlock algorithm) is the standard for distributed locking in microservices.\n- **Example:** Ensuring only one server processes a scheduled job at a time. You `SET lock:job NX EX 30` (set if not exists, expire in 30 seconds).\n- **Why not Postgres?** You can use `SELECT ... FOR UPDATE NOWAIT` or advisory locks, but they tie up database connections and are harder to manage with timeouts and distributed systems.\n\n### 6. You Need Geospatial Queries at High Speed\nRedis has a `GEO` API that is optimized for real-time location-based lookups.\n- **Example:** \"Find all taxis within 5km of this point.\" Redis does this in O(log(N)) time entirely in memory.\n- **Why not Postgres?** Postgres (with PostGIS) is far more powerful (complex polygons, projections, spatial joins), but for simple radius queries at massive scale, Redis is faster.\n\n---\n\n## When Redis is a Bad Choice (and you should use Postgres)\n\nYou should **not** choose Redis if:\n\n- **You need complex queries** (JOINs, subqueries, aggregations, full-text search). Redis has no query language; you must fetch data by key and process it in your application.\n- **You need ACID transactions across multiple keys.** Redis transactions are not truly isolated (they are \"optimistic\" or \"wrapped\" but not like Postgres).\n- **Your dataset is larger than available RAM.** Redis will crash or swap to disk (very slowly). Postgres handles terabytes on disk gracefully.\n- **You need data durability.** Redis's default persistence (RDB snapshots, AOF logs) can lose data on crash. Postgres (",
+          "retrieved_docs": [],
+          "latency_ms": 24665.93170799024,
+          "tokens_used": 1013,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00110351,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_004",
+          "query_text": "What does HyDE stand for in retrieval?",
+          "answer": "In the context of retrieval (specifically within information retrieval and AI), **HyDE** stands for **Hypothetical Document Embeddings**.\n\nIt is a technique used to improve retrieval performance, particularly in dense retrieval systems (like those using embedding models). Here is the core idea behind it:\n\n1.  **The Problem:** A user query (e.g., \"How does a car engine work?\") is often short, ambiguous, and phrased differently than the documents in the database (e.g., \"The four-stroke cycle of an internal combustion engine...\"). This creates a \"vocabulary mismatch\" or \"semantic gap\" between the query and the relevant documents.\n\n2.  **The HyDE Solution:** Instead of retrieving documents based directly on the user's query, HyDE first uses a large language model (LLM) to **generate a hypothetical document** that *would* answer the query. For example, the LLM might generate: \"A car engine works by converting fuel into motion through a four-stroke cycle: intake, compression, power, and exhaust...\"\n\n3.  **The Retrieval Step:** The system then takes this **generated hypothetical document** (not the original query) and converts it into an embedding vector. It uses this vector to search the database for real documents that are semantically similar to the hypothetical one.\n\n**Why it works:**\nThe generated \"document\" is much closer in structure, length, and vocabulary to the real documents in the database than the original short query is. This makes the embedding similarity search much more effective.\n\n**Summary:**\n- **HyDE** = **Hy**pothetical **D**ocument **E**mbeddings.\n- **Purpose:** To bridge the gap between a user's short query and the longer, more detailed documents in a database by first generating a \"fake\" document to use as the search key.",
+          "retrieved_docs": [],
+          "latency_ms": 9846.575874995324,
+          "tokens_used": 396,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00042481,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_005",
+          "query_text": "Why use tenacity for retries?",
+          "answer": "Tenacity is a popular Python library for adding retry behavior to functions, and it's often chosen over simpler approaches (like manual `try/except` loops or `time.sleep`) for several key reasons:\n\n## 1. **Clean, Declarative Syntax**\nInstead of cluttering your business logic with retry boilerplate, Tenacity uses decorators:\n\n```python\n# Without Tenacity - messy\ndef fetch_data():\n    for attempt in range(3):\n        try:\n            return api_call()\n        except Exception:\n            if attempt == 2:\n                raise\n            time.sleep(1)\n\n# With Tenacity - clean\n@retry(stop=stop_after_attempt(3), wait=wait_fixed(1))\ndef fetch_data():\n    return api_call()\n```\n\n## 2. **Flexible Stopping Conditions**\nTenacity provides more sophisticated retry logic than simple \"try N times\":\n- Stop after N attempts: `stop_after_attempt(3)`\n- Stop after time limit: `stop_after_delay(30)` (stop retrying after 30 seconds total)\n- Stop on specific exceptions: `retry_if_exception_type(ConnectionError)`\n- Combine conditions: `stop=stop_after_attempt(5) | stop_after_delay(60)`\n\n## 3. **Intelligent Waiting Strategies**\nSimple retries often use fixed delays, but Tenacity offers:\n- **Exponential backoff**: `wait_exponential(multiplier=1, min=1, max=10)` (1s, 2s, 4s, 8s...)\n- **Random jitter**: `wait_random(min=1, max=5)` (avoids thundering herd problem)\n- **Fixed + random**: `wait_fixed(3) + wait_random(0, 2)` (3s \u00b1 random 0-2s)\n- **Custom wait functions**: For domain-specific timing\n\n## 4. **Exception Handling Granularity**\n- Retry only on specific exceptions: `retry_if_exception_type(requests.ConnectionError)`\n- Retry on custom conditions: `retry_if_exception(lambda e: \"timeout\" in str(e))`\n- Rethrow or return different values on final failure\n\n## 5. **Async Support**\nTenacity works seamlessly with `asyncio` and `async/await`:\n\n```python\n@retry(stop=stop_after_attempt(3))\nasync def fetch_async():\n    return await async_api_call()\n```\n\n## 6. **Callbacks and Logging**\n- Before/after retry callbacks for logging\n- Custom retry error callbacks\n- Statistics collection (how many retries, total time)\n\n## 7. **Stateless and Composable**\nYou can create reusable retry configurations:\n\n```python\n# Define once, use everywhere\ndb_retry = retry(\n    stop=stop_after_attempt(3),\n    wait=wait_exponential(multiplier=1, min=1, max=10),\n    retry=retry_if_exception_type(DatabaseError)\n)\n\n@db_retry\ndef query_db():\n    ...\n\n@db_retry\ndef update_db():\n    ...\n```\n\n## When NOT to use Tenacity\n\n- **Simple one-off scripts** where a manual loop is fine\n- **Performance-critical code** where the overhead matters (though it's minimal)\n- **When you need maximum control** over every microsecond of timing\n\n## Alternative Libraries\n\n- **backoff**: Lighter weight, decorator-based\n- **retry**: Simpler but less flexible\n- **stamina**: More modern, with built-in monitoring support\n\n**In summary**: Use Tenacity when you need production-grade retry logic with multiple strategies, async support, and clean code separation. It's particularly valuable in distributed systems, API clients, and database operations where transient failures are common.",
+          "retrieved_docs": [],
+          "latency_ms": 15397.716916995705,
+          "tokens_used": 837,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00091074,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_006",
+          "query_text": "What is BGE-base-en-v1.5 used for?",
+          "answer": "**BGE-base-en-v1.5** is a popular open-source embedding model developed by the Beijing Academy of Artificial Intelligence (BAAI). It is specifically designed to convert text into dense vector representations (embeddings).\n\nHere\u2019s a breakdown of its primary use cases:\n\n### 1. Semantic Search & Information Retrieval\nThis is its most common application. Instead of relying on keyword matching (e.g., searching for \"car\" and missing \"automobile\"), BGE-base-en-v1.5 understands the **meaning** of the query.\n- **How it works:** You embed all your documents into a vector database (like Pinecone, Weaviate, or Chroma). When a user types a query, you embed the query and find the documents with the most similar vectors.\n- **Example:** A customer asking \"How do I return a faulty item?\" will find the correct FAQ page about \"Refund policy for defective products.\"\n\n### 2. Retrieval-Augmented Generation (RAG)\nThis is the backbone of many modern Large Language Model (LLM) applications.\n- **How it works:** When a user asks a question, the system uses BGE to find the most relevant chunks of information from a knowledge base (e.g., company documents, textbooks). These chunks are then \"fed\" to an LLM (like GPT-4 or Llama) as context, allowing the LLM to answer based on your data rather than its general training.\n- **Example:** A legal AI assistant uses BGE to find the specific paragraph in a 500-page contract that relates to the user's question about \"termination clauses.\"\n\n### 3. Text Classification & Clustering\nBecause the embeddings capture semantic meaning, you can feed them into a simple classifier (like SVM or logistic regression) or clustering algorithm (like K-Means).\n- **Example:** Grouping thousands of customer support tickets into categories like \"Billing Issue,\" \"Technical Problem,\" or \"Account Management\" without needing to manually define keywords.\n\n### 4. Recommendation Systems\nYou can embed user profiles and items (products, articles, movies) and find items whose vectors are closest to a user's profile vector.\n- **Example:** \"Find news articles similar to the one the user just read.\"\n\n### 5. Deduplication & Similarity Detection\nFinding near-duplicate sentences, paragraphs, or documents within a large dataset.\n- **Example:** Cleaning a dataset of product descriptions to remove listings that are essentially the same product posted by different sellers.\n\n### Key Features of BGE-base-en-v1.5 (compared to alternatives)\n\n- **High Performance:** It consistently ranks among the top models on the Massive Text Embedding Benchmark (MTEB) leaderboard for its size class.\n- **Efficient Size:** The \"base\" model has ~110 million parameters. It is significantly faster and cheaper to run than larger models (like BGE-large or OpenAI's `text-embedding-3-large`) while offering very competitive accuracy.\n- **Long Context:** It supports a maximum input length of **8192 tokens** (about 6,000 words), which is very useful for processing long documents or paragraphs.\n- **Asymmetric Search Support:** The model is trained to handle cases where the query and the document are very different in style or length. For example, a short keyword search query vs. a long paragraph of text.\n\n### In summary: If you need to build a system that \"understands\" the meaning of text to search, compare, or organize information\u2014especially for RAG pipelines\u2014BGE-base-en-v1.5 is a top-tier, cost-effective choice.",
+          "retrieved_docs": [],
+          "latency_ms": 19336.392459008493,
+          "tokens_used": 761,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00082299,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_007",
+          "query_text": "Compare LlamaIndex and Haystack briefly.",
+          "answer": "Here is a brief comparison of **LlamaIndex** and **Haystack**:\n\n| Feature | LlamaIndex | Haystack |\n| :--- | :--- | :--- |\n| **Primary Focus** | Data indexing, retrieval, and RAG (Retrieval-Augmented Generation) pipelines. | End-to-end NLP pipelines (search, QA, summarization, RAG). |\n| **Core Strength** | **Data connectivity** \u2013 connects LLMs to your private/external data (APIs, databases, PDFs, etc.). | **Modular pipeline architecture** \u2013 easy to swap components (retrievers, readers, generators). |\n| **When to Choose** | You need to **ingest, index, and query** complex data sources (e.g., structured + unstructured). | You want a **production-ready search/QA system** with a plug-and-play framework. |\n| **Ease of Use** | Very flexible but can be more abstract; steep learning curve for advanced features. | More opinionated and structured; easier to get started for standard search/QA tasks. |\n| **Best For** | RAG applications, data agents, and complex multi-source retrieval. | Semantic search, document QA, and multi-step NLP pipelines. |\n\n**In short:** LlamaIndex is your go-to for **connecting LLMs to your data** (especially complex or custom data sources). Haystack is better for **building robust, modular search and QA systems** quickly.",
+          "retrieved_docs": [],
+          "latency_ms": 16465.583750003134,
+          "tokens_used": 315,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0003357100000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_008",
+          "query_text": "When does ProcessPoolExecutor beat threads?",
+          "answer": "This is a great question because it gets to the heart of the **GIL (Global Interpreter Lock)** and the fundamental differences between CPU-bound and I/O-bound tasks in Python.\n\n**The short answer:** `ProcessPoolExecutor` beats threads when your workload is **CPU-bound** (heavy computation, number crunching) and you want to leverage multiple CPU cores to achieve true parallelism.\n\nHere\u2019s the detailed breakdown of when and why.\n\n---\n\n### The Core Rule of Thumb\n\n| Task Type | Best Choice | Why? |\n| :--- | :--- | :--- |\n| **CPU-Bound** (e.g., complex math, image processing, data transformation) | **`ProcessPoolExecutor`** | Bypasses the GIL. Each process gets its own Python interpreter and can run on a separate core simultaneously. |\n| **I/O-Bound** (e.g., network requests, file reads, database queries, API calls) | **`ThreadPoolExecutor`** | Threads are lightweight. While waiting for I/O, the GIL is released, allowing other threads to run. Processes would add overhead without benefit. |\n\n---\n\n### When `ProcessPoolExecutor` Specifically Beats Threads\n\n#### 1. Pure CPU-Intensive Tasks (The Classic Case)\n\nThis is the most straightforward scenario. If your function does nothing but compute and doesn't wait for external resources, threads will be **slower than a single thread** due to GIL contention. Processes will give you a near-linear speedup (up to the number of physical cores).\n\n**Example: Calculating Pi or Prime Numbers**\n\n```python\nimport time\nfrom concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor\n\ndef is_prime(n):\n    \"\"\"CPU-bound: checks if a number is prime.\"\"\"\n    if n < 2:\n        return False\n    for i in range(2, int(n**0.5) + 1):\n        if n % i == 0:\n            return False\n    return True\n\nnumbers = [n for n in range(10_000_000, 10_010_000)]  # 10,000 numbers\n\n# --- Threads (slow) ---\nstart = time.time()\nwith ThreadPoolExecutor(max_workers=8) as executor:\n    results = list(executor.map(is_prime, numbers))\nprint(f\"Threads: {time.time() - start:.2f}s\")  # ~3-4x slower than single core\n\n# --- Processes (fast) ---\nstart = time.time()\nwith ProcessPoolExecutor(max_workers=8) as executor:\n    results = list(executor.map(is_prime, numbers))\nprint(f\"Processes: {time.time() - start:.2f}s\")  # ~8x faster (on 8 cores)\n```\n\n**Result:** Processes will complete in a fraction of the time. Threads might even be slower than running the loop sequentially because of the GIL overhead.\n\n#### 2. Tasks with Heavy Serialization/Deserialization (But Still CPU-Heavy)\n\n`ProcessPoolExecutor` uses `pickle` to send data to and from worker processes. This adds overhead. However, if the CPU work *inside* the function is significantly larger than the cost of pickling the arguments and results, processes still win.\n\n- **When processes still win:** Function takes 10 seconds, pickling takes 0.1 seconds.\n- **When threads might win (rare):** Function takes 0.01 seconds, pickling takes 0.1 seconds. (In this case, the overhead of process communication kills the benefit. You'd be better off using threads or just a single loop.)\n\n#### 3. Tasks that are \"Mostly CPU\" with Some I/O\n\nImagine a function that downloads a 1GB file (I/O), then does a CPU-intensive hash on it (CPU). The I/O part is a small fraction of the total time.\n\n- **Threads:** The I/O is fast, but the CPU-bound hash is blocked by the GIL. Only one hash runs at a time.\n- **Processes:** The I/O is still fast, and multiple hashes run on different cores simultaneously.\n\n**Result:** Processes are significantly faster because the dominant cost (CPU) is parallelized.\n\n---\n\n### The Critical Caveats (When NOT to use Processes)\n\n1.  **High Overhead:** Spawning processes is much more expensive than creating threads. If your function runs in microseconds, the overhead of creating a process pool and pickling data will dominate.\n2.  **Data Transfer Costs:** Large arguments or results must be pickled and unpickled. If your function is very simple but operates on huge datasets, the serialization bottleneck can make processes slower.\n3.  **Shared State:** Processes don't share memory. You cannot easily update a global counter",
+          "retrieved_docs": [],
+          "latency_ms": 15413.761917006923,
+          "tokens_used": 1012,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0011032400000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_009",
+          "query_text": "What is semantic caching?",
+          "answer": "Here is a detailed explanation of semantic caching.\n\n### The Simple Definition\n\n**Semantic caching** is a caching strategy that stores and retrieves data based on the **meaning** of a query, rather than its exact text.\n\nUnlike traditional caching, which requires an exact match (e.g., \"red car\" only matches \"red car\"), semantic caching can return a cached result for a query like \"crimson vehicle\" because it understands these two phrases are semantically similar.\n\n---\n\n### How It Works: The Core Mechanism\n\nSemantic caching relies on three key technologies:\n\n1.  **Embeddings:** The query is converted into a mathematical vector (a list of numbers) that represents its meaning. Similar queries produce vectors that are close together in a high-dimensional space.\n2.  **Vector Database:** The cached queries and their corresponding responses are stored in a vector database, not a traditional key-value store.\n3.  **Similarity Search:** When a new query arrives, the system:\n    - Converts the new query into an embedding vector.\n    - Searches the vector database for cached queries whose vectors are \"close\" to the new query's vector (e.g., using cosine similarity).\n    - If a sufficiently similar cached query is found (above a certain threshold), the cached response is returned.\n\n### A Concrete Analogy: The Library\n\n- **Traditional Cache:** You go to the librarian and ask for \"The Adventures of Huckleberry Finn.\" The librarian only knows the exact title. If you ask for \"The story of Huck Finn,\" they say, \"I don't have that,\" even though it's the same book.\n- **Semantic Cache:** The librarian understands the *meaning* of your request. You ask for \"The story of Huck Finn,\" and they immediately say, \"Ah, you mean *The Adventures of Huckleberry Finn*,\" and hand you the book. They've matched the *concept*, not the exact title.\n\n### Why Is It Important? (The Problem It Solves)\n\nThis is most critical for **Large Language Models (LLMs)** and AI applications.\n\n- **Cost:** LLM API calls (like GPT-4) are expensive. Semantic caching drastically reduces the number of API calls needed.\n- **Latency:** LLM inference is slow. Serving a cached response is nearly instantaneous, improving user experience.\n- **Consistency:** You can guarantee that the same *question* (asked slightly differently) gets the same *answer*, preventing hallucinations or inconsistent outputs from the model.\n\n### Key Differences: Traditional vs. Semantic Cache\n\n| Feature | Traditional Cache (e.g., Redis) | Semantic Cache (e.g., GPTCache) |\n| :--- | :--- | :--- |\n| **Match Criteria** | Exact string match | Semantic similarity (meaning) |\n| **Storage** | Key-value store (e.g., \"red car\" -> response) | Vector database (e.g., [0.1, 0.5, ...] -> response) |\n| **Query Example** | \"What is the capital of France?\" | \"What is the capital of France?\" **OR** \"Tell me the capital city of France.\" |\n| **Cache Hit** | Only if the exact string is repeated. | Also hits on paraphrases, synonyms, and conceptually similar questions. |\n| **Complexity** | Low | High (requires embedding model, vector DB, similarity algorithm) |\n\n### Real-World Use Cases\n\n1.  **Customer Support Chatbots:** A user asks, \"How do I reset my password?\" A second user asks, \"I forgot my login credentials, what do I do?\" The semantic cache recognizes these are the same intent and returns the same answer without calling the LLM.\n2.  **Code Generation Assistants:** A developer asks, \"Write a Python function to sort a list of dictionaries by a key.\" Another asks, \"Create a script in Python to order a list of dicts by a specific field.\" The cache returns the same code snippet.\n3.  **Content Creation:** A marketing team asks for \"a tagline for a sustainable shoe brand.\" A different team member asks for \"a slogan for an eco-friendly footwear company.\" The cache serves the same pre-generated tagline.\n\n### Challenges and Limitations\n\n- **Accuracy:** The similarity threshold must be carefully tuned. Too low, and you return irrelevant results (cache pollution). Too high, and you miss valid matches (low hit rate).\n- **Complexity:** It's significantly more complex to implement and maintain than a simple key-value cache.\n- **Context Dependency:** For multi-turn conversations (chat history), semantic caching becomes much harder. The meaning of a query depends on the previous messages.\n- **Staleness:** If the underlying data changes (e.g., a company policy is updated), you must invalidate all semantically similar cached responses, which is non-trivial.\n\n",
+          "retrieved_docs": [],
+          "latency_ms": 24957.65570900403,
+          "tokens_used": 1009,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0011024300000000002,
+          "provider": "deepseek"
+        }
+      ],
+      "metrics": {
+        "mean_recall_at_k": 0.0,
+        "std_recall_at_k": 0.0,
+        "mean_mrr": 0.0,
+        "std_mrr": 0.0,
+        "mean_latency_ms": 12997.207904301467,
+        "std_latency_ms": 9218.879262254743,
+        "total_tokens": 6974,
+        "mean_tokens_per_query": 697.4,
+        "total_queries": 10,
+        "cost_usd": 0.0059301300000000005,
+        "provider_calls": {
+          "groq": 3,
+          "deepseek": 7
+        }
+      }
+    },
+    {
+      "run_id": 2,
+      "timestamp": "2026-06-07T13:56:27.667404",
+      "query_results": [
+        {
+          "query_id": "fb_000",
+          "query_text": "What is dependency injection?",
+          "answer": "This is a great question, as **Dependency Injection (DI)** is a fundamental concept in modern software engineering, especially in frameworks like Spring (Java), Angular (TypeScript), and ASP.NET Core (C#).\n\nHere is the breakdown, from a simple analogy to the technical details.\n\n### The Simple Analogy: The Coffee Maker\n\nImagine you want to make coffee.\n\n- **Without DI (Hard-coded):** You build a coffee maker that has a *specific* coffee grinder built directly into its frame. If the grinder breaks, you have to throw away the whole coffee maker. If you want to use pre-ground coffee instead of beans, you can't. The coffee maker is *tightly coupled* to the grinder.\n- **With DI (Flexible):** You build a coffee maker with a standard \"portafilter\" or \"input slot.\" You then *inject* a grinder into that slot. You can swap it for a different grinder, a pre-ground coffee adapter, or even a tea infuser. The coffee maker is *loosely coupled* to its dependencies.\n\n**In programming:** The \"coffee maker\" is your main class (e.g., `OrderService`). The \"grinder\" is a dependency it needs (e.g., `PaymentGateway` or `EmailSender`). Dependency Injection is the act of *providing* that dependency from the outside, rather than having the class create it itself.\n\n---\n\n### The Technical Definition\n\n**Dependency Injection** is a design pattern where an object receives its dependencies from an external source (an \"injector\" or \"container\") rather than creating them internally.\n\nIt is a specific form of **Inversion of Control (IoC)** . Instead of your code controlling the flow and creation of objects, you hand that control over to a framework or container.\n\n### The Problem DI Solves (Tight Coupling)\n\nWithout DI, your code looks like this:\n\n```java\n// BAD: Tightly Coupled\npublic class OrderService {\n    private EmailSender emailSender;\n\n    public OrderService() {\n        // The class CREATES its own dependency\n        this.emailSender = new SmtpEmailSender(\"smtp.gmail.com\");\n    }\n\n    public void processOrder(Order order) {\n        // ... process order ...\n        emailSender.send(\"Order Confirmed\", order.getEmail());\n    }\n}\n```\n\n**Problems:**\n1.  **Hard to Test:** To test `OrderService`, you are *forced* to use the real `SmtpEmailSender`, which might actually send emails.\n2.  **Inflexible:** If you want to use a different email service (e.g., `SendGridEmailSender`), you have to modify the `OrderService` code.\n3.  **Hidden Dependencies:** It's not obvious from the constructor signature what `OrderService` needs to function.\n\n### The Solution (Loose Coupling)\n\nWith DI, you \"invert\" the control:\n\n**Step 1: Define an Interface (The \"Contract\")**\n\n```java\n// The \"portafilter\" standard\npublic interface EmailSender {\n    void send(String subject, String to);\n}\n```\n\n**Step 2: Implement the Interface**\n\n```java\npublic class SmtpEmailSender implements EmailSender {\n    // ... implementation using SMTP ...\n}\n\npublic class SendGridEmailSender implements EmailSender {\n    // ... implementation using SendGrid API ...\n}\n```\n\n**Step 3: Inject the Dependency (The \"Injection\")**\n\n```java\n// GOOD: Loosely Coupled via DI\npublic class OrderService {\n    private EmailSender emailSender;\n\n    // The dependency is \"injected\" via the constructor\n    public OrderService(EmailSender emailSender) {\n        this.emailSender = emailSender;\n    }\n\n    public void processOrder(Order order) {\n        // ... process order ...\n        emailSender.send(\"Order Confirmed\", order.getEmail());\n    }\n}\n```\n\n**Step 4: Wire it up (The \"Container\")**\n\nNow, somewhere in your application's startup code (the \"Composition Root\"), you configure a DI Container:\n\n```java\n// Using a hypothetical DI Container\nContainer container = new Container();\n\n// Tell the container: \"When someone asks for an EmailSender, give them a SmtpEmailSender\"\ncontainer.register(EmailSender.class, SmtpEmailSender.class);\n\n// The container creates the OrderService and automatically injects the SmtpEmailSender\nOrderService orderService = container.resolve(OrderService.class);\n```\n\n### The Three Common Types of Injection\n\n1.  **Constructor Injection (Most Common & Recommended):** Dependencies are provided through the class constructor (as shown above).\n    - *Pros:* Guarantees the object is fully initialized, dependencies are clear.\n2.  **Setter Injection:** Dependencies are set via",
+          "retrieved_docs": [],
+          "latency_ms": 15028.690708000795,
+          "tokens_used": 1009,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0011024300000000002,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_001",
+          "query_text": "Compare async vs sync in FastAPI.",
+          "answer": "## Async vs Sync in FastAPI\n\nFastAPI supports both asynchronous and synchronous route handlers, and understanding when to use each is crucial for optimal performance.\n\n## **Key Differences**\n\n### **Async Handlers**\n```python\nfrom fastapi import FastAPI\nimport asyncio\n\napp = FastAPI()\n\n@app.get(\"/async-endpoint\")\nasync def async_endpoint():\n    # Non-blocking I/O operations\n    await asyncio.sleep(1)\n    return {\"message\": \"Async endpoint\"}\n```\n\n### **Sync Handlers**\n```python\nfrom fastapi import FastAPI\nimport time\n\napp = FastAPI()\n\n@app.get(\"/sync-endpoint\")\ndef sync_endpoint():\n    # Blocking I/O operations\n    time.sleep(1)\n    return {\"message\": \"Sync endpoint\"}\n```\n\n## **When to Use Each**\n\n### **Use Async When:**\n- Making HTTP requests (aiohttp, httpx)\n- Database operations with async drivers (asyncpg, databases, SQLAlchemy async)\n- File I/O with async libraries (aiofiles)\n- WebSocket connections\n- Long-running I/O operations\n- High concurrency requirements\n\n### **Use Sync When:**\n- CPU-bound operations (image processing, data parsing)\n- Using synchronous libraries (requests, psycopg2, standard file operations)\n- Simple CRUD operations with sync ORMs\n- Quick computations with minimal I/O\n\n## **Performance Implications**\n\n### **Async Benefits:**\n```python\nimport asyncio\nfrom fastapi import FastAPI\nimport httpx\n\napp = FastAPI()\n\n@app.get(\"/async-multiple-requests\")\nasync def async_multiple():\n    async with httpx.AsyncClient() as client:\n        # These run concurrently\n        tasks = [\n            client.get(\"https://api1.example.com\"),\n            client.get(\"https://api2.example.com\"),\n            client.get(\"https://api3.example.com\")\n        ]\n        responses = await asyncio.gather(*tasks)\n    return {\"status\": \"completed\"}\n```\n\n### **Sync Limitations:**\n```python\nfrom fastapi import FastAPI\nimport requests\n\napp = FastAPI()\n\n@app.get(\"/sync-multiple-requests\")\ndef sync_multiple():\n    # These run sequentially - much slower\n    resp1 = requests.get(\"https://api1.example.com\")\n    resp2 = requests.get(\"https://api2.example.com\")\n    resp3 = requests.get(\"https://api3.example.com\")\n    return {\"status\": \"completed\"}\n```\n\n## **Thread Pool Management**\n\nFastAPI handles sync functions by running them in a thread pool:\n\n```python\nfrom fastapi import FastAPI\nimport time\nfrom concurrent.futures import ThreadPoolExecutor\n\napp = FastAPI()\n\n# Default thread pool size\nDEFAULT_THREAD_POOL_SIZE = 40\n\n@app.get(\"/sync-with-pool\")\ndef sync_endpoint():\n    time.sleep(0.1)  # This runs in a thread pool\n    return {\"message\": \"Sync but non-blocking for other requests\"}\n```\n\n## **Best Practices**\n\n### **1. Mixed Routes Example:**\n```python\nfrom fastapi import FastAPI\nimport asyncio\nimport time\nfrom typing import Dict\n\napp = FastAPI()\n\n# Async for I/O bound\n@app.get(\"/async-io\")\nasync def async_io():\n    await asyncio.sleep(0.5)\n    return {\"type\": \"async\"}\n\n# Sync for CPU bound\n@app.get(\"/sync-cpu\")\ndef sync_cpu():\n    # CPU intensive operation\n    result = sum(range(1000000))\n    return {\"result\": result}\n\n# Sync for simple operations\n@app.get(\"/sync-simple\")\ndef sync_simple():\n    return {\"message\": \"Simple sync\"}\n```\n\n### **2. Performance Comparison:**\n```python\nfrom fastapi import FastAPI\nimport asyncio\nimport time\nimport aiofiles\nimport os\n\napp = FastAPI()\n\n# Slow sync file reading\n@app.get(\"/sync-file\")\ndef sync_file():\n    with open(\"large_file.txt\", \"r\") as f:\n        content = f.read()\n    return {\"length\": len(content)}\n\n# Fast async file reading\n@app.get(\"/async-file\")\nasync def async_file():\n    async with aiofiles.open(\"large_file.txt\", \"r\") as f:\n        content = await f.read()\n    return {\"length\": len(content)}\n```\n\n## **Key Takeaways**\n\n| Aspect | Async | Sync |\n|--------|-------|------|\n| **I/O Operations** | Excellent | Poor |\n| **CPU Operations** | Not beneficial | Good |\n| **Concurrency** | High (event loop) | Limited (thread pool) |\n| **Complexity** | Higher | Lower |\n| **Debugging** | More complex | Easier |\n| **Memory** | Lower overhead | Higher (",
+          "retrieved_docs": [],
+          "latency_ms": 13080.081207997864,
+          "tokens_used": 1012,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0011032400000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_002",
+          "query_text": "Explain Python decorators in one paragraph.",
+          "answer": "A Python decorator is a function that takes another function as input, wraps its behavior with additional logic, and returns a modified version of that function, all without changing the original function's code. Using the `@decorator_name` syntax placed above a function definition, decorators allow you to transparently add functionality like logging, access control, timing, or caching to existing functions. For example, `@timer` could automatically measure and print how long a function takes to run, while the function itself remains unchanged\u2014just defined with that `@timer` line above it.",
+          "retrieved_docs": [],
+          "latency_ms": 7708.138749992941,
+          "tokens_used": 129,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00013194000000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_003",
+          "query_text": "When would you choose Redis over Postgres?",
+          "answer": "This is a great architectural question. The short answer is: **choose Redis when you need blindingly fast, ephemeral, or specialized data structures, and choose Postgres when you need durability, complex queries, and relational integrity.**\n\nThey are not direct competitors; they are complementary tools. You often use both in the same application (e.g., Postgres for source of truth, Redis as a cache or session store).\n\nHere\u2019s a breakdown of when to choose Redis over Postgres:\n\n### 1. When you need **sub-millisecond latency** for high-throughput operations\n- **Redis:** Data lives entirely in RAM. Operations like `GET`, `SET`, or `INCR` take microseconds. It can handle **hundreds of thousands to millions of operations per second** on a single node.\n- **Postgres:** Even with an index and a warm cache (shared_buffers), disk I/O or even the overhead of the query planner and MVCC (Multi-Version Concurrency Control) adds latency (typically 1-10ms for simple queries).\n- **Choose Redis for:** Real-time leaderboards, rate limiters, API response caches, session stores.\n\n### 2. When you need **specialized data structures** (not just key-value)\n- **Redis:** Offers native data types like:\n    - **Lists:** For queues (LPUSH/RPOP).\n    - **Sorted Sets:** For leaderboards (ZADD/ZRANK).\n    - **HyperLogLog:** For approximate unique counts (e.g., number of unique visitors).\n    - **Bitmaps:** For feature flags or user activity tracking.\n    - **Streams:** For message queues or event logs (similar to Kafka).\n- **Postgres:** You can simulate these with tables and indexes, but it\u2019s slower (no in-memory pointer manipulation) and requires more complex SQL.\n- **Choose Redis for:** Real-time analytics, job queues (Sidekiq, Celery), rate limiting, geospatial queries (GEOADD/GEORADIUS).\n\n### 3. When you need **automatic data expiration (TTL)**\n- **Redis:** Every key can have a `TTL` (time-to-live). Data is automatically evicted by the server. This is a first-class feature.\n- **Postgres:** You must implement expiration manually (e.g., `DELETE FROM sessions WHERE expires_at < NOW()`), which requires a scheduled job or a trigger, adding complexity and load.\n- **Choose Redis for:** Session stores, temporary tokens (password reset, email verification), cache invalidation.\n\n### 4. When you need a **simple, atomic counter** or **distributed lock**\n- **Redis:** `INCR` (atomic increment), `INCRBY`, `SETNX` (set if not exists, for distributed locks) are built-in, atomic operations with zero network round-trips.\n- **Postgres:** `UPDATE counters SET count = count + 1 WHERE id = X` works but requires a transaction and row-level locking, which is slower and heavier.\n- **Choose Redis for:** Rate limit counters, \"like\" buttons, distributed mutexes (Redlock).\n\n### 5. When you need **pub/sub** (publish/subscribe) for real-time messaging\n- **Redis:** Has a built-in, lightweight pub/sub system. Clients subscribe to channels and receive messages instantly.\n- **Postgres:** `LISTEN/NOTIFY` exists but is less performant, less flexible (limited payloads), and not designed for high-throughput message fan-out.\n- **Choose Redis for:** Real-time chat notifications, live dashboards, broadcasting events to a fleet of servers.\n\n### 6. When you need **high availability with minimal complexity** (for caching)\n- **Redis Sentinel** or **Redis Cluster** provides automatic failover and sharding with a simpler operational model than Postgres replication (for a cache layer). Losing a Redis node is acceptable because data can be rebuilt from Postgres.\n- **Postgres:** HA (e.g., Patroni, repmgr) is more complex and typically requires synchronous replication for zero data loss, which adds latency.\n- **Choose Redis for:** A cache layer where speed is critical and data loss is acceptable.\n\n---\n\n### When you should **NOT** choose Redis:\n\n- **Durability is non-negotiable:** Redis's default `RDB` (snapshot) or `AOF` (append-only file) persistence is slower and less reliable than Postgres's WAL (Write-Ahead Log). A server crash can lose up to a few seconds of data.\n- **Complex queries:** `JOIN`s, `GROUP BY`, `WHERE` with multiple conditions, subqueries, window functions. Redis has no query language; you must fetch data by key and process it in your application.\n",
+          "retrieved_docs": [],
+          "latency_ms": 16075.771667005029,
+          "tokens_used": 1013,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00110351,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_004",
+          "query_text": "What does HyDE stand for in retrieval?",
+          "answer": "In the context of retrieval (specifically in information retrieval and AI), **HyDE** stands for **Hypothetical Document Embeddings**.\n\nIt is a technique used to improve zero-shot dense retrieval. The core idea is:\n\n1.  **Generate a Hypothetical Document:** Instead of directly searching for a query, you first use a Large Language Model (LLM) to generate a \"hypothetical\" document that would perfectly answer the user's query.\n2.  **Embed the Document:** You then create a vector embedding of this generated (synthetic) document.\n3.  **Retrieve via Document Similarity:** You use this document embedding to search your vector database, looking for real documents that are semantically similar to the *hypothetical* one.\n\n**Why does this work?**\nThe key insight is that **documents and queries often exist in different vector spaces**. A query like \"Tell me about string theory\" is short and interrogative, while a relevant document is long and declarative (\"String theory is a theoretical framework...\"). HyDE bridges this gap by turning the query into a document-like representation, making it easier for a document retrieval system to find matches.\n\n**Summary:**\nHyDE = **Hypothetical Document Embeddings** (not a standard acronym for a different system).",
+          "retrieved_docs": [],
+          "latency_ms": 9362.608915995224,
+          "tokens_used": 277,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0002939100000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_005",
+          "query_text": "Why use tenacity for retries?",
+          "answer": "This is an excellent question, as it gets to the heart of why a dedicated library like Tenacity is often superior to writing ad-hoc retry logic.\n\nThe simple answer is: **Tenacity provides a battle-tested, declarative, and highly configurable way to add retry logic to any function, handling all the common failure modes (backoff, jitter, exceptions, timeouts) that you would otherwise have to code yourself, and which are notoriously tricky to get right.**\n\nLet's break down the \"why\" into specific problems Tenacity solves.\n\n### The Problem: Why *not* just use a simple `while` loop?\n\nA naive retry implementation looks like this:\n\n```python\nimport time\nimport random\n\ndef unreliable_function():\n    if random.random() < 0.7:\n        raise ConnectionError(\"Network issue\")\n    return \"Success\"\n\n# Naive retry\nattempts = 3\nfor i in range(attempts):\n    try:\n        result = unreliable_function()\n        print(f\"Success on attempt {i+1}\")\n        break\n    except ConnectionError:\n        if i == attempts - 1:\n            raise\n        print(f\"Attempt {i+1} failed, retrying...\")\n        time.sleep(1) # Fixed wait\n```\n\nThis code has several immediate problems:\n1.  **Fixed Wait:** Sleeping for 1 second every time is inefficient and can cause \"thundering herd\" problems (all clients retrying at the same time).\n2.  **No Backoff:** It doesn't wait longer between attempts to give the system time to recover.\n3.  **No Jitter:** Without randomness, retries will cluster, overwhelming the server.\n4.  **No Exception Filtering:** It catches *all* `ConnectionError` types. What if you only want to retry on specific HTTP status codes (e.g., 429 Too Many Requests, 503 Service Unavailable)?\n5.  **No Timeout:** The retry loop itself has no total time limit. A transient issue could cause your program to hang for minutes.\n6.  **No Callbacks:** You can't easily log or notify when a retry happens.\n7.  **Code Duplication:** You have to write this same boilerplate for every function that needs retries.\n\n### How Tenacity Solves These Problems (The \"Why\")\n\nTenacity turns the above mess into a clean, readable decorator or a context manager.\n\n```python\nfrom tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type\nimport random\n\n@retry(\n    stop=stop_after_attempt(3),  # 1. Stop after 3 attempts\n    wait=wait_exponential(multiplier=1, min=1, max=10), # 2. Exponential backoff\n    retry=retry_if_exception_type(ConnectionError) # 3. Only retry on ConnectionError\n)\ndef reliable_function():\n    if random.random() < 0.7:\n        raise ConnectionError(\"Network issue\")\n    return \"Success\"\n```\n\nHere is the **core reason to use Tenacity**: it provides **separation of concerns**. Your business logic (`reliable_function`) is clean, and your resilience logic is a declarative configuration.\n\n### Key Features That Justify Using Tenacity\n\n#### 1. **Sophisticated Wait Strategies (Backoff & Jitter)**\n- **Exponential Backoff:** `wait_exponential()` doubles the wait time after each failure. This is the industry standard for giving overloaded systems time to recover.\n- **Jitter:** `wait_random_exponential()` adds randomness. This is **critical** for preventing the \"thundering herd\" problem where all retrying clients hit the server simultaneously.\n- **Chainable Waits:** You can combine strategies, e.g., wait 1 second, then exponential backoff.\n\n#### 2. **Flexible Stop Conditions**\n- **By Attempt:** `stop_after_attempt(5)`\n- **By Time:** `stop_after_delay(60)` (stop after 60 seconds total, regardless of attempts)\n- **Combined:** `stop=stop_after_attempt(10) | stop_after_delay(120)` (stop if *either* condition is met)\n\n#### 3. **Precise Exception Handling**\n- **By Type:** `retry_if_exception_type(TimeoutError)`\n- **By Function:** `retry_if_exception(lambda e: \"rate limit\" in str(e).lower())`\n- **Negation:** `retry_if_not_exception_type(ValueError)` (retry on everything except ValueError)\n\n#### 4. **Built-in Async Support**\nTenacity works seamlessly with `async`/`await` functions, which is",
+          "retrieved_docs": [],
+          "latency_ms": 16758.37570799922,
+          "tokens_used": 1012,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0011032400000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_006",
+          "query_text": "What is BGE-base-en-v1.5 used for?",
+          "answer": "**BGE-base-en-v1.5** (BAAI General Embedding) is a text embedding model developed by the Beijing Academy of Artificial Intelligence (BAAI). It is specifically designed to convert text into high-dimensional vectors (dense embeddings) that capture semantic meaning.\n\nHere is a breakdown of its primary use cases:\n\n### 1. Semantic Search (Retrieval)\nThis is its most common and powerful use case. You can encode a large corpus of documents (e.g., knowledge base articles, product descriptions, legal documents) into vectors. When a user submits a query, you encode the query into a vector and find the most semantically similar documents by calculating the cosine similarity between the query vector and the document vectors.\n\n- **Example:** Searching for \"How do I reset my password?\" will find documents about \"account recovery steps\" even if the exact words \"reset\" and \"password\" are not present.\n\n### 2. Retrieval-Augmented Generation (RAG)\nBGE-base-en-v1.5 is a cornerstone model for RAG pipelines. In a RAG system, the model retrieves relevant context from a vector database (using its embeddings) and passes that context to a Large Language Model (LLM) to generate a more accurate and grounded answer.\n\n- **Workflow:** User Query \u2192 BGE Embedding \u2192 Vector DB Search \u2192 Retrieve Top-k Chunks \u2192 LLM generates answer based on those chunks.\n\n### 3. Text Classification\nYou can use the embeddings as feature vectors for downstream classifiers. For example, you can encode customer reviews and train a simple logistic regression or SVM classifier on top of these vectors to predict sentiment (positive/negative).\n\n- **Benefit:** This is often faster and requires less data than fine-tuning a separate classification model.\n\n### 4. Clustering and Topic Modeling\nBy embedding a large set of documents, you can apply clustering algorithms (like K-Means or HDBSCAN) to group similar documents together. This is useful for organizing news articles, customer feedback, or research papers into distinct topics.\n\n### 5. Duplicate Detection / Near-Duplicate Detection\nIf two pieces of text have very similar embeddings (e.g., cosine similarity > 0.95), they are likely semantically identical or near-duplicates. This is useful for cleaning datasets or detecting plagiarism.\n\n### 6. Recommendation Systems\nYou can use embeddings to find items (products, movies, articles) that are semantically similar to a user's past interactions or a specific item they liked.\n\n---\n\n### Key Technical Features of BGE-base-en-v1.5\n\n- **Model Size:** \"Base\" means it has ~110 million parameters (a good balance of speed and quality).\n- **Language:** Primarily optimized for **English**.\n- **Max Sequence Length:** 512 tokens.\n- **Output Dimension:** 768-dimensional vectors.\n- **Key Improvement over v1.0:** The \"v1.5\" version introduced **M3-Embedding** training techniques, which significantly improved its performance on **dense retrieval** tasks, particularly for **asymmetric semantic search** (where queries are short and documents are long). It also has better support for **instructions** (prepending a task-specific prefix like `Represent this sentence for searching relevant passages:` to the query).\n\n### How to Use It (Quick Example with `sentence-transformers`)\n\n```python\nfrom sentence_transformers import SentenceTransformer\n\n# Load the model\nmodel = SentenceTransformer('BAAI/bge-base-en-v1.5')\n\n# Encode a query (with instruction for retrieval)\nquery = \"What is the capital of France?\"\nquery_embedding = model.encode(query, normalize_embeddings=True)\n\n# Encode documents\ndocuments = [\"Paris is the capital of France.\", \"London is the capital of the UK.\"]\ndoc_embeddings = model.encode(documents, normalize_embeddings=True)\n\n# Calculate similarity (e.g., cosine similarity)\nimport numpy as np\nsimilarities = np.dot(query_embedding, doc_embeddings.T)\nprint(similarities)  # Higher score for the first document\n```\n\n**In summary:** BGE-base-en-v1.5 is a go-to model for **converting English text into semantic vectors** for use in search, RAG, classification, and clustering tasks. It is widely used because it offers excellent performance for its size and is straightforward to deploy.",
+          "retrieved_docs": [],
+          "latency_ms": 14866.058165993309,
+          "tokens_used": 927,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0010055900000000002,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_007",
+          "query_text": "Compare LlamaIndex and Haystack briefly.",
+          "answer": "Here's a brief comparison of **LlamaIndex** and **Haystack**:\n\n**LlamaIndex**\n- **Primary Focus:** Data indexing, retrieval, and connecting LLMs to external data (documents, databases, APIs).\n- **Best For:** Building custom RAG (Retrieval-Augmented Generation) pipelines, handling complex data ingestion, and creating knowledge bases.\n- **Key Strength:** Extremely flexible data connectors and advanced indexing strategies (e.g., hierarchical, hybrid search).\n- **Typical Use Case:** Research assistants, document Q&A, structured data retrieval.\n\n**Haystack**\n- **Primary Focus:** End-to-end NLP pipeline orchestration (search, summarization, question answering, etc.).\n- **Best For:** Production-ready search systems, multi-step NLP workflows, and integrating with various backends.\n- **Key Strength:** Strong pipeline architecture, built-in evaluation tools, and easy deployment (e.g., REST API, Docker).\n- **Typical Use Case:** Enterprise search, FAQ bots, conversational AI with retrieval.\n\n**Bottom Line:**\n- Use **LlamaIndex** if you need deep control over data indexing and retrieval logic.\n- Use **Haystack** if you want a robust, production-ready framework for building and deploying NLP pipelines quickly.\n\nBoth support LLM integration and vector stores, but their design philosophies differ: LlamaIndex is data-centric, while Haystack is pipeline-centric.",
+          "retrieved_docs": [],
+          "latency_ms": 9600.443041010294,
+          "tokens_used": 299,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0003181100000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_008",
+          "query_text": "When does ProcessPoolExecutor beat threads?",
+          "answer": "This is a great question, because the answer is not simply \"CPU-bound tasks.\" While that's the starting point, the *real* performance benefit comes from understanding **how Python's GIL interacts with your specific workload.**\n\nHere is the precise breakdown of when `ProcessPoolExecutor` beats threads.\n\n### The Short Answer\n\n`ProcessPoolExecutor` beats threads when your task is **CPU-bound** and **does not release the GIL**.\n\nConversely, threads can beat processes when the task is **I/O-bound** (waiting on network, disk, database) because the GIL is released during those waits.\n\n### The Detailed Breakdown: 3 Key Scenarios\n\n#### 1. CPU-Intensive, Pure Python Code (The Clear Winner for Processes)\n\nThis is the textbook case. If you are doing heavy number crunching, image processing, or data parsing in pure Python, **processes will destroy threads.**\n\n- **Why?** Threads are limited by the **Global Interpreter Lock (GIL)** . Only one thread can execute Python bytecode at a time, even on a multi-core CPU. So 8 threads on an 8-core machine still run at the speed of ~1 core.\n- **How Processes Win:** Each process gets its own Python interpreter and its own GIL. They can run 8 tasks simultaneously on 8 cores.\n- **Example:** Calculating a million prime numbers.\n\n```python\nimport time\nfrom concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor\n\ndef cpu_heavy(n):\n    \"\"\"A pure Python CPU-bound task (no C extensions)\"\"\"\n    total = 0\n    for i in range(n):\n        total += i ** 2\n    return total\n\nif __name__ == \"__main__\":\n    N = 10_000_000\n    # Threads: ~1.5 seconds (effectively single-threaded)\n    # Processes: ~0.4 seconds (using 4 cores)\n```\n\n#### 2. CPU-Intensive Code that Releases the GIL (Tie or Threads Win)\n\nMany popular libraries like **NumPy, Pandas, OpenCV, and PyTorch** are written in C and explicitly release the GIL during heavy computations.\n\n- **Why it changes:** When a thread calls a C function that releases the GIL, other threads can run Python code simultaneously. This allows true parallelism for those specific operations.\n- **Processes vs. Threads:** In this case, threads can achieve near-process-level speed for the math part, but with **drastically lower overhead**.\n- **Winner:** **Threads** are often better here because they share memory (no pickling) and start faster.\n- **Example:** Large matrix multiplication with NumPy.\n\n```python\nimport numpy as np\nimport time\nfrom concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor\n\ndef numpy_heavy(size):\n    \"\"\"NumPy releases the GIL, so threads work well here\"\"\"\n    a = np.random.rand(size, size)\n    b = np.random.rand(size, size)\n    return np.dot(a, b)\n\n# Threads will be nearly as fast as processes for this, with less overhead.\n```\n\n#### 3. I/O-Bound Tasks (The Clear Winner for Threads)\n\nIf your task spends 99% of its time waiting (HTTP requests, database queries, file reads), **threads always win**.\n\n- **Why?** When a thread does `requests.get(url)`, the network call releases the GIL. The thread goes to sleep waiting for a response, and another thread runs. You can have hundreds of threads doing I/O concurrently.\n- **Processes are terrible here** because:\n    1.  **Overhead:** Starting a process is expensive (forking, copying memory).\n    2.  **Pickling:** Data must be serialized (pickled) to send to the process and back. For I/O tasks, this overhead often exceeds the task's duration.\n    3.  **Memory:** Each process has its own memory space, wasting RAM for simple I/O tasks.\n\n### The \"Pickling Tax\" (Crucial for ProcessPoolExecutor)\n\nThis is the hidden cost that often makes processes slower in practice.\n\n- **Threads:** Arguments are passed by reference. No copying.\n- **Processes:** Arguments and return values must be **pickled** (serialized) and sent via inter-process communication (IPC).\n\n**When this kills processes:**\n- Passing large data structures (e.g., a 1GB DataFrame).\n- Passing non-picklable objects (e.g., lambda functions, database connections).\n- Tasks that return large results.\n\n**Rule of Thumb:** If your task is CPU-bound but the input data is *massive*, threads might actually be faster because the time to pickle and send the data to a process exceeds",
+          "retrieved_docs": [],
+          "latency_ms": 18209.47258299566,
+          "tokens_used": 1012,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0011032400000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_009",
+          "query_text": "What is semantic caching?",
+          "answer": "Here is a detailed explanation of semantic caching.\n\n### The Simple Definition\n\n**Semantic caching** is a caching strategy that stores and retrieves data based on the *meaning* (semantics) of a query, rather than its exact, literal text.\n\nThink of it like a smart librarian. Instead of only remembering the exact book titles you've asked for, they understand the topic of your request. If you ask for \"books about French cooking\" and later ask for \"guides on preparing French cuisine,\" the librarian knows you want the same thing and can hand you the same books without going back to the shelves.\n\n### How It Differs from Traditional Caching\n\nThis is the most important distinction.\n\n- **Traditional (Exact-Match) Caching:** The cache key is the query string itself (e.g., `SELECT * FROM users WHERE city = 'Paris'`). If the next query is `SELECT * FROM users WHERE city = 'Paris'`, it's a cache **hit**. If the query is `SELECT * FROM users WHERE city = 'paris'` (lowercase 'p') or `SELECT * FROM users WHERE city = 'Paris' ORDER BY name`, it's a cache **miss**. It's rigid and literal.\n\n- **Semantic Caching:** The cache key is the *meaning* or *intent* of the query. The system understands that \"What is the capital of France?\" and \"Paris is the capital of which country?\" are semantically related to the same piece of information. It can return a cached answer for a new, but semantically equivalent, question.\n\n### How Semantic Caching Works (The Technical Process)\n\nSemantic caching typically involves several steps:\n\n1.  **Query Embedding:** When a new query arrives, it's not used as the key directly. Instead, a Machine Learning model (specifically, a text embedding model) converts the query into a **vector**\u2014a list of numbers (e.g., `[0.23, -0.45, 0.89, ...]`). This vector is a mathematical representation of the query's meaning.\n\n2.  **Semantic Search:** The system doesn't look for an exact match. Instead, it performs a **similarity search** in a vector database. It compares the new query's vector against all the vectors of previously cached queries.\n\n3.  **Similarity Threshold:** The system calculates the \"distance\" or \"cosine similarity\" between the vectors. If the new query's vector is very close to a cached query's vector (e.g., 95% similarity), it's considered a semantic match.\n\n4.  **Retrieval & Validation:** The cached answer for the most similar query is retrieved. However, the system must also check if the cached answer is still **valid** for the new query. This is a crucial step. For example, if the cached query was \"What is the current stock price of AAPL?\" and the new query is \"What was the stock price of AAPL a year ago?\", the vectors might be similar, but the answer is completely different. The system needs to understand the temporal context.\n\n5.  **Return or Miss:**\n    - If a semantically similar query is found *and* the cached answer is valid for the new query, it's a **semantic cache hit**. The answer is returned instantly.\n    - If no similar query is found, or the cached answer is invalid, it's a **semantic cache miss**. The system must compute the answer from scratch (e.g., call an LLM or query a database) and then store the new query and its answer in the cache.\n\n### Where is Semantic Cache Used? (Key Use Cases)\n\nIt's most powerful in systems where queries are natural language and can be phrased in many ways.\n\n1.  **Large Language Models (LLMs) & AI Chatbots:** This is the primary use case.\n    - **User 1:** \"Summarize the key findings of the Q3 financial report.\"\n    - **User 2:** \"Give me a brief overview of the third-quarter earnings.\"\n    - **Semantic Cache:** Recognizes these are the same request and returns the same LLM-generated summary, saving significant time and cost on API calls.\n\n2.  **Enterprise Search & Knowledge Bases:** A company's internal FAQ or documentation. Employees can ask questions in their own words and get the same cached answer.\n\n3.  **E-commerce Product Search:** A user searching for \"cheap sneakers\" and another searching for \"affordable running shoes\" might get the same cached product results.\n\n### The Pros and Cons\n\n**Pros (Why use it?):**\n\n- **Massive Latency Reduction:** Answers for semantically similar questions are served instantly.\n- **Significant Cost Savings:** Drastically reduces the number of expensive LLM API calls or complex database queries.\n-",
+          "retrieved_docs": [],
+          "latency_ms": 21112.439917007578,
+          "tokens_used": 1009,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0011024300000000002,
+          "provider": "deepseek"
+        }
+      ],
+      "metrics": {
+        "mean_recall_at_k": 0.0,
+        "std_recall_at_k": 0.0,
+        "mean_mrr": 0.0,
+        "std_mrr": 0.0,
+        "mean_latency_ms": 14180.208066399791,
+        "std_latency_ms": 4255.750403634698,
+        "total_tokens": 7699,
+        "mean_tokens_per_query": 769.9,
+        "total_queries": 10,
+        "cost_usd": 0.00836764,
+        "provider_calls": {
+          "deepseek": 10
+        }
+      }
+    },
+    {
+      "run_id": 3,
+      "timestamp": "2026-06-07T13:58:49.470678",
+      "query_results": [
+        {
+          "query_id": "fb_000",
+          "query_text": "What is dependency injection?",
+          "answer": "**Dependency Injection (DI)** is a software design pattern where an object receives its dependencies from an external source rather than creating them itself.\n\nIn simpler terms: Instead of a class building what it needs internally, you \"inject\" (pass in) those needed pieces from the outside.\n\n## Core Problem DI Solves\n\nWithout DI, classes are **tightly coupled** and hard to test:\n\n```python\n# Without DI (Tight Coupling)\nclass EmailService:\n    def send(self, message):\n        print(f\"Sending: {message}\")\n\nclass Notification:\n    def __init__(self):\n        self.email = EmailService()  # Hard-coded dependency\n    \n    def alert(self, msg):\n        self.email.send(msg)  # Can't easily change or mock this\n```\n\n## With Dependency Injection\n\n```python\n# With DI (Loose Coupling)\nclass Notification:\n    def __init__(self, email_service):  # Dependency injected from outside\n        self.email = email_service\n    \n    def alert(self, msg):\n        self.email.send(msg)\n\n# Usage\nemail = EmailService()\nnotification = Notification(email)  # Inject the dependency\nnotification.alert(\"Hello!\")\n```\n\n## Key Benefits\n\n1. **Testability** - Easily swap real services with mocks during testing\n2. **Flexibility** - Change implementations without modifying dependent code\n3. **Reusability** - Components are more modular and reusable\n4. **Maintainability** - Clear separation of concerns\n\n## Common Injection Types\n\n1. **Constructor Injection** (most common): Pass dependencies through constructor\n2. **Setter Injection**: Set dependencies via setter methods\n3. **Interface Injection**: Dependencies implement a specific interface\n\n## Real-World Example (TypeScript)\n\n```typescript\n// Dependency (interface)\ninterface Logger {\n    log(message: string): void;\n}\n\n// Implementation\nclass ConsoleLogger implements Logger {\n    log(message: string) {\n        console.log(message);\n    }\n}\n\n// Class that uses DI\nclass UserService {\n    constructor(private logger: Logger) {}  // Injected\n    \n    createUser(name: string) {\n        // Business logic...\n        this.logger.log(`User ${name} created`);\n    }\n}\n\n// Usage with DI container\nconst logger = new ConsoleLogger();\nconst userService = new UserService(logger);\n```\n\nDependency Injection is often implemented using **DI containers** (like Spring in Java, Angular in TypeScript) that automatically manage and inject dependencies, but the core concept is simply passing dependencies from outside rather than creating them inside.",
+          "retrieved_docs": [],
+          "latency_ms": 15288.926458000788,
+          "tokens_used": 536,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00058213,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_001",
+          "query_text": "Compare async vs sync in FastAPI.",
+          "answer": "## Async vs Sync in FastAPI\n\nFastAPI supports both **async** and **sync** route handlers, and choosing between them depends on your specific use case. Let's compare them in detail.\n\n## Basic Syntax\n\n### Sync Route\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get(\"/sync-endpoint\")\ndef sync_endpoint():\n    # Synchronous processing\n    return {\"message\": \"This is synchronous\"}\n```\n\n### Async Route\n```python\nfrom fastapi import FastAPI\n\napp = FastAPI()\n\n@app.get(\"/async-endpoint\")\nasync def async_endpoint():\n    # Asynchronous processing\n    return {\"message\": \"This is asynchronous\"}\n```\n\n## Key Differences\n\n### 1. **Threading Model**\n\n| Aspect | Sync | Async |\n|--------|------|-------|\n| **Execution** | Runs in thread pool | Runs in event loop |\n| **Concurrency** | Thread-based | Event-driven |\n| **Overhead** | Higher (thread switching) | Lower (coroutine switching) |\n\n### 2. **Performance Characteristics**\n\n```python\nimport asyncio\nimport time\n\n# Sync - blocks the thread\n@app.get(\"/sync-slow\")\ndef sync_slow():\n    time.sleep(5)  # Blocks the thread\n    return {\"status\": \"done\"}\n\n# Async - non-blocking\n@app.get(\"/async-slow\")\nasync def async_slow():\n    await asyncio.sleep(5)  # Non-blocking\n    return {\"status\": \"done\"}\n```\n\n## When to Use Each\n\n### Use **Sync** when:\n\n1. **CPU-bound operations**\n```python\n@app.get(\"/compute\")\ndef compute_heavy():\n    # CPU-intensive work\n    result = sum(range(10_000_000))\n    return {\"result\": result}\n```\n\n2. **Simple CRUD operations**\n```python\n@app.get(\"/users/{user_id}\")\ndef get_user(user_id: int):\n    # Quick database lookup\n    return db.query(User).filter(User.id == user_id).first()\n```\n\n3. **Using synchronous libraries**\n```python\nimport requests\n\n@app.get(\"/external-api\")\ndef call_external():\n    response = requests.get(\"https://api.example.com/data\")\n    return response.json()\n```\n\n### Use **Async** when:\n\n1. **I/O-bound operations**\n```python\nimport aiohttp\n\n@app.get(\"/async-external\")\nasync def call_external_async():\n    async with aiohttp.ClientSession() as session:\n        async with session.get(\"https://api.example.com/data\") as response:\n            return await response.json()\n```\n\n2. **Multiple concurrent I/O operations**\n```python\n@app.get(\"/parallel-requests\")\nasync def parallel_requests():\n    async with aiohttp.ClientSession() as session:\n        tasks = [\n            session.get(f\"https://api.example.com/item/{i}\")\n            for i in range(10)\n        ]\n        responses = await asyncio.gather(*tasks)\n        return [await r.json() for r in responses]\n```\n\n3. **WebSocket connections**\n```python\nfrom fastapi import WebSocket\n\n@app.websocket(\"/ws\")\nasync def websocket_endpoint(websocket: WebSocket):\n    await websocket.accept()\n    while True:\n        data = await websocket.receive_text()\n        await websocket.send_text(f\"Message received: {data}\")\n```\n\n## Performance Comparison\n\n### Test Scenario: 100 concurrent requests\n\n```python\nimport time\nimport asyncio\nfrom fastapi import FastAPI\nfrom concurrent.futures import ThreadPoolExecutor\nimport httpx\n\napp = FastAPI()\n\n# Sync version\n@app.get(\"/sync\")\ndef sync_endpoint():\n    time.sleep(0.1)  # Simulate I/O\n    return {\"status\": \"ok\"}\n\n# Async version\n@app.get(\"/async\")\nasync def async_endpoint():\n    await asyncio.sleep(0.1)  # Simulate I/O\n    return {\"status\": \"ok\"}\n```\n\n**Typical results with 100 concurrent requests:**\n- **Sync**: ~10-15 seconds (thread pool limited)\n- **Async**: ~1-2 seconds (event loop optimized)\n\n## Internal Mechanism\n\n### How FastAPI Handles Them\n\n```python\nfrom fastapi import FastAPI\nfrom typing import Callable\nimport asyncio\n\napp = FastAPI()\n\n# FastAPI internally does this:\ndef wrap_sync_in_async(func: Callable):\n    async def wrapper(*args, **kwargs):\n        # Sync functions are run in thread pool\n        loop = asyncio.get_event_loop()\n        return await loop.run_in_executor(None, func, *args, **kwargs)\n    return wrapper\n```\n\n## Best Practices\n\n### 1. **Mix Both Types**\n```python",
+          "retrieved_docs": [],
+          "latency_ms": 15960.606583001208,
+          "tokens_used": 1012,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0011032400000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_002",
+          "query_text": "Explain Python decorators in one paragraph.",
+          "answer": "A Python decorator is a function that takes another function as input, wraps it with additional behavior, and returns the modified function\u2014all without permanently altering the original function\u2019s code. You apply a decorator to a function using the `@decorator_name` syntax above its definition. This is equivalent to writing `my_function = decorator(my_function)`. Common uses include logging, timing, access control, caching, or enforcing type checks. Essentially, decorators provide a clean, reusable way to extend or modify the functionality of functions or methods.",
+          "retrieved_docs": [],
+          "latency_ms": 14522.058957998524,
+          "tokens_used": 124,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00012644000000000002,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_003",
+          "query_text": "When would you choose Redis over Postgres?",
+          "answer": "This is a great architectural question. The choice between **Redis** and **PostgreSQL** isn't about which is \"better,\" but about which is the **right tool for the specific job**.\n\nHere is a clear breakdown of when you would choose **Redis** over **PostgreSQL**:\n\n### 1. When you need sub-millisecond latency (Real-time systems)\n- **Redis:** Operates entirely in-memory. Read/Write operations typically take **< 1 millisecond**. This is critical for real-time applications where waiting even 5ms is too long.\n- **Postgres:** Reads from disk (even with caching). Queries can take 1-50ms depending on complexity and data size.\n- **Choose Redis for:** Real-time leaderboards, live chat, gaming state, ad bidding, real-time analytics.\n\n### 2. When your data is ephemeral or has automatic expiration (TTL)\n- **Redis:** Has built-in **Time-To-Live (TTL)** for keys. Data automatically vanishes after a set time. This is not a natural concept in SQL.\n- **Postgres:** You must manually delete rows or run a cron job to clean up expired data.\n- **Choose Redis for:** Session stores, temporary tokens, rate limiting counters, verification codes, cached API responses.\n\n### 3. When you need simple, atomic data structures (Counters, Queues, Sets)\n- **Redis:** Provides atomic operations on native data types: `INCR` for counters, `LPUSH`/`RPOP` for queues, `SADD` for sets, `ZADD` for sorted sets. These are single, fast commands.\n- **Postgres:** Requires `UPDATE ... SET count = count + 1` with transactions or `SELECT ... FOR UPDATE` to avoid race conditions. It's heavier.\n- **Choose Redis for:** Rate limiting (`INCR` + expire), job queues (Redis Streams or Lists), unique visitor tracking (HyperLogLog), leaderboards (Sorted Sets).\n\n### 4. When you need a pub/sub message broker (Simple messaging)\n- **Redis:** Has a lightweight, built-in **Pub/Sub** mechanism. Clients subscribe to channels and receive messages instantly.\n- **Postgres:** Has `LISTEN`/`NOTIFY`, but it is less feature-rich and not designed for high-throughput message streaming.\n- **Choose Redis for:** Real-time notifications, broadcasting updates to multiple clients (e.g., live sports scores), inter-service communication in microservices.\n\n### 5. When you need a cache layer (Hot data)\n- **Redis:** Is the industry standard for caching. It can sit in front of Postgres to absorb read traffic for frequently accessed data.\n- **Postgres:** Can be a cache (e.g., using materialized views), but it's not designed for this purpose.\n- **Choose Redis for:** Caching database query results, caching HTML fragments, caching API responses.\n\n### 6. When you need global distributed locks\n- **Redis:** Has **Redlock** algorithm and simple `SETNX` (Set if Not Exists) commands for distributed locks, which are critical for coordinating microservices.\n- **Postgres:** Can do this with `SELECT ... FOR UPDATE` or advisory locks, but it's slower and ties your lock to a database connection.\n- **Choose Redis for:** Distributed locking, leader election, ensuring only one instance of a job runs.\n\n---\n\n### When would you *NOT* choose Redis?\n\nYou should **not** choose Redis over Postgres when:\n\n- **You need complex queries:** Joins, subqueries, aggregations, `GROUP BY`, `WHERE` clauses on multiple fields.\n- **Your data must be durable** (if Redis crashes, you lose recent writes unless you use AOF/RDB persistence, which is slower).\n- **You have relational data** (e.g., a user has many orders, which have many items).\n- **You need ACID transactions** with rollbacks and complex consistency guarantees.\n- **Your dataset is larger than available RAM** (Redis is expensive for large cold data).\n\n---\n\n### The \"Hybrid\" Pattern (Most Common in Production)\n\nThe most powerful architecture uses **both**:\n\n1.  **PostgreSQL** is the **System of Record** (source of truth). All writes go here.\n2.  **Redis** is the **Performance Layer**. It caches frequent reads and handles real-time features.\n\n**Example flow:**\n- **Write:** User updates profile \u2192 Write to Postgres \u2192 Invalidate/update the Redis cache.\n- **Read:** Load leaderboard \u2192 Check Redis first (99% hit rate) \u2192 If miss, query Postgres, then cache the result in Redis.\n\n### Summary Table\n\n| Requirement | Choose Redis | Choose Postgres |\n| :--- | :--- | :--- |\n| **Latency",
+          "retrieved_docs": [],
+          "latency_ms": 24477.13612500229,
+          "tokens_used": 1013,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00110351,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_004",
+          "query_text": "What does HyDE stand for in retrieval?",
+          "answer": "In the context of retrieval, particularly within information retrieval and retrieval-augmented generation (RAG) systems, **HyDE** stands for:\n\n**Hypothetical Document Embeddings**\n\nIt is a technique used to improve the retrieval of relevant documents by first generating a \"hypothetical\" document that answers the user's query, and then using the embedding of that hypothetical document to search the database.\n\n**How it works (briefly):**\n\n1.  **Query:** The user asks a question (e.g., \"What is the capital of France?\").\n2.  **Generation:** Instead of directly embedding the query, a Large Language Model (LLM) generates a \"hypothetical document\" that would ideally contain the answer (e.g., \"Paris is the capital and most populous city of France...\").\n3.  **Embedding:** This generated text is turned into a vector embedding.\n4.  **Retrieval:** This embedding is used to search a vector database, looking for real documents with similar embeddings.\n\n**Why use it?**\n\nThe core idea is that a hypothetical *answer* (a document) is often closer in the embedding space to real relevant documents than the original *question* is. This helps bridge the \"vocabulary mismatch\" or \"representation gap\" between a short, conversational query and a long, factual document.",
+          "retrieved_docs": [],
+          "latency_ms": 15328.004541996052,
+          "tokens_used": 286,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00030381000000000006,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_005",
+          "query_text": "Why use tenacity for retries?",
+          "answer": "Tenacity is a popular Python library used for adding retry behavior to functions, and it's chosen for several key reasons that make it more powerful and flexible than writing custom retry logic:\n\n## 1. **Clean, Declarative Syntax**\nInstead of wrapping your code in manual `try/except` loops with counters, Tenacity uses decorators:\n\n```python\nfrom tenacity import retry, stop_after_attempt, wait_exponential\n\n@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))\ndef fetch_data(url):\n    return requests.get(url).json()\n```\n\n## 2. **Sophisticated Wait Strategies**\nTenacity provides built-in strategies beyond simple fixed delays:\n- **Exponential backoff** (`wait_exponential`) - critical for API rate limits\n- **Random jitter** (`wait_random`) - prevents thundering herd problems\n- **Chainable waits** - combine multiple strategies\n- **Custom wait functions** - for domain-specific logic\n\n## 3. **Fine-Grained Control Over Retry Conditions**\nYou can specify *exactly* which exceptions to retry and which to fail immediately:\n\n```python\n@retry(retry=retry_if_exception_type(ConnectionError) | retry_if_exception(lambda e: e.status_code >= 500))\ndef unstable_operation():\n    ...\n```\n\n## 4. **Built-in Stop Conditions**\n- Stop after N attempts (`stop_after_attempt`)\n- Stop after time limit (`stop_after_delay`)\n- Stop on specific exceptions (`stop_if_exception`)\n- Custom stop functions\n\n## 5. **Observability and Callbacks**\nTenacity provides hooks for logging, metrics, and side effects:\n```python\n@retry(before=before_log(logger, logging.INFO), after=after_log(logger, logging.DEBUG))\ndef monitored_function():\n    ...\n```\n\n## 6. **Async Support**\nWorks with `async/await` out of the box, unlike many simpler retry implementations.\n\n## 7. **Battle-Tested and Maintained**\n- Used in major projects (OpenStack, Apache Airflow, etc.)\n- Mature API (since 2014)\n- Active maintenance and community\n\n## When You Might *Not* Need Tenacity\n- **One-off scripts** with simple needs\n- **Very high-performance** code where decorator overhead matters (rare)\n- **Already using a framework** with built-in retries (e.g., `requests` session, `aiohttp`, `Spring Retry` in Java)\n\n## Example: Manual vs Tenacity\n\n**Manual (error-prone):**\n```python\ndef get_data():\n    for attempt in range(3):\n        try:\n            return api.call()\n        except TemporaryError:\n            if attempt == 2:\n                raise\n            time.sleep(2 ** attempt)\n```\n\n**Tenacity (clean):**\n```python\n@retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=2))\ndef get_data():\n    return api.call()\n```\n\nThe manual version lacks jitter, doesn't handle async, requires custom logging, and is harder to test or modify. Tenacity gives you all these features with a single decorator.\n\n**Bottom line:** Use Tenacity when you need production-grade retry logic that's configurable, observable, and maintainable. For simple cases, a manual loop might suffice, but Tenacity scales much better as your requirements grow.",
+          "retrieved_docs": [],
+          "latency_ms": 16618.42312500812,
+          "tokens_used": 751,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00081614,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_006",
+          "query_text": "What is BGE-base-en-v1.5 used for?",
+          "answer": "**BGE-base-en-v1.5** is a text embedding model developed by the Beijing Academy of Artificial Intelligence (BAAI). Its primary use is to convert text (words, sentences, or documents) into dense numerical vectors (embeddings) that capture semantic meaning.\n\nHere are its specific use cases:\n\n**1. Semantic Search (Retrieval)**\n- **How it works:** You encode a user's query and a large corpus of documents into vectors. You then use a vector database to find the documents whose vectors are most similar (e.g., cosine similarity) to the query vector.\n- **Example:** A customer support chatbot searching through a knowledge base to find the article most relevant to a user's question.\n\n**2. RAG (Retrieval-Augmented Generation)**\n- **How it works:** This is the most common modern use. The model retrieves relevant context from a private database (e.g., company documents) and feeds that context to a Large Language Model (LLM) like GPT-4 or Llama to generate a grounded answer.\n- **Why BGE?** It is specifically optimized for this \"retrieval\" step, offering high accuracy while being lightweight enough to run on a single GPU or CPU.\n\n**3. Text Classification**\n- **How it works:** You convert text into an embedding and then train a simple classifier (e.g., logistic regression or a small neural network) on top of those embeddings.\n- **Example:** Classifying customer emails as \"complaint,\" \"inquiry,\" or \"feedback\" based on their semantic content.\n\n**4. Clustering & Topic Modeling**\n- **How it works:** You embed a set of documents and then use clustering algorithms (like K-Means or HDBSCAN) to group similar documents together.\n- **Example:** Organizing thousands of news articles into distinct topic clusters (e.g., \"Sports,\" \"Politics,\" \"Technology\").\n\n**5. Deduplication & Near-Duplicate Detection**\n- **How it works:** You compare the embeddings of two pieces of text. If the vectors are extremely close (cosine similarity > 0.95), they are likely duplicates or near-duplicates.\n- **Example:** Cleaning a dataset of product reviews to remove spam or bot-generated duplicates.\n\n**Key Features & Why it's Popular:**\n- **High Performance:** It consistently ranks at the top of the MTEB (Massive Text Embedding Benchmark) for English models of its size (around 110M parameters).\n- **Efficient:** It is small enough to run on modest hardware (even a laptop CPU) but powerful enough for production use.\n- **Open Source:** It is freely available on Hugging Face (`BAAI/bge-base-en-v1.5`).\n- **Long Context Support:** It supports a maximum sequence length of **512 tokens**, which is good for paragraphs and short documents.\n\n**In short:** BGE-base-en-v1.5 is a go-to model for **turning text into searchable vectors**, primarily used to power **semantic search** and **RAG pipelines** in AI applications.",
+          "retrieved_docs": [],
+          "latency_ms": 20584.950208009104,
+          "tokens_used": 655,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.00070639,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_007",
+          "query_text": "Compare LlamaIndex and Haystack briefly.",
+          "answer": "Here's a brief comparison of **LlamaIndex** and **Haystack**:\n\n| Feature | LlamaIndex | Haystack |\n|---------|------------|----------|\n| **Primary Focus** | Data indexing & retrieval (connecting LLMs to custom data) | End-to-end NLP pipelines (search, QA, summarization) |\n| **Best For** | Building custom RAG (Retrieval-Augmented Generation) systems, especially with complex data sources | Production-ready search systems, document QA, and multi-step NLP workflows |\n| **Data Ingestion** | Extensive connectors (PDFs, databases, APIs, Notion, etc.) with advanced indexing strategies | Strong document stores (Elasticsearch, FAISS, Milvus) with file converters |\n| **Querying** | Flexible retrieval (vector, keyword, hybrid) + query engines & agents | Pipeline-based: retrievers, readers, rankers, generators |\n| **Ease of Use** | More Pythonic, lower-level control; steeper learning curve | Higher-level abstractions (pipelines); more turnkey |\n| **Production Readiness** | Good, but newer ecosystem | Very mature, used in production by enterprises |\n| **Community** | Growing fast (startup) | Large, established (deepset) |\n\n**In short:**\n- Choose **LlamaIndex** if you're deeply customizing RAG with diverse data sources.\n- Choose **Haystack** if you need a robust, production-ready search/QA pipeline with minimal boilerplate.",
+          "retrieved_docs": [],
+          "latency_ms": 19042.84995800117,
+          "tokens_used": 323,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0003445100000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_008",
+          "query_text": "When does ProcessPoolExecutor beat threads?",
+          "answer": "This is a great question because it gets to the heart of Python's concurrency limitations (the GIL) and the trade-offs between I/O-bound and CPU-bound work.\n\n**The short answer:** `ProcessPoolExecutor` beats threads **when your task is CPU-bound** (heavy computation) and you need to bypass the Global Interpreter Lock (GIL) to achieve true parallelism.\n\nHere\u2019s the detailed breakdown of when and why.\n\n---\n\n### The Core Rule of Thumb\n\n| Type of Work | Best Tool | Why? |\n| :--- | :--- | :--- |\n| **I/O-bound** (network, disk, database) | `ThreadPoolExecutor` | Threads are lightweight. The GIL is released during I/O waits, so threads can overlap efficiently. |\n| **CPU-bound** (number crunching, data processing, math) | `ProcessPoolExecutor` | Processes bypass the GIL, allowing true parallel execution on multiple CPU cores. |\n\n---\n\n### When `ProcessPoolExecutor` Wins (CPU-Bound Tasks)\n\n`ProcessPoolExecutor` beats threads when your code spends most of its time **executing Python bytecode** (i.e., doing math, loops, string processing, etc.) and not waiting for external resources.\n\n**Example: Calculating Pi (CPU-bound)**\n\n```python\nimport time\nfrom concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor\n\ndef calculate_pi(terms):\n    \"\"\"CPU-intensive task: approximate pi using Leibniz series.\"\"\"\n    pi = 0\n    for k in range(terms):\n        pi += ((-1)**k) / (2*k + 1)\n    return pi * 4\n\nif __name__ == \"__main__\":\n    terms = 10_000_000  # 10 million terms\n    \n    # Threads (will be slower due to GIL)\n    start = time.time()\n    with ThreadPoolExecutor(max_workers=4) as executor:\n        results = list(executor.map(calculate_pi, [terms]*4))\n    print(f\"Threads: {time.time() - start:.2f}s\")\n    \n    # Processes (true parallelism)\n    start = time.time()\n    with ProcessPoolExecutor(max_workers=4) as executor:\n        results = list(executor.map(calculate_pi, [terms]*4))\n    print(f\"Processes: {time.time() - start:.2f}s\")\n```\n\n**Expected output (on a 4-core machine):**\n```\nThreads: 12.50s   # No speedup vs sequential\nProcesses: 3.20s  # ~4x faster (true parallel)\n```\n\n**Why?** Threads are fighting over the GIL, so only one thread runs Python code at a time. Processes each have their own GIL and Python interpreter, so they can run 4 tasks simultaneously on 4 cores.\n\n---\n\n### When Threads Still Win (I/O-Bound Tasks)\n\nEven though this question is about when processes beat threads, it's important to note the flip side. For I/O-bound tasks (downloading files, reading from disk, querying databases), **threads are significantly better** because:\n\n1.  **Processes have high overhead** (spinning up a new Python interpreter, copying memory).\n2.  **Threads are lightweight** (shared memory, fast context switching).\n3.  **The GIL is released during I/O** (e.g., `time.sleep()`, `requests.get()`, `file.read()`), so threads can overlap efficiently.\n\n**Example: Downloading URLs (I/O-bound)**\n\n```python\nimport requests\nimport time\nfrom concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor\n\ndef download_url(url):\n    response = requests.get(url)\n    return len(response.content)\n\nurls = [\"https://example.com\"] * 20\n\n# Threads (fast, because GIL is released during network I/O)\nstart = time.time()\nwith ThreadPoolExecutor(max_workers=10) as executor:\n    list(executor.map(download_url, urls))\nprint(f\"Threads: {time.time() - start:.2f}s\")\n\n# Processes (slower due to overhead)\nstart = time.time()\nwith ProcessPoolExecutor(max_workers=10) as executor:\n    list(executor.map(download_url, urls))\nprint(f\"Processes: {time.time() - start:.2f}s\")\n```\n\n**Expected output:**\n```\nThreads: 2.10s     # ~10x faster than sequential\nProcesses: 4.50s   # Slower due to process creation overhead\n```\n\n---\n\n### When to Use `ProcessPoolExecutor` (Summary)\n\nUse `ProcessPoolExecutor` when **all** of the following are true:\n\n1.  **Task is CPU-bound",
+          "retrieved_docs": [],
+          "latency_ms": 21863.682916999096,
+          "tokens_used": 1012,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0011032400000000001,
+          "provider": "deepseek"
+        },
+        {
+          "query_id": "fb_009",
+          "query_text": "What is semantic caching?",
+          "answer": "Here is a detailed explanation of semantic caching.\n\n### The Simple Analogy: A Smart Librarian\n\nImagine a standard cache is like a librarian who only finds a book if you give them the **exact, verbatim title**.\n- You: \"I need the red book about cooking pasta.\"\n- Librarian: *Checks the catalog for \"red book about cooking pasta.\"* \"Not found.\"\n- You: \"Okay, how about 'The Pasta Bible'?\"\n- Librarian: *Checks again.* \"Ah, yes! Here it is.\"\n\n**Semantic caching** is like a librarian who understands the **meaning** of your request.\n- You: \"I need the red book about cooking pasta.\"\n- Librarian: *Thinks, \"They want a cookbook focused on pasta... I have 'The Pasta Bible' right here. That matches the meaning.\"* \"Here you go!\"\n\n### The Technical Definition\n\n**Semantic caching** is a caching strategy that stores and retrieves data based on the **meaning or intent** of a query, rather than its exact syntax or literal string.\n\nInstead of looking for an exact match (e.g., `\"What is the capital of France?\"`), a semantic cache understands that `\"Capital of France\"` and `\"French capital city\"` are the same question and can serve the same cached answer.\n\n### How It Differs from Traditional Caching\n\n| Feature | Traditional (Exact) Caching | Semantic Caching |\n| :--- | :--- | :--- |\n| **Match Criteria** | Exact string match, exact key match | Semantic similarity, conceptual overlap |\n| **Example Query 1** | \"Show me the weather in Paris\" | \"Show me the weather in Paris\" |\n| **Example Query 2** | \"Weather in Paris\" | **MISS** (different string) | **HIT** (same meaning) |\n| **Example Query 3** | \"What's the temperature in Paris?\" | **MISS** (different string) | **HIT** (same meaning) |\n| **Technology** | Hash maps, key-value stores (Redis, Memcached) | Embedding models, vector databases, LLMs |\n| **Use Case** | Web page caching, database query caching | LLM responses, RAG (Retrieval-Augmented Generation) systems |\n\n### How It Works (Step-by-Step)\n\n1.  **Receive a Query:** A user (or an AI application) sends a query: *\"What are the benefits of renewable energy?\"*\n\n2.  **Generate an Embedding:** The query is converted into a **vector embedding**\u2014a long list of numbers that mathematically represents the *meaning* of the query. This is done by a special AI model (e.g., from OpenAI, Cohere, or Sentence Transformers).\n\n3.  **Search the Semantic Cache:** This vector is compared against all the vectors stored in the cache (which is often a **vector database**). The system looks for an existing query that is \"close enough\" in meaning (e.g., within a certain similarity threshold).\n\n4.  **Cache Hit (Semantic Match):** If a similar query is found (e.g., *\"What are the advantages of green energy?\"*), the system returns the **cached response** from that previous query. The user gets a fast answer without calling the expensive AI model again.\n\n5.  **Cache Miss (No Match):** If no semantically similar query is found, the system forwards the query to the expensive backend (e.g., an LLM like GPT-4 or a database).\n    - The backend generates the response.\n    - The **new query + its response** are stored as a new entry in the semantic cache for future use.\n\n### Why Is It So Important (Especially for AI)?\n\nThis is the killer application. Large Language Models (LLMs) are:\n- **Expensive:** Every API call costs money.\n- **Slow:** Generating a response takes time (seconds, not milliseconds).\n- **Stateless:** They don't remember past conversations (by default).\n\nSemantic caching solves all three:\n1.  **Reduces Cost:** If 100 users ask \"What's the capital of France?\" in 100 different ways, you only pay for the first one. The other 99 get the cached result.\n2.  **Reduces Latency:** A vector database lookup takes milliseconds. An LLM call can take seconds. This makes applications feel much faster.\n3.  **Improves Consistency:** The same question will always get the same factual answer, preventing the LLM's \"hallucination\" from generating slightly different (and possibly incorrect) responses each time.\n\n### Real-World Example\n\n**Scenario:** A customer support chatbot for a bank.\n\n- **User 1:** \"How do I freeze",
+          "retrieved_docs": [],
+          "latency_ms": 17743.81137501041,
+          "tokens_used": 1009,
+          "recall_at_k": null,
+          "reciprocal_rank": null,
+          "cost_usd": 0.0011024300000000002,
+          "provider": "deepseek"
+        }
+      ],
+      "metrics": {
+        "mean_recall_at_k": 0.0,
+        "std_recall_at_k": 0.0,
+        "mean_mrr": 0.0,
+        "std_mrr": 0.0,
+        "mean_latency_ms": 18143.045024902676,
+        "std_latency_ms": 3285.7485032241925,
+        "total_tokens": 6721,
+        "mean_tokens_per_query": 672.1,
+        "total_queries": 10,
+        "cost_usd": 0.007291840000000001,
+        "provider_calls": {
+          "deepseek": 10
+        }
+      }
+    }
+  ],
+  "timestamp_utc": "2026-06-07T08:31:50Z"
+}

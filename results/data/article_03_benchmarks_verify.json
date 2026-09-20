@@ -1,0 +1,144 @@
+{
+  "benchmark": "article_03_evaluation",
+  "configurations": [
+    {
+      "name": "ragas",
+      "description": "RAGAS automated metrics (faithfulness, answer relevance, context precision, answer correctness)"
+    },
+    {
+      "name": "llm_judge",
+      "description": "LLM-as-Judge with structured rubric (pinned: openai/gpt-4o-mini, temperature=0)"
+    }
+  ],
+  "dataset": {
+    "path": "/Users/jagdish/work/intellij/py-ws/agentic-ai-stress-suite/datasets/synthetic_queries/article_01.json",
+    "num_queries": 30,
+    "queries_evaluated": 30,
+    "pipeline_errors": 0
+  },
+  "settings": {
+    "top_k": 5,
+    "runs": 3,
+    "ragas_llm": "gpt-4o-mini",
+    "judge_temperature": 0.0
+  },
+  "pipeline": {
+    "name": "naive_rag",
+    "collection": "a03",
+    "embedding_model": "BAAI/bge-base-en-v1.5",
+    "latency_ms": {
+      "mean": 1163.8254086176555,
+      "std": 1095.8000212549427,
+      "min": 523.3588218688965,
+      "max": 6842.200994491577
+    }
+  },
+  "results": [
+    {
+      "name": "ragas",
+      "description": "RAGAS automated metrics (faithfulness, answer relevance, context precision, answer correctness)",
+      "metrics": {
+        "answer_correctness": {
+          "mean": 0.4246482494985742,
+          "std": 0.011811924784745558,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.4113948068396017,
+            0.42246917478541196,
+            0.4400807668707091
+          ]
+        },
+        "faithfulness": {
+          "mean": 0.8684578076244742,
+          "std": 0.003125906347428661,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.8727398589065256,
+            0.8653654863654864,
+            0.8672680776014109
+          ]
+        },
+        "answer_relevancy": {
+          "mean": 0.9355944005596054,
+          "std": 0.0003859058824180632,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.9352067220241412,
+            0.9354555777766274,
+            0.9361209018780474
+          ]
+        },
+        "context_precision": {
+          "mean": 0.7228240740483677,
+          "std": 0.008016615119425165,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.7276388888623831,
+            0.7115277777518785,
+            0.7293055555308414
+          ]
+        }
+      },
+      "wall_time_seconds": 438.61938095092773,
+      "samples_scored": 30,
+      "num_runs": 3
+    },
+    {
+      "name": "llm_judge",
+      "description": "LLM-as-Judge with structured rubric (pinned: openai/gpt-4o-mini, temperature=0)",
+      "metrics": {
+        "correctness": {
+          "mean": 0.96,
+          "std": 0.018856180831641232,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.9733333333333333,
+            0.9733333333333333,
+            0.9333333333333333
+          ]
+        },
+        "completeness": {
+          "mean": 0.9311111111111111,
+          "std": 0.008314794192830946,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.94,
+            0.9333333333333333,
+            0.92
+          ]
+        },
+        "groundedness": {
+          "mean": 0.96,
+          "std": 0.019626135258506313,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.9666666666666667,
+            0.98,
+            0.9333333333333333
+          ]
+        },
+        "relevance": {
+          "mean": 0.9733333333333333,
+          "std": 0.018856180831641284,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.9866666666666667,
+            0.9866666666666667,
+            0.9466666666666667
+          ]
+        }
+      },
+      "wall_time_seconds": 252.18530917167664,
+      "samples_scored": 30,
+      "num_runs": 3
+    }
+  ]
+}

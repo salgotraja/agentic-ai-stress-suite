@@ -1,0 +1,130 @@
+{
+  "benchmark": "article_02_advanced_retrieval",
+  "dry_run": false,
+  "configurations": [
+    {
+      "name": "dense_only",
+      "description": "Dense-only retrieval (Article 1 baseline)",
+      "pipeline_type": "naive",
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hybrid_bm25_dense",
+      "description": "Hybrid search (BM25 + dense + RRF)",
+      "pipeline_type": "hybrid",
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hybrid_flashrank",
+      "description": "Hybrid + FlashRank reranking (local, free)",
+      "pipeline_type": "hybrid",
+      "cost_per_1k_queries": 0.0
+    }
+  ],
+  "dataset": {
+    "path": "/Users/jagdish/work/intellij/py-ws/agentic-ai-stress-suite/datasets/synthetic_queries/article_02.json",
+    "num_queries": 30
+  },
+  "settings": {
+    "num_runs": 3,
+    "top_k": 5
+  },
+  "results": [
+    {
+      "name": "dense_only",
+      "description": "Dense-only retrieval (Article 1 baseline)",
+      "recall_at_k": {
+        "mean": 0.7611111111111111,
+        "std": 0.0,
+        "runs": [
+          0.7611111111111111,
+          0.7611111111111111,
+          0.7611111111111111
+        ]
+      },
+      "mrr": {
+        "mean": 0.7388888888888889,
+        "std": 0.0,
+        "runs": [
+          0.7388888888888889,
+          0.7388888888888889,
+          0.7388888888888889
+        ]
+      },
+      "latency_ms": {
+        "mean": 1095.4267976556569,
+        "std": 93.90396510474942,
+        "runs": [
+          992.981881932792,
+          1177.4182999334396,
+          1115.880211100739
+        ]
+      },
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hybrid_bm25_dense",
+      "description": "Hybrid search (BM25 + dense + RRF)",
+      "recall_at_k": {
+        "mean": 0.7444444444444445,
+        "std": 0.0,
+        "runs": [
+          0.7444444444444445,
+          0.7444444444444445,
+          0.7444444444444445
+        ]
+      },
+      "mrr": {
+        "mean": 0.69,
+        "std": 0.0,
+        "runs": [
+          0.69,
+          0.69,
+          0.69
+        ]
+      },
+      "latency_ms": {
+        "mean": 1149.0510615222674,
+        "std": 102.06008989513953,
+        "runs": [
+          1035.8084194662904,
+          1177.4174721002055,
+          1233.9272930003062
+        ]
+      },
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hybrid_flashrank",
+      "description": "Hybrid + FlashRank reranking (local, free)",
+      "recall_at_k": {
+        "mean": 0.6833333333333333,
+        "std": 0.0,
+        "runs": [
+          0.6833333333333333,
+          0.6833333333333333,
+          0.6833333333333333
+        ]
+      },
+      "mrr": {
+        "mean": 0.7666666666666667,
+        "std": 0.0,
+        "runs": [
+          0.7666666666666667,
+          0.7666666666666667,
+          0.7666666666666667
+        ]
+      },
+      "latency_ms": {
+        "mean": 1340.973039810423,
+        "std": 496.4752827799375,
+        "runs": [
+          1913.1282904326024,
+          1023.8070999660218,
+          1085.9837290326443
+        ]
+      },
+      "cost_per_1k_queries": 0.0
+    }
+  ]
+}

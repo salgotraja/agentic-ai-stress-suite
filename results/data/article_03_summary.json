@@ -1,0 +1,128 @@
+{
+  "benchmark": "article_03_evaluation",
+  "pipeline": {
+    "name": "naive_rag",
+    "embedding_model": "BAAI/bge-base-en-v1.5",
+    "latency_ms": {
+      "mean": 714.6047353744507,
+      "std": 204.32613801703806,
+      "min": 358.5379123687744,
+      "max": 1602.3871898651123
+    }
+  },
+  "dataset": {
+    "num_queries": 30,
+    "queries_evaluated": 30,
+    "pipeline_errors": 0
+  },
+  "settings": {
+    "top_k": 5,
+    "runs": 3,
+    "judge_temperature": 0.0,
+    "ragas_llm": "gpt-4o-mini"
+  },
+  "evaluators": {
+    "ragas": {
+      "wall_time_seconds": 1424.9258241653442,
+      "num_runs": 3,
+      "samples_scored": 30,
+      "metrics": {
+        "answer_correctness": {
+          "mean": 0.4362923814112248,
+          "std": 0.021846164709344872,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.44209312563010517,
+            0.4596721518744969,
+            0.4071118667290724
+          ]
+        },
+        "faithfulness": {
+          "mean": 0.8029321445190898,
+          "std": 0.0013775792806202125,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.8013675175873318,
+            0.8027091998415528,
+            0.8047197161283849
+          ]
+        },
+        "answer_relevancy": {
+          "mean": 0.9370418813136041,
+          "std": 0.00028762814992810656,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.9371896059790966,
+            0.936639799547627,
+            0.9372962384140889
+          ]
+        },
+        "context_precision": {
+          "mean": 0.7407407407048149,
+          "std": 0.02057973219314239,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.7694444444056945,
+            0.7305555555198612,
+            0.7222222221888889
+          ]
+        }
+      }
+    },
+    "llm_judge": {
+      "wall_time_seconds": 585.4062645435333,
+      "num_runs": 3,
+      "samples_scored": 30,
+      "metrics": {
+        "correctness": {
+          "mean": 0.9844444444444443,
+          "std": 0.003142696805273565,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.9866666666666667,
+            0.9866666666666667,
+            0.98
+          ]
+        },
+        "completeness": {
+          "mean": 0.9666666666666667,
+          "std": 0.005443310539518118,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.9733333333333333,
+            0.9666666666666667,
+            0.9600000000000001
+          ]
+        },
+        "groundedness": {
+          "mean": 0.9822222222222222,
+          "std": 0.00628539361054713,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.9733333333333333,
+            0.9866666666666667,
+            0.9866666666666667
+          ]
+        },
+        "relevance": {
+          "mean": 0.9977777777777778,
+          "std": 0.0031426968052735123,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            1.0,
+            1.0,
+            0.9933333333333334
+          ]
+        }
+      }
+    }
+  }
+}

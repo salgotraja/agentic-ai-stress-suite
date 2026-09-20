@@ -1,0 +1,21 @@
+{
+  "recall_at_1": {
+    "stock": 0.4633,
+    "finetuned": 0.3955,
+    "delta": -0.0678
+  },
+  "recall_at_3": {
+    "stock": 0.6554,
+    "finetuned": 0.5706,
+    "delta": -0.0847
+  },
+  "recall_at_5": {
+    "stock": 0.7288,
+    "finetuned": 0.6215,
+    "delta": -0.1073
+  },
+  "latency_ms": {
+    "stock_median": 7.18,
+    "finetuned_median": 6.66
+  }
+}

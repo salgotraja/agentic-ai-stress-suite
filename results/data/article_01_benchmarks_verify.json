@@ -1,0 +1,180 @@
+{
+  "benchmark": "article_01_state_aware_rag",
+  "configurations": [
+    {
+      "name": "naive",
+      "description": "Dense-only retrieval (Chroma + BGE-base-en-v1.5)",
+      "pipeline_type": "naive",
+      "advanced_flags": {},
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hyde",
+      "description": "HyDE: hypothetical document embeddings",
+      "pipeline_type": "advanced",
+      "advanced_flags": {
+        "use_hyde": true,
+        "use_decomposition": false
+      },
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "decomposition",
+      "description": "Query decomposition with parallel retrieval",
+      "pipeline_type": "advanced",
+      "advanced_flags": {
+        "use_hyde": false,
+        "use_decomposition": true
+      },
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hyde_decomposition",
+      "description": "Composite: HyDE + decomposition",
+      "pipeline_type": "advanced",
+      "advanced_flags": {
+        "use_hyde": true,
+        "use_decomposition": true
+      },
+      "cost_per_1k_queries": 0.0
+    }
+  ],
+  "dataset": {
+    "path": "/Users/jagdish/work/intellij/py-ws/agentic-ai-stress-suite/datasets/synthetic_queries/article_01.json",
+    "num_queries": 300
+  },
+  "settings": {
+    "num_runs": 3,
+    "top_k": 5
+  },
+  "results": [
+    {
+      "name": "naive",
+      "description": "Dense-only retrieval (Chroma + BGE-base-en-v1.5)",
+      "recall_at_k": {
+        "mean": 0.4866666666666667,
+        "std": 0.0,
+        "runs": [
+          0.4866666666666667,
+          0.4866666666666667,
+          0.4866666666666667
+        ]
+      },
+      "mrr": {
+        "mean": 0.44966666666666666,
+        "std": 0.0,
+        "runs": [
+          0.44966666666666666,
+          0.44966666666666666,
+          0.44966666666666666
+        ]
+      },
+      "latency_ms": {
+        "mean": 1624.043742776521,
+        "std": 19.638129895239025,
+        "runs": [
+          1612.9525285898853,
+          1646.7181230799058,
+          1612.4605766597717
+        ]
+      },
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hyde",
+      "description": "HyDE: hypothetical document embeddings",
+      "recall_at_k": {
+        "mean": 0.508888888888889,
+        "std": 0.0034694433324435722,
+        "runs": [
+          0.505,
+          0.5116666666666667,
+          0.51
+        ]
+      },
+      "mrr": {
+        "mean": 0.48255555555555557,
+        "std": 0.0036315659989787233,
+        "runs": [
+          0.4787222222222222,
+          0.48594444444444446,
+          0.483
+        ]
+      },
+      "latency_ms": {
+        "mean": 1855.0188422066842,
+        "std": 43.185844238564904,
+        "runs": [
+          1806.5757838500213,
+          1868.9948984634127,
+          1889.4858443066187
+        ]
+      },
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "decomposition",
+      "description": "Query decomposition with parallel retrieval",
+      "recall_at_k": {
+        "mean": 0.4772222222222222,
+        "std": 0.0009622504486493665,
+        "runs": [
+          0.47833333333333333,
+          0.4766666666666667,
+          0.4766666666666667
+        ]
+      },
+      "mrr": {
+        "mean": 0.42633333333333334,
+        "std": 0.015316818803903266,
+        "runs": [
+          0.4428888888888889,
+          0.42344444444444446,
+          0.4126666666666667
+        ]
+      },
+      "latency_ms": {
+        "mean": 2176.312560971112,
+        "std": 83.75393912658583,
+        "runs": [
+          2247.777169026849,
+          2197.010121959914,
+          2084.150391926572
+        ]
+      },
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hyde_decomposition",
+      "description": "Composite: HyDE + decomposition",
+      "recall_at_k": {
+        "mean": 0.5114814814814814,
+        "std": 0.01255031027767215,
+        "runs": [
+          0.5233333333333333,
+          0.49833333333333335,
+          0.5127777777777778
+        ]
+      },
+      "mrr": {
+        "mean": 0.43403703703703705,
+        "std": 0.008080676030065839,
+        "runs": [
+          0.43822222222222224,
+          0.4247222222222222,
+          0.43916666666666665
+        ]
+      },
+      "latency_ms": {
+        "mean": 4207.5657452400665,
+        "std": 22.29535952449392,
+        "runs": [
+          4232.403533046709,
+          4201.011685433344,
+          4189.282017240148
+        ]
+      },
+      "cost_per_1k_queries": 0.0
+    }
+  ]
+}

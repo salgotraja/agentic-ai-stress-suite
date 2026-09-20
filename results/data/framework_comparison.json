@@ -1,0 +1,65 @@
+{
+  "code_complexity": {
+    "llamaindex": {
+      "loc": 432,
+      "api_calls": {
+        "llamaindex_imports": 1,
+        "haystack_imports": 0,
+        "total_method_calls": 207
+      }
+    },
+    "haystack": {
+      "loc": 267,
+      "api_calls": {
+        "llamaindex_imports": 0,
+        "haystack_imports": 17,
+        "total_method_calls": 154
+      }
+    }
+  },
+  "indexing_time_ms": {
+    "llamaindex": 34430.48862499927,
+    "haystack": 32852.52637499798
+  },
+  "latency": {
+    "llamaindex": {
+      "mean_ms": 22.27292506674227,
+      "std_ms": 10.437784056578705,
+      "min_ms": 13.045167001109803,
+      "max_ms": 63.950291001674486,
+      "p50_ms": 18.712104500082205,
+      "p95_ms": 39.11099620127059,
+      "p99_ms": 57.834493471455076
+    },
+    "haystack": {
+      "mean_ms": 39.39291123339596,
+      "std_ms": 2.1806011083412717,
+      "min_ms": 37.32062500057509,
+      "max_ms": 49.043374998291256,
+      "p50_ms": 38.96033350065409,
+      "p95_ms": 42.56034549980541,
+      "p99_ms": 47.26446656808549
+    }
+  },
+  "accuracy": {
+    "llamaindex": {
+      "recall_at_k_mean": 0.0,
+      "recall_at_k_std": 0.0,
+      "num_queries": 300
+    },
+    "haystack": {
+      "recall_at_k_mean": 0.0,
+      "recall_at_k_std": 0.0,
+      "num_queries": 300
+    }
+  },
+  "metadata": {
+    "dataset": "/Users/jagdish/work/intellij/py-ws/agentic-ai-stress-suite/datasets/synthetic_queries/article_01.json",
+    "docs_dir": "/Users/jagdish/work/intellij/py-ws/agentic-ai-stress-suite/datasets/tech_docs",
+    "num_documents": 207,
+    "num_queries": 300,
+    "latency_queries": 10,
+    "runs": 3,
+    "top_k": 5
+  }
+}

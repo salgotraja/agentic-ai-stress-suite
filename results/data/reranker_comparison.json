@@ -1,0 +1,21 @@
+{
+  "benchmark": "reranker_comparison",
+  "test_cases": 5,
+  "results": [
+    {
+      "backend": "FlashRank",
+      "mean_accuracy_at_1": 1.0,
+      "std_accuracy_at_1": 0.0,
+      "mean_latency_ms": 28.33125840406865,
+      "std_latency_ms": 0.0,
+      "cost_per_1k_queries": 0.0,
+      "runs": [
+        {
+          "run": 1,
+          "accuracy_at_1": 1.0,
+          "avg_latency_ms": 28.33125840406865
+        }
+      ]
+    }
+  ]
+}

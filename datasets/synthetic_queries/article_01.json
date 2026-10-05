@@ -1,15 +1,15 @@
 {
   "metadata": {
-    "version": "2.0",
+    "version": "2.1",
     "created_date": "2026-01-15",
     "description": "Synthetic test queries for Article 1: RAG baseline evaluation",
-    "total_queries": 150,
+    "total_queries": 142,
     "difficulty_distribution": {
-      "simple": 56,
-      "moderate": 62,
+      "simple": 55,
+      "moderate": 57,
       "negation": 1,
       "temporal": 6,
-      "complex": 24,
+      "complex": 22,
       "comparison": 1
     },
     "category_distribution": {
@@ -17,11 +17,11 @@
       "procedural": 45,
       "temporal": 18,
       "comparison": 34,
-      "negation": 12
+      "negation": 4
     },
-    "revised_date": "2026-10-04",
-    "revision_notes": "v1.0 held 300 rows but only 152 distinct questions, and 97 source_docs references pointed at files that did not exist after the corpus grew from 40 to 200 documents. v2.0 keeps the first occurrence of each distinct question (ids are unchanged, so they are not contiguous), drops 2 questions with no dedicated document in the corpus (q032, q042), and relabels every remaining question against the 200-document corpus.",
-    "label_policy": "source_docs lists the documents whose main subject is what the question asks about, at most three. Comparison questions get the dedicated document for each side. Labels were assigned by reading document titles and section headings, not by running a retriever, and were reviewed by a single reviewer. expected_answer text is unchanged from v1.0."
+    "revised_date": "2026-10-05",
+    "revision_notes": "v1.0 held 300 rows but only 152 distinct questions, and 97 source_docs references pointed at files that did not exist after the corpus grew from 40 to 200 documents. v2.0 keeps the first occurrence of each distinct question (ids are unchanged, so they are not contiguous), drops 2 questions with no dedicated document in the corpus (q032, q042), and relabels every remaining question against the 200-document corpus. v2.1 applies the second labelling pass: 45 questions relabelled, and 8 questions about Pydantic validation pitfalls (q038, q098, q118, q158, q199, q219, q226, q286) removed because no document has that topic as its main subject and three independent label sets disagreed on them.",
+    "label_policy": "source_docs lists the documents whose main subject is what the question asks about, at most three. Comparison questions get the dedicated document for each side. Near-duplicate documents on the same topic are both listed. Labels were assigned in two independent passes with the same policy, each checking document titles, section headings and content. The second pass did not see the first pass labels or any retrieval results. The passes agreed exactly on 96 of 150 questions and shared at least one document on 137. Disagreements were settled from document content only, without looking at retrieval results. expected_answer text is unchanged from v1.0."
   },
   "queries": [
     {
@@ -96,7 +96,8 @@
       "query": "How do you validate JSON data using Pydantic models?",
       "expected_answer": "You can validate JSON data using the validate() method on a Pydantic model.",
       "source_docs": [
-        "pydantic/02_basemodel_basics.md"
+        "pydantic/11_serialization_and_deserialization.md",
+        "pydantic/36_json_encoding_and_decoding.md"
       ],
       "difficulty": "simple",
       "category": "procedural",
@@ -108,6 +109,7 @@
       "expected_answer": "@autowired is used to inject a bean into a method, while @bean is used to define a bean.",
       "source_docs": [
         "spring/02_ioc_container.md",
+        "spring/03_dependency_injection.md",
         "spring/05_dependency_injection_patterns.md"
       ],
       "difficulty": "simple",
@@ -142,7 +144,8 @@
       "query": "Can you give an example of using a React hook to manage state?",
       "expected_answer": "Using the useState hook, for example: const [count, setCount] = useState(0);",
       "source_docs": [
-        "react/05_useState_hook.md"
+        "react/05_useState_hook.md",
+        "react/06_advanced_usestate_patterns.md"
       ],
       "difficulty": "simple",
       "category": "procedural",
@@ -210,6 +213,7 @@
       "query": "How do you implement a bean lifecycle in Spring?",
       "expected_answer": "Bean lifecycle in Spring involves using annotations such as @PostConstruct and @PreDestroy to manage the lifecycle of a bean.",
       "source_docs": [
+        "spring/04_bean_scopes.md",
         "spring/06_bean_lifecycle_and_callbacks.md"
       ],
       "difficulty": "moderate",
@@ -221,7 +225,6 @@
       "query": "What is the difference between a Pydantic model and a standard Python class?",
       "expected_answer": "A Pydantic model is a class that extends BaseModel, while a standard Python class is a class that does not extend BaseModel.",
       "source_docs": [
-        "pydantic/01_introduction.md",
         "pydantic/02_basemodel_basics.md"
       ],
       "difficulty": "simple",
@@ -266,7 +269,8 @@
       "query": "How do you implement authentication in FastAPI using OAuth2PasswordBearer?",
       "expected_answer": "You can implement authentication in FastAPI using OAuth2PasswordBearer by adding it as a dependency.",
       "source_docs": [
-        "fastapi/10_security_in_fastapi.md"
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
       ],
       "difficulty": "moderate",
       "category": "procedural",
@@ -299,6 +303,7 @@
       "query": "What is the purpose of the @autowired annotation in Spring?",
       "expected_answer": "@autowired is used to inject a bean into a method in Spring.",
       "source_docs": [
+        "spring/03_dependency_injection.md",
         "spring/05_dependency_injection_patterns.md"
       ],
       "difficulty": "simple",
@@ -310,6 +315,7 @@
       "query": "Can you give an example of using @autowired to inject a service?",
       "expected_answer": "Using @autowired to inject a service, for example: @Autowired private UserService userService;",
       "source_docs": [
+        "spring/03_dependency_injection.md",
         "spring/05_dependency_injection_patterns.md"
       ],
       "difficulty": "simple",
@@ -356,6 +362,7 @@
       "expected_answer": "@autowired is used to inject a bean into a method, while @bean is used to define a bean.",
       "source_docs": [
         "spring/02_ioc_container.md",
+        "spring/03_dependency_injection.md",
         "spring/05_dependency_injection_patterns.md"
       ],
       "difficulty": "simple",
@@ -367,7 +374,6 @@
       "query": "What are common pitfalls to avoid when using Pydantic models?",
       "expected_answer": "Common pitfalls to avoid when using Pydantic models include not using fields with default values and not using the validate() method.",
       "source_docs": [
-        "pydantic/02_basemodel_basics.md",
         "pydantic/50_pydantic_best_practices_and_patterns.md"
       ],
       "difficulty": "negation",
@@ -379,8 +385,7 @@
       "query": "How do you implement authentication in React using the useReducer hook?",
       "expected_answer": "You can implement authentication in React using the useReducer hook by creating a reducer function and using it with the useReducer hook.",
       "source_docs": [
-        "react/09_usereducer_for_complex_state.md",
-        "react/10_usecontext_for_state_management.md"
+        "react/09_usereducer_for_complex_state.md"
       ],
       "difficulty": "moderate",
       "category": "procedural",
@@ -405,30 +410,20 @@
       "expected_answer": "Both FastAPI and Spring use dependency injection to provide shared resources. FastAPI uses function parameters with type hints and Depends(), while Spring uses @Autowired annotations. FastAPI's approach is more explicit and type-safe.",
       "source_docs": [
         "fastapi/05_dependencies__dependency_injection.md",
-        "spring/03_dependency_injection.md"
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
       ],
       "difficulty": "moderate",
       "category": "comparison",
       "notes": "Multi-hop query comparing two frameworks"
     },
     {
-      "id": "q038",
-      "query": "What are common pitfalls when using Pydantic validation?",
-      "expected_answer": "Common pitfalls include incorrect type annotations, missing validation rules, and incorrect use of validators. It is essential to carefully design your models and validate user input to avoid these issues.",
-      "source_docs": [
-        "pydantic/03_field_types_and_validation.md",
-        "pydantic/08_custom_validators.md"
-      ],
-      "difficulty": "moderate",
-      "category": "negation",
-      "notes": "Query highlighting what not to do"
-    },
-    {
       "id": "q039",
       "query": "How to implement authentication in FastAPI using OAuth2?",
       "expected_answer": "To implement authentication in FastAPI, you can use the OAuth2 library. You need to create an OAuth2 client, register it, and then use the client credentials to authenticate your users. You can also use the FastAPI built-in support for OAuth2.",
       "source_docs": [
-        "fastapi/10_security_in_fastapi.md"
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
       ],
       "difficulty": "moderate",
       "category": "procedural",
@@ -440,6 +435,7 @@
       "expected_answer": "React hooks provide a way to manage state and side effects in functional components. Spring bean lifecycle, on the other hand, is focused on managing the lifecycle of beans in a Spring application. While both are used for managing state, they serve different purposes.",
       "source_docs": [
         "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
         "spring/06_bean_lifecycle_and_callbacks.md"
       ],
       "difficulty": "moderate",
@@ -473,7 +469,8 @@
       "query": "Can you give an example of using Pydantic's custom validators?",
       "expected_answer": "You can use Pydantic's custom validators by creating a custom validator function and passing it as a field validator. For example, you can create a custom validator for email addresses or phone numbers.",
       "source_docs": [
-        "pydantic/08_custom_validators.md"
+        "pydantic/08_custom_validators.md",
+        "pydantic/10_field_validators.md"
       ],
       "difficulty": "moderate",
       "category": "procedural",
@@ -506,7 +503,8 @@
       "query": "How do I implement authentication in FastAPI using OAuth2?",
       "expected_answer": "To implement authentication in FastAPI using OAuth2, use the OAuth2PasswordBearer class to authenticate users and the Depends() function to inject the token into the endpoint.",
       "source_docs": [
-        "fastapi/10_security_in_fastapi.md"
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
       ],
       "difficulty": "moderate",
       "category": "procedural",
@@ -552,7 +550,8 @@
       "query": "What are the benefits of using FastAPI's automatic documentation feature?",
       "expected_answer": "FastAPI's automatic documentation feature provides a user-friendly API documentation that can be easily shared with clients, improving collaboration and reducing documentation effort.",
       "source_docs": [
-        "fastapi/01_fastapi_introduction.md"
+        "fastapi/01_fastapi_introduction.md",
+        "fastapi/21_openapi_customization.md"
       ],
       "difficulty": "simple",
       "category": "simple",
@@ -563,7 +562,8 @@
       "query": "How do I use Pydantic's custom validators?",
       "expected_answer": "To use Pydantic's custom validators, create a custom validator class that implements the Validator class and use the @validates decorator to apply the validator to a field.",
       "source_docs": [
-        "pydantic/08_custom_validators.md"
+        "pydantic/08_custom_validators.md",
+        "pydantic/10_field_validators.md"
       ],
       "difficulty": "moderate",
       "category": "procedural",
@@ -585,7 +585,8 @@
       "query": "What are common pitfalls when using Pydantic's custom validators?",
       "expected_answer": "Common pitfalls with Pydantic's custom validators include incorrect validator types and not handling validation errors properly. It's essential to validate input data correctly and handle potential exceptions.",
       "source_docs": [
-        "pydantic/08_custom_validators.md"
+        "pydantic/08_custom_validators.md",
+        "pydantic/10_field_validators.md"
       ],
       "difficulty": "simple",
       "category": "negation",
@@ -629,7 +630,8 @@
       "query": "How do I implement authentication in my FastAPI application using OAuth2?",
       "expected_answer": "To implement authentication in FastAPI using OAuth2, you need to create an OAuth2 client and use the OAuth2PasswordBearer class. You must also configure the client correctly and validate incoming tokens.",
       "source_docs": [
-        "fastapi/10_security_in_fastapi.md"
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
       ],
       "difficulty": "moderate",
       "category": "procedural",
@@ -664,6 +666,7 @@
       "expected_answer": "To compare the performance of FastAPI and Spring Framework, you can use benchmarks such as those provided by the framework's documentation. FastAPI is generally faster due to its async design and built-in support for asynchronous operations.",
       "source_docs": [
         "fastapi/01_fastapi_introduction.md",
+        "fastapi/34_performance_optimization.md",
         "spring/01_introduction.md"
       ],
       "difficulty": "complex",
@@ -698,7 +701,8 @@
       "query": "How do I implement authentication in a FastAPI application using OAuth2?",
       "expected_answer": "You can use the FastAPI OAuth2 library to implement authentication. This involves installing the library, defining the OAuth2 endpoints, and using the `OAuth2PasswordBearer` class to authenticate requests.",
       "source_docs": [
-        "fastapi/10_security_in_fastapi.md"
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
       ],
       "difficulty": "moderate",
       "category": "procedural",
@@ -710,6 +714,7 @@
       "expected_answer": "FastAPI is generally faster and more lightweight than Spring Framework due to its use of asynchronous programming and standard Python type hints. However, Spring Framework offers more features and flexibility for complex use cases.",
       "source_docs": [
         "fastapi/01_fastapi_introduction.md",
+        "fastapi/34_performance_optimization.md",
         "spring/01_introduction.md"
       ],
       "difficulty": "complex",
@@ -733,7 +738,8 @@
       "expected_answer": "FastAPI's dependency injection is more explicit and type-safe than Spring Framework's, using function parameters with type hints and Depends() instead of @Autowired annotations.",
       "source_docs": [
         "fastapi/05_dependencies__dependency_injection.md",
-        "spring/03_dependency_injection.md"
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
       ],
       "difficulty": "moderate",
       "category": "comparison",
@@ -762,23 +768,12 @@
       "notes": "Query that requires following a procedure outlined in Spring Security docs"
     },
     {
-      "id": "q098",
-      "query": "What NOT to do when using Pydantic for validation?",
-      "expected_answer": "Common pitfalls when using Pydantic for validation include not providing sufficient type hints, neglecting to use explicit field types, and not handling validation errors properly.",
-      "source_docs": [
-        "pydantic/03_field_types_and_validation.md",
-        "pydantic/08_custom_validators.md"
-      ],
-      "difficulty": "simple",
-      "category": "negation",
-      "notes": "Query highlighting potential mistakes"
-    },
-    {
       "id": "q101",
       "query": "Compare React hooks to Spring bean lifecycle.",
       "expected_answer": "React hooks manage component state and side effects, while Spring bean lifecycle manages the creation and destruction of beans. React hooks are more explicit and functional, whereas Spring's approach is more object-oriented.",
       "source_docs": [
         "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
         "spring/06_bean_lifecycle_and_callbacks.md"
       ],
       "difficulty": "complex",
@@ -835,7 +830,8 @@
       "expected_answer": "FastAPI applications use async/await for handling concurrent requests, which allows for efficient and non-blocking I/O. Spring applications use a ThreadPoolExecutor for handling concurrent requests, which can lead to performance issues if not configured properly.",
       "source_docs": [
         "fastapi/06_async.md",
-        "spring/31_async_processing_with_async.md"
+        "spring/31_async_processing_with_async.md",
+        "spring/32_spring_webflux_fundamentals.md"
       ],
       "difficulty": "complex",
       "category": "comparison",
@@ -858,6 +854,7 @@
       "expected_answer": "React hooks and Spring bean lifecycle are different concepts that serve different purposes. React hooks are used for state management in functional components, while Spring bean lifecycle is used for managing the life cycle of beans in a Spring application.",
       "source_docs": [
         "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
         "spring/06_bean_lifecycle_and_callbacks.md"
       ],
       "difficulty": "complex",
@@ -882,23 +879,12 @@
       "expected_answer": "FastAPI applications are generally faster and more efficient than Spring applications due to their use of async/await and modern Python features. However, Spring applications can be more scalable and handle high traffic loads with proper configuration.",
       "source_docs": [
         "fastapi/01_fastapi_introduction.md",
+        "fastapi/34_performance_optimization.md",
         "spring/01_introduction.md"
       ],
       "difficulty": "complex",
       "category": "comparison",
       "notes": ""
-    },
-    {
-      "id": "q118",
-      "query": "What are common pitfalls for using Pydantic validation?",
-      "expected_answer": "Common pitfalls include over-reliance on custom validators, ignoring data constraints, and neglecting to handle validation errors properly.",
-      "source_docs": [
-        "pydantic/03_field_types_and_validation.md",
-        "pydantic/08_custom_validators.md"
-      ],
-      "difficulty": "moderate",
-      "category": "negation",
-      "notes": "Warning about common issues"
     },
     {
       "id": "q120",
@@ -928,6 +914,7 @@
       "expected_answer": "React hooks are used for managing state and side effects in functional components, while Spring bean lifecycle is used for managing the life cycle of Spring beans. React hooks are more lightweight and easier to use.",
       "source_docs": [
         "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
         "spring/06_bean_lifecycle_and_callbacks.md"
       ],
       "difficulty": "moderate",
@@ -939,7 +926,8 @@
       "query": "How do I handle concurrent requests in a Spring application?",
       "expected_answer": "Spring provides built-in support for handling concurrent requests through the @Async annotation and the ThreadPoolTaskExecutor.",
       "source_docs": [
-        "spring/31_async_processing_with_async.md"
+        "spring/31_async_processing_with_async.md",
+        "spring/32_spring_webflux_fundamentals.md"
       ],
       "difficulty": "moderate",
       "category": "procedural",
@@ -951,7 +939,8 @@
       "expected_answer": "FastAPI's dependency injection is more explicit and type-safe, using function parameters with type hints and Depends(), whereas Spring uses @Autowired annotations.",
       "source_docs": [
         "fastapi/05_dependencies__dependency_injection.md",
-        "spring/03_dependency_injection.md"
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
       ],
       "difficulty": "moderate",
       "category": "comparison",
@@ -962,7 +951,8 @@
       "query": "What is the purpose of using React hooks?",
       "expected_answer": "React hooks are used to manage state and side effects in functional components, making the code more modular and reusable.",
       "source_docs": [
-        "react/05_useState_hook.md"
+        "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md"
       ],
       "difficulty": "simple",
       "category": "simple",
@@ -1007,6 +997,7 @@
       "expected_answer": "React hooks and Spring bean lifecycle are fundamentally different concepts. React hooks are used for managing state and side effects in functional components, while Spring bean lifecycle is used for managing the lifecycle of Spring beans. React hooks are more explicit and functional, whereas Spring bean lifecycle is more object-oriented and declarative.",
       "source_docs": [
         "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
         "spring/06_bean_lifecycle_and_callbacks.md"
       ],
       "difficulty": "complex",
@@ -1051,24 +1042,11 @@
       "query": "How does Spring's IoC container compare to Pydantic's dependency injection?",
       "expected_answer": "Spring's IoC container provides a more comprehensive dependency injection framework than Pydantic. Spring's container manages the creation, destruction, and initialization of bean objects, whereas Pydantic uses function parameters and type hints for dependency injection.",
       "source_docs": [
-        "spring/02_ioc_container.md",
-        "pydantic/33_pydantic_with_fastapi_integration_patterns.md"
+        "spring/02_ioc_container.md"
       ],
       "difficulty": "complex",
       "category": "comparison",
       "notes": "Multi-hop query comparing two frameworks"
-    },
-    {
-      "id": "q158",
-      "query": "What are common pitfalls with Pydantic validation?",
-      "expected_answer": "Common pitfalls with Pydantic validation include incorrect usage of custom validators, neglecting to validate nested models, and failure to provide default values for optional fields.",
-      "source_docs": [
-        "pydantic/03_field_types_and_validation.md",
-        "pydantic/08_custom_validators.md"
-      ],
-      "difficulty": "complex",
-      "category": "negation",
-      "notes": "Complex query requiring synthesis of multiple concepts"
     },
     {
       "id": "q161",
@@ -1087,6 +1065,7 @@
       "expected_answer": "The key difference between React hooks and Spring bean lifecycle is that React hooks are designed for functional components and provide a way to manage state and side effects, whereas Spring bean lifecycle is designed for object-oriented programming and provides a way to manage the life cycle of objects.",
       "source_docs": [
         "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
         "spring/06_bean_lifecycle_and_callbacks.md"
       ],
       "difficulty": "complex",
@@ -1273,18 +1252,6 @@
       "notes": ""
     },
     {
-      "id": "q199",
-      "query": "What are some common pitfalls with Pydantic model validation?",
-      "expected_answer": "Common pitfalls include incorrect type annotations, missing validation constraints, and failure to handle custom validators.",
-      "source_docs": [
-        "pydantic/03_field_types_and_validation.md",
-        "pydantic/08_custom_validators.md"
-      ],
-      "difficulty": "moderate",
-      "category": "negation",
-      "notes": "Query highlighting potential issues"
-    },
-    {
       "id": "q200",
       "query": "How do I implement request body validation in a FastAPI endpoint using Pydantic?",
       "expected_answer": "Use Pydantic models with validation enabled to validate request bodies. Use Depends() to inject validated models into endpoint functions.",
@@ -1302,7 +1269,8 @@
       "expected_answer": "BaseModel is a more advanced model class that provides validation, serialization, and deserialization capabilities. dataclass is a simpler class that only provides attribute serialization.",
       "source_docs": [
         "pydantic/02_basemodel_basics.md",
-        "pydantic/17_pydantic_dataclasses.md"
+        "pydantic/17_pydantic_dataclasses.md",
+        "pydantic/35_pydantic_with_dataclasses_stdlib.md"
       ],
       "difficulty": "simple",
       "category": "comparison",
@@ -1338,7 +1306,8 @@
       "expected_answer": "Pydantic's BaseModel and dataclass are both used for building data models, but they have different approaches. BaseModel uses a more explicit and type-safe approach, while dataclass relies on Python's dataclass feature. BaseModel provides additional features like validation and serialization.",
       "source_docs": [
         "pydantic/02_basemodel_basics.md",
-        "pydantic/17_pydantic_dataclasses.md"
+        "pydantic/17_pydantic_dataclasses.md",
+        "pydantic/35_pydantic_with_dataclasses_stdlib.md"
       ],
       "difficulty": "simple",
       "category": "comparison",
@@ -1366,18 +1335,6 @@
       "difficulty": "moderate",
       "category": "simple",
       "notes": ""
-    },
-    {
-      "id": "q219",
-      "query": "What are some common pitfalls when using Pydantic model validation?",
-      "expected_answer": "Common pitfalls when using Pydantic model validation include forgetting to include validation in the model, using the wrong field types, and not handling validation errors properly. Always validate model fields and handle errors accordingly.",
-      "source_docs": [
-        "pydantic/03_field_types_and_validation.md",
-        "pydantic/08_custom_validators.md"
-      ],
-      "difficulty": "moderate",
-      "category": "negation",
-      "notes": "What NOT to do query about Pydantic validation"
     },
     {
       "id": "q221",
@@ -1409,7 +1366,8 @@
       "expected_answer": "Use Pydantic's BaseModel when you need more complex model validation and behavior, while dataclass is more suitable for simple data modeling. BaseModel provides more advanced features and flexibility, while dataclass is more lightweight and easier to use.",
       "source_docs": [
         "pydantic/02_basemodel_basics.md",
-        "pydantic/17_pydantic_dataclasses.md"
+        "pydantic/17_pydantic_dataclasses.md",
+        "pydantic/35_pydantic_with_dataclasses_stdlib.md"
       ],
       "difficulty": "temporal",
       "category": "temporal",
@@ -1425,18 +1383,6 @@
       "difficulty": "moderate",
       "category": "procedural",
       "notes": "How-to query about background tasks"
-    },
-    {
-      "id": "q226",
-      "query": "What are common pitfalls with Pydantic model validation?",
-      "expected_answer": "Pitfalls include incorrect use of model inheritance, misconfiguring validation rules, and neglecting to handle custom validators. It's essential to validate models thoroughly before using them in your application.",
-      "source_docs": [
-        "pydantic/03_field_types_and_validation.md",
-        "pydantic/08_custom_validators.md"
-      ],
-      "difficulty": "moderate",
-      "category": "negation",
-      "notes": "Highlights potential issues with Pydantic validation"
     },
     {
       "id": "q227",
@@ -1478,7 +1424,8 @@
       "expected_answer": "Using Pydantic's BaseModel provides benefits like automatic validation, type checking, and support for nested models. It also allows for custom validation rules and is more extensible than dataclass.",
       "source_docs": [
         "pydantic/02_basemodel_basics.md",
-        "pydantic/17_pydantic_dataclasses.md"
+        "pydantic/17_pydantic_dataclasses.md",
+        "pydantic/35_pydantic_with_dataclasses_stdlib.md"
       ],
       "difficulty": "moderate",
       "category": "comparison",
@@ -1524,7 +1471,8 @@
       "query": "How do I implement authentication using OAuth2 in FastAPI?",
       "expected_answer": "FastAPI provides a built-in OAuth2 authentication system. Implementing authentication using OAuth2 involves creating a client ID, client secret, access token, and refresh token. The implementation details, however, depend on the specific OAuth2 flow used.",
       "source_docs": [
-        "fastapi/10_security_in_fastapi.md"
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
       ],
       "difficulty": "complex",
       "category": "procedural",
@@ -1604,7 +1552,8 @@
       "expected_answer": "Both Spring and FastAPI use dependency injection to provide shared resources. However, Spring uses a more complex annotation-based approach, whereas FastAPI uses a simpler type-hint-based approach.",
       "source_docs": [
         "fastapi/05_dependencies__dependency_injection.md",
-        "spring/03_dependency_injection.md"
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
       ],
       "difficulty": "moderate",
       "category": "comparison",
@@ -1638,6 +1587,7 @@
       "expected_answer": "React hooks provide a more explicit and composable way to manage state, while Spring bean lifecycle uses a more implicit and stateful approach. React hooks are also more flexible and easier to debug.",
       "source_docs": [
         "react/04_state_management_basics.md",
+        "react/05_useState_hook.md",
         "spring/06_bean_lifecycle_and_callbacks.md"
       ],
       "difficulty": "moderate",
@@ -1649,23 +1599,12 @@
       "query": "How do I implement authentication in FastAPI using OAuth2 and Pydantic models?",
       "expected_answer": "To implement authentication in FastAPI using OAuth2 and Pydantic models, use the OAuth2 library to handle authentication flows and Pydantic models to validate user data. You can also use FastAPI's built-in support for OAuth2 and Pydantic's support for OAuth2 validation.",
       "source_docs": [
-        "fastapi/10_security_in_fastapi.md"
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
       ],
       "difficulty": "complex",
       "category": "procedural",
       "notes": "Multi-hop query involving multiple libraries"
-    },
-    {
-      "id": "q286",
-      "query": "What are the common pitfalls with Pydantic validation?",
-      "expected_answer": "Common pitfalls with Pydantic validation include forgetting to add field-level constraints, using the wrong validation type (e.g. str instead of Email), and not handling validation errors properly.",
-      "source_docs": [
-        "pydantic/03_field_types_and_validation.md",
-        "pydantic/08_custom_validators.md"
-      ],
-      "difficulty": "complex",
-      "category": "negation",
-      "notes": "Listing common pitfalls with Pydantic validation"
     },
     {
       "id": "q293",
@@ -1706,7 +1645,8 @@
       "query": "When should I use Spring profiles over environment variables for configuration?",
       "expected_answer": "Use Spring profiles when you need to switch between different configurations based on environment, without altering the code. Environment variables are better suited for single-value settings.",
       "source_docs": [
-        "spring/07_spring_profiles.md"
+        "spring/07_spring_profiles.md",
+        "spring/24_spring_boot_configuration.md"
       ],
       "difficulty": "moderate",
       "category": "temporal",
@@ -1729,7 +1669,8 @@
       "query": "How do I implement authentication in FastAPI using OAuth2 and Pydantic models, and what are the security considerations?",
       "expected_answer": "To implement authentication using OAuth2, create a custom authentication endpoint and use Pydantic models for user input. Ensure proper validation, token generation, and secure token storage. Use HTTPS for secure communication.",
       "source_docs": [
-        "fastapi/10_security_in_fastapi.md"
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
       ],
       "difficulty": "complex",
       "category": "procedural",

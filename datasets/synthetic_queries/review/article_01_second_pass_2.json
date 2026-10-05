@@ -1,0 +1,422 @@
+[
+ {
+  "id": "q059",
+  "source_docs": [
+   "fastapi/08_background_tasks_in_fastapi.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI background tasks doc."
+ },
+ {
+  "id": "q060",
+  "source_docs": [
+   "pydantic/07_forward_references_and_recursive_models.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated forward references and recursive models doc."
+ },
+ {
+  "id": "q061",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI concurrency and async/await doc."
+ },
+ {
+  "id": "q062",
+  "source_docs": [
+   "fastapi/10_security_in_fastapi.md",
+   "fastapi/42_oauth2_advanced_flows.md"
+  ],
+  "confidence": "high",
+  "reason": "Security doc leads with OAuth2 password flow; OAuth2 advanced flows doc also dedicated."
+ },
+ {
+  "id": "q063",
+  "source_docs": [
+   "react/05_useState_hook.md",
+   "react/09_usereducer_for_complex_state.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated doc for each hook."
+ },
+ {
+  "id": "q064",
+  "source_docs": [
+   "spring/02_ioc_container.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated IoC container doc."
+ },
+ {
+  "id": "q065",
+  "source_docs": [
+   "fastapi/34_performance_optimization.md",
+   "fastapi/38_load_testing_and_benchmarking.md"
+  ],
+  "confidence": "low",
+  "reason": "FastAPI performance optimization and benchmarking docs; no Spring doc is dedicated to performance."
+ },
+ {
+  "id": "q075",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated BaseModel doc."
+ },
+ {
+  "id": "q086",
+  "source_docs": [
+   "fastapi/04_request_body.md",
+   "fastapi/12_request_validation_with_pydantic_in_fastapi.md"
+  ],
+  "confidence": "high",
+  "reason": "Request body doc and request validation with Pydantic doc."
+ },
+ {
+  "id": "q087",
+  "source_docs": [
+   "fastapi/10_security_in_fastapi.md",
+   "fastapi/42_oauth2_advanced_flows.md"
+  ],
+  "confidence": "high",
+  "reason": "Security doc leads with OAuth2 password flow; OAuth2 advanced flows doc also dedicated."
+ },
+ {
+  "id": "q089",
+  "source_docs": [
+   "fastapi/34_performance_optimization.md",
+   "fastapi/38_load_testing_and_benchmarking.md"
+  ],
+  "confidence": "low",
+  "reason": "FastAPI performance optimization and benchmarking docs; no Spring doc is dedicated to performance."
+ },
+ {
+  "id": "q091",
+  "source_docs": [
+   "fastapi/08_background_tasks_in_fastapi.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI background tasks doc."
+ },
+ {
+  "id": "q093",
+  "source_docs": [
+   "fastapi/05_dependencies__dependency_injection.md",
+   "spring/03_dependency_injection.md",
+   "spring/05_dependency_injection_patterns.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated DI doc per side; Spring has two near-duplicate DI docs; fastapi/15 advanced DI also considered but cap is three."
+ },
+ {
+  "id": "q094",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI concurrency and async/await doc."
+ },
+ {
+  "id": "q095",
+  "source_docs": [
+   "spring/20_spring_security_with_jwt.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated Spring Security with JWT doc."
+ },
+ {
+  "id": "q098",
+  "source_docs": [
+   "pydantic/50_pydantic_best_practices_and_patterns.md"
+  ],
+  "confidence": "low",
+  "reason": "No dedicated pitfalls doc; best-practices doc has an anti-patterns section (also considered pydantic/24, pydantic/03_field_types_and_validation)."
+ },
+ {
+  "id": "q101",
+  "source_docs": [
+   "react/08_custom_hooks_deep_dive.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "low",
+  "reason": "False-premise comparison; spring/06 is the bean lifecycle doc, no general React hooks doc exists so custom hooks doc is closest (also considered react/05, react/07, spring/04)."
+ },
+ {
+  "id": "q102",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI concurrency and async/await doc."
+ },
+ {
+  "id": "q104",
+  "source_docs": [
+   "spring/07_spring_profiles.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated Spring Profiles doc."
+ },
+ {
+  "id": "q106",
+  "source_docs": [
+   "fastapi/02_path_parameters.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated path parameters doc."
+ },
+ {
+  "id": "q107",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated BaseModel doc."
+ },
+ {
+  "id": "q110",
+  "source_docs": [
+   "fastapi/06_async.md",
+   "spring/31_async_processing_with_async.md",
+   "spring/32_spring_webflux_fundamentals.md"
+  ],
+  "confidence": "medium",
+  "reason": "FastAPI async doc; Spring has no single concurrency doc, @Async and WebFlux docs cover it."
+ },
+ {
+  "id": "q111",
+  "source_docs": [
+   "spring/07_spring_profiles.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated Spring Profiles doc."
+ },
+ {
+  "id": "q113",
+  "source_docs": [
+   "react/08_custom_hooks_deep_dive.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "low",
+  "reason": "False-premise comparison; spring/06 is the bean lifecycle doc, no general React hooks doc exists so custom hooks doc is closest (also considered react/05, react/07, spring/04)."
+ },
+ {
+  "id": "q114",
+  "source_docs": [
+   "fastapi/22_request_validation_error_handling.md",
+   "pydantic/24_error_handling_and_validationerror.md"
+  ],
+  "confidence": "medium",
+  "reason": "FastAPI validation error handling and Pydantic ValidationError docs (also considered fastapi/49)."
+ },
+ {
+  "id": "q115",
+  "source_docs": [
+   "fastapi/34_performance_optimization.md",
+   "fastapi/38_load_testing_and_benchmarking.md"
+  ],
+  "confidence": "low",
+  "reason": "FastAPI performance optimization and benchmarking docs; no Spring doc is dedicated to performance."
+ },
+ {
+  "id": "q118",
+  "source_docs": [
+   "pydantic/50_pydantic_best_practices_and_patterns.md"
+  ],
+  "confidence": "low",
+  "reason": "No dedicated pitfalls doc; best-practices doc has an anti-patterns section (also considered pydantic/24, pydantic/03_field_types_and_validation)."
+ },
+ {
+  "id": "q120",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI concurrency and async/await doc."
+ },
+ {
+  "id": "q122",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated BaseModel doc."
+ },
+ {
+  "id": "q124",
+  "source_docs": [
+   "react/08_custom_hooks_deep_dive.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "low",
+  "reason": "False-premise comparison; spring/06 is the bean lifecycle doc, no general React hooks doc exists so custom hooks doc is closest (also considered react/05, react/07, spring/04)."
+ },
+ {
+  "id": "q125",
+  "source_docs": [
+   "spring/31_async_processing_with_async.md",
+   "spring/32_spring_webflux_fundamentals.md"
+  ],
+  "confidence": "medium",
+  "reason": "No dedicated Spring concurrency doc; @Async and WebFlux docs are closest."
+ },
+ {
+  "id": "q129",
+  "source_docs": [
+   "fastapi/05_dependencies__dependency_injection.md",
+   "spring/03_dependency_injection.md",
+   "spring/05_dependency_injection_patterns.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated DI doc per side; Spring has two near-duplicate DI docs; fastapi/15 advanced DI also considered but cap is three."
+ },
+ {
+  "id": "q130",
+  "source_docs": [
+   "react/08_custom_hooks_deep_dive.md"
+  ],
+  "confidence": "low",
+  "reason": "No general hooks doc; custom hooks doc closest (also considered react/05, react/01)."
+ },
+ {
+  "id": "q140",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI concurrency and async/await doc."
+ },
+ {
+  "id": "q141",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated BaseModel doc."
+ },
+ {
+  "id": "q142",
+  "source_docs": [
+   "spring/11_exception_handling.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated Spring exception handling doc."
+ },
+ {
+  "id": "q143",
+  "source_docs": [
+   "react/08_custom_hooks_deep_dive.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "low",
+  "reason": "False-premise comparison; spring/06 is the bean lifecycle doc, no general React hooks doc exists so custom hooks doc is closest (also considered react/05, react/07, spring/04)."
+ },
+ {
+  "id": "q145",
+  "source_docs": [
+   "pydantic/08_custom_validators.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated custom validators doc."
+ },
+ {
+  "id": "q149",
+  "source_docs": [
+   "pydantic/08_custom_validators.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated custom validators doc."
+ },
+ {
+  "id": "q154",
+  "source_docs": [
+   "pydantic/08_custom_validators.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated custom validators doc."
+ },
+ {
+  "id": "q155",
+  "source_docs": [
+   "spring/02_ioc_container.md"
+  ],
+  "confidence": "medium",
+  "reason": "False premise: Spring IoC doc labelled; Pydantic has no dependency injection doc."
+ },
+ {
+  "id": "q158",
+  "source_docs": [
+   "pydantic/50_pydantic_best_practices_and_patterns.md"
+  ],
+  "confidence": "low",
+  "reason": "No dedicated pitfalls doc; best-practices doc has an anti-patterns section (also considered pydantic/24, pydantic/03_field_types_and_validation)."
+ },
+ {
+  "id": "q161",
+  "source_docs": [
+   "fastapi/03_query_parameters.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated query parameters doc."
+ },
+ {
+  "id": "q162",
+  "source_docs": [
+   "react/08_custom_hooks_deep_dive.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "low",
+  "reason": "False-premise comparison; spring/06 is the bean lifecycle doc, no general React hooks doc exists so custom hooks doc is closest (also considered react/05, react/07, spring/04)."
+ },
+ {
+  "id": "q166",
+  "source_docs": [
+   "fastapi/02_path_parameters.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated path parameters doc."
+ },
+ {
+  "id": "q167",
+  "source_docs": [
+   "fastapi/04_request_body.md"
+  ],
+  "confidence": "medium",
+  "reason": "Request body doc is the dedicated topic; no doc covers multiple bodies specifically."
+ },
+ {
+  "id": "q168",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md"
+  ],
+  "confidence": "medium",
+  "reason": "False premise: no separate 'Model' class; BaseModel doc labelled."
+ },
+ {
+  "id": "q170",
+  "source_docs": [
+   "spring/21_oauth2_with_spring_security.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated OAuth2 with Spring Security doc."
+ },
+ {
+  "id": "q172",
+  "source_docs": [
+   "fastapi/08_background_tasks_in_fastapi.md"
+  ],
+  "confidence": "medium",
+  "reason": "Background tasks doc covers Celery task queues; no dedicated Celery doc."
+ },
+ {
+  "id": "q174",
+  "source_docs": [
+   "fastapi/03_query_parameters.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated query parameters doc."
+ }
+]

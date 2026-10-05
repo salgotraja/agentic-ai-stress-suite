@@ -1,0 +1,359 @@
+{
+  "decisions": {
+    "q007": {
+      "source_docs": [
+        "pydantic/11_serialization_and_deserialization.md",
+        "pydantic/36_json_encoding_and_decoding.md"
+      ],
+      "reason": "second pass: the dropped or replaced document only mentions the topic in a section"
+    },
+    "q008": {
+      "source_docs": [
+        "spring/02_ioc_container.md",
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q011": {
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "react/06_advanced_usestate_patterns.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q014": {
+      "source_docs": [
+        "react/11_usememo_and_performance_optimization.md",
+        "react/15_reactmemo_and_component_memoization.md",
+        "react/34_performance_profiling.md"
+      ],
+      "reason": "first pass: React.memo exists for performance, so its document stays"
+    },
+    "q017": {
+      "source_docs": [
+        "spring/04_bean_scopes.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q018": {
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md"
+      ],
+      "reason": "second pass: the dropped or replaced document only mentions the topic in a section"
+    },
+    "q022": {
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q025": {
+      "source_docs": [
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q026": {
+      "source_docs": [
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q031": {
+      "source_docs": [
+        "spring/02_ioc_container.md",
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q033": {
+      "source_docs": [
+        "pydantic/50_pydantic_best_practices_and_patterns.md"
+      ],
+      "reason": "second pass: the dropped or replaced document only mentions the topic in a section"
+    },
+    "q034": {
+      "source_docs": [
+        "react/09_usereducer_for_complex_state.md"
+      ],
+      "reason": "second pass: the dropped or replaced document only mentions the topic in a section"
+    },
+    "q037": {
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md",
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q039": {
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q040": {
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "reason": "no general React hooks document; the two hooks documents chosen across passes plus the Spring lifecycle document"
+    },
+    "q044": {
+      "source_docs": [
+        "pydantic/08_custom_validators.md",
+        "pydantic/10_field_validators.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q049": {
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q053": {
+      "source_docs": [
+        "fastapi/01_fastapi_introduction.md",
+        "fastapi/21_openapi_customization.md"
+      ],
+      "reason": "union: benefits are in the introduction, the generated docs are the subject of the OpenAPI document"
+    },
+    "q054": {
+      "source_docs": [
+        "pydantic/08_custom_validators.md",
+        "pydantic/10_field_validators.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q058": {
+      "source_docs": [
+        "pydantic/08_custom_validators.md",
+        "pydantic/10_field_validators.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q062": {
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q065": {
+      "source_docs": [
+        "fastapi/01_fastapi_introduction.md",
+        "fastapi/34_performance_optimization.md",
+        "spring/01_introduction.md"
+      ],
+      "reason": "no document compares the two frameworks; FastAPI performance document plus each framework introduction"
+    },
+    "q087": {
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q089": {
+      "source_docs": [
+        "fastapi/01_fastapi_introduction.md",
+        "fastapi/34_performance_optimization.md",
+        "spring/01_introduction.md"
+      ],
+      "reason": "no document compares the two frameworks; FastAPI performance document plus each framework introduction"
+    },
+    "q093": {
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md",
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q101": {
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "reason": "no general React hooks document; the two hooks documents chosen across passes plus the Spring lifecycle document"
+    },
+    "q110": {
+      "source_docs": [
+        "fastapi/06_async.md",
+        "spring/31_async_processing_with_async.md",
+        "spring/32_spring_webflux_fundamentals.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q113": {
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "reason": "no general React hooks document; the two hooks documents chosen across passes plus the Spring lifecycle document"
+    },
+    "q115": {
+      "source_docs": [
+        "fastapi/01_fastapi_introduction.md",
+        "fastapi/34_performance_optimization.md",
+        "spring/01_introduction.md"
+      ],
+      "reason": "no document compares the two frameworks; FastAPI performance document plus each framework introduction"
+    },
+    "q124": {
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "reason": "no general React hooks document; the two hooks documents chosen across passes plus the Spring lifecycle document"
+    },
+    "q125": {
+      "source_docs": [
+        "spring/31_async_processing_with_async.md",
+        "spring/32_spring_webflux_fundamentals.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q129": {
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md",
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q130": {
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md"
+      ],
+      "reason": "no general React hooks document; both hooks documents chosen across passes"
+    },
+    "q143": {
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "reason": "no general React hooks document; the two hooks documents chosen across passes plus the Spring lifecycle document"
+    },
+    "q155": {
+      "source_docs": [
+        "spring/02_ioc_container.md"
+      ],
+      "reason": "second pass: the dropped or replaced document only mentions the topic in a section"
+    },
+    "q162": {
+      "source_docs": [
+        "react/05_useState_hook.md",
+        "react/08_custom_hooks_deep_dive.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "reason": "no general React hooks document; the two hooks documents chosen across passes plus the Spring lifecycle document"
+    },
+    "q201": {
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md",
+        "pydantic/17_pydantic_dataclasses.md",
+        "pydantic/35_pydantic_with_dataclasses_stdlib.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q207": {
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md",
+        "pydantic/17_pydantic_dataclasses.md",
+        "pydantic/35_pydantic_with_dataclasses_stdlib.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q224": {
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md",
+        "pydantic/17_pydantic_dataclasses.md",
+        "pydantic/35_pydantic_with_dataclasses_stdlib.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q234": {
+      "source_docs": [
+        "pydantic/02_basemodel_basics.md",
+        "pydantic/17_pydantic_dataclasses.md",
+        "pydantic/35_pydantic_with_dataclasses_stdlib.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q248": {
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q272": {
+      "source_docs": [
+        "fastapi/05_dependencies__dependency_injection.md",
+        "spring/03_dependency_injection.md",
+        "spring/05_dependency_injection_patterns.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q281": {
+      "source_docs": [
+        "react/04_state_management_basics.md",
+        "react/05_useState_hook.md",
+        "spring/06_bean_lifecycle_and_callbacks.md"
+      ],
+      "reason": "state management framing: React state basics and useState plus the Spring lifecycle document"
+    },
+    "q284": {
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q298": {
+      "source_docs": [
+        "spring/07_spring_profiles.md",
+        "spring/24_spring_boot_configuration.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    },
+    "q300": {
+      "source_docs": [
+        "fastapi/10_security_in_fastapi.md",
+        "fastapi/42_oauth2_advanced_flows.md"
+      ],
+      "reason": "union: both documents have the question topic as their main subject"
+    }
+  },
+  "excluded": [
+    "q038",
+    "q098",
+    "q118",
+    "q158",
+    "q199",
+    "q219",
+    "q226",
+    "q286"
+  ],
+  "agreement": {
+    "exact": 96,
+    "shared_document": 137,
+    "of": 150
+  }
+}

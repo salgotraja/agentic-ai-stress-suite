@@ -1,0 +1,437 @@
+[
+ {
+  "id": "q175",
+  "source_docs": [
+   "pydantic/07_forward_references_and_recursive_models.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated forward references doc."
+ },
+ {
+  "id": "q178",
+  "source_docs": [
+   "fastapi/03_query_parameters.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated query parameters doc."
+ },
+ {
+  "id": "q182",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md"
+  ],
+  "confidence": "medium",
+  "reason": "False premise (no separate 'Model' class); BaseModel basics is the only dedicated doc."
+ },
+ {
+  "id": "q183",
+  "source_docs": [
+   "fastapi/04_request_body.md",
+   "fastapi/12_request_validation_with_pydantic_in_fastapi.md"
+  ],
+  "confidence": "high",
+  "reason": "Request body doc and request validation with Pydantic doc."
+ },
+ {
+  "id": "q184",
+  "source_docs": [
+   "spring/04_bean_scopes.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated bean scopes doc."
+ },
+ {
+  "id": "q185",
+  "source_docs": [
+   "react/04_state_management_basics.md",
+   "spring/09_rest_api_development.md"
+  ],
+  "confidence": "low",
+  "reason": "No doc on React+Spring integration; React state basics and Spring REST API doc cover each side (also considered spring/01, react/40 data fetching)."
+ },
+ {
+  "id": "q186",
+  "source_docs": [
+   "fastapi/02_path_parameters.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated path parameters doc."
+ },
+ {
+  "id": "q188",
+  "source_docs": [
+   "spring/21_oauth2_with_spring_security.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated OAuth2 with Spring Security doc."
+ },
+ {
+  "id": "q193",
+  "source_docs": [
+   "fastapi/10_security_in_fastapi.md",
+   "fastapi/43_rolebased_access_control_rbac.md"
+  ],
+  "confidence": "high",
+  "reason": "Security (authentication) doc and RBAC (authorization) doc."
+ },
+ {
+  "id": "q194",
+  "source_docs": [
+   "fastapi/07_middleware_in_fastapi.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated middleware doc."
+ },
+ {
+  "id": "q199",
+  "source_docs": [
+   "pydantic/24_error_handling_and_validationerror.md",
+   "pydantic/50_pydantic_best_practices_and_patterns.md"
+  ],
+  "confidence": "low",
+  "reason": "No doc is dedicated to validation pitfalls; ValidationError doc and best-practices/anti-patterns doc are closest; also considered pydantic/03 field types and validation and 25 model validators."
+ },
+ {
+  "id": "q200",
+  "source_docs": [
+   "fastapi/12_request_validation_with_pydantic_in_fastapi.md",
+   "fastapi/04_request_body.md"
+  ],
+  "confidence": "high",
+  "reason": "Request validation with Pydantic doc plus request body doc."
+ },
+ {
+  "id": "q201",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md",
+   "pydantic/17_pydantic_dataclasses.md",
+   "pydantic/35_pydantic_with_dataclasses_stdlib.md"
+  ],
+  "confidence": "medium",
+  "reason": "BaseModel basics doc plus the two dataclass docs (Pydantic dataclasses and stdlib dataclass interop)."
+ },
+ {
+  "id": "q203",
+  "source_docs": [
+   "react/05_useState_hook.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "low",
+  "reason": "False-premise comparison; no general Hooks overview exists so useState doc used (considered react/08 custom hooks); spring/06 is the dedicated lifecycle doc (spring/04 covers scopes and lifecycle)."
+ },
+ {
+  "id": "q205",
+  "source_docs": [
+   "fastapi/01_fastapi_introduction.md",
+   "spring/01_introduction.md"
+  ],
+  "confidence": "high",
+  "reason": "Introduction doc for each framework."
+ },
+ {
+  "id": "q207",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md",
+   "pydantic/17_pydantic_dataclasses.md",
+   "pydantic/35_pydantic_with_dataclasses_stdlib.md"
+  ],
+  "confidence": "medium",
+  "reason": "BaseModel basics doc plus the two dataclass docs (Pydantic dataclasses and stdlib dataclass interop)."
+ },
+ {
+  "id": "q212",
+  "source_docs": [
+   "react/05_useState_hook.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "low",
+  "reason": "False-premise comparison; no general Hooks overview exists so useState doc used (considered react/08 custom hooks); spring/06 is the dedicated lifecycle doc (spring/04 covers scopes and lifecycle)."
+ },
+ {
+  "id": "q215",
+  "source_docs": [
+   "fastapi/08_background_tasks_in_fastapi.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated background tasks doc."
+ },
+ {
+  "id": "q219",
+  "source_docs": [
+   "pydantic/24_error_handling_and_validationerror.md",
+   "pydantic/50_pydantic_best_practices_and_patterns.md"
+  ],
+  "confidence": "low",
+  "reason": "No doc is dedicated to validation pitfalls; ValidationError doc and best-practices/anti-patterns doc are closest; also considered pydantic/03 field types and validation and 25 model validators."
+ },
+ {
+  "id": "q221",
+  "source_docs": [
+   "react/05_useState_hook.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "low",
+  "reason": "False-premise comparison; no general Hooks overview exists so useState doc used (considered react/08 custom hooks); spring/06 is the dedicated lifecycle doc (spring/04 covers scopes and lifecycle)."
+ },
+ {
+  "id": "q222",
+  "source_docs": [
+   "fastapi/02_path_parameters.md",
+   "fastapi/03_query_parameters.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated path and query parameter docs."
+ },
+ {
+  "id": "q224",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md",
+   "pydantic/17_pydantic_dataclasses.md",
+   "pydantic/35_pydantic_with_dataclasses_stdlib.md"
+  ],
+  "confidence": "medium",
+  "reason": "BaseModel basics doc plus the two dataclass docs (Pydantic dataclasses and stdlib dataclass interop)."
+ },
+ {
+  "id": "q225",
+  "source_docs": [
+   "fastapi/08_background_tasks_in_fastapi.md"
+  ],
+  "confidence": "medium",
+  "reason": "Background tasks doc (covers task queues); no dedicated scheduler doc."
+ },
+ {
+  "id": "q226",
+  "source_docs": [
+   "pydantic/24_error_handling_and_validationerror.md",
+   "pydantic/50_pydantic_best_practices_and_patterns.md"
+  ],
+  "confidence": "low",
+  "reason": "No doc is dedicated to validation pitfalls; ValidationError doc and best-practices/anti-patterns doc are closest; also considered pydantic/03 field types and validation and 25 model validators."
+ },
+ {
+  "id": "q227",
+  "source_docs": [
+   "spring/21_oauth2_with_spring_security.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated OAuth2 with Spring Security doc."
+ },
+ {
+  "id": "q230",
+  "source_docs": [
+   "spring/07_spring_profiles.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated Spring profiles doc."
+ },
+ {
+  "id": "q231",
+  "source_docs": [
+   "react/05_useState_hook.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "high",
+  "reason": "False-premise comparison; dedicated useState doc and dedicated bean lifecycle doc."
+ },
+ {
+  "id": "q234",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md",
+   "pydantic/17_pydantic_dataclasses.md",
+   "pydantic/35_pydantic_with_dataclasses_stdlib.md"
+  ],
+  "confidence": "medium",
+  "reason": "BaseModel basics doc plus the two dataclass docs (Pydantic dataclasses and stdlib dataclass interop)."
+ },
+ {
+  "id": "q235",
+  "source_docs": [
+   "fastapi/05_dependencies__dependency_injection.md",
+   "fastapi/15_advanced_dependencies_and_dependency_injection_in_fastapi.md"
+  ],
+  "confidence": "high",
+  "reason": "Basic and advanced FastAPI dependency injection docs (sub-dependencies/chaining)."
+ },
+ {
+  "id": "q240",
+  "source_docs": [
+   "react/05_useState_hook.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "high",
+  "reason": "False-premise comparison; dedicated useState doc and dedicated bean lifecycle doc."
+ },
+ {
+  "id": "q246",
+  "source_docs": [
+   "fastapi/02_path_parameters.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated path parameters doc."
+ },
+ {
+  "id": "q248",
+  "source_docs": [
+   "fastapi/10_security_in_fastapi.md",
+   "fastapi/42_oauth2_advanced_flows.md"
+  ],
+  "confidence": "high",
+  "reason": "FastAPI security doc covers OAuth2 password flow/JWT; OAuth2 advanced flows doc is dedicated to OAuth2."
+ },
+ {
+  "id": "q251",
+  "source_docs": [
+   "fastapi/04_request_body.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated request body doc using Pydantic models."
+ },
+ {
+  "id": "q255",
+  "source_docs": [
+   "fastapi/07_middleware_in_fastapi.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated middleware doc."
+ },
+ {
+  "id": "q258",
+  "source_docs": [
+   "react/05_useState_hook.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "high",
+  "reason": "False-premise comparison; dedicated useState doc and dedicated bean lifecycle doc."
+ },
+ {
+  "id": "q259",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated concurrency and async/await doc."
+ },
+ {
+  "id": "q268",
+  "source_docs": [
+   "react/04_state_management_basics.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "medium",
+  "reason": "False-premise comparison; React state management basics doc and Spring bean lifecycle doc (spring/04 also covers lifecycle)."
+ },
+ {
+  "id": "q270",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md"
+  ],
+  "confidence": "medium",
+  "reason": "False-premise comparison; BaseModel basics covers Pydantic side, no doc on Spring/Lombok @Data."
+ },
+ {
+  "id": "q272",
+  "source_docs": [
+   "fastapi/05_dependencies__dependency_injection.md",
+   "spring/03_dependency_injection.md",
+   "spring/05_dependency_injection_patterns.md"
+  ],
+  "confidence": "medium",
+  "reason": "FastAPI DI doc plus both near-duplicate Spring DI docs (also considered fastapi/15)."
+ },
+ {
+  "id": "q273",
+  "source_docs": [
+   "fastapi/01_fastapi_introduction.md"
+  ],
+  "confidence": "medium",
+  "reason": "FastAPI introduction doc; no Flask doc in corpus."
+ },
+ {
+  "id": "q278",
+  "source_docs": [
+   "fastapi/08_background_tasks_in_fastapi.md"
+  ],
+  "confidence": "medium",
+  "reason": "Background tasks doc covers Celery task queues; also considered fastapi/32 message queues."
+ },
+ {
+  "id": "q281",
+  "source_docs": [
+   "react/05_useState_hook.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "low",
+  "reason": "False-premise comparison; no general Hooks overview exists so useState doc used (considered react/08 custom hooks); spring/06 is the dedicated lifecycle doc (spring/04 covers scopes and lifecycle)."
+ },
+ {
+  "id": "q284",
+  "source_docs": [
+   "fastapi/10_security_in_fastapi.md",
+   "fastapi/42_oauth2_advanced_flows.md"
+  ],
+  "confidence": "high",
+  "reason": "FastAPI security doc covers OAuth2 password flow/JWT; OAuth2 advanced flows doc is dedicated to OAuth2."
+ },
+ {
+  "id": "q286",
+  "source_docs": [
+   "pydantic/24_error_handling_and_validationerror.md",
+   "pydantic/50_pydantic_best_practices_and_patterns.md"
+  ],
+  "confidence": "low",
+  "reason": "No doc is dedicated to validation pitfalls; ValidationError doc and best-practices/anti-patterns doc are closest; also considered pydantic/03 field types and validation and 25 model validators."
+ },
+ {
+  "id": "q293",
+  "source_docs": [
+   "fastapi/07_middleware_in_fastapi.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated middleware doc."
+ },
+ {
+  "id": "q294",
+  "source_docs": [
+   "fastapi/03_query_parameters.md"
+  ],
+  "confidence": "medium",
+  "reason": "Dedicated query parameters doc; no doc on Pydantic models for query params specifically."
+ },
+ {
+  "id": "q297",
+  "source_docs": [
+   "fastapi/06_async.md",
+   "pydantic/33_pydantic_with_fastapi_integration_patterns.md"
+  ],
+  "confidence": "medium",
+  "reason": "Async doc and Pydantic-FastAPI integration doc (also considered pydantic/44 async validators)."
+ },
+ {
+  "id": "q298",
+  "source_docs": [
+   "spring/07_spring_profiles.md",
+   "spring/24_spring_boot_configuration.md"
+  ],
+  "confidence": "high",
+  "reason": "Profiles doc and Spring Boot externalized configuration doc."
+ },
+ {
+  "id": "q299",
+  "source_docs": [
+   "fastapi/12_request_validation_with_pydantic_in_fastapi.md",
+   "fastapi/22_request_validation_error_handling.md"
+  ],
+  "confidence": "medium",
+  "reason": "Request validation with Pydantic doc and validation error handling doc (also considered pydantic/33)."
+ },
+ {
+  "id": "q300",
+  "source_docs": [
+   "fastapi/10_security_in_fastapi.md",
+   "fastapi/42_oauth2_advanced_flows.md"
+  ],
+  "confidence": "high",
+  "reason": "FastAPI security doc covers OAuth2 password flow/JWT; OAuth2 advanced flows doc is dedicated to OAuth2."
+ }
+]

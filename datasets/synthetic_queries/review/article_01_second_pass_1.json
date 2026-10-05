@@ -1,0 +1,430 @@
+[
+ {
+  "id": "q001",
+  "source_docs": [
+   "fastapi/01_fastapi_introduction.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI introduction covering its features."
+ },
+ {
+  "id": "q002",
+  "source_docs": [
+   "fastapi/02_path_parameters.md",
+   "fastapi/03_query_parameters.md"
+  ],
+  "confidence": "high",
+  "reason": "Comparison: dedicated path-parameter and query-parameter docs."
+ },
+ {
+  "id": "q003",
+  "source_docs": [
+   "fastapi/05_dependencies__dependency_injection.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI Depends/DI doc with examples; considered 15 (advanced DI)."
+ },
+ {
+  "id": "q004",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI concurrency and async/await doc."
+ },
+ {
+  "id": "q005",
+  "source_docs": [
+   "fastapi/10_security_in_fastapi.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI security/authentication doc; 42 covers only advanced OAuth2 flows."
+ },
+ {
+  "id": "q006",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md"
+  ],
+  "confidence": "medium",
+  "reason": "False premise: BaseModel is the Pydantic model; BaseModel basics is the dedicated doc."
+ },
+ {
+  "id": "q007",
+  "source_docs": [
+   "pydantic/11_serialization_and_deserialization.md",
+   "pydantic/36_json_encoding_and_decoding.md"
+  ],
+  "confidence": "medium",
+  "reason": "Docs dedicated to parsing/deserializing and JSON decoding into models."
+ },
+ {
+  "id": "q008",
+  "source_docs": [
+   "spring/02_ioc_container.md",
+   "spring/05_dependency_injection_patterns.md",
+   "spring/03_dependency_injection.md"
+  ],
+  "confidence": "medium",
+  "reason": "Comparison: IoC container and beans doc for @Bean; DI pattern docs (with @Autowired section) for @Autowired."
+ },
+ {
+  "id": "q009",
+  "source_docs": [
+   "spring/03_dependency_injection.md",
+   "spring/05_dependency_injection_patterns.md"
+  ],
+  "confidence": "high",
+  "reason": "Two near-duplicate docs dedicated to Spring dependency injection."
+ },
+ {
+  "id": "q010",
+  "source_docs": [
+   "react/05_useState_hook.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated useState hook doc."
+ },
+ {
+  "id": "q011",
+  "source_docs": [
+   "react/05_useState_hook.md",
+   "react/06_advanced_usestate_patterns.md"
+  ],
+  "confidence": "medium",
+  "reason": "useState docs are dedicated to state hooks; considered 09 useReducer and 04 state basics."
+ },
+ {
+  "id": "q012",
+  "source_docs": [
+   "react/16_error_boundaries.md"
+  ],
+  "confidence": "high",
+  "reason": "Error boundaries is the dedicated React error-handling doc."
+ },
+ {
+  "id": "q013",
+  "source_docs": [
+   "react/03_components_and_props.md"
+  ],
+  "confidence": "medium",
+  "reason": "Components and Props covers function vs class components; false-premise comparison."
+ },
+ {
+  "id": "q014",
+  "source_docs": [
+   "react/34_performance_profiling.md",
+   "react/11_usememo_and_performance_optimization.md"
+  ],
+  "confidence": "medium",
+  "reason": "Docs dedicated to React performance; considered 15 React.memo and 50 best practices."
+ },
+ {
+  "id": "q015",
+  "source_docs": [
+   "spring/02_ioc_container.md"
+  ],
+  "confidence": "medium",
+  "reason": "IoC Container and Beans covers bean definitions; no doc dedicated solely to @Bean."
+ },
+ {
+  "id": "q016",
+  "source_docs": [
+   "spring/02_ioc_container.md"
+  ],
+  "confidence": "medium",
+  "reason": "IoC Container and Beans is the bean-focused doc; considered 03/05 DI docs."
+ },
+ {
+  "id": "q017",
+  "source_docs": [
+   "spring/06_bean_lifecycle_and_callbacks.md",
+   "spring/04_bean_scopes.md"
+  ],
+  "confidence": "high",
+  "reason": "Bean lifecycle and callbacks doc plus scopes-and-lifecycle doc."
+ },
+ {
+  "id": "q018",
+  "source_docs": [
+   "pydantic/02_basemodel_basics.md"
+  ],
+  "confidence": "medium",
+  "reason": "BaseModel basics is the dedicated Pydantic model doc; no doc on plain Python classes; considered 01 intros."
+ },
+ {
+  "id": "q019",
+  "source_docs": [
+   "pydantic/04_string_constraints.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated string constraints doc."
+ },
+ {
+  "id": "q020",
+  "source_docs": [
+   "fastapi/05_dependencies__dependency_injection.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI Depends/DI doc."
+ },
+ {
+  "id": "q021",
+  "source_docs": [
+   "fastapi/05_dependencies__dependency_injection.md"
+  ],
+  "confidence": "medium",
+  "reason": "DI doc includes database-session dependency example; considered 14/29 SQLAlchemy docs."
+ },
+ {
+  "id": "q022",
+  "source_docs": [
+   "fastapi/10_security_in_fastapi.md",
+   "fastapi/42_oauth2_advanced_flows.md"
+  ],
+  "confidence": "medium",
+  "reason": "Both FastAPI security docs centre on OAuth2PasswordBearer-based auth."
+ },
+ {
+  "id": "q023",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated async/await doc covering async def vs def; 34 has only a section."
+ },
+ {
+  "id": "q024",
+  "source_docs": [
+   "fastapi/34_performance_optimization.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI performance optimization doc."
+ },
+ {
+  "id": "q025",
+  "source_docs": [
+   "spring/05_dependency_injection_patterns.md",
+   "spring/03_dependency_injection.md"
+  ],
+  "confidence": "medium",
+  "reason": "DI docs are the dedicated home of @Autowired; no @Autowired-only doc."
+ },
+ {
+  "id": "q026",
+  "source_docs": [
+   "spring/05_dependency_injection_patterns.md",
+   "spring/03_dependency_injection.md"
+  ],
+  "confidence": "medium",
+  "reason": "DI docs with @Autowired injection examples."
+ },
+ {
+  "id": "q027",
+  "source_docs": [
+   "spring/02_ioc_container.md",
+   "pydantic/02_basemodel_basics.md"
+  ],
+  "confidence": "medium",
+  "reason": "False-premise comparison: Spring beans doc and Pydantic BaseModel doc."
+ },
+ {
+  "id": "q028",
+  "source_docs": [
+   "fastapi/05_dependencies__dependency_injection.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated FastAPI Depends/DI doc."
+ },
+ {
+  "id": "q030",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "medium",
+  "reason": "Dedicated async/await doc in the corpus."
+ },
+ {
+  "id": "q031",
+  "source_docs": [
+   "spring/02_ioc_container.md",
+   "spring/05_dependency_injection_patterns.md",
+   "spring/03_dependency_injection.md"
+  ],
+  "confidence": "medium",
+  "reason": "Same as q008: beans doc for @Bean, DI docs for @Autowired."
+ },
+ {
+  "id": "q033",
+  "source_docs": [
+   "pydantic/50_pydantic_best_practices_and_patterns.md"
+  ],
+  "confidence": "low",
+  "reason": "Best practices doc has anti-patterns section; considered 02 BaseModel basics and 01 intro."
+ },
+ {
+  "id": "q034",
+  "source_docs": [
+   "react/09_usereducer_for_complex_state.md"
+  ],
+  "confidence": "low",
+  "reason": "No React auth doc; useReducer doc is dedicated to the named hook; considered 10 useContext (AuthContext section)."
+ },
+ {
+  "id": "q035",
+  "source_docs": [
+   "spring/02_ioc_container.md",
+   "spring/05_dependency_injection_patterns.md",
+   "fastapi/05_dependencies__dependency_injection.md"
+  ],
+  "confidence": "medium",
+  "reason": "Comparison: Spring beans and @Autowired DI docs vs FastAPI Depends doc; considered spring/03."
+ },
+ {
+  "id": "q037",
+  "source_docs": [
+   "fastapi/05_dependencies__dependency_injection.md",
+   "spring/03_dependency_injection.md",
+   "spring/05_dependency_injection_patterns.md"
+  ],
+  "confidence": "medium",
+  "reason": "Comparison: FastAPI DI doc and Spring DI docs; considered fastapi/15 advanced DI."
+ },
+ {
+  "id": "q038",
+  "source_docs": [
+   "pydantic/03_field_types_and_validation.md",
+   "pydantic/03_field_types_validation.md"
+  ],
+  "confidence": "low",
+  "reason": "Validation-dedicated docs; considered 24 ValidationError and 50 best practices equally."
+ },
+ {
+  "id": "q039",
+  "source_docs": [
+   "fastapi/10_security_in_fastapi.md",
+   "fastapi/42_oauth2_advanced_flows.md"
+  ],
+  "confidence": "high",
+  "reason": "FastAPI security doc (OAuth2 password flow) and OAuth2 advanced flows doc."
+ },
+ {
+  "id": "q040",
+  "source_docs": [
+   "spring/06_bean_lifecycle_and_callbacks.md",
+   "react/08_custom_hooks_deep_dive.md",
+   "react/07_advanced_useeffect_patterns.md"
+  ],
+  "confidence": "low",
+  "reason": "False-premise comparison; no general React hooks doc, so custom hooks and useEffect docs considered alongside 05 useState."
+ },
+ {
+  "id": "q041",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated async/await doc covering when to use async def."
+ },
+ {
+  "id": "q043",
+  "source_docs": [
+   "pydantic/05_model_inheritance_and_composition.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated inheritance and composition doc."
+ },
+ {
+  "id": "q044",
+  "source_docs": [
+   "pydantic/08_custom_validators.md",
+   "pydantic/10_field_validators.md"
+  ],
+  "confidence": "medium",
+  "reason": "Custom validators doc plus field validators doc."
+ },
+ {
+  "id": "q045",
+  "source_docs": [
+   "react/09_usereducer_for_complex_state.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated useReducer for complex state doc."
+ },
+ {
+  "id": "q048",
+  "source_docs": [
+   "fastapi/06_async.md"
+  ],
+  "confidence": "medium",
+  "reason": "Dedicated async doc; considered 34 performance (Async Gotchas section)."
+ },
+ {
+  "id": "q049",
+  "source_docs": [
+   "fastapi/10_security_in_fastapi.md",
+   "fastapi/42_oauth2_advanced_flows.md"
+  ],
+  "confidence": "high",
+  "reason": "FastAPI security doc and OAuth2 advanced flows doc."
+ },
+ {
+  "id": "q050",
+  "source_docs": [
+   "pydantic/03_field_types_and_validation.md",
+   "pydantic/03_field_types_validation.md"
+  ],
+  "confidence": "high",
+  "reason": "Two near-duplicate field types and validation docs."
+ },
+ {
+  "id": "q051",
+  "source_docs": [
+   "react/09_usereducer_for_complex_state.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated useReducer doc with when-to-choose section."
+ },
+ {
+  "id": "q052",
+  "source_docs": [
+   "spring/04_bean_scopes.md",
+   "spring/06_bean_lifecycle_and_callbacks.md"
+  ],
+  "confidence": "high",
+  "reason": "Bean scopes and lifecycle doc plus lifecycle callbacks doc."
+ },
+ {
+  "id": "q053",
+  "source_docs": [
+   "fastapi/21_openapi_customization.md"
+  ],
+  "confidence": "medium",
+  "reason": "OpenAPI doc generation doc; considered 01 intro (has an auto-docs section)."
+ },
+ {
+  "id": "q054",
+  "source_docs": [
+   "pydantic/08_custom_validators.md",
+   "pydantic/10_field_validators.md"
+  ],
+  "confidence": "medium",
+  "reason": "Custom validators doc plus field validators doc."
+ },
+ {
+  "id": "q055",
+  "source_docs": [
+   "spring/02_ioc_container.md"
+  ],
+  "confidence": "high",
+  "reason": "Dedicated IoC container doc."
+ },
+ {
+  "id": "q058",
+  "source_docs": [
+   "pydantic/08_custom_validators.md",
+   "pydantic/10_field_validators.md"
+  ],
+  "confidence": "medium",
+  "reason": "Validator docs, each with pitfalls sections."
+ }
+]

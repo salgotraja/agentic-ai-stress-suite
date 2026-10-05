@@ -13,4 +13,3 @@ reference for the frameworks it describes.
 The questions and expected answers in `datasets/synthetic_queries/` were also
 LLM-generated with `scripts/generate_queries.py`. See the `label_policy` field
 in each query file for how source labels were assigned.
-

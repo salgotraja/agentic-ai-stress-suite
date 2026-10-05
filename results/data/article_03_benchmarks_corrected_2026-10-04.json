@@ -1,0 +1,192 @@
+{
+  "benchmark": "article_03_evaluation",
+  "configurations": [
+    {
+      "name": "ragas",
+      "description": "RAGAS automated metrics (faithfulness, answer relevance, context precision, answer correctness)"
+    },
+    {
+      "name": "llm_judge",
+      "description": "LLM-as-Judge with structured rubric (pinned: openai/gpt-4o-mini, temperature=0)"
+    }
+  ],
+  "dataset": {
+    "path": "datasets/synthetic_queries/article_01.json",
+    "num_queries": 30,
+    "queries_evaluated": 30,
+    "pipeline_errors": 0
+  },
+  "settings": {
+    "top_k": 5,
+    "runs": 3,
+    "ragas_llm": "gpt-4o-mini",
+    "judge_temperature": 0.0
+  },
+  "pipeline": {
+    "name": "naive_rag",
+    "collection": "a03",
+    "embedding_model": "BAAI/bge-base-en-v1.5",
+    "latency_ms": {
+      "mean": 2226.4179865519204,
+      "std": 501.66675841447625,
+      "min": 1213.3870124816895,
+      "max": 3405.735731124878
+    }
+  },
+  "results": [
+    {
+      "name": "ragas",
+      "description": "RAGAS automated metrics (faithfulness, answer relevance, context precision, answer correctness)",
+      "metrics": {
+        "answer_correctness": {
+          "mean": 0.37044985002963493,
+          "std": 0.011874575808772148,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.368574055329456,
+            0.3569354336673979,
+            0.3858400610920509
+          ]
+        },
+        "faithfulness": {
+          "mean": 0.9745121702884001,
+          "std": 0.0017625813787718223,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.976175218199986,
+            0.9752886710239651,
+            0.9720726216412491
+          ]
+        },
+        "answer_relevancy": {
+          "mean": 0.7428013550804672,
+          "std": 0.013479508874662429,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.731896600012787,
+            0.761794798928988,
+            0.7347126662996265
+          ]
+        },
+        "context_precision": {
+          "mean": 0.7278751596123288,
+          "std": 0.008795638869410758,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.7180076628063873,
+            0.7262499999682095,
+            0.7393678160623898
+          ]
+        }
+      },
+      "wall_time_seconds": 2151.9200949668884,
+      "samples_scored": 30,
+      "num_runs": 3
+    },
+    {
+      "name": "llm_judge",
+      "description": "LLM-as-Judge with structured rubric (pinned: openai/gpt-4o-mini, temperature=0)",
+      "metrics": {
+        "correctness": {
+          "mean": 0.8866666666666667,
+          "std": 0.0054433105395181635,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.88,
+            0.8866666666666667,
+            0.8933333333333333
+          ]
+        },
+        "completeness": {
+          "mean": 0.8688888888888888,
+          "std": 0.008314794192830984,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.8666666666666667,
+            0.88,
+            0.86
+          ]
+        },
+        "groundedness": {
+          "mean": 0.9266666666666667,
+          "std": 0.0054433105395181635,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.92,
+            0.9266666666666666,
+            0.9333333333333333
+          ]
+        },
+        "relevance": {
+          "mean": 0.9377777777777778,
+          "std": 0.0031426968052735123,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.94,
+            0.9333333333333333,
+            0.94
+          ]
+        }
+      },
+      "metrics_failure_penalised": {
+        "correctness": {
+          "mean": 0.8866666666666667,
+          "std": 0.0054433105395181635,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.88,
+            0.8866666666666667,
+            0.8933333333333333
+          ]
+        },
+        "completeness": {
+          "mean": 0.8688888888888888,
+          "std": 0.008314794192830984,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.8666666666666667,
+            0.88,
+            0.86
+          ]
+        },
+        "groundedness": {
+          "mean": 0.9266666666666667,
+          "std": 0.0054433105395181635,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.92,
+            0.9266666666666666,
+            0.9333333333333333
+          ]
+        },
+        "relevance": {
+          "mean": 0.9377777777777778,
+          "std": 0.0031426968052735123,
+          "n_runs": 3,
+          "n_samples": 30,
+          "per_run_means": [
+            0.94,
+            0.9333333333333333,
+            0.94
+          ]
+        }
+      },
+      "parse_failures": [],
+      "valid_score_coverage": 1.0,
+      "wall_time_seconds": 272.10239815711975,
+      "samples_scored": 30,
+      "num_runs": 3
+    }
+  ]
+}

@@ -30,11 +30,18 @@ def temp_log() -> Any:
 
 
 def generate_test_embeddings(
-    n: int, dim: int = 384, mean: float = 0.0, std: float = 0.3, seed: int = 42
+    n: int,
+    dim: int = 384,
+    mean: float = 0.0,
+    std: float = 0.3,
+    seed: int = 42,
+    normalize: bool = True,
 ) -> np.ndarray:
     """Generate test embeddings from normal distribution."""
     rng = np.random.RandomState(seed)
     embeddings = rng.normal(loc=mean, scale=std, size=(n, dim))
+    if not normalize:
+        return embeddings
     # Normalize to unit length
     norms = np.linalg.norm(embeddings, axis=1, keepdims=True)
     return embeddings / (norms + 1e-8)
@@ -89,8 +96,8 @@ def test_no_drift_detection(temp_log: Any) -> None:
         if alert:
             alerts.append(alert)
 
-    # Should have very few or no alerts (same distribution)
-    assert len(alerts) < 5, f"Too many false positives: {len(alerts)} alerts"
+    # Same distribution: the window is checked once and must not alert.
+    assert not alerts, f"False positive on an unchanged distribution: {len(alerts)} alerts"
 
 
 def test_mean_shift_detection(temp_log: Any) -> None:
@@ -140,13 +147,15 @@ def test_variance_change_detection(temp_log: Any) -> None:
         log_path=temp_log,
     )
 
+    # Unit-normalising removes the scale, so a variance change is only
+    # observable on unnormalised vectors.
     # Establish baseline (std=0.3)
-    baseline_embeddings = generate_test_embeddings(200, 384, std=0.3, seed=42)
+    baseline_embeddings = generate_test_embeddings(200, 384, std=0.3, seed=42, normalize=False)
     for embedding in baseline_embeddings:
         detector.add_embedding(embedding)
 
     # Add embeddings with different variance (std=0.6)
-    drifted_embeddings = generate_test_embeddings(200, 384, std=0.6, seed=100)
+    drifted_embeddings = generate_test_embeddings(200, 384, std=0.6, seed=100, normalize=False)
     alerts = []
     for embedding in drifted_embeddings:
         alert = detector.add_embedding(embedding)

@@ -36,7 +36,10 @@ import argparse
 import json
 import os
 import random
+import statistics
+import subprocess
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
@@ -59,6 +62,7 @@ class ConfigResult:
     latency_ms: dict[str, float]
     cost_per_1k_queries: float
     extra: dict[str, Any]
+    per_query: list[dict[str, Any]]
 
 
 def load_queries(filepath: Path) -> list[Query]:
@@ -106,8 +110,20 @@ def run_config_benchmark(
         ConfigResult with aggregated metrics
     """
     runner = BenchmarkRunner(pipeline, num_runs=num_runs, top_k=top_k)
-    runner.run_benchmark(queries)
+    runs = runner.run_benchmark(queries)
     metrics = runner.get_aggregate_metrics()
+
+    # Retrieval is deterministic across runs, so the first run's per-query
+    # rows are enough to inspect which queries each configuration wins or loses.
+    per_query = [
+        {
+            "id": r.query_id,
+            "recall_at_k": r.recall_at_k,
+            "reciprocal_rank": r.reciprocal_rank,
+            "retrieved_docs": r.retrieved_docs,
+        }
+        for r in runs[0].query_results
+    ]
 
     return ConfigResult(
         name=name,
@@ -121,7 +137,93 @@ def run_config_benchmark(
             "top_k": top_k,
             "total_queries": metrics.get("total_queries", 0),
         },
+        per_query=per_query,
     )
+
+
+def reset_collection(pipeline: Any, collection: str) -> None:
+    """Drop a Chroma collection so the index is built from an empty state.
+
+    Pipelines add to an existing collection, so a collection left over from an
+    earlier benchmark would return every chunk twice and crowd the top-K.
+    """
+    client = (
+        pipeline._get_or_create_chroma_client()
+        if hasattr(pipeline, "_get_or_create_chroma_client")
+        else pipeline.chroma_client
+    )
+    existing = {getattr(c, "name", c) for c in client.list_collections()}
+    if collection in existing:
+        client.delete_collection(name=collection)
+
+
+def measure_rerank_timing(pipeline: Any, queries: list[Query], top_k: int) -> dict[str, Any]:
+    """Time the reranker alone: cold first call, warm inference, and cache hits.
+
+    End-to-end latency includes LLM generation, which hides reranker cost in
+    noise. This times only the rerank call on the same fused candidates the
+    pipeline would rerank. Must run before any other rerank call so the first
+    measurement includes model load.
+    """
+    from src.rag.reranking import CachingReranker
+
+    backend = pipeline._reranker
+    retrieval_k = pipeline.settings.reranking_top_k
+
+    def candidates(query_text: str) -> list[Any]:
+        bm25 = pipeline.retrieve_bm25(query_text, retrieval_k * 2)
+        dense = pipeline.retrieve_dense(query_text, retrieval_k * 2)
+        return cast(list[Any], pipeline._reciprocal_rank_fusion(bm25, dense, top_k=retrieval_k))
+
+    def timed(reranker: Any, query_text: str, docs: list[Any]) -> float:
+        start = time.perf_counter()
+        reranker.rerank(query=query_text, documents=docs, top_k=top_k)
+        return (time.perf_counter() - start) * 1000
+
+    fused = [(q.query, candidates(q.query)) for q in queries]
+
+    cold_ms = timed(backend, *fused[0])
+    warm_ms = [timed(backend, text, docs) for text, docs in fused]
+
+    cached = CachingReranker(backend, maxsize=len(fused))
+    for text, docs in fused:
+        cached.rerank(query=text, documents=docs, top_k=top_k)
+    hit_ms = [timed(cached, text, docs) for text, docs in fused]
+
+    return {
+        "candidates_per_query": retrieval_k,
+        "cold_first_call_ms": cold_ms,
+        "warm_uncached_ms": {
+            "mean": statistics.mean(warm_ms),
+            "median": statistics.median(warm_ms),
+            "max": max(warm_ms),
+        },
+        "cache_hit_ms": {"mean": statistics.mean(hit_ms), "max": max(hit_ms)},
+        "cache_stats": cached.stats(),
+    }
+
+
+def collect_provenance(settings: Any) -> dict[str, Any]:
+    """Record what produced this artifact so a published number can be traced."""
+    from importlib.metadata import version
+
+    def git(*cmd: str) -> str:
+        return subprocess.run(
+            ["git", *cmd], cwd=PROJECT_ROOT, capture_output=True, text=True, check=False
+        ).stdout.strip()
+
+    return {
+        "git_commit": git("rev-parse", "HEAD"),
+        "git_dirty": bool(git("status", "--porcelain", "--untracked-files=no")),
+        "llama_index_core": version("llama-index-core"),
+        "chromadb": version("chromadb"),
+        "embedding_model": "BAAI/bge-base-en-v1.5",
+        "generator_model": settings.default_llm_model,
+        "reranking_model": settings.reranking_model,
+        "reranking_candidates": settings.reranking_top_k,
+        "reranking_cache_enabled_during_benchmark": False,
+        "index": "Chroma collections dropped and rebuilt per configuration",
+    }
 
 
 def main() -> int:
@@ -216,6 +318,7 @@ def main() -> int:
             "description": "Hybrid + FlashRank reranking (local, free)",
             "settings_override": {
                 "use_reranking": True,
+                "reranking_cache_enabled": False,
                 "reranking_backend": "flashrank",
             },
             "pipeline_type": "hybrid",
@@ -248,6 +351,7 @@ def main() -> int:
                 "description": "Hybrid + Cohere reranking (cloud, $1/1K)",
                 "settings_override": {
                     "use_reranking": True,
+                    "reranking_cache_enabled": False,
                     "reranking_backend": "cohere",
                 },
                 "pipeline_type": "hybrid",
@@ -384,7 +488,13 @@ def main() -> int:
                 print(f"  Reusing {len(documents_cache)} documents from cache")
 
             print("  Building index (first build embeds entire corpus, may take minutes)...")
+            reset_collection(pipeline, collection)
             pipeline.build_index(documents_cache)
+
+            rerank_timing: dict[str, Any] | None = None
+            if cfg_settings.use_reranking:
+                print("  Timing reranker in isolation (cold, warm, cached)...")
+                rerank_timing = measure_rerank_timing(pipeline, queries, args.top_k)
 
             cfg_result = run_config_benchmark(
                 name=name,
@@ -404,6 +514,8 @@ def main() -> int:
                     "mrr": cfg_result.mrr,
                     "latency_ms": cfg_result.latency_ms,
                     "cost_per_1k_queries": cfg_result.cost_per_1k_queries,
+                    "per_query": cfg_result.per_query,
+                    **({"rerank_timing": rerank_timing} if rerank_timing else {}),
                 }
             )
 
@@ -435,6 +547,7 @@ def main() -> int:
             "num_runs": args.runs,
             "top_k": args.top_k,
         },
+        "provenance": None if args.dry_run else collect_provenance(settings),
         "results": results,
     }
 

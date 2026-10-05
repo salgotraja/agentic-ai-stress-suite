@@ -259,15 +259,21 @@ class DriftDetector:
         Why per-dimension KS test:
         - KS test is univariate (operates on 1D data)
         - For multi-dimensional data, test each dimension independently
-        - Use minimum p-value (most conservative for drift detection)
-        - Bonferroni correction would be too strict (many dimensions)
+        - Take the smallest per-dimension p-value, then Bonferroni-correct it
+          by the number of dimensions tested
+        - The raw minimum is the opposite of conservative: with hundreds of
+          dimensions, at least one falls below 0.05 by chance on almost every
+          window, so an uncorrected minimum alerts when nothing has drifted
+        - Bonferroni assumes nothing about dependence between dimensions, so
+          it over-corrects for correlated embeddings. Calibrate the threshold
+          against a stable historical period before relying on alerts
 
         Args:
             baseline: Baseline embeddings
             current: Current window embeddings
 
         Returns:
-            Tuple of (max KS statistic, min p-value) across dimensions
+            Tuple of (max KS statistic, Bonferroni-corrected min p-value)
         """
         baseline_arr = np.array(baseline)
         current_arr = np.array(current)
@@ -284,8 +290,8 @@ class DriftDetector:
             ks_statistics.append(ks_stat)
             p_values.append(p_val)
 
-        # Return max statistic and min p-value (most conservative)
-        return float(np.max(ks_statistics)), float(np.min(p_values))
+        corrected_p = min(1.0, float(np.min(p_values)) * len(p_values))
+        return float(np.max(ks_statistics)), corrected_p
 
     def _create_alert(
         self, metrics: dict[str, Any], metadata: dict[str, Any] | None = None

@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import statistics
 import sys
@@ -153,12 +154,25 @@ def run_pipeline_on_queries(
     return samples, latencies_ms
 
 
-def aggregate_scores(results: list[EvalResult]) -> dict[str, dict[str, float]]:
-    """Compute mean/std/n per metric across an evaluator's results."""
+def aggregate_scores(
+    results: list[EvalResult], *, include_parse_failures: bool = True
+) -> dict[str, dict[str, float]]:
+    """Compute mean/std/n per metric across an evaluator's results.
+
+    A judge reply that failed to parse carries placeholder zeros. Excluding
+    those rows gives answer quality on assessed samples; including them gives
+    a failure-penalised operational score.
+    """
     by_metric: dict[str, list[float]] = {}
     for r in results:
+        if not include_parse_failures and r.metadata.get("parse_failed"):
+            continue
         for metric, score in r.scores.items():
-            by_metric.setdefault(metric, []).append(score)
+            # RAGAS returns NaN when a metric call times out. That is a
+            # missing score, so it is left out of the mean and shows up as a
+            # lower n for that metric.
+            if not math.isnan(score):
+                by_metric.setdefault(metric, []).append(score)
 
     summary: dict[str, dict[str, float]] = {}
     for metric, values in by_metric.items():
@@ -378,6 +392,10 @@ def main() -> int:
     documents = pipeline.load_documents(args.docs_dir)
     print(f"  Loaded {len(documents)} documents")
     print("  Building Chroma index (embeds entire corpus)...")
+    # Drop any earlier copy first: the pipeline appends to an existing
+    # collection, which would return every chunk twice.
+    if "a03" in {getattr(c, "name", c) for c in pipeline.chroma_client.list_collections()}:
+        pipeline.chroma_client.delete_collection(name="a03")
     pipeline.build_index(documents)
 
     # 3. Run pipeline end-to-end on every query, capturing answer + contexts.
@@ -394,6 +412,22 @@ def main() -> int:
     eval_samples = [s for s in samples if "pipeline_error" not in s.metadata]
 
     results: list[dict[str, Any]] = []
+
+    # Per-sample record of what each evaluator saw and scored, so evaluator
+    # disagreements can be inspected instead of inferred from aggregates.
+    per_sample: dict[str, dict[str, Any]] = {
+        s.sample_id: {
+            "id": s.sample_id,
+            "query": s.query,
+            "expected_answer": s.expected_answer,
+            "answer": s.answer,
+            "contexts": s.contexts,
+            "expected_source_docs": s.source_docs,
+            "ragas_runs": [],
+            "judge_runs": [],
+        }
+        for s in eval_samples
+    }
 
     # 4. RAGAS evaluation. Re-runs the evaluator --runs times on the same
     # generations to surface evaluator stochasticity (RAGAS uses an LLM under
@@ -415,6 +449,10 @@ def main() -> int:
             elapsed = time.time() - ragas_start
             ragas_total_elapsed += elapsed
             ragas_samples_scored = len(ragas_results)
+            for r in ragas_results:
+                per_sample[r.sample_id]["ragas_runs"].append(
+                    {m: (None if math.isnan(v) else v) for m, v in r.scores.items()}
+                )
             run_metrics = aggregate_scores(ragas_results)
             ragas_per_run.append(run_metrics)
             for metric, stats in run_metrics.items():
@@ -467,6 +505,9 @@ def main() -> int:
         )
 
         judge_per_run: list[dict[str, dict[str, float]]] = []
+        judge_penalised_per_run: list[dict[str, dict[str, float]]] = []
+        judge_parse_failures: list[str] = []
+        judge_evaluations = 0
         judge_total_elapsed = 0.0
         judge_samples_scored = 0
         for run_idx in range(1, args.runs + 1):
@@ -476,7 +517,22 @@ def main() -> int:
             elapsed = time.time() - judge_start
             judge_total_elapsed += elapsed
             judge_samples_scored = len(judge_results)
-            run_metrics = aggregate_scores(judge_results)
+            judge_evaluations += len(judge_results)
+            for r in judge_results:
+                failed = bool(r.metadata.get("parse_failed"))
+                if failed:
+                    judge_parse_failures.append(f"run{run_idx}:{r.sample_id}")
+                per_sample[r.sample_id]["judge_runs"].append(
+                    {
+                        "scores": None if failed else r.scores,
+                        "justifications": r.metadata.get("justifications", {}),
+                        "parse_failed": failed,
+                    }
+                )
+            # Quality scores cover assessed samples only. A reply that failed
+            # to parse is a missing assessment, not an answer that scored zero.
+            run_metrics = aggregate_scores(judge_results, include_parse_failures=False)
+            judge_penalised_per_run.append(aggregate_scores(judge_results))
             judge_per_run.append(run_metrics)
             for metric, stats in run_metrics.items():
                 print(f"    {metric}: mean={stats['mean']:.3f}")
@@ -501,6 +557,13 @@ def main() -> int:
                 "name": "llm_judge",
                 "description": judge_description,
                 "metrics": judge_metrics,
+                "metrics_failure_penalised": aggregate_runs(judge_penalised_per_run),
+                "parse_failures": judge_parse_failures,
+                "valid_score_coverage": (
+                    1.0 - len(judge_parse_failures) / judge_evaluations
+                    if judge_evaluations
+                    else 0.0
+                ),
                 "wall_time_seconds": judge_total_elapsed,
                 "samples_scored": judge_samples_scored,
                 "num_runs": args.runs,
@@ -536,7 +599,14 @@ def main() -> int:
     with open(args.output, "w") as f:
         json.dump(output, f, indent=2)
 
+    samples_path = args.output.with_name(f"{args.output.stem}_samples.json")
+    with open(samples_path, "w") as f:
+        json.dump(
+            {"benchmark": output["benchmark"], "samples": list(per_sample.values())}, f, indent=2
+        )
+
     print(f"\nBenchmark results saved to {args.output}")
+    print(f"Per-sample evaluator records saved to {samples_path}")
     return 0
 
 

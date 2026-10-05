@@ -3,6 +3,43 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased] - 2026-10-04 benchmark corrections
+
+### Fixed
+
+- `src/rag/hybrid_search.py`: the dense and BM25 indexes were built from two
+  separate parses of the corpus, so the same chunk carried a different node ID
+  in each index and Reciprocal Rank Fusion never merged a shared candidate.
+  Both indexes are now built from one chunk set, and the Chroma collection is
+  dropped before a rebuild. This invalidates the hybrid numbers recorded under
+  1.0.0 below. Corrected run: dense 0.761 / 0.739, hybrid 0.744 / 0.794,
+  hybrid + FlashRank 0.733 / 0.756 (Recall@5 / MRR, 30 queries)
+- Reranker latency: the result cache stayed on across benchmark runs, so
+  repeat runs measured cache hits. `reranking_cache_enabled` now lets the
+  Article 2 runner time uncached inference; rerank cost is about 0.7 s per
+  query for 20 candidates
+- `datasets/synthetic_queries/article_01.json` v2.0: 300 rows held only 152
+  distinct questions and 97 source references pointed at missing files.
+  Deduplicated to 150 questions and relabelled against the 200-document corpus
+- `scripts/validate_queries.py`: missing source references and duplicate
+  query text are errors, not warnings
+- `src/rag/evaluation/drift_detection.py`: the per-dimension KS minimum
+  p-value is Bonferroni-corrected. Uncorrected, it alerted on every no-drift
+  window at 384 dimensions. The variance-change test compared two identical
+  distributions and passed only because of that false alarm
+- `src/rag/evaluation/llm_judge.py`: a judge reply that fails to parse is
+  flagged `parse_failed`; the Article 3 runner reports answer quality on
+  assessed samples and a failure-penalised score separately
+
+### Added
+
+- Article 1, 2 and 3 runners write per-query or per-sample records and run
+  provenance into their artifacts and rebuild Chroma collections from empty
+- Article 1 runner: `dense_inmemory` configuration, a dense baseline on the
+  same in-memory index HyDE and decomposition use. The Chroma baseline embeds
+  source-path metadata and scores 0.872 Recall@5; the like-for-like baseline
+  scores 0.840, HyDE 0.867, decomposition 0.853, HyDE + decomposition 0.862
+
 ## [1.0.0] - 2026-02-22
 
 ### Added

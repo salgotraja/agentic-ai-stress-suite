@@ -232,6 +232,11 @@ class Settings(BaseSettings):
         gt=0,
         description="Number of candidates to retrieve before reranking",
     )
+    reranking_cache_enabled: bool = Field(
+        default=True,
+        description="Cache rerank results per (query, candidates, top_k). "
+        "Disable when benchmarking reranker inference latency",
+    )
 
     # Development
     debug: bool = Field(

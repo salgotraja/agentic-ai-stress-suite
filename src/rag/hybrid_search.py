@@ -175,13 +175,18 @@ class HybridSearchPipeline:
         # Initialize reranker if enabled. Wrap in CachingReranker so repeat
         # queries against the same RRF candidate set skip the cross-encoder
         # round-trip (rerank is the dominant cost in hybrid retrieval).
+        # Benchmarks that repeat a query set turn the cache off, otherwise
+        # every run after the first measures cache hits, not inference.
         self._reranker: FlashRankReranker | None = None
         if self.settings.use_reranking:
             base_reranker = create_reranker(
                 backend=self.settings.reranking_backend,
                 settings=self.settings,
             )
-            self._reranker = CachingReranker(base_reranker)  # type: ignore[assignment]
+            if self.settings.reranking_cache_enabled:
+                self._reranker = CachingReranker(base_reranker)  # type: ignore[assignment]
+            else:
+                self._reranker = base_reranker  # type: ignore[assignment]
 
     def _parse_chroma_host(self) -> str:
         """Extract host from Chroma URL."""
@@ -272,8 +277,19 @@ class HybridSearchPipeline:
         - Use persistent BM25 index (pickle or database)
         - Consider ElasticSearch for unified indexing
         """
-        # Build dense index (identical to NaiveRAG)
+        # Chunk once. RRF merges candidates by node_id, and the node parser
+        # assigns a fresh UUID on every parse, so both indices must be built
+        # from these exact node objects. Parsing a second time for BM25 gives
+        # every chunk a different ID and no candidate is ever fused.
+        self._chunks = self.node_parser.get_nodes_from_documents(documents)
+
+        # Build dense index from a clean collection. Chunks left over from an
+        # earlier build carry IDs that BM25 does not know and would surface as
+        # duplicate, unfusable candidates.
         chroma_client = self._get_or_create_chroma_client()
+        existing = {getattr(c, "name", c) for c in chroma_client.list_collections()}
+        if self.collection_name in existing:
+            chroma_client.delete_collection(name=self.collection_name)
         chroma_collection = chroma_client.get_or_create_collection(name=self.collection_name)
         vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
         storage_context = StorageContext.from_defaults(vector_store=vector_store)
@@ -283,20 +299,11 @@ class HybridSearchPipeline:
         LlamaIndexSettings.embed_model = self.embed_model
         LlamaIndexSettings.node_parser = self.node_parser
 
-        self._dense_index = VectorStoreIndex.from_documents(
-            documents,
+        self._dense_index = VectorStoreIndex(
+            nodes=self._chunks,
             storage_context=storage_context,
             show_progress=True,
         )
-
-        # Extract chunks for BM25 indexing
-        # Teaching note: We need to access the chunks created by VectorStoreIndex.
-        # LlamaIndex stores these in the vector store, but we need them for BM25.
-        # We re-parse documents to get identical chunks.
-        self._chunks = []
-        for doc in documents:
-            nodes = self.node_parser.get_nodes_from_documents([doc])
-            self._chunks.extend(nodes)
 
         # Build BM25 index
         # Teaching note: BM25 requires tokenized text

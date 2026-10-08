@@ -3,6 +3,64 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased] - 2026-10-04 benchmark corrections
+
+### Fixed
+
+- `src/rag/hybrid_search.py`: the dense and BM25 indexes were built from two
+  separate parses of the corpus, so the same chunk carried a different node ID
+  in each index and Reciprocal Rank Fusion never merged a shared candidate.
+  Both indexes are now built from one chunk set, and the Chroma collection is
+  dropped before a rebuild. This invalidates the hybrid numbers recorded under
+  1.0.0 below. Corrected run: dense 0.761 / 0.739, hybrid 0.744 / 0.794,
+  hybrid + FlashRank 0.733 / 0.756 (Recall@5 / MRR, 30 queries)
+- Reranker latency: the result cache stayed on across benchmark runs, so
+  repeat runs measured cache hits. `reranking_cache_enabled` now lets the
+  Article 2 runner time uncached inference; rerank cost is about 0.7 s per
+  query for 20 candidates
+- `datasets/synthetic_queries/article_01.json` v2.0: 300 rows held only 152
+  distinct questions and 97 source references pointed at missing files.
+  Deduplicated to 150 questions and relabelled against the 200-document corpus
+- `scripts/validate_queries.py`: missing source references and duplicate
+  query text are errors, not warnings
+- `src/rag/evaluation/drift_detection.py`: the per-dimension KS minimum
+  p-value is Bonferroni-corrected. Uncorrected, it alerted on every no-drift
+  window at 384 dimensions. The variance-change test compared two identical
+  distributions and passed only because of that false alarm
+- `src/rag/evaluation/llm_judge.py`: a judge reply that fails to parse is
+  flagged `parse_failed`; the Article 3 runner reports answer quality on
+  assessed samples and a failure-penalised score separately
+
+### Added
+
+- Article 1, 2 and 3 runners write per-query or per-sample records and run
+  provenance into their artifacts and rebuild Chroma collections from empty
+- Article 1 runner: `dense_inmemory` configuration, a dense baseline on the
+  same in-memory index HyDE and decomposition use
+- `datasets/synthetic_queries/article_01.json` v2.1: a second, independent
+  labelling pass (stored under `datasets/synthetic_queries/review/`) agreed
+  exactly on 96 of 150 questions; 45 relabelled after adjudication from
+  document content, 8 validation-pitfall questions removed. Rescored single-run
+  results: dense in-memory 0.838 / 0.898, HyDE 0.854 / 0.870, decomposition
+  0.837 / 0.807, HyDE + decomposition 0.877 / 0.846 (Recall@5 / MRR, 142
+  questions)
+- Corpus provenance moved from `datasets/tech_docs/attribution.md` to
+  `datasets/CORPUS_PROVENANCE.md`; every markdown file under `tech_docs/` is
+  indexed, so notes there change retrieval
+
+### Open
+
+- Retrieval depends on the checkout path and Chroma collection name, because
+  `SimpleDirectoryReader` puts the absolute `file_path` into the embedded text
+  and the naive and hybrid pipelines also embed `source` and `collection`.
+  Measured effect is 1 to 3 pp Recall@5. Excluding these keys from embedding
+  (`excluded_embed_metadata_keys`) would fix it and change every retrieval
+  number, so it is left for a deliberate rerun
+- Groq retired `llama-3.1-8b-instant` and `llama-3.3-70b-versatile` on
+  2026-10-05. Every Groq-first call in `UnifiedLLMClient` now falls through to
+  the next provider, so LLM-dependent benchmarks are no longer reproducible on
+  their original generator
+
 ## [1.0.0] - 2026-02-22
 
 ### Added

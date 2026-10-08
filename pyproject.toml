@@ -1,7 +1,7 @@
 [project]
 name = "agentic-ai-stress-suite"
 version = "0.1.0"
-description = "Production-grade proof-of-concept demonstrating empirical trade-offs in RAG-to-agent workflows"
+description = "Experimental reference implementation demonstrating empirical trade-offs in RAG-to-agent workflows"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [

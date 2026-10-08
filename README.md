@@ -5,8 +5,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Coverage](https://img.shields.io/badge/coverage-75%25-green)
 
-Production-grade proof-of-concept demonstrating empirical trade-offs in
-RAG-to-agent workflows. ~25,000 lines of annotated production code with
+Experimental reference implementation demonstrating empirical trade-offs in
+RAG-to-agent workflows. ~25,000 lines of annotated code with
 reproducible benchmarks across retrieval, agents, LLM ops, security,
 scaling, and custom embeddings.
 
@@ -31,15 +31,15 @@ writes JSON to `results/data/`, and renders a chart via Jupyter. The
 "Key Results" table reports happy-path measurements; "Stress Test
 Results" reports the same code under chaos injection (`--chaos` flag).
 Numbers are mean over 3 runs unless noted. We publish the numbers that
-lost too: BGE fine-tune regressed -11%, hybrid recall tied dense, INT8
+lost too: BGE fine-tune regressed -11%, hybrid lost a little recall to dense, FlashRank did not beat plain hybrid, INT8
 on Apple Silicon was a wash.
 
 ## Key Results
 
 | Technique | Metric | Improvement |
 |-----------|--------|-------------|
-| Hybrid (BM25+dense+RRF) vs dense baseline (30q / 211 chunks) | Recall@5 / MRR | dense 0.761 / 0.739 → hybrid 0.761 / 0.648 (no recall lift; MRR drops on rank noise) |
-| + FlashRank reranking on top-20 candidates | Recall@5 / MRR | 0.683 / 0.769 (cross-encoder recovers ranking quality but mispredicts on edge cases; trade-off, not pure win) |
+| Hybrid (BM25+dense+RRF) vs dense baseline (30 queries, corrected run 2026-10-04) | Recall@5 / MRR / Hit@1 | dense 0.761 / 0.739 / 21 → hybrid 0.744 / 0.794 / 23 (ranking improves, small recall cost) |
+| + FlashRank reranking on top-20 candidates | Recall@5 / MRR / Hit@1 | 0.733 / 0.756 / 21 (behind plain hybrid on all three, about 0.7 s per uncached query) |
 | BGE fine-tuning (regression) | Recall@5 | 0.729 → 0.622 (-11%) |
 | Semantic cache (alone) | LLM cost on 100-query workload (vs uncached Groq-8B) | $0.001272 → $0.000769 (39.6%) |
 | Complexity routing (alone) | LLM cost on 100-query workload (vs all-GPT-4o reprice) | $0.1935 → $0.00228 (98.8%) |

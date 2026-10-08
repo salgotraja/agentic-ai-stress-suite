@@ -32,6 +32,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -89,8 +90,20 @@ def run_config_benchmark(
 ) -> ConfigResult:
     """Run benchmark for a single configuration via shared BenchmarkRunner."""
     runner = BenchmarkRunner(pipeline, num_runs=num_runs, top_k=top_k)
-    runner.run_benchmark(queries)
+    runs = runner.run_benchmark(queries)
     metrics = runner.get_aggregate_metrics()
+
+    # First-run rows only. HyDE and decomposition call an LLM, so later runs
+    # can retrieve differently; the aggregate metrics cover all runs.
+    per_query = [
+        {
+            "id": r.query_id,
+            "recall_at_k": r.recall_at_k,
+            "reciprocal_rank": r.reciprocal_rank,
+            "retrieved_docs": r.retrieved_docs,
+        }
+        for r in runs[0].query_results
+    ]
 
     return ConfigResult(
         name=name,
@@ -103,6 +116,7 @@ def run_config_benchmark(
             "num_runs": num_runs,
             "top_k": top_k,
             "total_queries": metrics.get("total_queries", 0),
+            "per_query": per_query,
         },
     )
 
@@ -147,6 +161,12 @@ def main() -> int:
         help="Path to tech docs directory for indexing",
     )
     parser.add_argument(
+        "--only",
+        nargs="+",
+        default=None,
+        help="Run only the named configurations",
+    )
+    parser.add_argument(
         "--skip-naive",
         action="store_true",
         help="Skip naive baseline (useful when Chroma is unavailable)",
@@ -189,6 +209,19 @@ def main() -> int:
             "advanced_flags": {},
             "cost_per_1k": 0.0,
         },
+        # Like-for-like baseline for the three transformed configurations.
+        # "naive" indexes every file in the corpus into Chroma and embeds
+        # document metadata with each chunk. The advanced pipeline indexes the
+        # markdown files only, in memory, without that metadata. The two dense
+        # baselines therefore differ, and a transform must be compared with
+        # the baseline that shares its index.
+        {
+            "name": "dense_inmemory",
+            "description": "Dense-only retrieval on the advanced pipeline's in-memory index",
+            "pipeline_type": "advanced",
+            "advanced_flags": {"use_hyde": False, "use_decomposition": False},
+            "cost_per_1k": 0.0,
+        },
         {
             "name": "hyde",
             "description": "HyDE: hypothetical document embeddings",
@@ -212,6 +245,8 @@ def main() -> int:
         },
     ]
 
+    if args.only:
+        configs = [c for c in configs if c["name"] in args.only]
     if args.skip_naive:
         configs = [c for c in configs if c["pipeline_type"] != "naive"]
     if args.skip_advanced:
@@ -253,6 +288,11 @@ def main() -> int:
                 documents_naive = pipeline.load_documents(args.docs_dir)
                 print(f"  Loaded {len(documents_naive)} documents")
             print("  Building Chroma index (embeds entire corpus)...")
+            # The pipeline appends to an existing collection, so drop any
+            # earlier copy or every chunk is returned twice.
+            existing = {getattr(c, "name", c) for c in pipeline.chroma_client.list_collections()}
+            if f"a01_{name}" in existing:
+                pipeline.chroma_client.delete_collection(name=f"a01_{name}")
             pipeline.build_index(documents_naive)
 
         elif pipeline_type == "advanced":
@@ -312,6 +352,7 @@ def main() -> int:
                 "mrr": cfg_result.mrr,
                 "latency_ms": cfg_result.latency_ms,
                 "cost_per_1k_queries": cfg_result.cost_per_1k_queries,
+                "per_query": cfg_result.extra["per_query"],
             }
         )
 
@@ -338,6 +379,19 @@ def main() -> int:
         "dataset": {
             "path": str(args.dataset),
             "num_queries": len(queries),
+            "version": json.loads(args.dataset.read_text()).get("metadata", {}).get("version"),
+        },
+        "provenance": {
+            "git_commit": subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=PROJECT_ROOT,
+                capture_output=True,
+                text=True,
+                check=False,
+            ).stdout.strip(),
+            "embedding_model": "BAAI/bge-base-en-v1.5",
+            "generator_model": settings.default_llm_model,
+            "index": "naive: Chroma collection dropped and rebuilt; advanced: in-memory index",
         },
         "settings": {
             "num_runs": args.runs,

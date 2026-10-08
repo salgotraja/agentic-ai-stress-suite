@@ -345,7 +345,10 @@ class LLMJudge:
             sample_id=sample.sample_id,
             evaluator=EVALUATOR_NAME,
             scores=scores,
-            metadata={"justifications": justifications},
+            # An empty parse means the judge reply was not usable JSON. The
+            # scores are then placeholders, not an assessment, so callers can
+            # report answer quality and evaluator reliability separately.
+            metadata={"justifications": justifications, "parse_failed": not parsed},
         )
 
         if self._persistence:

@@ -1,0 +1,3732 @@
+{
+  "benchmark": "article_01_state_aware_rag",
+  "scoring": "rescore",
+  "note": "Rescored against dataset v2.1 labels from the first-run per-query retrieved_docs stored in article_01_benchmarks_corrected_2026-10-04.json. Recall@5 and MRR use BenchmarkRunner._calculate_recall_at_k and _calculate_mrr. Values are single-run. The HyDE, decomposition and composite configurations could not be rerun on their original generator: the fallback chain started with Groq llama-3.1-8b-instant, which Groq retired on 2026-10-05. Validation: rebuilding the naive index retrieval-only under the original checkout path and collection name reproduced the stored naive retrieved_docs for all 142 questions.",
+  "environment_notes": [
+    "The naive Chroma index was built from the original corpus. The in-memory index shared by dense_inmemory, hyde, decomposition and hyde_decomposition was built after datasets/tech_docs/attribution.md had been edited with a provenance note (since moved to datasets/CORPUS_PROVENANCE.md). Those four configurations are like-for-like with each other; naive is not like-for-like with them.",
+    "Both pipelines embed the absolute file_path of each document with every chunk, and the naive pipeline also embeds the source path and the Chroma collection name. Retrieval results therefore depend on the checkout location and the collection name. Measured: naive Recall@5 0.847 from the original checkout versus 0.822 from another path; dense_inmemory 0.838 versus 0.825.",
+    "Latency is copied from the 2026-10-04 three-run execution over the 150-question v2.0 set. dense_inmemory latency comes from a separate execution and is not comparable with the other rows."
+  ],
+  "dataset": {
+    "path": "datasets/synthetic_queries/article_01.json",
+    "version": "2.1",
+    "num_queries": 142
+  },
+  "source_artifact": "results/data/article_01_benchmarks_corrected_2026-10-04.json",
+  "configurations": [
+    {
+      "name": "naive",
+      "description": "Dense-only retrieval (Chroma + BGE-base-en-v1.5)",
+      "pipeline_type": "naive",
+      "advanced_flags": {},
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "dense_inmemory",
+      "description": "Dense-only retrieval on the advanced pipeline's in-memory index",
+      "pipeline_type": "advanced",
+      "advanced_flags": {
+        "use_hyde": false,
+        "use_decomposition": false
+      },
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hyde",
+      "description": "HyDE: hypothetical document embeddings",
+      "pipeline_type": "advanced",
+      "advanced_flags": {
+        "use_hyde": true,
+        "use_decomposition": false
+      },
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "decomposition",
+      "description": "Query decomposition with parallel retrieval",
+      "pipeline_type": "advanced",
+      "advanced_flags": {
+        "use_hyde": false,
+        "use_decomposition": true
+      },
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hyde_decomposition",
+      "description": "Composite: HyDE + decomposition",
+      "pipeline_type": "advanced",
+      "advanced_flags": {
+        "use_hyde": true,
+        "use_decomposition": true
+      },
+      "cost_per_1k_queries": 0.0
+    }
+  ],
+  "results": [
+    {
+      "name": "naive",
+      "recall_at_k": 0.8474178403755869,
+      "mrr": 0.883450704225352,
+      "hit_at_1": 117,
+      "any_expected_in_top5": 137,
+      "v20_three_run_recall": [
+        0.8722222222222222,
+        0.8722222222222222,
+        0.8722222222222222
+      ],
+      "latency_ms_v20_execution": {
+        "mean": 2438.8168232218595,
+        "std": 7.934625834774153,
+        "runs": [
+          2431.771652739941,
+          2447.4121263534958,
+          2437.2666905721417
+        ]
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q002",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q003",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q004",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q005",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q006",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q007",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q008",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q009",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q010",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q011",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q012",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.2
+        },
+        {
+          "id": "q013",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q014",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q015",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q016",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q017",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q018",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q019",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q020",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q021",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q022",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q023",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q024",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q025",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q026",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q027",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q028",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q030",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q031",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q033",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q034",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q035",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q037",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "q039",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q040",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q041",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q043",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q044",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q045",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q048",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q049",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q050",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q051",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q052",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q053",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q054",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q055",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q058",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q059",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q060",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q061",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q062",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q063",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q064",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q065",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q075",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q086",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q087",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q089",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q091",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q093",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q094",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q095",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q101",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q102",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q104",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q106",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q107",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q110",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "q111",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q113",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q114",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q115",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q120",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q122",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q124",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q125",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q129",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q130",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q140",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q141",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q142",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q143",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q145",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q149",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q154",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q155",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q161",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q162",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q166",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q167",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q168",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q170",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q172",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q174",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q175",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q178",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q182",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q183",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q184",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q185",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q186",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q188",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q193",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q194",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q200",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q201",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q203",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q205",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q207",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q212",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q215",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q221",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q222",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q224",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q225",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q227",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q230",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q231",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q234",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q235",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q240",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q246",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q248",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q251",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q255",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q258",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q259",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "q268",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q270",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q272",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q273",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q278",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q281",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q284",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q293",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q294",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q297",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q298",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q299",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q300",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        }
+      ]
+    },
+    {
+      "name": "dense_inmemory",
+      "recall_at_k": 0.8380281690140845,
+      "mrr": 0.8975352112676056,
+      "hit_at_1": 120,
+      "any_expected_in_top5": 137,
+      "v20_three_run_recall": [
+        0.84,
+        0.84,
+        0.84
+      ],
+      "latency_ms_v20_execution": {
+        "mean": 2008.732221245494,
+        "std": 20.460651145274316,
+        "runs": [
+          2022.6186178279265,
+          1985.2356475354948,
+          2018.3423983730609
+        ]
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q002",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q003",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q004",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q005",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q006",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q007",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.2
+        },
+        {
+          "id": "q008",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q009",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q010",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q011",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q012",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q013",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q014",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q015",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q016",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q017",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q018",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "q019",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q020",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q021",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q022",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q023",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q024",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q025",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q026",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q027",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q028",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q030",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q031",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q033",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q034",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q035",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q037",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q039",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q040",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q041",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q043",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q044",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q045",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q048",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q049",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q050",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q051",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q052",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q053",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q054",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q055",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q058",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q059",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q060",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q061",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q062",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q063",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q064",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q065",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q075",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q086",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q087",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q089",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q091",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q093",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q094",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q095",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q101",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q102",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q104",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q106",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q107",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q110",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q111",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q113",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q114",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q115",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q120",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q122",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q124",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q125",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q129",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q130",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q140",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q141",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q142",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q143",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q145",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q149",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q154",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q155",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q161",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q162",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q166",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q167",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q168",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q170",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q172",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q174",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q175",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q178",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q182",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q183",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q184",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q185",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q186",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q188",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q193",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q194",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q200",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q201",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q203",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q205",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q207",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q212",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q215",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q221",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q222",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q224",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q225",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q227",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q230",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q231",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q234",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q235",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q240",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q246",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q248",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q251",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q255",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q258",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q259",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q268",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q270",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q272",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q273",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q278",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q281",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q284",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q293",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q294",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q297",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q298",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q299",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q300",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        }
+      ]
+    },
+    {
+      "name": "hyde",
+      "recall_at_k": 0.8544600938967137,
+      "mrr": 0.8697183098591549,
+      "hit_at_1": 116,
+      "any_expected_in_top5": 133,
+      "v20_three_run_recall": [
+        0.8577777777777778,
+        0.8777777777777778,
+        0.8644444444444445
+      ],
+      "latency_ms_v20_execution": {
+        "mean": 3568.1510503331083,
+        "std": 125.5852528982897,
+        "runs": [
+          3711.0566327398797,
+          3518.0325421798625,
+          3475.3639760795827
+        ]
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q002",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q003",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q004",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q005",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q006",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q007",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q008",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q009",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q010",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q011",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q012",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q013",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q014",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q015",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q016",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q017",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q018",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q019",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q020",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q021",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q022",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q023",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q024",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q025",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q026",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q027",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q028",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q030",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q031",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q033",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q034",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q035",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q037",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q039",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q040",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q041",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q043",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q044",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q045",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q048",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "q049",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q050",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q051",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q052",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q053",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q054",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q055",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q058",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q059",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q060",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q061",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q062",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q063",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q064",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q065",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "q075",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q086",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q087",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q089",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q091",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q093",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q094",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q095",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q101",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q102",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q104",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q106",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q107",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q110",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q111",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q113",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q114",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q115",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q120",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q122",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q124",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q125",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q129",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q130",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q140",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q141",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q142",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q143",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q145",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q149",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q154",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q155",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q161",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q162",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q166",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q167",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q168",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q170",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q172",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q174",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q175",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q178",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q182",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q183",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q184",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q185",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q186",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q188",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q193",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q194",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q200",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q201",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q203",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q205",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q207",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q212",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q215",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q221",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q222",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q224",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q225",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q227",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q230",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q231",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q234",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q235",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q240",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q246",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q248",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q251",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q255",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q258",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q259",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q268",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q270",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q272",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q273",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q278",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q281",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q284",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q293",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q294",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q297",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q298",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q299",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q300",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        }
+      ]
+    },
+    {
+      "name": "decomposition",
+      "recall_at_k": 0.8368544600938969,
+      "mrr": 0.8068075117370893,
+      "hit_at_1": 100,
+      "any_expected_in_top5": 134,
+      "v20_three_run_recall": [
+        0.8566666666666667,
+        0.8533333333333334,
+        0.85
+      ],
+      "latency_ms_v20_execution": {
+        "mean": 3188.1412874113366,
+        "std": 15.563631817169346,
+        "runs": [
+          3178.6498164072204,
+          3179.671099980284,
+          3206.1029458465055
+        ]
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q002",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q003",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q004",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q005",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q006",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q007",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q008",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q009",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q010",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q011",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q012",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q013",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q014",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q015",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q016",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q017",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q018",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q019",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q020",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q021",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q022",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q023",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q024",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q025",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q026",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q027",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.2
+        },
+        {
+          "id": "q028",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q030",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q031",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q033",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q034",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q035",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q037",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q039",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q040",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q041",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q043",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q044",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q045",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q048",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q049",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q050",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q051",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q052",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q053",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q054",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q055",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q058",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q059",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q060",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q061",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q062",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q063",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q064",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q065",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q075",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q086",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q087",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q089",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q091",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q093",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q094",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q095",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q101",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q102",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q104",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q106",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q107",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q110",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q111",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q113",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q114",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q115",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q120",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q122",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q124",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q125",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q129",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q130",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q140",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q141",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q142",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q143",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q145",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q149",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q154",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q155",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q161",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q162",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q166",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q167",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.2
+        },
+        {
+          "id": "q168",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q170",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q172",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q174",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q175",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q178",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q182",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q183",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q184",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q185",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q186",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q188",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q193",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q194",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q200",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q201",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q203",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q205",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q207",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q212",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q215",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q221",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q222",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q224",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q225",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q227",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q230",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q231",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q234",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q235",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q240",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q246",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q248",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q251",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q255",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q258",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q259",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q268",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q270",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q272",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q273",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q278",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q281",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q284",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "q293",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q294",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q297",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "q298",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q299",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q300",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        }
+      ]
+    },
+    {
+      "name": "hyde_decomposition",
+      "recall_at_k": 0.8767605633802819,
+      "mrr": 0.846244131455399,
+      "hit_at_1": 108,
+      "any_expected_in_top5": 136,
+      "v20_three_run_recall": [
+        0.8688888888888889,
+        0.8622222222222222,
+        0.8555555555555555
+      ],
+      "latency_ms_v20_execution": {
+        "mean": 8243.704732804488,
+        "std": 56.78561494862202,
+        "runs": [
+          8308.692468626445,
+          8203.657606679675,
+          8218.764123107345
+        ]
+      },
+      "per_query": [
+        {
+          "id": "q001",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q002",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q003",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q004",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q005",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q006",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q007",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q008",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q009",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q010",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q011",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q012",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q013",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q014",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q015",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q016",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q017",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q018",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q019",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q020",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q021",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q022",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q023",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q024",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q025",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q026",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q027",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q028",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q030",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q031",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q033",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q034",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q035",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q037",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q039",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q040",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q041",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q043",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q044",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q045",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q048",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q049",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q050",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q051",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q052",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q053",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q054",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q055",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q058",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q059",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q060",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q061",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "q062",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q063",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q064",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q065",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q075",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q086",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q087",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q089",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q091",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q093",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q094",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q095",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q101",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q102",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q104",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q106",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q107",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q110",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q111",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q113",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q114",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q115",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q120",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q122",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q124",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q125",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q129",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q130",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q140",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q141",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q142",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q143",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q145",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q149",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q154",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q155",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q161",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "q162",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q166",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q167",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q168",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q170",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q172",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q174",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q175",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q178",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q182",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q183",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q184",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q185",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q186",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q188",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q193",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q194",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q200",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q201",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q203",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q205",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q207",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q212",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q215",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q221",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q222",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q224",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q225",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q227",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "q230",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q231",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q234",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q235",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q240",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q246",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q248",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q251",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q255",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q258",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q259",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q268",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q270",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q272",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "q273",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q278",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q281",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q284",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q293",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q294",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q297",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "q298",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q299",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "q300",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0
+        }
+      ]
+    }
+  ]
+}

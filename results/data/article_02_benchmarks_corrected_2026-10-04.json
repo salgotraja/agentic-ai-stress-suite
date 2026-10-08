@@ -1,0 +1,1247 @@
+{
+  "benchmark": "article_02_advanced_retrieval",
+  "dry_run": false,
+  "configurations": [
+    {
+      "name": "dense_only",
+      "description": "Dense-only retrieval (Article 1 baseline)",
+      "pipeline_type": "naive",
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hybrid_bm25_dense",
+      "description": "Hybrid search (BM25 + dense + RRF)",
+      "pipeline_type": "hybrid",
+      "cost_per_1k_queries": 0.0
+    },
+    {
+      "name": "hybrid_flashrank",
+      "description": "Hybrid + FlashRank reranking (local, free)",
+      "pipeline_type": "hybrid",
+      "cost_per_1k_queries": 0.0
+    }
+  ],
+  "dataset": {
+    "path": "datasets/synthetic_queries/article_02.json",
+    "num_queries": 30
+  },
+  "settings": {
+    "num_runs": 3,
+    "top_k": 5
+  },
+  "provenance": {
+    "git_commit": "60e6228b5f2160419a93c7c6ea937d8866024f98",
+    "git_dirty": true,
+    "llama_index_core": "0.14.21",
+    "chromadb": "1.1.1",
+    "embedding_model": "BAAI/bge-base-en-v1.5",
+    "generator_model": "groq/llama-3-8b",
+    "reranking_model": "ms-marco-MiniLM-L-12-v2",
+    "reranking_candidates": 20,
+    "reranking_cache_enabled_during_benchmark": false,
+    "index": "Chroma collections dropped and rebuilt per configuration"
+  },
+  "results": [
+    {
+      "name": "dense_only",
+      "description": "Dense-only retrieval (Article 1 baseline)",
+      "recall_at_k": {
+        "mean": 0.7611111111111111,
+        "std": 0.0,
+        "runs": [
+          0.7611111111111111,
+          0.7611111111111111,
+          0.7611111111111111
+        ]
+      },
+      "mrr": {
+        "mean": 0.7388888888888889,
+        "std": 0.0,
+        "runs": [
+          0.7388888888888889,
+          0.7388888888888889,
+          0.7388888888888889
+        ]
+      },
+      "latency_ms": {
+        "mean": 2277.763868045036,
+        "std": 73.56789009252661,
+        "runs": [
+          2360.409001301256,
+          2219.424518099792,
+          2253.45808473406
+        ]
+      },
+      "cost_per_1k_queries": 0.0,
+      "per_query": [
+        {
+          "id": "q201",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/08_spring_mvc_fundamentals.md",
+            "datasets/tech_docs/spring/32_spring_webflux_fundamentals.md"
+          ]
+        },
+        {
+          "id": "q202",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/03_query_parameters.md"
+          ]
+        },
+        {
+          "id": "q203",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/15_advanced_dependencies_and_dependency_injection_in_fastapi.md",
+            "datasets/tech_docs/fastapi/05_dependencies__dependency_injection.md",
+            "datasets/tech_docs/fastapi/15_advanced_dependencies_and_dependency_injection_in_fastapi.md",
+            "datasets/tech_docs/spring/03_dependency_injection.md",
+            "datasets/tech_docs/spring/05_dependency_injection_patterns.md"
+          ]
+        },
+        {
+          "id": "q204",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/05_useState_hook.md",
+            "datasets/tech_docs/react/04_state_management_basics.md",
+            "datasets/tech_docs/react/22_form_handling_basics.md",
+            "datasets/tech_docs/react/06_advanced_usestate_patterns.md",
+            "datasets/tech_docs/react/05_useState_hook.md"
+          ]
+        },
+        {
+          "id": "q205",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/02_basemodel_basics.md",
+            "datasets/tech_docs/pydantic/49_testing_pydantic_models.md",
+            "datasets/tech_docs/pydantic/49_testing_pydantic_models.md",
+            "datasets/tech_docs/pydantic/47_testing_with_pydantic.md",
+            "datasets/tech_docs/pydantic/48_pydantic_for_data_pipelines.md"
+          ]
+        },
+        {
+          "id": "q206",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/24_websocket_advanced_patterns.md",
+            "datasets/tech_docs/fastapi/24_websocket_advanced_patterns.md",
+            "datasets/tech_docs/fastapi/16_websockets_and_serversent_events_in_fastapi.md",
+            "datasets/tech_docs/fastapi/16_websockets_and_serversent_events_in_fastapi.md",
+            "datasets/tech_docs/fastapi/24_websocket_advanced_patterns.md"
+          ]
+        },
+        {
+          "id": "q207",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/04_bean_scopes.md",
+            "datasets/tech_docs/spring/04_bean_scopes.md",
+            "datasets/tech_docs/spring/04_bean_scopes.md",
+            "datasets/tech_docs/spring/04_bean_scopes.md",
+            "datasets/tech_docs/spring/04_bean_scopes.md"
+          ]
+        },
+        {
+          "id": "q208",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/12_request_validation_with_pydantic_in_fastapi.md",
+            "datasets/tech_docs/fastapi/04_request_body.md",
+            "datasets/tech_docs/pydantic/33_pydantic_with_fastapi_integration_patterns.md",
+            "datasets/tech_docs/pydantic/33_pydantic_with_fastapi_integration_patterns.md",
+            "datasets/tech_docs/fastapi/12_request_validation_with_pydantic_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q209",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/04_state_management_basics.md",
+            "datasets/tech_docs/react/09_usereducer_for_complex_state.md",
+            "datasets/tech_docs/react/24_state_management_with_redux.md",
+            "datasets/tech_docs/react/26_state_management_with_jotai.md",
+            "datasets/tech_docs/react/06_advanced_usestate_patterns.md"
+          ]
+        },
+        {
+          "id": "q210",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/10_request_and_response_handling.md",
+            "datasets/tech_docs/spring/08_spring_mvc_fundamentals.md",
+            "datasets/tech_docs/spring/08_spring_mvc_fundamentals.md",
+            "datasets/tech_docs/spring/10_request_and_response_handling.md",
+            "datasets/tech_docs/spring/10_request_and_response_handling.md"
+          ]
+        },
+        {
+          "id": "q211",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md",
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md",
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md",
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md",
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q212",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/14_uselayouteffect_vs_useeffect.md",
+            "datasets/tech_docs/react/22_form_handling_basics.md",
+            "datasets/tech_docs/react/22_form_handling_basics.md",
+            "datasets/tech_docs/react/01_introduction.md",
+            "datasets/tech_docs/react/04_state_management_basics.md"
+          ]
+        },
+        {
+          "id": "q213",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/03_field_types_and_validation.md",
+            "datasets/tech_docs/pydantic/04_string_constraints.md",
+            "datasets/tech_docs/pydantic/03_field_types_and_validation.md",
+            "datasets/tech_docs/pydantic/03_field_types_and_validation.md",
+            "datasets/tech_docs/pydantic/10_field_validators.md"
+          ]
+        },
+        {
+          "id": "q214",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/01_introduction.md",
+            "datasets/tech_docs/react/01_introduction.md",
+            "datasets/tech_docs/react/02_jsx_fundamentals.md",
+            "datasets/tech_docs/react/03_components_and_props.md",
+            "datasets/tech_docs/react/02_jsx_fundamentals.md"
+          ]
+        },
+        {
+          "id": "q215",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q216",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/09_testing_fastapi_applications.md",
+            "datasets/tech_docs/fastapi/09_testing_fastapi_applications.md",
+            "datasets/tech_docs/fastapi/09_testing_fastapi_applications.md",
+            "datasets/tech_docs/fastapi/01_fastapi_introduction.md",
+            "datasets/tech_docs/fastapi/01_fastapi_introduction.md"
+          ]
+        },
+        {
+          "id": "q217",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/07_spring_profiles.md",
+            "datasets/tech_docs/spring/07_spring_profiles.md",
+            "datasets/tech_docs/spring/07_spring_profiles.md",
+            "datasets/tech_docs/spring/24_spring_boot_configuration.md",
+            "datasets/tech_docs/spring/07_spring_profiles.md"
+          ]
+        },
+        {
+          "id": "q218",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/10_security_in_fastapi.md",
+            "datasets/tech_docs/fastapi/10_security_in_fastapi.md",
+            "datasets/tech_docs/fastapi/10_security_in_fastapi.md",
+            "datasets/tech_docs/fastapi/43_rolebased_access_control_rbac.md",
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q219",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/46_typescript_with_react.md"
+          ]
+        },
+        {
+          "id": "q220",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md"
+          ]
+        },
+        {
+          "id": "q221",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q222",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/02_ioc_container.md",
+            "datasets/tech_docs/spring/02_ioc_container.md",
+            "datasets/tech_docs/spring/02_ioc_container.md",
+            "datasets/tech_docs/spring/01_introduction.md",
+            "datasets/tech_docs/spring/02_ioc_container.md"
+          ]
+        },
+        {
+          "id": "q223",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/04_request_body.md",
+            "datasets/tech_docs/fastapi/12_request_validation_with_pydantic_in_fastapi.md",
+            "datasets/tech_docs/fastapi/22_request_validation_error_handling.md",
+            "datasets/tech_docs/pydantic/33_pydantic_with_fastapi_integration_patterns.md",
+            "datasets/tech_docs/fastapi/12_request_validation_with_pydantic_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q224",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md",
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md",
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md",
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md",
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q225",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/05_model_inheritance_and_composition.md",
+            "datasets/tech_docs/pydantic/05_model_inheritance_and_composition.md",
+            "datasets/tech_docs/pydantic/16_dynamic_model_creation.md",
+            "datasets/tech_docs/pydantic/02_basemodel_basics.md",
+            "datasets/tech_docs/pydantic/05_model_inheritance_and_composition.md"
+          ]
+        },
+        {
+          "id": "q226",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/50_fastapi_best_practices_and_production_checklist.md",
+            "datasets/tech_docs/fastapi/06_async.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/spring/31_async_processing_with_async.md",
+            "datasets/tech_docs/fastapi/06_async.md"
+          ]
+        },
+        {
+          "id": "q227",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md",
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md",
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md",
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md",
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md"
+          ]
+        },
+        {
+          "id": "q228",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md"
+          ]
+        },
+        {
+          "id": "q229",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/31_async_processing_with_async.md",
+            "datasets/tech_docs/fastapi/06_async.md",
+            "datasets/tech_docs/fastapi/50_fastapi_best_practices_and_production_checklist.md",
+            "datasets/tech_docs/fastapi/06_async.md",
+            "datasets/tech_docs/fastapi/34_performance_optimization.md"
+          ]
+        },
+        {
+          "id": "q230",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "hybrid_bm25_dense",
+      "description": "Hybrid search (BM25 + dense + RRF)",
+      "recall_at_k": {
+        "mean": 0.7444444444444445,
+        "std": 0.0,
+        "runs": [
+          0.7444444444444445,
+          0.7444444444444445,
+          0.7444444444444445
+        ]
+      },
+      "mrr": {
+        "mean": 0.7944444444444444,
+        "std": 0.0,
+        "runs": [
+          0.7944444444444444,
+          0.7944444444444444,
+          0.7944444444444444
+        ]
+      },
+      "latency_ms": {
+        "mean": 2309.8449139432178,
+        "std": 45.51050223103318,
+        "runs": [
+          2358.4749167319387,
+          2268.280334730904,
+          2302.779490366811
+        ]
+      },
+      "cost_per_1k_queries": 0.0,
+      "per_query": [
+        {
+          "id": "q201",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/45_spring_graphql.md",
+            "datasets/tech_docs/spring/12_validation_with_bean_validation.md"
+          ]
+        },
+        {
+          "id": "q202",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/03_query_parameters.md"
+          ]
+        },
+        {
+          "id": "q203",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/05_dependencies__dependency_injection.md",
+            "datasets/tech_docs/spring/03_dependency_injection.md",
+            "datasets/tech_docs/fastapi/15_advanced_dependencies_and_dependency_injection_in_fastapi.md",
+            "datasets/tech_docs/fastapi/15_advanced_dependencies_and_dependency_injection_in_fastapi.md",
+            "datasets/tech_docs/fastapi/43_rolebased_access_control_rbac.md"
+          ]
+        },
+        {
+          "id": "q204",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/04_state_management_basics.md",
+            "datasets/tech_docs/react/05_useState_hook.md",
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/22_form_handling_basics.md",
+            "datasets/tech_docs/react/22_form_handling_basics.md"
+          ]
+        },
+        {
+          "id": "q205",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/02_basemodel_basics.md",
+            "datasets/tech_docs/pydantic/01_introduction.md",
+            "datasets/tech_docs/pydantic/23_annotated_types_and_metadata.md",
+            "datasets/tech_docs/pydantic/49_testing_pydantic_models.md",
+            "datasets/tech_docs/react/24_state_management_with_redux.md"
+          ]
+        },
+        {
+          "id": "q206",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/24_websocket_advanced_patterns.md",
+            "datasets/tech_docs/fastapi/24_websocket_advanced_patterns.md",
+            "datasets/tech_docs/fastapi/16_websockets_and_serversent_events_in_fastapi.md",
+            "datasets/tech_docs/fastapi/24_websocket_advanced_patterns.md",
+            "datasets/tech_docs/fastapi/24_websocket_advanced_patterns.md"
+          ]
+        },
+        {
+          "id": "q207",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/04_bean_scopes.md",
+            "datasets/tech_docs/spring/04_bean_scopes.md",
+            "datasets/tech_docs/spring/04_bean_scopes.md",
+            "datasets/tech_docs/spring/04_bean_scopes.md",
+            "datasets/tech_docs/spring/06_bean_lifecycle_and_callbacks.md"
+          ]
+        },
+        {
+          "id": "q208",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/12_request_validation_with_pydantic_in_fastapi.md",
+            "datasets/tech_docs/pydantic/47_testing_with_pydantic.md",
+            "datasets/tech_docs/fastapi/22_request_validation_error_handling.md",
+            "datasets/tech_docs/fastapi/22_request_validation_error_handling.md",
+            "datasets/tech_docs/fastapi/06_async.md"
+          ]
+        },
+        {
+          "id": "q209",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/04_state_management_basics.md",
+            "datasets/tech_docs/react/24_state_management_with_redux.md",
+            "datasets/tech_docs/react/26_state_management_with_jotai.md",
+            "datasets/tech_docs/react/04_state_management_basics.md",
+            "datasets/tech_docs/react/09_usereducer_for_complex_state.md"
+          ]
+        },
+        {
+          "id": "q210",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/08_spring_mvc_fundamentals.md",
+            "datasets/tech_docs/spring/10_request_and_response_handling.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/08_spring_mvc_fundamentals.md"
+          ]
+        },
+        {
+          "id": "q211",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md",
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md",
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md",
+            "datasets/tech_docs/fastapi/36_request_and_response_lifecycle.md",
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q212",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/06_bean_lifecycle_and_callbacks.md",
+            "datasets/tech_docs/react/14_uselayouteffect_vs_useeffect.md",
+            "datasets/tech_docs/react/14_uselayouteffect_vs_useeffect.md",
+            "datasets/tech_docs/fastapi/36_request_and_response_lifecycle.md",
+            "datasets/tech_docs/react/40_data_fetching_patterns.md"
+          ]
+        },
+        {
+          "id": "q213",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.5,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/08_custom_validators.md",
+            "datasets/tech_docs/pydantic/03_field_types_and_validation.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/04_string_constraints.md",
+            "datasets/tech_docs/pydantic/08_custom_validators.md"
+          ]
+        },
+        {
+          "id": "q214",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/02_jsx_fundamentals.md",
+            "datasets/tech_docs/react/01_introduction.md",
+            "datasets/tech_docs/react/02_jsx_fundamentals.md",
+            "datasets/tech_docs/react/01_introduction.md",
+            "datasets/tech_docs/react/02_jsx_fundamentals.md"
+          ]
+        },
+        {
+          "id": "q215",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/19_events_startup_and_shutdown.md"
+          ]
+        },
+        {
+          "id": "q216",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/09_testing_fastapi_applications.md",
+            "datasets/tech_docs/fastapi/09_testing_fastapi_applications.md",
+            "datasets/tech_docs/fastapi/38_load_testing_and_benchmarking.md",
+            "datasets/tech_docs/fastapi/09_testing_fastapi_applications.md",
+            "datasets/tech_docs/fastapi/37_advanced_testing_patterns.md"
+          ]
+        },
+        {
+          "id": "q217",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/07_spring_profiles.md",
+            "datasets/tech_docs/spring/07_spring_profiles.md",
+            "datasets/tech_docs/spring/24_spring_boot_configuration.md",
+            "datasets/tech_docs/spring/24_spring_boot_configuration.md",
+            "datasets/tech_docs/spring/07_spring_profiles.md"
+          ]
+        },
+        {
+          "id": "q218",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/10_security_in_fastapi.md",
+            "datasets/tech_docs/fastapi/10_security_in_fastapi.md",
+            "datasets/tech_docs/fastapi/05_dependencies__dependency_injection.md",
+            "datasets/tech_docs/fastapi/10_security_in_fastapi.md",
+            "datasets/tech_docs/fastapi/13_response_models_and_status_codes_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q219",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/46_typescript_with_react.md",
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md"
+          ]
+        },
+        {
+          "id": "q220",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md"
+          ]
+        },
+        {
+          "id": "q221",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q222",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/02_ioc_container.md",
+            "datasets/tech_docs/spring/02_ioc_container.md",
+            "datasets/tech_docs/spring/02_ioc_container.md",
+            "datasets/tech_docs/spring/01_introduction.md",
+            "datasets/tech_docs/spring/03_dependency_injection.md"
+          ]
+        },
+        {
+          "id": "q223",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/04_request_body.md",
+            "datasets/tech_docs/fastapi/12_request_validation_with_pydantic_in_fastapi.md",
+            "datasets/tech_docs/fastapi/22_request_validation_error_handling.md",
+            "datasets/tech_docs/pydantic/33_pydantic_with_fastapi_integration_patterns.md",
+            "datasets/tech_docs/pydantic/33_pydantic_with_fastapi_integration_patterns.md"
+          ]
+        },
+        {
+          "id": "q224",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md",
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md",
+            "datasets/tech_docs/fastapi/29_database_integration_with_sqlalchemy.md",
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md",
+            "datasets/tech_docs/pydantic/32_orm_mode_and_arbitrary_types_allowed.md"
+          ]
+        },
+        {
+          "id": "q225",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/05_model_inheritance_and_composition.md",
+            "datasets/tech_docs/pydantic/05_model_inheritance_and_composition.md",
+            "datasets/tech_docs/pydantic/15_generic_models.md",
+            "datasets/tech_docs/pydantic/05_model_inheritance_and_composition.md",
+            "datasets/tech_docs/pydantic/16_dynamic_model_creation.md"
+          ]
+        },
+        {
+          "id": "q226",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/06_async.md",
+            "datasets/tech_docs/fastapi/50_fastapi_best_practices_and_production_checklist.md",
+            "datasets/tech_docs/react/24_state_management_with_redux.md",
+            "datasets/tech_docs/pydantic/13_config_class_options.md"
+          ]
+        },
+        {
+          "id": "q227",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md",
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md",
+            "datasets/tech_docs/react/50_react_best_practices_and_production_checklist.md",
+            "datasets/tech_docs/react/34_performance_profiling.md",
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md"
+          ]
+        },
+        {
+          "id": "q228",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/10_request_and_response_handling.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/fastapi/05_dependencies__dependency_injection.md"
+          ]
+        },
+        {
+          "id": "q229",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/50_fastapi_best_practices_and_production_checklist.md",
+            "datasets/tech_docs/spring/31_async_processing_with_async.md",
+            "datasets/tech_docs/react/05_useState_hook.md",
+            "datasets/tech_docs/fastapi/06_async.md",
+            "datasets/tech_docs/pydantic/42_type_coercion_rules_deep_dive.md"
+          ]
+        },
+        {
+          "id": "q230",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "hybrid_flashrank",
+      "description": "Hybrid + FlashRank reranking (local, free)",
+      "recall_at_k": {
+        "mean": 0.7333333333333333,
+        "std": 0.0,
+        "runs": [
+          0.7333333333333333,
+          0.7333333333333333,
+          0.7333333333333333
+        ]
+      },
+      "mrr": {
+        "mean": 0.7555555555555555,
+        "std": 0.0,
+        "runs": [
+          0.7555555555555555,
+          0.7555555555555555,
+          0.7555555555555555
+        ]
+      },
+      "latency_ms": {
+        "mean": 3151.574632378793,
+        "std": 117.91444716103574,
+        "runs": [
+          3052.5837916022283,
+          3120.110637434118,
+          3282.029468100033
+        ]
+      },
+      "cost_per_1k_queries": 0.0,
+      "per_query": [
+        {
+          "id": "q201",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/08_spring_mvc_fundamentals.md",
+            "datasets/tech_docs/spring/10_request_and_response_handling.md",
+            "datasets/tech_docs/spring/26_spring_boot_testing.md"
+          ]
+        },
+        {
+          "id": "q202",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/03_query_parameters.md",
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/02_path_parameters.md",
+            "datasets/tech_docs/fastapi/03_query_parameters.md"
+          ]
+        },
+        {
+          "id": "q203",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 0.3333333333333333,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/15_advanced_dependencies_and_dependency_injection_in_fastapi.md",
+            "datasets/tech_docs/fastapi/15_advanced_dependencies_and_dependency_injection_in_fastapi.md",
+            "datasets/tech_docs/spring/03_dependency_injection.md",
+            "datasets/tech_docs/fastapi/05_dependencies__dependency_injection.md",
+            "datasets/tech_docs/spring/05_dependency_injection_patterns.md"
+          ]
+        },
+        {
+          "id": "q204",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/31_testing_with_jest_and_react_testing_library.md",
+            "datasets/tech_docs/react/05_useState_hook.md",
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/10_usecontext_for_state_management.md",
+            "datasets/tech_docs/react/22_form_handling_basics.md"
+          ]
+        },
+        {
+          "id": "q205",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/01_introduction_to_pydantic.md",
+            "datasets/tech_docs/pydantic/02_basemodel_basics.md",
+            "datasets/tech_docs/pydantic/31_pydantic_with_dataframes.md",
+            "datasets/tech_docs/pydantic/01_introduction.md",
+            "datasets/tech_docs/pydantic/48_pydantic_for_data_pipelines.md"
+          ]
+        },
+        {
+          "id": "q206",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/16_websockets_and_serversent_events_in_fastapi.md",
+            "datasets/tech_docs/fastapi/24_websocket_advanced_patterns.md",
+            "datasets/tech_docs/fastapi/24_websocket_advanced_patterns.md",
+            "datasets/tech_docs/fastapi/01_fastapi_introduction.md",
+            "datasets/tech_docs/fastapi/26_serversent_events_sse.md"
+          ]
+        },
+        {
+          "id": "q207",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/04_bean_scopes.md",
+            "datasets/tech_docs/spring/06_bean_lifecycle_and_callbacks.md",
+            "datasets/tech_docs/spring/07_spring_profiles.md",
+            "datasets/tech_docs/spring/02_ioc_container.md",
+            "datasets/tech_docs/spring/02_ioc_container.md"
+          ]
+        },
+        {
+          "id": "q208",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/12_request_validation_with_pydantic_in_fastapi.md",
+            "datasets/tech_docs/fastapi/22_request_validation_error_handling.md",
+            "datasets/tech_docs/pydantic/33_pydantic_with_fastapi_integration_patterns.md",
+            "datasets/tech_docs/pydantic/33_pydantic_with_fastapi_integration_patterns.md",
+            "datasets/tech_docs/fastapi/22_request_validation_error_handling.md"
+          ]
+        },
+        {
+          "id": "q209",
+          "recall_at_k": 0.3333333333333333,
+          "reciprocal_rank": 0.3333333333333333,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/06_advanced_usestate_patterns.md",
+            "datasets/tech_docs/react/26_state_management_with_jotai.md",
+            "datasets/tech_docs/react/04_state_management_basics.md",
+            "datasets/tech_docs/react/26_state_management_with_jotai.md",
+            "datasets/tech_docs/react/24_state_management_with_redux.md"
+          ]
+        },
+        {
+          "id": "q210",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/10_request_and_response_handling.md",
+            "datasets/tech_docs/spring/08_spring_mvc_fundamentals.md",
+            "datasets/tech_docs/spring/08_spring_mvc_fundamentals.md",
+            "datasets/tech_docs/spring/10_request_and_response_handling.md",
+            "datasets/tech_docs/spring/37_spring_rest_client_resttemplate.md"
+          ]
+        },
+        {
+          "id": "q211",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md",
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md",
+            "datasets/tech_docs/fastapi/07_middleware_in_fastapi.md",
+            "datasets/tech_docs/fastapi/36_request_and_response_lifecycle.md",
+            "datasets/tech_docs/fastapi/36_request_and_response_lifecycle.md"
+          ]
+        },
+        {
+          "id": "q212",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 0.5,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/22_form_handling_basics.md",
+            "datasets/tech_docs/spring/06_bean_lifecycle_and_callbacks.md",
+            "datasets/tech_docs/react/16_error_boundaries.md",
+            "datasets/tech_docs/react/14_uselayouteffect_vs_useeffect.md",
+            "datasets/tech_docs/react/01_introduction.md"
+          ]
+        },
+        {
+          "id": "q213",
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/03_field_types_and_validation.md",
+            "datasets/tech_docs/pydantic/03_field_types_and_validation.md",
+            "datasets/tech_docs/fastapi/12_request_validation_with_pydantic_in_fastapi.md",
+            "datasets/tech_docs/pydantic/08_custom_validators.md",
+            "datasets/tech_docs/pydantic/03_field_types_and_validation.md"
+          ]
+        },
+        {
+          "id": "q214",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/02_jsx_fundamentals.md",
+            "datasets/tech_docs/react/01_introduction.md",
+            "datasets/tech_docs/react/01_introduction.md",
+            "datasets/tech_docs/react/01_introduction.md",
+            "datasets/tech_docs/react/03_components_and_props.md"
+          ]
+        },
+        {
+          "id": "q215",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/19_events_startup_and_shutdown.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q216",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/09_testing_fastapi_applications.md",
+            "datasets/tech_docs/fastapi/38_load_testing_and_benchmarking.md",
+            "datasets/tech_docs/fastapi/09_testing_fastapi_applications.md",
+            "datasets/tech_docs/fastapi/09_testing_fastapi_applications.md",
+            "datasets/tech_docs/fastapi/09_testing_fastapi_applications.md"
+          ]
+        },
+        {
+          "id": "q217",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/07_spring_profiles.md",
+            "datasets/tech_docs/spring/24_spring_boot_configuration.md",
+            "datasets/tech_docs/spring/23_spring_boot_fundamentals.md",
+            "datasets/tech_docs/spring/24_spring_boot_configuration.md",
+            "datasets/tech_docs/spring/07_spring_profiles.md"
+          ]
+        },
+        {
+          "id": "q218",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/10_security_in_fastapi.md",
+            "datasets/tech_docs/fastapi/10_security_in_fastapi.md",
+            "datasets/tech_docs/fastapi/50_fastapi_best_practices_and_production_checklist.md",
+            "datasets/tech_docs/fastapi/01_fastapi_introduction.md",
+            "datasets/tech_docs/fastapi/01_fastapi_introduction.md"
+          ]
+        },
+        {
+          "id": "q219",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/46_typescript_with_react.md",
+            "datasets/tech_docs/react/46_typescript_with_react.md",
+            "datasets/tech_docs/react/08_custom_hooks_deep_dive.md",
+            "datasets/tech_docs/react/40_data_fetching_patterns.md"
+          ]
+        },
+        {
+          "id": "q220",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md"
+          ]
+        },
+        {
+          "id": "q221",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/18_custom_response_classes.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md",
+            "datasets/tech_docs/fastapi/17_file_uploads_and_streaming_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q222",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/02_ioc_container.md",
+            "datasets/tech_docs/spring/02_ioc_container.md",
+            "datasets/tech_docs/spring/05_dependency_injection_patterns.md",
+            "datasets/tech_docs/spring/01_introduction.md",
+            "datasets/tech_docs/spring/01_introduction.md"
+          ]
+        },
+        {
+          "id": "q223",
+          "recall_at_k": 0.6666666666666666,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/12_request_validation_with_pydantic_in_fastapi.md",
+            "datasets/tech_docs/fastapi/22_request_validation_error_handling.md",
+            "datasets/tech_docs/fastapi/22_request_validation_error_handling.md",
+            "datasets/tech_docs/fastapi/04_request_body.md",
+            "datasets/tech_docs/pydantic/33_pydantic_with_fastapi_integration_patterns.md"
+          ]
+        },
+        {
+          "id": "q224",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md",
+            "datasets/tech_docs/fastapi/29_database_integration_with_sqlalchemy.md",
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md",
+            "datasets/tech_docs/fastapi/29_database_integration_with_sqlalchemy.md",
+            "datasets/tech_docs/fastapi/14_database_integration_with_sqlalchemy_in_fastapi.md"
+          ]
+        },
+        {
+          "id": "q225",
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/05_model_inheritance_and_composition.md",
+            "datasets/tech_docs/pydantic/05_model_inheritance_and_composition.md",
+            "datasets/tech_docs/pydantic/16_dynamic_model_creation.md",
+            "datasets/tech_docs/pydantic/15_generic_models.md",
+            "datasets/tech_docs/pydantic/06_discriminated_unions.md"
+          ]
+        },
+        {
+          "id": "q226",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/pydantic/21_custom_field_types.md",
+            "datasets/tech_docs/fastapi/06_async.md",
+            "datasets/tech_docs/spring/31_async_processing_with_async.md",
+            "datasets/tech_docs/fastapi/08_background_tasks_in_fastapi.md",
+            "datasets/tech_docs/react/48_microfrontends_with_react.md"
+          ]
+        },
+        {
+          "id": "q227",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md",
+            "datasets/tech_docs/react/34_performance_profiling.md",
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md",
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md",
+            "datasets/tech_docs/react/15_reactmemo_and_component_memoization.md"
+          ]
+        },
+        {
+          "id": "q228",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md",
+            "datasets/tech_docs/fastapi/04_request_body.md",
+            "datasets/tech_docs/spring/27_mockmvc_and_controller_testing.md",
+            "datasets/tech_docs/spring/09_rest_api_development.md"
+          ]
+        },
+        {
+          "id": "q229",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/spring/31_async_processing_with_async.md",
+            "datasets/tech_docs/fastapi/34_performance_optimization.md",
+            "datasets/tech_docs/pydantic/44_async_validators_and_io.md",
+            "datasets/tech_docs/fastapi/06_async.md",
+            "datasets/tech_docs/fastapi/06_async.md"
+          ]
+        },
+        {
+          "id": "q230",
+          "recall_at_k": 0.0,
+          "reciprocal_rank": 0.0,
+          "retrieved_docs": [
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md",
+            "datasets/tech_docs/react/01_introduction.md",
+            "datasets/tech_docs/react/18_code_splitting_and_lazy_loading.md"
+          ]
+        }
+      ],
+      "rerank_timing": {
+        "candidates_per_query": 20,
+        "cold_first_call_ms": 963.6152910097735,
+        "warm_uncached_ms": {
+          "mean": 724.4145597986062,
+          "median": 716.1994999914896,
+          "max": 885.3809580032248
+        },
+        "cache_hit_ms": {
+          "mean": 0.011854200662734607,
+          "max": 0.03337500675115734
+        },
+        "cache_stats": {
+          "hits": 30,
+          "misses": 30,
+          "hit_rate": 0.5,
+          "size": 30
+        }
+      }
+    }
+  ]
+}

@@ -117,16 +117,19 @@ def validate_query_file(
             if "framework" in mf and mf["framework"] not in VALID_FRAMEWORKS:
                 warnings.append(f"{prefix}: Unknown framework '{mf['framework']}'")
 
-    # Missing sources are warnings (PDFs may not match path exactly)
-    if missing_sources:
-        if verbose:
-            for ms in missing_sources:
-                warnings.append(ms)
-        else:
-            warnings.append(
-                f"{len(missing_sources)} source doc references not found "
-                f"(use --verbose for details)"
-            )
+    # A label that points at a missing file can never be retrieved, so the
+    # query scores zero for every pipeline. That is a broken benchmark, not a
+    # hard query, and must fail validation.
+    errors.extend(missing_sources)
+
+    # Repeated question text silently reweights the benchmark toward a few
+    # topics and lets the same question carry conflicting labels.
+    texts = Counter(
+        q["query"].strip().lower() for q in queries if isinstance(q, dict) and "query" in q
+    )
+    for text, count in texts.items():
+        if count > 1:
+            errors.append(f"Duplicate query text ({count} rows): {text!r}")
 
     # Check minimum query count
     if len(queries) < 20:

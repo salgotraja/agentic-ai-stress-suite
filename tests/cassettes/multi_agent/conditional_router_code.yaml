@@ -6,7 +6,7 @@ interactions:
       Y?\")\n- creative: Creative generation (\"Write a poem\", \"Generate ideas\")\n-
       code: Programming question (\"Fix this bug\", \"Write function to...\")\n- general:
       Everything else\n\nQuery: Fix this Python bug: def foo(): return x\n\nClassification
-      (single word):"}],"model":"llama-3.1-8b-instant","max_tokens":10,"temperature":0.7}'
+      (single word):"}],"model":"openai/gpt-oss-20b","max_tokens":522,"reasoning_effort":"low","temperature":0.7}'
     headers:
       Accept:
       - application/json
@@ -15,13 +15,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '562'
+      - '586'
       Content-Type:
       - application/json
       Host:
       - api.groq.com
       User-Agent:
-      - OpenAI/Python 2.15.0
+      - OpenAI/Python 2.24.0
       X-Stainless-Arch:
       - arm64
       X-Stainless-Async:
@@ -31,7 +31,7 @@ interactions:
       X-Stainless-OS:
       - MacOS
       X-Stainless-Package-Version:
-      - 2.15.0
+      - 2.24.0
       X-Stainless-Runtime:
       - CPython
       X-Stainless-Runtime-Version:
@@ -45,16 +45,17 @@ interactions:
   response:
     body:
       string: !!binary |
-        Gz8CAMR/psu9y/hmcuCRaa0Q+4lD9OqWO3C7t3+CtjBrC1tGgbd92NZWIEEU+BOmx3wcJ1biNtXb
-        X4wtCjRDdTXrtiRSZGmTdZSkdeMS01hK6lpkiTW5tNZ0VSs1GGI9UXOB+dFhEIwxgIG1/Da1KGSa
-        SmlNmucMa2xpQYFlqdYq0Q+ZZHUyhvOqwgUGRvzKieL1Fw/d9ygEQ7vFCMUvjrgQClTnOeJcDBeF
-        OHZjS/hnWGK/HbE+UYR7WRgGrWX+Uqs6CpxX3PD/znAv/fF+003+GldCIR7CpM5kSmmG7Yjrdvkr
-        zhROFFLrgTBIpV2eZo4hB4QqKAt2MYjcppkRKcNHBqQiVg3/WMncZDLX/0Ervj6omtv4GQ5JtPoN
-        342hp2M7xowsd5vvUpt2phZ1B4Yv3x9xR1HtEwftXsh56PvrRwtqVU3V11cvj864zx0MJxWwq500
-        1mYq/WcYZTflr5EOFIjBt7RWocX/Cw==
+        G7QCAMT/n7O+36by3BrHEKFp/+8S8elgAONuXnfg9kPtGgUaxgeOqC25f2veVqBRCzTAAFt6zM9x
+        KWj1smrtF7yDgH3qy67bkrq8b3TDKdX94NK6KLrU5KZN686Z0lBf9RUHQzQT2cuYHhUGkY8BDF3L
+        55KDKDpe1GXT1JxhjY4WCMSNgvbZuF1pPM+0zA0Y+uFnTog/X3jmfoDIGYotbkF84YgLQUCfpz8v
+        HS4wMNFJAjY6AsPVVf/gwwiB309K9puOj8SfiU5sdJSYe0wG//5IfkWOXsUP3urLxyAmjT3ww7DE
+        cTuiOSHCvSwMVG1W+q9D4Lzihp9/DHd6L+033SQvvxJE/sjruuUl72qG7YjrdskrzhROiKLlerA4
+        yPuS933dMqCIVomyHoIwUtmUZd51DF8hwMTxSg0ZlVZVU/C2iEGSoM6cEAN8zKGvf34WWpHmID27
+        +BaAwWb+ihx8GOnYDr8T3cMmiXPi1VBqC4Z3OR5xhzhjOw7aZV6stV2f9aumN/v6tG7Ku+k9rNcM
+        hpPIQbR9XtU8r9ofBv68Jnl5OiAQg3S06uDw8wI=
     headers:
       CF-RAY:
-      - 9ce4739a1ed7bc88-DEL
+      - a4719ef1fbda09a7-DEL
       Cache-Control:
       - private, max-age=0, no-store, no-cache, must-revalidate
       Connection:
@@ -64,7 +65,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 15 Feb 2026 11:26:39 GMT
+      - Thu, 08 Oct 2026 02:12:29 GMT
       Server:
       - cloudflare
       Strict-Transport-Security:
@@ -76,9 +77,9 @@ interactions:
       cf-cache-status:
       - DYNAMIC
       set-cookie:
-      - __cf_bm=hwQVxDMko50QzI8v_0fDZXWNYIvMjcHBX0Y9CGYDSaI-1771154799.6986356-1.0.1.1-tyATiOJ8L.gRJ3GdWBR3q5r0Cl3JmCMtLJiOym6u4.FVpOnh1wDHV9oVle7qsHyIlm57DP0gXc8TlhHs0v3ZJqyb.xAhnqKxEm7a22JLr.wsfLgfsgZtbHyxYMX5QtlE;
-        HttpOnly; Secure; Path=/; Domain=groq.com; Expires=Sun, 15 Feb 2026 11:56:39
-        GMT
+      - __cf_bm=L8QwrUjrOwF6EI.qlZ6Fksra91xZvTSWitJ6yqeId6I-1791425549.1172874-1.0.1.1-FhmRrHtzEkXAa0c2zcIoDYGO0XhEQuFmGWtjWG9RMWL1EBk.Vt2T9kTJXDrME9HXFiJkMMjVvNEEoeAdDP7ANgItmfql8ouAd1eHj4fE4sLRgQULTezGeA06kJsPdR3_;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Thu, 08
+        Oct 2026 02:42:29 GMT
       vary:
       - Origin
       via:
@@ -86,19 +87,19 @@ interactions:
       x-groq-region:
       - bom
       x-ratelimit-limit-requests:
-      - '14400'
+      - '500000'
       x-ratelimit-limit-tokens:
-      - '6000'
+      - '250000'
       x-ratelimit-remaining-requests:
-      - '14397'
+      - '499998'
       x-ratelimit-remaining-tokens:
-      - '5643'
+      - '249572'
       x-ratelimit-reset-requests:
-      - 18s
+      - 345ms
       x-ratelimit-reset-tokens:
-      - 3.57s
+      - 102ms
       x-request-id:
-      - req_01khggtz30ed2beaxxg1rf46wq
+      - req_01m4cmh4vaewcvhcdj07jxnmtk
     status:
       code: 200
       message: OK

@@ -33,7 +33,11 @@ class TestSettings:
         monkeypatch.setenv("DEBUG", "false")
         monkeypatch.setenv("LOG_LEVEL", "INFO")
 
-        settings = Settings()
+        # A developer's local .env, read directly or loaded into the environment
+        # by litellm on import, can override these; the test is about code defaults.
+        monkeypatch.delenv("DEFAULT_LLM_MODEL", raising=False)
+        monkeypatch.delenv("LLM_PINNED_MODEL", raising=False)
+        settings = Settings(_env_file=None)
 
         assert settings.environment == Environment.DEV
         # Empty string from env becomes None for optional fields
@@ -41,7 +45,7 @@ class TestSettings:
         assert settings.embeddings_url == "http://localhost:8080"
         assert settings.chroma_url == "http://localhost:8000"
         assert settings.redis_url == "redis://localhost:6379"
-        assert settings.default_llm_model == "groq/llama-3-8b"
+        assert settings.default_llm_model == "groq/openai/gpt-oss-20b"
         assert settings.default_llm_temperature == 0.7
         assert settings.default_llm_max_tokens == 1000
         assert settings.llm_request_timeout == 30

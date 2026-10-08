@@ -390,7 +390,8 @@ def main() -> int:
                 check=False,
             ).stdout.strip(),
             "embedding_model": "BAAI/bge-base-en-v1.5",
-            "generator_model": settings.default_llm_model,
+            "generator_model": settings.llm_pinned_model
+            or "unpinned: UnifiedLLMClient fallback chain, provider per call not recorded",
             "index": "naive: Chroma collection dropped and rebuilt; advanced: in-memory index",
         },
         "settings": {

@@ -218,7 +218,8 @@ def collect_provenance(settings: Any) -> dict[str, Any]:
         "llama_index_core": version("llama-index-core"),
         "chromadb": version("chromadb"),
         "embedding_model": "BAAI/bge-base-en-v1.5",
-        "generator_model": settings.default_llm_model,
+        "generator_model": settings.llm_pinned_model
+        or "unpinned: UnifiedLLMClient fallback chain, provider per call not recorded",
         "reranking_model": settings.reranking_model,
         "reranking_candidates": settings.reranking_top_k,
         "reranking_cache_enabled_during_benchmark": False,

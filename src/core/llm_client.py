@@ -2,11 +2,11 @@
 
 Cloud-first LLM strategy (hardware constraints on M4):
 - Local: text-embeddings-inference (BGE-base-en-v1.5, Metal-accelerated)
-- Cloud LLMs: Groq-8B -> Groq-70B -> DeepSeek -> Claude -> Gemini -> OpenAI
+- Cloud LLMs: Groq gpt-oss-20b -> Groq gpt-oss-120b -> DeepSeek -> Claude -> Gemini -> OpenAI
 
 Canonical 6-link chain. Must match src/ops/routing.py and README.md line 111.
-- Llama-3.1-8B (Groq):  Development iteration ($0.05/1M tokens, fast)
-- Llama-3.3-70B (Groq): High complexity tasks ($0.59/1M tokens)
+- gpt-oss-20b (Groq):  Development iteration ($0.075/1M input tokens, fast)
+- gpt-oss-120b (Groq): High complexity tasks ($0.15/1M input tokens)
 Then escalate: DeepSeek -> Claude -> Gemini -> OpenAI (GPT-4o) for max reliability.
 
 Why not Ollama locally:
@@ -54,11 +54,36 @@ class LLMProvider(str, Enum):
 
 
 class GroqModel(str, Enum):
-    """Groq model variants by size."""
+    """Groq model variants by size.
 
-    LLAMA_3_8B = "llama-3.1-8b-instant"
-    LLAMA_3_32B = "qwen/qwen3-32b"
-    LLAMA_3_70B = "llama-3.3-70b-versatile"  # Note: Groq's 70B is actually their best model
+    Groq retired the Llama 3.1 8B and 3.3 70B models and qwen3-32b on
+    2026-10-05. Every model Groq now serves for chat is a reasoning model.
+    """
+
+    GPT_OSS_20B = "openai/gpt-oss-20b"
+    GPT_OSS_120B = "openai/gpt-oss-120b"
+
+
+# Groq's gpt-oss models reason before answering, and reasoning tokens count
+# against max_tokens. Without these settings a small answer budget is spent
+# entirely on reasoning and the call returns an empty string: at default
+# effort gpt-oss-20b used 148 of 150 tokens reasoning, and at low effort it
+# still could not answer within 30. Callers keep expressing max_tokens as the
+# answer budget; the headroom is added on top. Reasoning tokens are billed.
+GROQ_REASONING_EFFORT = "low"
+GROQ_REASONING_HEADROOM = 512
+
+
+def groq_reasoning_kwargs(max_tokens: int) -> dict[str, Any]:
+    """Request arguments for a Groq reasoning model given an answer budget."""
+    return {
+        "reasoning_effort": GROQ_REASONING_EFFORT,
+        "max_tokens": max_tokens + GROQ_REASONING_HEADROOM,
+    }
+
+
+class EmptyCompletionError(Exception):
+    """A provider returned no answer text because it ran out of tokens."""
 
 
 @dataclass
@@ -177,9 +202,9 @@ class UnifiedLLMClient:
         self.pricing: dict[LLMProvider, dict[Any, tuple[float, ...]]] = {
             LLMProvider.GROQ: {
                 # Groq doesn't have explicit caching API
-                GroqModel.LLAMA_3_8B: (0.05, 0.08, 0.05, 0.05),
-                GroqModel.LLAMA_3_32B: (0.59, 0.79, 0.59, 0.59),
-                GroqModel.LLAMA_3_70B: (0.59, 0.79, 0.59, 0.59),
+                # Groq model pages, read 2026-10-08: input, output, cached input
+                GroqModel.GPT_OSS_20B: (0.075, 0.30, 0.075, 0.037),
+                GroqModel.GPT_OSS_120B: (0.15, 0.60, 0.15, 0.075),
             },
             LLMProvider.DEEPSEEK: {
                 # DeepSeek doesn't have explicit caching API
@@ -328,14 +353,23 @@ class UnifiedLLMClient:
             model=model.value,
             messages=[{"role": "user", "content": prompt}],
             temperature=temperature,
-            max_tokens=max_tokens,
             timeout=timeout,
+            **groq_reasoning_kwargs(max_tokens),
         )
 
         latency = time.time() - start_time
 
+        content = response.choices[0].message.content or ""
+        if not content and response.choices[0].finish_reason == "length":
+            # Returning "" here would be scored downstream as a wrong answer
+            # instead of surfacing as a provider failure.
+            raise EmptyCompletionError(
+                f"{model.value} returned no answer within {max_tokens} tokens "
+                f"plus {GROQ_REASONING_HEADROOM} reasoning headroom"
+            )
+
         return LLMResponse(
-            content=response.choices[0].message.content or "",
+            content=content,
             provider=LLMProvider.GROQ,
             model=model.value,
             prompt_tokens=response.usage.prompt_tokens if response.usage else 0,
@@ -729,8 +763,8 @@ class UnifiedLLMClient:
         Generate text with automatic fallback chain and prompt caching.
 
         Fallback order:
-        1. Groq Llama-3-8B (fast, cheap)
-        2. Groq Llama-3-70B (higher quality)
+        1. Groq gpt-oss-20b (fast, cheap, low reasoning effort)
+        2. Groq gpt-oss-120b (higher quality, low reasoning effort)
         3. DeepSeek (good balance)
         4. Claude Sonnet 4.5 (high quality, prompt caching)
         5. Gemini 2.0 Flash (alternative)
@@ -776,11 +810,27 @@ class UnifiedLLMClient:
         self.errors = []
         attempt = 0
 
+        # A pinned model makes every call use exactly one model and raise on
+        # failure. Benchmarks need this: falling through the chain changes
+        # the generator mid-run and the artifact cannot say which one ran.
+        if preferred_provider is None and self.settings.llm_pinned_model:
+            pinned_provider, _, pinned_model = self.settings.llm_pinned_model.partition("/")
+            preferred_provider = LLMProvider(pinned_provider)
+            preferred_model = pinned_model or None
+
         # When the caller pins a provider (e.g. LLMJudge wanting reliable JSON
         # via gpt-4o-mini), bypass the cost-optimised fallback chain and call
         # that provider directly. preferred_model is forwarded only where the
         # provider call exposes a model override; today that is OpenAI only.
         if preferred_provider is not None:
+            if preferred_provider == LLMProvider.GROQ and self.groq_client:
+                return self._call_groq(
+                    prompt,
+                    GroqModel(preferred_model or GroqModel.GPT_OSS_20B.value),
+                    temperature,
+                    max_tokens,
+                    timeout,
+                )
             if preferred_provider == LLMProvider.OPENAI and self.openai_client:
                 return self._call_openai(
                     prompt,
@@ -801,35 +851,35 @@ class UnifiedLLMClient:
         # Narrowing here would silently leak a new SDK error type and
         # break the cost-optimised fallback chain. Failures are captured
         # in self.errors so callers can audit which providers were tried.
-        # Try Groq 8B
+        # Try Groq gpt-oss-20b
         if self.groq_client:
             attempt += 1
             try:
                 return self._call_groq(
-                    prompt, GroqModel.LLAMA_3_8B, temperature, max_tokens, timeout
+                    prompt, GroqModel.GPT_OSS_20B, temperature, max_tokens, timeout
                 )
             except Exception as e:
                 self.errors.append(
                     LLMError(
                         provider=LLMProvider.GROQ,
-                        model=GroqModel.LLAMA_3_8B.value,
+                        model=GroqModel.GPT_OSS_20B.value,
                         error=e,
                         attempt=attempt,
                     )
                 )
 
-        # Try Groq 70B
+        # Try Groq gpt-oss-120b
         if self.groq_client:
             attempt += 1
             try:
                 return self._call_groq(
-                    prompt, GroqModel.LLAMA_3_70B, temperature, max_tokens, timeout
+                    prompt, GroqModel.GPT_OSS_120B, temperature, max_tokens, timeout
                 )
             except Exception as e:
                 self.errors.append(
                     LLMError(
                         provider=LLMProvider.GROQ,
-                        model=GroqModel.LLAMA_3_70B.value,
+                        model=GroqModel.GPT_OSS_120B.value,
                         error=e,
                         attempt=attempt,
                     )

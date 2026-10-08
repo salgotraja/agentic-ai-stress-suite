@@ -70,6 +70,7 @@ from dotenv import load_dotenv  # noqa: E402
 load_dotenv(PROJECT_ROOT / ".env.local", override=True)
 
 from src.core.config import get_settings  # noqa: E402
+from src.core.llm_client import groq_reasoning_kwargs  # noqa: E402
 from src.ops.security import GuardrailsManager, GuardResult, LlamaGuardClassifier  # noqa: E402
 
 _PROMPTS_CSV = PROJECT_ROOT / "datasets" / "red_team_prompts" / "red_team_prompts.csv"
@@ -81,7 +82,7 @@ _SEVERITY_LEVELS = ("L1", "L2", "L3")
 _PROMPT_GUARD_MODEL = "meta-llama/llama-prompt-guard-2-86m"
 _DEFAULT_THRESHOLD = 0.5
 
-_CHAOS_LLM_MODEL = "llama-3.1-8b-instant"
+_CHAOS_LLM_MODEL = "openai/gpt-oss-20b"
 _CHAOS_DEFAULT_TOP_K = 3
 _CHAOS_DEFAULT_RUNS = 3
 
@@ -458,7 +459,7 @@ def _build_chaos_llm_call(no_llm: bool, api_key: str | None) -> Any:
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
-            max_tokens=400,
+            **groq_reasoning_kwargs(400),
             temperature=0.0,
         )
         text = (resp.choices[0].message.content or "").strip()

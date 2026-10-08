@@ -145,11 +145,11 @@ tests/integration/  # Testcontainers-based, real Redis/Postgres
 
 ## LLM Cost Strategy
 
-Development uses Groq (Llama-3-8B: ~$0.05/1M tokens). Benchmarks escalate
+Development uses Groq (gpt-oss-20b: $0.075/1M input tokens, low reasoning effort). Benchmarks escalate
 to premium models only when quality comparison is the point. Local embeddings
 (BGE-base-en-v1.5, Metal-accelerated) are free.
 
-Fallback chain: `Groq-8B → Groq-70B → DeepSeek → Claude → Gemini → OpenAI`
+Fallback chain: `Groq gpt-oss-20b → Groq gpt-oss-120b → DeepSeek → Claude → Gemini → OpenAI`. Set `LLM_PINNED_MODEL` to disable fallback for benchmark runs.
 
 Total spend to reproduce every benchmark in this repo: **<$12**.
 

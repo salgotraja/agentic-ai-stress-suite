@@ -1,12 +1,13 @@
 # config/model_pricing.yaml
-# Prices per 1M tokens (USD), approximate as of early 2025
+# Prices per 1M tokens (USD). Groq rows from Groq's model pages, 2026-10-08;
+# the rest approximate as of early 2025.
 models:
-  groq/llama-3.1-8b-instant:
-    input: 0.05
-    output: 0.08
-  groq/llama-3.3-70b-versatile:
-    input: 0.59
-    output: 0.79
+  groq/openai/gpt-oss-20b:
+    input: 0.075
+    output: 0.30
+  groq/openai/gpt-oss-120b:
+    input: 0.15
+    output: 0.60
   deepseek/deepseek-chat:
     input: 0.14
     output: 0.28

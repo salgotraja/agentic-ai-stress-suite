@@ -74,3 +74,23 @@ def test_complexity_router_routes_complex_to_large_model() -> None:
     complex_query = "Analyze the trade-offs between " + "microservices " * 30
     model = router.select_model(complex_query)
     assert model == "gpt-4o"
+
+
+def test_router_sends_reasoning_settings_to_groq_only() -> None:
+    """Groq models get reasoning effort and headroom; other providers do not."""
+    from src.core.llm_client import GROQ_REASONING_EFFORT, GROQ_REASONING_HEADROOM
+
+    ok = MagicMock(
+        choices=[MagicMock(message=MagicMock(content="ok"))],
+        usage=MagicMock(prompt_tokens=1, completion_tokens=1),
+    )
+    with patch("src.ops.routing.litellm.completion") as mock_complete:
+        mock_complete.side_effect = [RuntimeError("groq down"), ok]
+        router = LLMRouter(fallback_chain=["groq/openai/gpt-oss-20b", "deepseek/deepseek-chat"])
+        router.complete("Say hello", max_tokens=10)
+
+    groq_call, deepseek_call = (c.kwargs for c in mock_complete.call_args_list)
+    assert groq_call["reasoning_effort"] == GROQ_REASONING_EFFORT
+    assert groq_call["max_tokens"] == 10 + GROQ_REASONING_HEADROOM
+    assert "reasoning_effort" not in deepseek_call
+    assert deepseek_call["max_tokens"] == 10

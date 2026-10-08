@@ -9,12 +9,12 @@ def test_calculate_cost_for_known_model() -> None:
     """Cost calculation uses per-model pricing from config."""
     logger = CostLogger()
     cost = logger.calculate_cost(
-        model="groq/llama-3.1-8b-instant",
+        model="groq/openai/gpt-oss-20b",
         input_tokens=1_000_000,
         output_tokens=1_000_000,
     )
-    # $0.05/1M input + $0.08/1M output = $0.13
-    assert cost == pytest.approx(0.13, rel=1e-3)
+    # $0.075/1M input + $0.30/1M output = $0.375
+    assert cost == pytest.approx(0.375, rel=1e-3)
 
 
 def test_calculate_cost_for_unknown_model_uses_default() -> None:
@@ -27,8 +27,8 @@ def test_calculate_cost_for_unknown_model_uses_default() -> None:
 def test_log_call_accumulates_daily_total() -> None:
     """Daily cost accumulates across multiple log_call calls."""
     logger = CostLogger()
-    logger.log_call("groq/llama-3.1-8b-instant", 100_000, 50_000)
-    logger.log_call("groq/llama-3.1-8b-instant", 100_000, 50_000)
+    logger.log_call("groq/openai/gpt-oss-20b", 100_000, 50_000)
+    logger.log_call("groq/openai/gpt-oss-20b", 100_000, 50_000)
     summary = logger.daily_summary()
     assert summary["total_cost_usd"] > 0
     assert summary["total_input_tokens"] == 200_000

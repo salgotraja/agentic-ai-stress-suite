@@ -199,7 +199,7 @@ def _build_methodology() -> dict[str, Any]:
         "node_count": 1,
         "host_hardware": "Apple M4 Pro, 48GB RAM",
         "transport": "NodePort 30080 (Service-level kube-proxy LB across replicas)",
-        "llm": "Groq llama-3.1-8b-instant (cloud) for /query and /agent",
+        "llm": "Groq openai/gpt-oss-20b (cloud) for /query and /agent",
         "embedding_model": "BAAI/bge-base-en-v1.5",
         "embedding_device": "cpu (Linux containers cannot use the host MPS backend)",
         "vector_db": "Chroma in-cluster, PVC-backed (5Gi RWO hostpath), naive_rag (338 chunks)",

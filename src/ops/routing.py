@@ -14,7 +14,7 @@ Why sequential fallback (cheapest-first), not parallel hedging:
   modes pay the fallback tail.
 
 Why this exact chain:
-- Groq Llama-3.1-8B at ~$0.05/1M heads the chain because development iteration
+- Groq gpt-oss-20b at $0.075/1M input heads the chain because development iteration
   dominates request volume and quality is acceptable for most tasks.
 - Each subsequent link adds reasoning quality at higher cost - the order is
   not arbitrary; it minimises expected $/request given the empirical failure
@@ -37,23 +37,24 @@ from typing import Any
 
 import litellm
 
+from src.core.llm_client import GROQ_REASONING_EFFORT, GROQ_REASONING_HEADROOM
+
 logger = logging.getLogger(__name__)
 
 # Fallback chain: cheapest first, most reliable last.
 # Canonical 6-link chain - must match README.md line 111 and src/core/llm_client.py.
 # Cost per 1M tokens (approximate, 2025):
-# - Groq Llama-3.1-8B:    ~$0.05  (fast, cheap, good for simple queries)
-# - Groq Llama-3.3-70B:   ~$0.59  (better quality, still cheap)
+# - Groq gpt-oss-20b:     $0.075 in / $0.30 out (fast, cheap, reasoning model)
+# - Groq gpt-oss-120b:    $0.15 in / $0.60 out  (better quality, reasoning model)
 # - DeepSeek chat:        ~$0.27  (excellent value, strong reasoning)
 # - Claude Sonnet 4.5:    ~$3.00  (premium quality, prompt caching)
 # - Gemini 2.0 Flash:     ~$0.075 (alternative high-quality, free in preview)
 # - OpenAI GPT-4o:        ~$2.50  (final fallback, max reliability)
 #
-# Why not start with GPT-4o? ~50x more expensive than Groq-8B.
-# For 1M queries, Groq costs $50 vs GPT-4o's $2,500.
+# Why not start with GPT-4o? Its input price is ~33x Groq gpt-oss-20b's.
 _FALLBACK_CHAIN = [
-    "groq/llama-3.1-8b-instant",
-    "groq/llama-3.3-70b-versatile",
+    "groq/openai/gpt-oss-20b",
+    "groq/openai/gpt-oss-120b",
     "deepseek/deepseek-chat",
     "anthropic/claude-sonnet-4-5-20250929",
     "gemini/gemini-2.0-flash-exp",
@@ -102,11 +103,18 @@ class LLMRouter:
 
         for model in self._chain[: self._max_fallbacks]:
             try:
+                call_kwargs = dict(kwargs)
+                if model.startswith("groq/"):
+                    # Groq's models are reasoning models: send the effort and
+                    # add reasoning headroom on top of the answer budget.
+                    call_kwargs["reasoning_effort"] = GROQ_REASONING_EFFORT
+                    if "max_tokens" in call_kwargs:
+                        call_kwargs["max_tokens"] += GROQ_REASONING_HEADROOM
                 response = litellm.completion(
                     model=model,
                     messages=messages,
                     timeout=self._timeout,
-                    **kwargs,
+                    **call_kwargs,
                 )
                 content = response.choices[0].message.content or ""
                 return RouterResponse(

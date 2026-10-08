@@ -9,7 +9,7 @@ What changed vs the legacy runner:
 This version measures real systems:
     - Redis: real server (default redis://localhost:6379), flushdb() per run
     - L2 cache: real BGE-base-en-v1.5 embeddings via HuggingFaceEmbedding
-    - LLM: real Groq llama-3.1-8b-instant for cache misses; cost computed
+    - LLM: real Groq openai/gpt-oss-20b for cache misses; cost computed
       from response.usage.prompt_tokens * actual pricing
     - Routing: queries routed by ComplexityRouter, then the routed Groq
       model is actually called - cost difference is measured against the
@@ -61,22 +61,22 @@ load_dotenv(PROJECT_ROOT / ".env.local", override=True)
 from src.core.benchmarking import Query, run_under_chaos  # noqa: E402
 from src.core.chaos.primitives import ChaosPreconditionError  # noqa: E402
 from src.core.config import get_settings  # noqa: E402
-from src.core.llm_client import UnifiedLLMClient  # noqa: E402
+from src.core.llm_client import UnifiedLLMClient, groq_reasoning_kwargs  # noqa: E402
 from src.ops.caching import SemanticCache  # noqa: E402
 from src.ops.routing import ComplexityRouter  # noqa: E402
 
 # Pricing per 1M tokens (USD). Mirrors src/core/llm_client.py - keep in lockstep.
 # Inline here so the benchmark stays self-contained.
 _PRICES: dict[str, tuple[float, float]] = {
-    "llama-3.1-8b-instant": (0.05, 0.08),
-    "llama-3.3-70b-versatile": (0.59, 0.79),
+    "openai/gpt-oss-20b": (0.075, 0.30),
+    "openai/gpt-oss-120b": (0.15, 0.60),
     "gpt-4o": (2.50, 10.00),
 }
 
 # Models actually called during the run.
-_CACHE_MISS_MODEL = "llama-3.1-8b-instant"  # cheap path for cache benchmark
-_SIMPLE_MODEL = "llama-3.1-8b-instant"
-_COMPLEX_MODEL = "llama-3.3-70b-versatile"
+_CACHE_MISS_MODEL = "openai/gpt-oss-20b"  # cheap path for cache benchmark
+_SIMPLE_MODEL = "openai/gpt-oss-20b"
+_COMPLEX_MODEL = "openai/gpt-oss-120b"
 _BASELINE_MODEL = "gpt-4o"  # naive "always premium" baseline for routing comparison
 
 
@@ -153,7 +153,7 @@ def _build_groq_call(no_llm: bool, api_key: str | None = None) -> Any:
         resp = client.chat.completions.create(
             model=model,
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=256,
+            **groq_reasoning_kwargs(256),
             temperature=0.0,  # deterministic for benchmarking
         )
         latency_s = time.perf_counter() - start

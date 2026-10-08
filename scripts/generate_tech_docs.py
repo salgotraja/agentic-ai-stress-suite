@@ -315,7 +315,7 @@ class TechDocsGenerator:
 
                 response = self.llm_client._call_groq(
                     prompt=prompt,
-                    model=GroqModel.LLAMA_3_70B,
+                    model=GroqModel.GPT_OSS_120B,
                     temperature=0.7,
                     max_tokens=4000,
                     timeout=60,
@@ -325,7 +325,7 @@ class TechDocsGenerator:
 
                 response = self.llm_client._call_groq(
                     prompt=prompt,
-                    model=GroqModel.LLAMA_3_32B,
+                    model=GroqModel.GPT_OSS_120B,
                     temperature=0.7,
                     max_tokens=4000,
                     timeout=60,
@@ -335,7 +335,7 @@ class TechDocsGenerator:
 
                 response = self.llm_client._call_groq(
                     prompt=prompt,
-                    model=GroqModel.LLAMA_3_70B,
+                    model=GroqModel.GPT_OSS_120B,
                     temperature=0.7,
                     max_tokens=4000,
                     timeout=60,

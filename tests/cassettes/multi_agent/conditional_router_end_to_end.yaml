@@ -5,7 +5,7 @@ interactions:
       analytical: Comparison or analysis (\"Compare X and Y\", \"Why is X better than
       Y?\")\n- creative: Creative generation (\"Write a poem\", \"Generate ideas\")\n-
       code: Programming question (\"Fix this bug\", \"Write function to...\")\n- general:
-      Everything else\n\nQuery: What is Python?\n\nClassification (single word):"}],"model":"llama-3.1-8b-instant","max_tokens":10,"temperature":0.7}'
+      Everything else\n\nQuery: What is Python?\n\nClassification (single word):"}],"model":"openai/gpt-oss-20b","max_tokens":522,"reasoning_effort":"low","temperature":0.7}'
     headers:
       Accept:
       - application/json
@@ -14,13 +14,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '537'
+      - '561'
       Content-Type:
       - application/json
       Host:
       - api.groq.com
       User-Agent:
-      - OpenAI/Python 2.15.0
+      - OpenAI/Python 2.24.0
       X-Stainless-Arch:
       - arm64
       X-Stainless-Async:
@@ -30,7 +30,7 @@ interactions:
       X-Stainless-OS:
       - MacOS
       X-Stainless-Package-Version:
-      - 2.15.0
+      - 2.24.0
       X-Stainless-Runtime:
       - CPython
       X-Stainless-Runtime-Version:
@@ -44,16 +44,18 @@ interactions:
   response:
     body:
       string: !!binary |
-        G0ACAMR/psu9y/hmOOLItFaI8BOH6FnbdQduv/1kx9u3Y8sobN6ubW2BFrVAI0yPeVw+jNJtqrO/
-        GBwMmr46m2WdeaJdUlcU8ySNcp7pOudKxinPnYvbREVRnSgwhHqk5gTTrcNADcGDgbV8NzmYWMo4
-        zjOpNcMSHM0wmOdqqXh6i7mq+eCPs/InGBjxCwfM5y8eui8wEUO7RQ/mF3uYCQbVcQy4JcGf5E8Y
-        tFVzXtWMf4Y5dOse6gPGX/PMMGstsfdajWFwnGHF/zfDFf3j7aKL7DksBBPdoiwrdJFmBcO6h2U9
-        7Rkm8gdMnOgB8RDJLM2lyhjKgKhManFSSfNUyoLhLwN8EtZq8DdxJpXOi/81B7beqZpcePg9IrF+
-        w7aD72hf96Ems6vNUiVdSq6uwfC03R42mPO+sdNmo3jqu+58S98mb91Eb1JZJadXd4DhIHIwKiri
-        PFOp/GeYZTdkz4F2GARvHS2Vd/j/AA==
+        G/kCAMT/pma9m0rzarQKGfvuijYGBomvXRSABWTny1Nwy5hAuYAFY2kLXKJ6dfk+n1Tw527A6tiw
+        GCIKv8LUfV+gFTimi4zT7ra0ytU8VHJI83mu0nquKJXdWKQ9NUVZN/3YVR0Y7LjQFJnVqcPA09aA
+        YWr5tqTAi24o6rJp6oFht4o2cFhHRurs7GJqQ0jLfATDPPyMAP7nBc/cd+A5Q7PFV+Av8HYjcMgQ
+        dIjSRDAg0YE4ZjnFQ25guL3qIdqcwfGDEkOkkmgRecfq+Sn5ix8XGRMdko9P8WLNh7+oe3wN1dPd
+        Rsksp5hs1q6H41z6i9RQTzJqa3hixrAT3hg2e3bejgHcHNvGgPYmhH3V4AjROrz9Yzg8/NP1oINE
+        1DuB56e8bvqhatqCwXm7uyiiXckE8KIt6YgDkA9Fm+fNwJAIzJVS9VtIDaApyqEsm5LhOwXwsmWe
+        k9H5XG1eN2VVFEqUALnjIU2S4p8QaLq3N08rxOhJrso+mMhgQIACMWtzJu+8zmZfJ6ZG9sPQd2oC
+        w6M4e3sFr9MpPF1FXuz1tF+afKF29dNjodS99PK+rMAQqPRqi75sm7Yp8jcGEL5GImry4LBGKNql
+        UXi7AQ==
     headers:
       CF-RAY:
-      - 9ce4739aec205507-DEL
+      - a4719ef30d49e067-DEL
       Cache-Control:
       - private, max-age=0, no-store, no-cache, must-revalidate
       Connection:
@@ -63,7 +65,7 @@ interactions:
       Content-Type:
       - application/json
       Date:
-      - Sun, 15 Feb 2026 11:26:39 GMT
+      - Thu, 08 Oct 2026 02:12:29 GMT
       Server:
       - cloudflare
       Strict-Transport-Security:
@@ -75,9 +77,9 @@ interactions:
       cf-cache-status:
       - DYNAMIC
       set-cookie:
-      - __cf_bm=LK1WBgJZf3UgEXtMzDimxK3AIybyjl.8ID1YGPJ1y9Y-1771154799.8211386-1.0.1.1-zPurkmULAUW1R0asXjA4QkgCzzX1V7CoqE8w.XDO3JS1CUHmPLTKHk195d7cswPw7dRTwMsvrjgiaCovWy8EMuQI6ukNHjlXRST8iXF6W5Et2QKiYdYBqdQVp4zzPMd5;
-        HttpOnly; Secure; Path=/; Domain=groq.com; Expires=Sun, 15 Feb 2026 11:56:39
-        GMT
+      - __cf_bm=TOfMxpYdEs7Z5Lvkzrh3IHWZ0vt9nlsFChMd2xkQRzY-1791425549.2891817-1.0.1.1-5G_O4LdarmR9s_IWg22Ca4rH6uD1bPqyLZ63nsgqhjjx2zNouLcu4jjAhIQXm4vFrZetiYtAYzGwIdgqVqehgSbC7dgRSij5sf3mETBm2aihSq9Ul1q0kgLZoEMZL3B0;
+        HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Thu, 08
+        Oct 2026 02:42:29 GMT
       vary:
       - Origin
       via:
@@ -85,19 +87,19 @@ interactions:
       x-groq-region:
       - bom
       x-ratelimit-limit-requests:
-      - '14400'
+      - '500000'
       x-ratelimit-limit-tokens:
-      - '6000'
+      - '250000'
       x-ratelimit-remaining-requests:
-      - '14396'
+      - '499998'
       x-ratelimit-remaining-tokens:
-      - '5529'
+      - '249805'
       x-ratelimit-reset-requests:
-      - 24s
+      - 345ms
       x-ratelimit-reset-tokens:
-      - 4.71s
+      - 46ms
       x-request-id:
-      - req_01khggtz7nf2z9c0ze84a7kygs
+      - req_01m4cmh50je6krcx1ddvarav23
     status:
       code: 200
       message: OK

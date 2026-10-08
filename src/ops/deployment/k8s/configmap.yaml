@@ -18,7 +18,7 @@ data:
   # Groq is the default dev/production LLM (cheapest at ~$0.05/1M tokens).
   # Override with ANTHROPIC_API_KEY + LLM_PROVIDER=anthropic for quality benchmarks.
   LLM_PROVIDER: "groq"
-  LLM_MODEL: "llama-3.1-8b-instant"
+  LLM_MODEL: "openai/gpt-oss-20b"
 
   # Embedding configuration
   # cpu is used in K8s (no Metal/MPS GPU available in Linux containers).

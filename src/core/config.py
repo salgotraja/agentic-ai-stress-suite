@@ -159,8 +159,14 @@ class Settings(BaseSettings):
 
     # LLM Configuration
     default_llm_model: str = Field(
-        default="groq/llama-3-8b",
+        default="groq/openai/gpt-oss-20b",
         description="Default LLM model for development (format: provider/model)",
+    )
+    llm_pinned_model: str | None = Field(
+        default=None,
+        description="Pin every UnifiedLLMClient call to one model and disable the "
+        "fallback chain (format: provider/model, e.g. groq/openai/gpt-oss-20b). "
+        "Set this for benchmark runs so the generator cannot change mid-run",
     )
     default_llm_temperature: float = Field(
         default=0.7,

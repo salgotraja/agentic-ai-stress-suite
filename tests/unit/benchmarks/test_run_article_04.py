@@ -316,3 +316,63 @@ def test_groq_tool_use_failed_is_a_provider_error() -> None:
     exc = Exception("Error code: 400 - {'error': {'code': 'tool_use_failed'}}")
 
     assert classify_error(exc) == ("Exception", True)
+
+
+def test_judge_prompt_states_the_exact_criterion_count() -> None:
+    from benchmarks.run_article_04 import build_judge_prompt
+
+    query = {"query": "x", "acceptance": ["a", "b", "c"]}
+
+    prompt = build_judge_prompt(query, _result())
+
+    assert "exactly 3 criteria" in prompt
+
+
+def test_judge_retries_once_after_an_unusable_reply() -> None:
+    client = Mock()
+    client.generate.side_effect = [
+        _judge_reply('{"criteria": [], "fabrication": false}'),
+        _judge_reply('{"criteria": [{"index": 1, "verdict": "met"}], "fabrication": false}'),
+    ]
+    query = {"query": "Calculate 6!", "acceptance": ["states 6 factorial is 720"]}
+
+    verdict = judge_trial(client, query, _result())
+
+    assert verdict["status"] == "ok"
+    assert verdict["attempts"] == 2
+    assert client.generate.call_count == 2
+
+
+def test_judge_gives_up_after_two_unusable_replies() -> None:
+    client = Mock()
+    client.generate.return_value = _judge_reply("no json here")
+    query = {"query": "Calculate 6!", "acceptance": ["states 6 factorial is 720"]}
+
+    verdict = judge_trial(client, query, _result())
+
+    assert verdict["status"] == "parse_failed"
+    assert client.generate.call_count == 2
+
+
+def test_rejudge_replaces_verdicts_and_recomputes_summaries() -> None:
+    from dataclasses import asdict
+
+    from benchmarks.rejudge_article_04 import rejudge
+
+    old = _result()
+    old.judge = {"status": "parse_failed", "raw": "x"}
+    artifact = {
+        "detailed_results": {"react": [asdict(old)]},
+        "summaries": {"react": {}},
+    }
+    client = Mock()
+    client.generate.return_value = _judge_reply(
+        '{"criteria": [{"index": 1, "verdict": "met"}], "fabrication": false}'
+    )
+    queries = {"q004": {"query": "Calculate 6!", "acceptance": ["states 6 factorial is 720"]}}
+
+    rejudge(artifact, queries, client)
+
+    assert artifact["detailed_results"]["react"][0]["judge"]["status"] == "ok"
+    assert artifact["summaries"]["react"]["evidence_consistent"] == 1
+    assert artifact["summaries"]["react"]["judge_parse_failures"] == 0

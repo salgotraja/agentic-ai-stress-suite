@@ -41,11 +41,29 @@ _L2_THRESHOLD = 0.95
 class CacheStats:
     hits: int = 0
     misses: int = 0
+    l1_hits: int = 0
+    l2_hits: int = 0
 
     @property
     def hit_rate(self) -> float:
         total = self.hits + self.misses
         return self.hits / total if total > 0 else 0.0
+
+
+@dataclass(frozen=True)
+class CacheLookup:
+    """Outcome of one cache lookup, kept so benchmarks can attribute each hit.
+
+    tier is "l1", "l2", or "miss". similarity is the best L2 cosine seen during
+    the lookup (None when L2 was not consulted), reported on misses too so the
+    margin below the threshold is visible. matched_query is the cached query
+    whose response an L2 hit returned.
+    """
+
+    response: str | None
+    tier: str
+    similarity: float | None = None
+    matched_query: str | None = None
 
 
 class SemanticCache:
@@ -102,7 +120,7 @@ class SemanticCache:
             return 0.0
         return float(np.dot(vec_a, vec_b) / (norm_a * norm_b))
 
-    def _l2_get(self, query: str) -> str | None:
+    def _l2_get(self, query: str) -> tuple[str | None, float | None, str | None]:
         """Scan L2 embedding entries for a semantically similar cached response.
 
         Enumerates the L2 index registry via SMEMBERS (non-blocking) instead of
@@ -114,16 +132,20 @@ class SemanticCache:
 
         Stale registry members (TTL-expired entries that left a dangling
         SET reference) are pruned with a single batched SREM.
+
+        Returns (response if the best match clears the threshold, best
+        similarity, source query of the best match).
         """
         query_emb = self._embed_fn(query)  # type: ignore[misc]
         members = self._redis.smembers(_L2_INDEX_KEY)
         if not members:
-            return None
+            return None, None, None
         keys = list(members)
         raws = self._redis.mget(keys)
         stale: list[Any] = []
         best_similarity = -1.0
         best_response: str | None = None
+        best_query: str | None = None
         # SMEMBERS order is arbitrary, so the first entry above threshold is not
         # necessarily the closest one. Sweep every entry and keep the best.
         for key, raw in zip(keys, raws, strict=False):
@@ -136,13 +158,16 @@ class SemanticCache:
                 if similarity > best_similarity:
                     best_similarity = similarity
                     best_response = str(entry["response"])
+                    best_query = entry.get("query")
             except (json.JSONDecodeError, KeyError, ValueError):
                 continue
         if stale:
             self._redis.srem(_L2_INDEX_KEY, *stale)
+        if best_response is None:
+            return None, None, None
         if best_similarity >= self._l2_threshold:
-            return best_response
-        return None
+            return best_response, best_similarity, best_query
+        return None, best_similarity, best_query
 
     def get(self, query: str) -> str | None:
         """Look up query in L1 then L2 cache.
@@ -151,20 +176,28 @@ class SemanticCache:
               L2 embedding hit → return (avoids LLM call at the cost of embed_fn call)
               Both miss → return None (caller must invoke LLM and populate cache)
         """
+        return self.lookup(query).response
+
+    def lookup(self, query: str) -> CacheLookup:
+        """Same flow as get(), reporting which tier answered and the L2 evidence."""
         key = self._make_key(query)
         raw = self._redis.get(key)
         if raw is not None:
             self._stats.hits += 1
-            return raw.decode() if isinstance(raw, bytes) else raw
+            self._stats.l1_hits += 1
+            return CacheLookup(raw.decode() if isinstance(raw, bytes) else raw, "l1")
 
+        similarity: float | None = None
+        matched_query: str | None = None
         if self._embed_fn is not None:
-            result = self._l2_get(query)
+            result, similarity, matched_query = self._l2_get(query)
             if result is not None:
                 self._stats.hits += 1
-                return result
+                self._stats.l2_hits += 1
+                return CacheLookup(result, "l2", similarity, matched_query)
 
         self._stats.misses += 1
-        return None
+        return CacheLookup(None, "miss", similarity, matched_query)
 
     def set(self, query: str, response: str) -> None:
         """Store query→response in L1. Also stores L2 entry if embed_fn is set.
@@ -179,7 +212,7 @@ class SemanticCache:
         if self._embed_fn is not None:
             embedding = self._embed_fn(query)
             l2_key = self._make_l2_key(query)
-            payload = json.dumps({"embedding": embedding, "response": response})
+            payload = json.dumps({"embedding": embedding, "response": response, "query": query})
             pipeline = self._redis.pipeline()
             pipeline.setex(l2_key, self._ttl, payload)
             pipeline.sadd(_L2_INDEX_KEY, l2_key)
@@ -190,6 +223,8 @@ class SemanticCache:
         return {
             "hits": self._stats.hits,
             "misses": self._stats.misses,
+            "l1_hits": self._stats.l1_hits,
+            "l2_hits": self._stats.l2_hits,
             "hit_rate": self._stats.hit_rate,
         }
 

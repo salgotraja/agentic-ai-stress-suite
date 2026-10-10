@@ -84,6 +84,19 @@ _FAILURE_ANSWER_PREFIXES = (
 # Exceptions raised by the LLM layer rather than by agent logic.
 _PROVIDER_ERROR_TYPES = frozenset({"ModelRefusalError", "EmptyCompletionError"})
 
+# Account-level rejections: every later call fails the same way, so the run
+# stops instead of recording them as agent failures.
+_BILLING_ERROR_MARKERS = ("usage limits", "credit balance")
+
+
+def is_billing_error(message: str | None) -> bool:
+    """True when the provider refused the call for account limits or credit."""
+    if not message:
+        return False
+    lowered = message.lower()
+    return any(marker in lowered for marker in _BILLING_ERROR_MARKERS)
+
+
 # The judge must not be either generator under test, so it is fixed here and
 # always called with an explicit provider, which overrides LLM_PINNED_MODEL.
 JUDGE_PROVIDER = LLMProvider.OPENAI
@@ -191,6 +204,7 @@ def classify_error(exc: BaseException) -> tuple[str, bool]:
         # Groq rejects a request when a reasoning model emits a native tool
         # call the request did not declare; a provider protocol failure.
         or "tool_use_failed" in message
+        or is_billing_error(message)
     )
     return error_type, provider
 
@@ -667,7 +681,10 @@ def run_benchmark(
         "plan_execute": [],
     }
 
+    aborted_reason: str | None = None
     for run_idx in range(runs):
+        if aborted_reason:
+            break
         print(f"\n{'=' * 80}")
         print(f"Run {run_idx + 1}/{runs}")
         print(f"{'=' * 80}\n")
@@ -678,6 +695,10 @@ def run_benchmark(
             # Run ReAct agent
             print("  - Running ReAct agent...", end=" ", flush=True)
             react_result = run_agent_on_query(react_agent, "react", query, use_mock)
+            if is_billing_error(react_result.error):
+                aborted_reason = f"run {run_idx + 1}, {query['id']}: {react_result.error}"
+                print(f"\nStopping: provider refused for account limits ({react_result.error})")
+                break
             if judge_client is not None:
                 react_result.judge = judge_trial(judge_client, query, react_result)
             all_results["react"].append(react_result)
@@ -689,6 +710,11 @@ def run_benchmark(
             # Run Plan-Execute agent
             print("  - Running Plan-Execute agent...", end=" ", flush=True)
             plan_result = run_agent_on_query(plan_execute_agent, "plan_execute", query, use_mock)
+            if is_billing_error(plan_result.error):
+                aborted_reason = f"run {run_idx + 1}, {query['id']}: {plan_result.error}"
+                print(f"\nStopping: provider refused for account limits ({plan_result.error})")
+                all_results["react"].pop()  # keep the two agents' trial sets paired
+                break
             if judge_client is not None:
                 plan_result.judge = judge_trial(judge_client, query, plan_result)
             all_results["plan_execute"].append(plan_result)
@@ -761,6 +787,7 @@ def run_benchmark(
             "categories": list(categories) if categories and not query_ids else [],
             "collection_name": collection_name if not use_mock else None,
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "aborted_reason": aborted_reason,
         },
         "provenance": {
             "git_commit": _git("rev-parse", "HEAD"),

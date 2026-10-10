@@ -291,6 +291,34 @@ def execute_tool_with_retry(
 # ============================================================================
 
 
+# Tools signal failure by returning text with one of these prefixes instead of
+# raising (see the tools under src/agents/tools/).
+_TOOL_ERROR_PREFIXES = ("Error", "Syntax Error", "Security Error")
+_TOOL_EVENT_PREVIEW_CHARS = 500
+
+
+def _tool_event(
+    tool_name: str | None,
+    tool_input: str | None,
+    status: str,
+    output: str = "",
+) -> dict[str, Any]:
+    """Record one tool call for evaluation.
+
+    status is what the executor saw: "ok", "failed_after_retries",
+    "unknown_tool" or "missing_input". output_is_error separately records
+    whether the tool's own output reports an error, because tools return
+    errors as text and the executor sees those calls as "ok".
+    """
+    return {
+        "tool": tool_name,
+        "input": (tool_input or "")[:_TOOL_EVENT_PREVIEW_CHARS],
+        "status": status,
+        "output_is_error": output.lstrip().startswith(_TOOL_ERROR_PREFIXES),
+        "output_preview": output[:_TOOL_EVENT_PREVIEW_CHARS],
+    }
+
+
 class AgentState(TypedDict):
     """
     State dictionary for ReAct agent.
@@ -324,6 +352,7 @@ class AgentState(TypedDict):
     iteration_count: int
     max_iterations: int
     correlation_id: str
+    tool_events: list[dict[str, Any]]
 
 
 @dataclass
@@ -616,6 +645,10 @@ Your response (JSON only, no other text):"""
                 **state,
                 "chat_history": new_history,
                 "next_action": "error",
+                "tool_events": [
+                    *state.get("tool_events", []),
+                    _tool_event(tool_name, tool_input, "missing_input"),
+                ],
             }
 
         # Find tool
@@ -630,6 +663,10 @@ Your response (JSON only, no other text):"""
             return {
                 **state,
                 "chat_history": new_history,
+                "tool_events": [
+                    *state.get("tool_events", []),
+                    _tool_event(tool_name, tool_input, "unknown_tool", error_msg),
+                ],
             }
 
         # Execute tool with retry logic
@@ -664,9 +701,14 @@ Your response (JSON only, no other text):"""
         else:
             new_history.append({"role": "observation", "content": f"Tool result: {result}"})
 
+        status = "failed_after_retries" if retry_errors else "ok"
         return {
             **state,
             "chat_history": new_history,
+            "tool_events": [
+                *state.get("tool_events", []),
+                _tool_event(tool_name, tool_input, status, str(result)),
+            ],
         }
 
     def _should_continue(self, state: AgentState) -> Literal["continue", "end"]:
@@ -740,6 +782,7 @@ Your response (JSON only, no other text):"""
             "iteration_count": 0,
             "max_iterations": self.max_iterations,
             "correlation_id": correlation_id,
+            "tool_events": [],
         }
 
         # Run graph
@@ -759,6 +802,7 @@ Your response (JSON only, no other text):"""
             "iteration_count": final_state.get("iteration_count", 0),
             "success": final_state.get("next_action") == "finish",
             "correlation_id": correlation_id,
+            "tool_events": final_state.get("tool_events", []),
         }
 
     def __repr__(self) -> str:
@@ -821,6 +865,7 @@ class PlanState(TypedDict):
     current_step_index: int
     final_answer: str | None
     correlation_id: str
+    tool_events: list[dict[str, Any]]
 
 
 @dataclass
@@ -1079,6 +1124,10 @@ Your plan (JSON array only, no other text):"""
                 **state,
                 "step_results": new_results,
                 "current_step_index": current_index + 1,
+                "tool_events": [
+                    *state.get("tool_events", []),
+                    _tool_event(tool_name, tool_input, "unknown_tool", error_result),
+                ],
             }
 
         # Validate tool_input
@@ -1091,6 +1140,10 @@ Your plan (JSON array only, no other text):"""
                 **state,
                 "step_results": new_results,
                 "current_step_index": current_index + 1,
+                "tool_events": [
+                    *state.get("tool_events", []),
+                    _tool_event(tool_name, tool_input, "missing_input", error_result),
+                ],
             }
 
         # Execute tool with retry logic
@@ -1119,10 +1172,15 @@ Your plan (JSON array only, no other text):"""
                 f"Tool: {tool_name}\nInput: {tool_input}\nResult: {result}"
             )
 
+        status = "failed_after_retries" if retry_errors else "ok"
         return {
             **state,
             "step_results": new_results,
             "current_step_index": current_index + 1,
+            "tool_events": [
+                *state.get("tool_events", []),
+                _tool_event(tool_name, tool_input, status, str(result)),
+            ],
         }
 
     def _should_continue_execution(self, state: PlanState) -> Literal["continue", "synthesize"]:
@@ -1241,6 +1299,7 @@ Your answer:"""
             "current_step_index": 0,
             "final_answer": None,
             "correlation_id": correlation_id,
+            "tool_events": [],
         }
 
         # Run graph
@@ -1255,6 +1314,7 @@ Your answer:"""
             "step_results": final_state.get("step_results", []),
             "success": final_state.get("final_answer") is not None,
             "correlation_id": correlation_id,
+            "tool_events": final_state.get("tool_events", []),
         }
 
     def __repr__(self) -> str:

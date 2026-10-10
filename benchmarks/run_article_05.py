@@ -356,7 +356,7 @@ def _run_parallel_pipeline(
     specialists = [
         SpecialistAgent(
             specialty=f"Specialist_{i + 1}",
-            tools=[rag_tool],
+            tools=[],  # analyze() never executes tools; listing one invites a rejected call
             llm_client=llm,
         )
         for i in range(n_specialists)
@@ -402,7 +402,7 @@ def _run_conflict_resolution(
     specialists = [
         SpecialistAgent(
             specialty=f"Candidate_{i + 1}",
-            tools=[rag_tool],
+            tools=[],  # analyze() never executes tools; listing one invites a rejected call
             llm_client=llm,
         )
         for i in range(n_candidates)

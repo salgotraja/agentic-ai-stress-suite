@@ -132,7 +132,9 @@ def benchmark_compile(st_model: Any) -> dict[str, Any]:
             entry["steady_ms"] = round(_median_ms(lambda m=compiled: run(m)), 2)
             entry["speedup_vs_eager"] = round(result["eager_ms"] / entry["steady_ms"], 3)
         except Exception as exc:  # noqa: BLE001 - record why a backend failed
-            entry["error"] = f"{type(exc).__name__}: {str(exc)[:300]}"
+            lines = str(exc).splitlines()
+            cause = next((ln for ln in lines if "error:" in ln), lines[0] if lines else "")
+            entry["error"] = f"{type(exc).__name__}: {cause.replace(str(Path.home()), '~')}"
         result[backend] = entry
     torch._dynamo.reset()
     return result

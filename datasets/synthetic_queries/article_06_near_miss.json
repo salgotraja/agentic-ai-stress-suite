@@ -1,0 +1,39 @@
+{
+  "description": "Close-but-different and same-intent query pairs for the Article 6 semantic-cache probe. AI-written (Claude), not reviewed by a person. Text pairs test what the embedding similarity does with a one-detail change. Context pairs send identical query text under different tenant or permission context, which tests cache identity rather than embeddings.",
+  "text_pairs": [
+    {"id": "neg_01", "kind": "negation", "seed": "Which Python built-in types are mutable?", "probe": "Which Python built-in types are not mutable?"},
+    {"id": "neg_02", "kind": "negation", "seed": "Which HTTP methods are idempotent?", "probe": "Which HTTP methods are not idempotent?"},
+    {"id": "neg_03", "kind": "negation", "seed": "When should a FastAPI endpoint be declared with async def?", "probe": "When should a FastAPI endpoint not be declared with async def?"},
+    {"id": "neg_04", "kind": "negation", "seed": "Is it safe to call time.sleep inside an async function?", "probe": "Why is it unsafe to call time.sleep inside an async function?"},
+    {"id": "ver_01", "kind": "framework_version", "seed": "How do I write a field validator in Pydantic v1?", "probe": "How do I write a field validator in Pydantic v2?"},
+    {"id": "ver_02", "kind": "framework_version", "seed": "In Python 2, what does the expression 3/2 evaluate to?", "probe": "In Python 3, what does the expression 3/2 evaluate to?"},
+    {"id": "ver_03", "kind": "framework_version", "seed": "Which servlet package namespace does Spring Boot 2 use?", "probe": "Which servlet package namespace does Spring Boot 3 use?"},
+    {"id": "ver_04", "kind": "framework_version", "seed": "How do I register a startup handler in FastAPI before lifespan events existed?", "probe": "How do I register a startup handler in FastAPI using lifespan events?"},
+    {"id": "date_01", "kind": "date", "seed": "What day of the week was 1 January 2024?", "probe": "What day of the week was 1 January 2025?"},
+    {"id": "date_02", "kind": "date", "seed": "How many days are in February 2024?", "probe": "How many days are in February 2023?"},
+    {"id": "date_03", "kind": "date", "seed": "How many days are there between 1 March 2024 and 1 April 2024?", "probe": "How many days are there between 1 March 2024 and 1 May 2024?"},
+    {"id": "date_04", "kind": "date", "seed": "Is 2100 a leap year?", "probe": "Is 2000 a leap year?"},
+    {"id": "unit_01", "kind": "units", "seed": "Convert 100 miles to kilometers.", "probe": "Convert 100 kilometers to miles."},
+    {"id": "unit_02", "kind": "units", "seed": "How many bytes are in 1 MB in SI units?", "probe": "How many bytes are in 1 MiB?"},
+    {"id": "unit_03", "kind": "units", "seed": "What is 30 degrees Celsius in Fahrenheit?", "probe": "What is 30 degrees Fahrenheit in Celsius?"},
+    {"id": "unit_04", "kind": "units", "seed": "Which Redis command sets a key expiry of 5 seconds?", "probe": "Which Redis command sets a key expiry of 5 milliseconds?"},
+    {"id": "para_01", "kind": "paraphrase_control", "seed": "How do I install FastAPI?", "probe": "What is the command to install FastAPI?"},
+    {"id": "para_02", "kind": "paraphrase_control", "seed": "What is dependency injection in FastAPI?", "probe": "Explain how FastAPI does dependency injection."},
+    {"id": "para_03", "kind": "paraphrase_control", "seed": "How do I set a TTL on a Redis key?", "probe": "How can I make a Redis key expire?"},
+    {"id": "para_04", "kind": "paraphrase_control", "seed": "What is the difference between a list and a tuple in Python?", "probe": "How does a Python list differ from a tuple?"},
+    {"id": "para_05", "kind": "paraphrase_control", "seed": "How do I read a JSON file in Python?", "probe": "How can I load a JSON file with Python?"},
+    {"id": "para_06", "kind": "paraphrase_control", "seed": "What does HTTP status code 404 mean?", "probe": "What is the meaning of an HTTP 404 status?"},
+    {"id": "para_07", "kind": "paraphrase_control", "seed": "How do I create a virtual environment in Python?", "probe": "What is the way to make a Python virtualenv?"},
+    {"id": "para_08", "kind": "paraphrase_control", "seed": "What is a Python decorator?", "probe": "Explain decorators in Python."}
+  ],
+  "context_pairs": [
+    {"id": "ten_01", "kind": "tenant", "query": "What is my API rate limit?", "seed_context": "Tenant: acme-corp. Plan: Enterprise. API rate limit: 1000 requests per minute.", "probe_context": "Tenant: globex. Plan: Free. API rate limit: 60 requests per minute."},
+    {"id": "ten_02", "kind": "tenant", "query": "Which region is my data stored in?", "seed_context": "Tenant: acme-corp. Data residency: eu-west-1 (Ireland).", "probe_context": "Tenant: globex. Data residency: ap-northeast-1 (Tokyo)."},
+    {"id": "ten_03", "kind": "tenant", "query": "How many seats does my subscription include?", "seed_context": "Tenant: acme-corp. Subscription: 250 seats.", "probe_context": "Tenant: globex. Subscription: 5 seats."},
+    {"id": "ten_04", "kind": "tenant", "query": "Is single sign-on enabled for my account?", "seed_context": "Tenant: acme-corp. SSO: enabled via Okta SAML.", "probe_context": "Tenant: globex. SSO: not available on the current plan."},
+    {"id": "perm_01", "kind": "permission_scope", "query": "How do I delete a project?", "seed_context": "User role: admin. Admins can delete projects from Settings > Danger Zone > Delete project.", "probe_context": "User role: viewer. Viewers cannot delete projects; only admins can."},
+    {"id": "perm_02", "kind": "permission_scope", "query": "Can I export the billing history?", "seed_context": "User role: billing-owner. Billing owners can export invoices as CSV from Billing > History > Export.", "probe_context": "User role: developer. Developers have no access to billing data."},
+    {"id": "perm_03", "kind": "permission_scope", "query": "How do I rotate the production API key?", "seed_context": "User role: admin. Admins rotate keys under Settings > API Keys > Rotate.", "probe_context": "User role: read-only analyst. Read-only users cannot view or rotate API keys."},
+    {"id": "perm_04", "kind": "permission_scope", "query": "Can I invite a new member to the workspace?", "seed_context": "User role: owner. Owners invite members from Members > Invite.", "probe_context": "User role: guest. Guests cannot invite members."}
+  ]
+}

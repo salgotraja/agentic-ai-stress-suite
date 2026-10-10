@@ -25,6 +25,7 @@ from typing import Any
 import anthropic
 import httpx
 import openai
+from openai.types.chat import ChatCompletionMessageParam
 from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from src.core.config import Settings, get_settings
@@ -80,6 +81,15 @@ def groq_reasoning_kwargs(max_tokens: int) -> dict[str, Any]:
         "reasoning_effort": GROQ_REASONING_EFFORT,
         "max_tokens": max_tokens + GROQ_REASONING_HEADROOM,
     }
+
+
+def _chat_messages(prompt: str, system_prompt: str | None) -> list[ChatCompletionMessageParam]:
+    """OpenAI-style messages, with the system prompt first when one is given."""
+    messages: list[ChatCompletionMessageParam] = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
+    messages.append({"role": "user", "content": prompt})
+    return messages
 
 
 class EmptyCompletionError(Exception):
@@ -357,6 +367,7 @@ class UnifiedLLMClient:
         temperature: float,
         max_tokens: int,
         timeout: int,
+        system_prompt: str | None = None,
     ) -> LLMResponse:
         """
         Call Groq API with exponential backoff.
@@ -371,7 +382,7 @@ class UnifiedLLMClient:
 
         response = self.groq_client.chat.completions.create(
             model=model.value,
-            messages=[{"role": "user", "content": prompt}],
+            messages=_chat_messages(prompt, system_prompt),
             temperature=temperature,
             timeout=timeout,
             **groq_reasoning_kwargs(max_tokens),
@@ -419,6 +430,7 @@ class UnifiedLLMClient:
         temperature: float,
         max_tokens: int,
         timeout: int,
+        system_prompt: str | None = None,
     ) -> LLMResponse:
         """Call DeepSeek API with exponential backoff."""
         if not self.deepseek_client:
@@ -428,7 +440,7 @@ class UnifiedLLMClient:
 
         response = self.deepseek_client.chat.completions.create(
             model="deepseek-chat",
-            messages=[{"role": "user", "content": prompt}],
+            messages=_chat_messages(prompt, system_prompt),
             temperature=temperature,
             max_tokens=max_tokens,
             timeout=timeout,
@@ -821,7 +833,9 @@ class UnifiedLLMClient:
             GuardrailBlockedError: If guardrails are enabled and the prompt is rejected
             Exception: If all providers fail
         """
-        temperature = temperature or self.settings.default_llm_temperature
+        # `or` would turn an explicit 0.0 into the default.
+        if temperature is None:
+            temperature = self.settings.default_llm_temperature
         max_tokens = max_tokens or self.settings.default_llm_max_tokens
         timeout = timeout or self.settings.llm_request_timeout
 
@@ -857,6 +871,7 @@ class UnifiedLLMClient:
                     temperature,
                     max_tokens,
                     timeout,
+                    system_prompt,
                 )
             if preferred_provider == LLMProvider.ANTHROPIC and self.anthropic_client:
                 return self._call_anthropic(
@@ -892,7 +907,7 @@ class UnifiedLLMClient:
             attempt += 1
             try:
                 return self._call_groq(
-                    prompt, GroqModel.GPT_OSS_20B, temperature, max_tokens, timeout
+                    prompt, GroqModel.GPT_OSS_20B, temperature, max_tokens, timeout, system_prompt
                 )
             except Exception as e:
                 self.errors.append(
@@ -909,7 +924,7 @@ class UnifiedLLMClient:
             attempt += 1
             try:
                 return self._call_groq(
-                    prompt, GroqModel.GPT_OSS_120B, temperature, max_tokens, timeout
+                    prompt, GroqModel.GPT_OSS_120B, temperature, max_tokens, timeout, system_prompt
                 )
             except Exception as e:
                 self.errors.append(
@@ -925,7 +940,7 @@ class UnifiedLLMClient:
         if self.deepseek_client:
             attempt += 1
             try:
-                return self._call_deepseek(prompt, temperature, max_tokens, timeout)
+                return self._call_deepseek(prompt, temperature, max_tokens, timeout, system_prompt)
             except Exception as e:
                 self.errors.append(
                     LLMError(

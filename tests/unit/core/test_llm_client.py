@@ -495,6 +495,72 @@ class TestGenerateParameters:
         assert call_args[0][3] == 500  # max_tokens
         assert call_args[0][4] == 60  # timeout
 
+    def test_generate_passes_explicit_zero_temperature(
+        self,
+        mock_settings: Settings,
+    ) -> None:
+        """An explicit 0.0 must reach the provider, not be replaced by the default."""
+        client = UnifiedLLMClient(settings=mock_settings)
+        client._call_groq = Mock(
+            return_value=LLMResponse(
+                content="Test",
+                provider=LLMProvider.GROQ,
+                model=GroqModel.GPT_OSS_20B.value,
+                prompt_tokens=1,
+                completion_tokens=1,
+                total_tokens=2,
+                cost_usd=0.0,
+                latency_seconds=0.1,
+            )
+        )
+
+        client.generate("Test prompt", temperature=0.0)
+
+        assert client._call_groq.call_args[0][2] == 0.0
+
+
+class TestSystemPromptForwarding:
+    """Groq and DeepSeek must send the system prompt as a system message."""
+
+    @staticmethod
+    def _mock_openai_compatible() -> Mock:
+        response = Mock()
+        response.choices = [Mock(message=Mock(content="ok"), finish_reason="stop")]
+        response.usage = Mock(prompt_tokens=1, completion_tokens=1, total_tokens=2)
+        sdk = Mock()
+        sdk.chat.completions.create.return_value = response
+        return sdk
+
+    def test_groq_sends_system_message(self, mock_settings: Settings) -> None:
+        client = UnifiedLLMClient(settings=mock_settings)
+        client.groq_client = self._mock_openai_compatible()
+
+        client._call_groq("hi", GroqModel.GPT_OSS_20B, 0.0, 10, 30, system_prompt="rules")
+
+        messages = client.groq_client.chat.completions.create.call_args.kwargs["messages"]
+        assert messages == [
+            {"role": "system", "content": "rules"},
+            {"role": "user", "content": "hi"},
+        ]
+
+    def test_deepseek_sends_system_message(self, mock_settings: Settings) -> None:
+        client = UnifiedLLMClient(settings=mock_settings)
+        client.deepseek_client = self._mock_openai_compatible()
+
+        client._call_deepseek("hi", 0.0, 10, 30, system_prompt="rules")
+
+        messages = client.deepseek_client.chat.completions.create.call_args.kwargs["messages"]
+        assert messages[0] == {"role": "system", "content": "rules"}
+
+    def test_no_system_message_without_system_prompt(self, mock_settings: Settings) -> None:
+        client = UnifiedLLMClient(settings=mock_settings)
+        client.groq_client = self._mock_openai_compatible()
+
+        client._call_groq("hi", GroqModel.GPT_OSS_20B, 0.0, 10, 30)
+
+        messages = client.groq_client.chat.completions.create.call_args.kwargs["messages"]
+        assert messages == [{"role": "user", "content": "hi"}]
+
 
 class TestErrorTracking:
     """Test error tracking functionality."""

@@ -88,6 +88,11 @@ _PROVIDER_ERROR_TYPES = frozenset({"ModelRefusalError", "EmptyCompletionError"})
 # always called with an explicit provider, which overrides LLM_PINNED_MODEL.
 JUDGE_PROVIDER = LLMProvider.OPENAI
 JUDGE_MODEL = "gpt-4o-mini"
+JUDGE_MAX_ATTEMPTS = 2
+# Bump when the judge prompt or parsing changes, so artifacts say which judge
+# scored them. 1: first full run (2026-10-10). 2: exact criterion count in the
+# prompt and one retry on an unusable reply.
+JUDGE_REVISION = 2
 
 
 class _AccumulatingLLMClient(UnifiedLLMClient):
@@ -192,6 +197,7 @@ def classify_error(exc: BaseException) -> tuple[str, bool]:
 def build_judge_prompt(query: dict[str, Any], result: AgentBenchmarkResult) -> str:
     """Prompt for scoring one answer against its acceptance criteria."""
     criteria = "\n".join(f"{i}. {c}" for i, c in enumerate(query.get("acceptance", []), 1))
+    n_criteria = len(query.get("acceptance", []))
     events = json.dumps(
         [
             {
@@ -225,6 +231,10 @@ For each criterion, decide "met", "partial" or "not_met". A criterion about
 executing code or using a tool is met only if the tool calls show it ran. A
 value that contradicts the known correct values is not met. Then decide
 whether the answer states results that no tool call supports (fabrication).
+
+There are exactly {n_criteria} criteria. Return exactly {n_criteria} objects in
+"criteria", one per criterion, with "index" 1 to {n_criteria} in order. Do not
+merge or skip criteria, even when two seem related.
 
 Reply with JSON only, in this shape:
 {{"criteria": [{{"index": 1, "verdict": "met", "reason": "..."}}], "fabrication": false, "fabrication_reason": ""}}"""
@@ -264,21 +274,32 @@ def judge_trial(
         # A failed or refused trial has no answer to grade; scoring it from the
         # tool calls alone rated "Error: Agent reasoning failed." as consistent.
         return {"status": "not_completed", "evidence_consistent": False}
-    try:
-        response = judge_client.generate(
-            prompt=build_judge_prompt(query, result),
-            temperature=0.0,
-            max_tokens=1500,
-            preferred_provider=JUDGE_PROVIDER,
-            preferred_model=JUDGE_MODEL,
-        )
-    except Exception as exc:  # a judge outage must not abort the benchmark
-        return {"status": "judge_error", "error": f"{type(exc).__name__}: {exc}"}
-    parsed = parse_judge_response(response.content, n_criteria)
-    if parsed is None:
-        return {"status": "parse_failed", "raw": response.content[:500]}
-    evidence_consistent = parsed["all_met"] and not parsed["fabrication"]
-    return {"status": "ok", "evidence_consistent": evidence_consistent, **parsed}
+    prompt = build_judge_prompt(query, result)
+    raw = ""
+    # One retry: the judge occasionally returns fewer verdicts than criteria or
+    # malformed JSON, and a fresh attempt usually parses.
+    for attempt in range(1, JUDGE_MAX_ATTEMPTS + 1):
+        try:
+            response = judge_client.generate(
+                prompt=prompt,
+                temperature=0.0,
+                max_tokens=1500,
+                preferred_provider=JUDGE_PROVIDER,
+                preferred_model=JUDGE_MODEL,
+            )
+        except Exception as exc:  # a judge outage must not abort the benchmark
+            return {"status": "judge_error", "error": f"{type(exc).__name__}: {exc}"}
+        raw = response.content
+        parsed = parse_judge_response(raw, n_criteria)
+        if parsed is not None:
+            evidence_consistent = parsed["all_met"] and not parsed["fabrication"]
+            return {
+                "status": "ok",
+                "evidence_consistent": evidence_consistent,
+                "attempts": attempt,
+                **parsed,
+            }
+    return {"status": "parse_failed", "attempts": JUDGE_MAX_ATTEMPTS, "raw": raw[:500]}
 
 
 @dataclass
@@ -746,6 +767,7 @@ def run_benchmark(
             or "unpinned: UnifiedLLMClient fallback chain, provider per call not recorded",
             "anthropic_effort": settings.anthropic_effort,
             "judge_model": f"{JUDGE_PROVIDER.value}/{JUDGE_MODEL}" if judge else None,
+            "judge_revision": JUDGE_REVISION if judge else None,
             "judge_metric": "evidence-consistency against dataset acceptance criteria and "
             "recorded tool outputs; ground-truth correctness only where ground_truth is set",
             "judge_cost_usd": judge_client.cost_usd if judge_client is not None else 0.0,

@@ -77,10 +77,11 @@ def _flashrank_scorer(threads: int) -> tuple[Scorer, dict[str, Any]]:
         model_name=FLASHRANK_MODEL, cache_dir=str(PROJECT_ROOT / "models" / "flashrank")
     )
     onnx_file = next(Path(ranker.model_dir).glob("*.onnx"))
-    options = ort.SessionOptions()
-    options.intra_op_num_threads = threads
-    options.inter_op_num_threads = 1
-    ranker.session = ort.InferenceSession(str(onnx_file), sess_options=options)
+    if threads > 0:
+        options = ort.SessionOptions()
+        options.intra_op_num_threads = threads
+        options.inter_op_num_threads = 1
+        ranker.session = ort.InferenceSession(str(onnx_file), sess_options=options)
 
     def score(query: str, texts: list[str]) -> list[float]:
         passages = [{"id": i, "text": t} for i, t in enumerate(texts)]
@@ -115,13 +116,20 @@ def _cpu_name() -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--seeds", type=int, nargs="+", default=[13, 21, 42])
-    parser.add_argument("--threads", type=int, default=4)
+    parser.add_argument(
+        "--threads",
+        type=int,
+        default=4,
+        help="Threads for every model; 0 keeps library defaults (production FlashRank session)",
+    )
+    parser.add_argument("--label", default="", help="Suffix for the output file name")
     parser.add_argument("--timing-passes", type=int, default=3)
     args = parser.parse_args()
 
     import torch
 
-    torch.set_num_threads(args.threads)
+    if args.threads > 0:
+        torch.set_num_threads(args.threads)
     git_commit = _git("rev-parse", "HEAD")
     git_dirty = bool(_git("status", "--porcelain", "--untracked-files=no"))
 
@@ -263,7 +271,8 @@ def main() -> None:
         "comparisons": comparisons,
         "timing": {
             "device": "cpu",
-            "threads": args.threads,
+            "threads": args.threads if args.threads > 0 else "library defaults",
+            "torch_threads_effective": torch.get_num_threads(),
             "batch": "one call per question, 20 (query, chunk) pairs, max_length 512",
             "passes": args.timing_passes,
             "warmup_calls_per_model": 5,
@@ -276,7 +285,8 @@ def main() -> None:
     }
     out_dir = PROJECT_ROOT / "results" / "data" / "article_09"
     out_dir.mkdir(parents=True, exist_ok=True)
-    out = out_dir / f"rerankers_{run_date}.json"
+    suffix = f"_{args.label}" if args.label else ""
+    out = out_dir / f"rerankers_{run_date}{suffix}.json"
     out.write_text(json.dumps(result, indent=2) + "\n")
     print(
         json.dumps({"quality": {r: quality[r]["all"] for r in quality}, "timing": timing}, indent=1)

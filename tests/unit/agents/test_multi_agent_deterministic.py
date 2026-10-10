@@ -38,11 +38,11 @@ Example:
 
 from __future__ import annotations
 
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 
-from src.agents.multi_agent import ConditionalRouter
+from src.agents.multi_agent import ConditionalRouter, CriticAgent
 from src.core.llm_client import LLMProvider, LLMResponse
 
 
@@ -420,3 +420,18 @@ class TestDeterministicTestingBestPractices:
 
         # Should complete in well under 1 second
         assert elapsed < 1.0, f"Too slow: {elapsed}s for 100 classifications"
+
+
+@pytest.mark.parametrize(
+    ("critique", "score"),
+    [
+        ("SCORE: 4\nSTRENGTHS: clear", 4),
+        ("**SCORE:** 2\n\n**STRENGTHS:** none", 2),
+        ("## SCORE: 5", 5),
+        ("Score: 3/5", 3),
+        ("No score line at all", 3),
+    ],
+)
+def test_critic_extract_score_reads_markdown_labels(critique: str, score: int) -> None:
+    critic = CriticAgent(llm_client=MagicMock())
+    assert critic._extract_score(critique) == score

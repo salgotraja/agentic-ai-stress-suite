@@ -40,7 +40,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import statistics
+import subprocess
 import sys
 import time
 from dataclasses import asdict, dataclass, field
@@ -61,6 +63,98 @@ SUPPORTED_PATTERNS = (
     "parallel",
     "conflict_resolution",
 )
+
+# What `success` means per pattern. It is a structural check only: it does not
+# score quality, groundedness, or whether a call was cut off at its token cap.
+SUCCESS_DEFINITIONS = {
+    "sequential": "the writer returned a non-empty draft; the critic ran once and "
+    "its score does not affect success",
+    "critic_refinement": "the final draft is non-empty; success does not require the "
+    "critic score to reach the acceptance threshold",
+    "parallel": "the concatenated output is non-empty; the failure report is itself "
+    "non-empty, so this succeeds even when every specialist failed",
+    "conflict_resolution": "at least one candidate succeeded and the resolver returned "
+    "a non-empty winner (voting) or decision (supervisor); voting over a single "
+    "surviving option succeeds",
+}
+
+# The stricter check reported next to `success`.
+COMPLETED_DEFINITIONS = {
+    "sequential": "success, the researcher executed a tool, and the final draft was "
+    "not cut off at its token cap",
+    "critic_refinement": "success, the researcher executed a tool, and the final draft "
+    "was not cut off at its token cap",
+    "parallel": "success and every specialist returned an answer",
+    "conflict_resolution": "success and every candidate returned an answer",
+}
+
+_STATED_SCORE = re.compile(r"SCORE\W*?(\d+)", re.IGNORECASE)
+
+# Stop reasons meaning the provider cut the answer off at max_tokens.
+_TRUNCATION_STOP_REASONS = ("length", "max_tokens")
+_BILLING_ERROR_MARKERS = ("usage limits", "credit balance")
+
+# Each agent's prompt opens with a fixed phrase, so the call log can name the
+# role without touching agent code. Order matters: refine before write.
+_ROLE_PATTERNS = (
+    ("researcher", re.compile(r"^You are a research assistant")),
+    ("writer_refine", re.compile(r"^You are a technical writer improving")),
+    ("writer", re.compile(r"^You are a technical writer\.")),
+    ("critic", re.compile(r"^You are a technical editor")),
+    ("voter", re.compile(r"^Score each option")),
+    ("supervisor", re.compile(r"^You are an expert supervisor")),
+    ("specialist", re.compile(r"^You are an? [^\n]+? specialist\.")),
+)
+
+
+def classify_role(prompt: str) -> str:
+    """Name the agent role that issued a prompt."""
+    for role, pattern in _ROLE_PATTERNS:
+        if pattern.match(prompt):
+            return role
+    return "other"
+
+
+def is_billing_error(message: str | None) -> bool:
+    """True when the provider refused because the account is out of budget."""
+    if not message:
+        return False
+    lowered = message.lower()
+    return any(marker in lowered for marker in _BILLING_ERROR_MARKERS)
+
+
+def stated_critic_score(critique: str | None) -> int | None:
+    """The score the critic wrote, tolerating markdown such as **SCORE:** 4."""
+    match = _STATED_SCORE.search(critique or "")
+    return int(match.group(1)) if match else None
+
+
+def is_completed(
+    pattern: str,
+    success: bool,
+    research: str | None,
+    specialists_failed: int,
+    calls: list[dict[str, Any]],
+) -> bool:
+    """Apply COMPLETED_DEFINITIONS to one trial."""
+    if not success:
+        return False
+    if pattern in ("sequential", "critic_refinement"):
+        drafts = [c for c in calls if c.get("role") in ("writer", "writer_refine")]
+        return research == "executed" and bool(drafts) and not drafts[-1].get("truncated")
+    return specialists_failed == 0
+
+
+def research_outcome(findings: str | None) -> str:
+    """Classify what the researcher's tool step did, from its findings text."""
+    text = findings or ""
+    if text.startswith("Research findings for"):
+        return "executed"
+    if text.startswith("Error during research"):
+        return "tool_error"
+    if text.startswith("Tool '"):
+        return "tool_not_found"
+    return "no_directive"
 
 
 @dataclass
@@ -86,6 +180,15 @@ class TaskResult:
     difficulty: str | None = None
     required_agents: list[str] = field(default_factory=list)
     expected_tools: list[str] = field(default_factory=list)
+    output: str = ""
+    completed: bool = False
+    critic_stated_scores: list[int | None] = field(default_factory=list)
+    critic_loop_scores: list[int] = field(default_factory=list)
+    research_outcome: str | None = None
+    specialists_failed: int = 0
+    supervisor_reasoning: str | None = None
+    truncated_calls: int = 0
+    calls: list[dict[str, Any]] = field(default_factory=list)
 
 
 @dataclass
@@ -100,6 +203,9 @@ class PatternSummary:
     tokens: dict[str, float] = field(default_factory=dict)
     cost_usd: dict[str, float] = field(default_factory=dict)
     llm_calls: dict[str, float] = field(default_factory=dict)
+    n_completed: int = 0
+    trials_with_truncation: int = 0
+    truncated_calls: int = 0
 
 
 class _AccumulatingLLMClient(UnifiedLLMClient):
@@ -123,6 +229,8 @@ class _AccumulatingLLMClient(UnifiedLLMClient):
             self._acc_total = 0
             self._acc_cost = 0.0
             self._acc_calls = 0
+            self._call_log: list[dict[str, Any]] = []
+            self.billing_error: str | None = None
 
     def snapshot(self) -> dict[str, Any]:
         with self._acc_lock:
@@ -132,16 +240,40 @@ class _AccumulatingLLMClient(UnifiedLLMClient):
                 "total_tokens": self._acc_total,
                 "cost_usd": self._acc_cost,
                 "llm_calls": self._acc_calls,
+                "calls": list(self._call_log),
             }
 
     def generate(self, *args: Any, **kwargs: Any) -> LLMResponse:
-        response = super().generate(*args, **kwargs)
+        prompt = kwargs.get("prompt", args[0] if args else "")
+        entry: dict[str, Any] = {
+            "role": classify_role(prompt),
+            "max_tokens": kwargs.get("max_tokens"),
+        }
+        try:
+            response = super().generate(*args, **kwargs)
+        except Exception as e:
+            entry["error"] = str(e)
+            with self._acc_lock:
+                self._call_log.append(entry)
+                if is_billing_error(str(e)):
+                    self.billing_error = str(e)
+            raise
+        entry.update(
+            {
+                "model": f"{response.provider.value}/{response.model}",
+                "stop_reason": response.stop_reason,
+                "truncated": response.stop_reason in _TRUNCATION_STOP_REASONS,
+                "completion_tokens": response.completion_tokens,
+                "content": response.content,
+            }
+        )
         with self._acc_lock:
             self._acc_prompt += response.prompt_tokens
             self._acc_completion += response.completion_tokens
             self._acc_total += response.total_tokens
             self._acc_cost += response.cost_usd
             self._acc_calls += 1
+            self._call_log.append(entry)
         return response
 
 
@@ -202,6 +334,7 @@ def _run_critic_pipeline(
         "agents_used": 3,
         "refinement_count": int(result.get("refinement_count", 0) or 0),
         "critic_score": result.get("critic_score"),
+        "research_outcome": research_outcome(result.get("research_findings")),
     }
 
 
@@ -209,7 +342,7 @@ def _run_parallel_pipeline(
     task_text: str,
     rag_tool: Any,
     llm: _AccumulatingLLMClient,
-    n_specialists: int = 3,
+    specialties: list[str] | None = None,
 ) -> dict[str, Any]:
     """Drive ParallelOrchestrator with three generic SpecialistAgents.
 
@@ -220,13 +353,14 @@ def _run_parallel_pipeline(
     """
     from src.agents.multi_agent import ParallelOrchestrator, SpecialistAgent
 
+    roles = specialties or [f"Specialist_{i + 1}" for i in range(3)]
     specialists = [
         SpecialistAgent(
-            specialty=f"Specialist_{i + 1}",
-            tools=[rag_tool],
+            specialty=role,
+            tools=[],  # analyze() never executes tools; listing one invites a rejected call
             llm_client=llm,
         )
-        for i in range(n_specialists)
+        for role in roles
     ]
     orchestrator = ParallelOrchestrator(
         specialists=specialists,
@@ -234,11 +368,13 @@ def _run_parallel_pipeline(
         llm_client=llm,
     )
     result = orchestrator.run_parallel(task_text)
+    specialist_results = result.get("specialist_results", [])
     return {
         "output": str(result.get("aggregated_result", "")),
-        "agents_used": n_specialists,
+        "agents_used": len(roles),
         "refinement_count": 0,
         "critic_score": None,
+        "specialists_failed": sum(1 for r in specialist_results if not r.get("success")),
     }
 
 
@@ -247,6 +383,7 @@ def _run_conflict_resolution(
     rag_tool: Any,
     llm: _AccumulatingLLMClient,
     method: str = "voting",
+    specialties: list[str] | None = None,
 ) -> dict[str, Any]:
     """Drive a VotingResolver or SupervisorResolver.
 
@@ -264,13 +401,15 @@ def _run_conflict_resolution(
     )
 
     n_candidates = 2 if method == "supervisor" else 3
+    roles = specialties or [f"Candidate_{i + 1}" for i in range(n_candidates)]
+    n_candidates = len(roles)
     specialists = [
         SpecialistAgent(
-            specialty=f"Candidate_{i + 1}",
-            tools=[rag_tool],
+            specialty=role,
+            tools=[],  # analyze() never executes tools; listing one invites a rejected call
             llm_client=llm,
         )
-        for i in range(n_candidates)
+        for role in roles
     ]
     fan_out = ParallelOrchestrator(
         specialists=specialists,
@@ -279,6 +418,7 @@ def _run_conflict_resolution(
     )
     fan_out_result = fan_out.run_parallel(task_text)
     candidate_results = fan_out_result.get("specialist_results", [])
+    failed = sum(1 for r in candidate_results if not r.get("success"))
 
     if method == "voting":
         options = [
@@ -293,6 +433,7 @@ def _run_conflict_resolution(
                 "refinement_count": 0,
                 "critic_score": None,
                 "error": "no_options",
+                "specialists_failed": failed,
             }
         resolver = VotingResolver(agents=specialists, llm_client=llm)
         resolved = resolver.resolve(options=options, context=task_text)
@@ -301,6 +442,7 @@ def _run_conflict_resolution(
             "agents_used": n_candidates + len(specialists),
             "refinement_count": 0,
             "critic_score": None,
+            "specialists_failed": failed,
         }
 
     # supervisor branch
@@ -320,6 +462,7 @@ def _run_conflict_resolution(
             "refinement_count": 0,
             "critic_score": None,
             "error": "no_recommendations",
+            "specialists_failed": failed,
         }
     resolver_s = SupervisorResolver(llm_client=llm)
     resolved = resolver_s.resolve(recommendations=recommendations, context=task_text)
@@ -328,6 +471,8 @@ def _run_conflict_resolution(
         "agents_used": n_candidates + 1,
         "refinement_count": 0,
         "critic_score": None,
+        "specialists_failed": failed,
+        "supervisor_reasoning": resolved.get("reasoning"),
     }
 
 
@@ -346,7 +491,7 @@ def run_task(
     task_id = task["id"]
     pattern = task["pattern"]
     task_text = task["task"]
-    task_metadata = {
+    task_metadata: dict[str, Any] = {
         "difficulty": task.get("difficulty"),
         "required_agents": list(task.get("required_agents", [])),
         "expected_tools": list(task.get("expected_tools", [])),
@@ -361,11 +506,15 @@ def run_task(
         elif pattern == "critic_refinement":
             inner = _run_critic_pipeline(task_text, rag_tool, llm, max_refinements=max_refinements)
         elif pattern == "parallel":
-            inner = _run_parallel_pipeline(task_text, rag_tool, llm, n_specialists=3)
+            inner = _run_parallel_pipeline(
+                task_text, rag_tool, llm, specialties=task.get("specialties")
+            )
         elif pattern == "conflict_resolution":
             # q011 is the supervisor task; q006 (and any others) use voting.
             method = "supervisor" if task_id == "q011" else "voting"
-            inner = _run_conflict_resolution(task_text, rag_tool, llm, method=method)
+            inner = _run_conflict_resolution(
+                task_text, rag_tool, llm, method=method, specialties=task.get("specialties")
+            )
         else:
             return TaskResult(
                 task_id=task_id,
@@ -398,6 +547,8 @@ def run_task(
             llm_calls=snap["llm_calls"],
             agents_used=0,
             error=f"pipeline_error: {e}",
+            truncated_calls=sum(1 for c in snap["calls"] if c.get("truncated")),
+            calls=snap["calls"],
             **task_metadata,
         )
 
@@ -406,6 +557,13 @@ def run_task(
     output = inner.get("output", "")
     error = inner.get("error")
     success = bool(output) and not error
+    calls = snap["calls"]
+    critiques = [c.get("content") or "" for c in calls if c.get("role") == "critic"]
+    loop_parser = None
+    if critiques:
+        from src.agents.multi_agent import CriticAgent
+
+        loop_parser = CriticAgent(llm_client=llm)
 
     return TaskResult(
         task_id=task_id,
@@ -423,6 +581,23 @@ def run_task(
         critic_score=inner.get("critic_score"),
         output_chars=len(output),
         error=error,
+        output=output,
+        completed=is_completed(
+            pattern,
+            success,
+            inner.get("research_outcome"),
+            int(inner.get("specialists_failed", 0) or 0),
+            calls,
+        ),
+        critic_stated_scores=[stated_critic_score(c) for c in critiques],
+        critic_loop_scores=[loop_parser._extract_score(c) for c in critiques]
+        if loop_parser
+        else [],
+        research_outcome=inner.get("research_outcome"),
+        specialists_failed=int(inner.get("specialists_failed", 0) or 0),
+        supervisor_reasoning=inner.get("supervisor_reasoning"),
+        truncated_calls=sum(1 for c in snap["calls"] if c.get("truncated")),
+        calls=snap["calls"],
         **task_metadata,
     )
 
@@ -458,6 +633,9 @@ def aggregate(results: list[TaskResult]) -> list[PatternSummary]:
                 tokens=_summarise([float(r.total_tokens) for r in recs]),
                 cost_usd=_summarise([r.cost_usd for r in recs]),
                 llm_calls=_summarise([float(r.llm_calls) for r in recs]),
+                n_completed=sum(1 for r in recs if r.completed),
+                trials_with_truncation=sum(1 for r in recs if r.truncated_calls),
+                truncated_calls=sum(r.truncated_calls for r in recs),
             )
         )
     return summaries
@@ -552,12 +730,20 @@ def main() -> int:
     # One TaskResult per (task x run). aggregate() collapses across the union
     # so per-pattern mean/std reflects both task variance and run variance.
     results: list[TaskResult] = []
+    aborted_reason: str | None = None
     for i, task in enumerate(tasks, 1):
+        if aborted_reason:
+            break
         print(f"\n[{i}/{len(tasks)}] {task['id']} ({task['pattern']})")
         print(f"  task: {task['task'][:90]}")
         for run_idx in range(1, args.runs + 1):
             result = run_task(task, rag_tool, llm, max_refinements=args.max_refinements)
             result.run_index = run_idx
+            if llm.billing_error:
+                # The trial is not a measurement of the pattern; drop it and stop.
+                aborted_reason = f"billing: {llm.billing_error}"
+                print(f"  ABORT {aborted_reason}")
+                break
             results.append(result)
             status = "OK" if result.success else "FAIL"
             run_label = f"run {run_idx}/{args.runs}" if args.runs > 1 else ""
@@ -604,6 +790,17 @@ def main() -> int:
             "rag_collection": args.collection_name,
             "runs": args.runs,
         },
+        "provenance": {
+            "git_commit": _git("rev-parse", "HEAD"),
+            "git_dirty": bool(_git("status", "--porcelain", "--untracked-files=no")),
+            "project_root": str(PROJECT_ROOT),
+            "generator_model": settings.llm_pinned_model
+            or "unpinned: UnifiedLLMClient fallback chain",
+            "anthropic_effort": settings.anthropic_effort,
+            "aborted_reason": aborted_reason,
+        },
+        "success_definitions": {p: SUCCESS_DEFINITIONS[p] for p in args.patterns},
+        "completed_definitions": {p: COMPLETED_DEFINITIONS[p] for p in args.patterns},
         "summaries": [asdict(s) for s in summaries],
         "tasks": [asdict(r) for r in results],
     }
@@ -613,6 +810,12 @@ def main() -> int:
         json.dump(output, f, indent=2)
     print(f"\nResults saved to {args.output}")
     return 0
+
+
+def _git(*args: str) -> str:
+    return subprocess.run(
+        ["git", *args], cwd=PROJECT_ROOT, capture_output=True, text=True, check=False
+    ).stdout.strip()
 
 
 def _describe_pattern(pattern: str) -> str:

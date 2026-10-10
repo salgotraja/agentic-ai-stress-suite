@@ -1,7 +1,8 @@
 {
   "metadata": {
-    "version": "1.0",
+    "version": "1.1",
     "created_date": "2026-02-15",
+    "specialties_note": "Added 2026-10-10 for tasks whose text names the specialist roles. Tasks without the field use generic role labels.",
     "description": "Multi-agent collaboration tasks for Article 5: Testing orchestration patterns (sequential, parallel, critic-in-loop)",
     "total_queries": 12,
     "pattern_distribution": {
@@ -34,6 +35,7 @@
       "required_agents": ["specialist_1", "specialist_2", "specialist_3", "synthesizer"],
       "expected_tools": ["rag", "database"],
       "difficulty": "hard",
+      "specialties": ["React state management", "React lifecycle", "React performance"],
       "description": "Parallel fan-out: 3 specialists work concurrently, synthesizer aggregates"
     },
     {
@@ -70,6 +72,7 @@
       "required_agents": ["specialist_1", "specialist_2", "specialist_3", "voting_resolver"],
       "expected_tools": ["rag", "search", "database"],
       "difficulty": "very_hard",
+      "specialties": ["FastAPI", "React", "Spring"],
       "description": "Parallel research → voting-based conflict resolution with justification"
     },
     {
@@ -97,6 +100,7 @@
       "required_agents": ["counter_1", "counter_2", "counter_3", "aggregator"],
       "expected_tools": ["database", "calculator"],
       "difficulty": "moderate",
+      "specialties": ["Spring", "Pydantic", "FastAPI"],
       "description": "Simple parallel counting → aggregation with statistics"
     },
     {
@@ -124,6 +128,7 @@
       "required_agents": ["frontend_specialist", "backend_specialist", "testing_specialist", "synthesizer"],
       "expected_tools": ["search", "rag", "database"],
       "difficulty": "hard",
+      "specialties": ["frontend", "backend", "testing"],
       "description": "Domain-expert parallel research → structured synthesis"
     }
   ]

@@ -291,6 +291,13 @@ def execute_tool_with_retry(
 # ============================================================================
 
 
+# Token budget for calls that carry the user-facing answer: ReAct's reasoning
+# reply (the final answer is a field inside its JSON) and Plan-and-Execute's
+# synthesis. At 500, Sonnet 5.5's answers overran the cap, the ReAct JSON was
+# cut off mid-string and the trial failed to parse; the same cap would cut
+# Plan-and-Execute answers mid-sentence. Raised for both agents.
+_ANSWER_MAX_TOKENS = 2000
+
 # Tools signal failure by returning text with one of these prefixes instead of
 # raising (see the tools under src/agents/tools/).
 _TOOL_ERROR_PREFIXES = ("Error", "Syntax Error", "Security Error")
@@ -539,7 +546,7 @@ Your response (JSON only, no other text):"""
         response = self.llm_client.generate(
             prompt=prompt,
             temperature=self.temperature,
-            max_tokens=500,
+            max_tokens=_ANSWER_MAX_TOKENS,
         )
 
         # Parse LLM response
@@ -1249,7 +1256,7 @@ Your answer:"""
         response = self.llm_client.generate(
             prompt=prompt,
             temperature=self.temperature,
-            max_tokens=500,
+            max_tokens=_ANSWER_MAX_TOKENS,
         )
 
         return {

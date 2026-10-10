@@ -50,6 +50,7 @@ from __future__ import annotations
 import argparse
 import csv
 import json
+import math
 import os
 import statistics
 import sys
@@ -167,23 +168,17 @@ class _PromptGuardClassifier(LlamaGuardClassifier):
                 max_tokens=10,
                 temperature=0.0,
             )
-            out = (resp.choices[0].message.content or "").strip()
-            score = float(out)
-        except (ValueError, TypeError):
-            # Non-numeric content - prompt-guard occasionally returns junk on
-            # malformed input. Fail open (regex layer already ran first).
-            return GuardResult(blocked=False)
+            raw = resp.choices[0].message.content
         except Exception as exc:
-            # Network / API failure. Honest production posture: if the
-            # guardrail HTTP call dies we degrade to regex-only rather than
-            # cascading-fail every request.
-            if self._fail_open:
-                return GuardResult(blocked=False)
-            return GuardResult(
-                blocked=True,
-                reason=f"Prompt-Guard unavailable; failing closed for safety ({exc}).",
-                rail="prompt_guard",
-            )
+            # Network / API failure. The exception text is not copied into
+            # the reason: reasons reach the audit log.
+            return self._classifier_failure(f"call failed ({type(exc).__name__})")
+
+        score = parse_probability(raw)
+        if score is None:
+            # Junk, NaN, infinity, or a value outside [0, 1] is a classifier
+            # failure, not an "allowed" verdict, so it follows fail_open.
+            return self._classifier_failure("returned no valid probability")
 
         if score >= self._threshold:
             return GuardResult(
@@ -192,6 +187,26 @@ class _PromptGuardClassifier(LlamaGuardClassifier):
                 rail="prompt_guard",
             )
         return GuardResult(blocked=False)
+
+    def _classifier_failure(self, what: str) -> GuardResult:
+        if self._fail_open:
+            return GuardResult(blocked=False)
+        return GuardResult(
+            blocked=True,
+            reason=f"Prompt-Guard {what}; failing closed for safety.",
+            rail="prompt_guard",
+        )
+
+
+def parse_probability(raw: object) -> float | None:
+    """Return raw as a probability in [0, 1], or None when it is not one."""
+    try:
+        score = float(str(raw).strip()) if raw is not None else None
+    except ValueError:
+        return None
+    if score is None or not math.isfinite(score) or not 0.0 <= score <= 1.0:
+        return None
+    return score
 
 
 def run_security_benchmark(

@@ -166,6 +166,9 @@ Provide your safety assessment for ONLY the last message. \
 Output 'safe' or 'unsafe\\n{{violated_categories}}'."""
 
 
+_LLAMA_GUARD_CATEGORY = re.compile(r"S\d{1,2}(?:,\s*S\d{1,2})*")
+
+
 class LlamaGuardClassifier:
     """Content safety classifier using Meta's Llama-Guard-3 model.
 
@@ -225,17 +228,32 @@ class LlamaGuardClassifier:
                 rail="llama_guard",
             )
 
-        if response.startswith("unsafe"):
-            # Parse category if present: "unsafe\ns2" → "S2"
-            parts = response.split("\n", 1)
-            category = parts[1].strip().upper() if len(parts) > 1 else "unknown"
+        verdict, _, detail = response.partition("\n")
+        verdict = verdict.strip()
+        if verdict == "unsafe":
+            # Parse category if present: "unsafe\ns2" → "S2". Only well-formed
+            # category codes reach the reason; raw model text never does.
+            category = detail.strip().upper()
+            if not _LLAMA_GUARD_CATEGORY.fullmatch(category):
+                category = "unknown"
             return GuardResult(
                 blocked=True,
                 reason=f"Content classified as unsafe (category: {category}).",
                 rail="llama_guard",
             )
+        if verdict == "safe":
+            return GuardResult(blocked=False)
 
-        return GuardResult(blocked=False)
+        # Neither verdict: a malformed answer is a classifier failure, so it
+        # follows the same fail_open policy as an exception.
+        _logger.warning("Llama-Guard returned an unparseable verdict")
+        if self._fail_open:
+            return GuardResult(blocked=False)
+        return GuardResult(
+            blocked=True,
+            reason="Llama-Guard returned an unparseable verdict; failing closed for safety.",
+            rail="llama_guard",
+        )
 
 
 # ---------------------------------------------------------------------------

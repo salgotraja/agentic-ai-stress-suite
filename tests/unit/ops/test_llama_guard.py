@@ -13,6 +13,8 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
+import pytest
+
 from src.ops.security import GuardrailsManager, LlamaGuardClassifier
 
 # ---------------------------------------------------------------------------
@@ -114,6 +116,31 @@ def test_llama_guard_llm_failure_fail_closed() -> None:
     result = clf.classify("What is the capital of France?")
     assert result.blocked is True
     assert result.rail == "llama_guard"
+
+
+@pytest.mark.parametrize("response", ["", "maybe", "I cannot help with that", "sa fe"])
+@pytest.mark.parametrize("fail_open", [True, False])
+def test_llama_guard_unparseable_verdict_follows_fail_open(response: str, fail_open: bool) -> None:
+    """A verdict that is neither 'safe' nor 'unsafe' is a classifier failure."""
+    clf = LlamaGuardClassifier(llm_fn=_make_llm_fn(response), fail_open=fail_open)
+    result = clf.classify("What is the capital of France?")
+    assert result.blocked is (not fail_open)
+    if not fail_open:
+        assert result.rail == "llama_guard"
+
+
+def test_llama_guard_category_rejects_free_text() -> None:
+    """Free text after 'unsafe' is not copied into the reason."""
+    clf = LlamaGuardClassifier(llm_fn=_make_llm_fn("unsafe\nuser alice@corp.com said so"))
+    result = clf.classify("Do something bad.")
+    assert result.blocked is True
+    assert "alice" not in (result.reason or "").lower()
+    assert "unknown" in (result.reason or "")
+
+
+def test_llama_guard_multi_category_kept() -> None:
+    clf = LlamaGuardClassifier(llm_fn=_make_llm_fn("unsafe\nS1,S9"))
+    assert "S1,S9" in (clf.classify("x").reason or "")
 
 
 # ---------------------------------------------------------------------------

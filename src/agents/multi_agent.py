@@ -45,6 +45,10 @@ from src.agents.tools.base import BaseTool
 from src.core.llm_client import UnifiedLLMClient
 from src.core.observability import generate_correlation_id, traced_generation
 
+# Answer budget for roles that write prose (writer, critic, specialist,
+# supervisor). Smaller caps cut drafts and critiques off mid-sentence.
+_ANSWER_MAX_TOKENS = 2000
+
 
 class MultiAgentState(TypedDict):
     """
@@ -308,7 +312,7 @@ Your response:"""
         response = self.llm_client.generate(
             prompt=prompt,
             temperature=self.temperature,
-            max_tokens=500,
+            max_tokens=_ANSWER_MAX_TOKENS,
         )
 
         draft = response.content.strip()
@@ -378,7 +382,7 @@ Write the refined response (2-4 paragraphs):"""
         response = self.llm_client.generate(
             prompt=prompt,
             temperature=self.temperature,
-            max_tokens=500,
+            max_tokens=_ANSWER_MAX_TOKENS,
         )
 
         refined_draft = response.content.strip()
@@ -523,7 +527,7 @@ Your critique:"""
         response = self.llm_client.generate(
             prompt=prompt,
             temperature=self.temperature,
-            max_tokens=400,
+            max_tokens=_ANSWER_MAX_TOKENS,
         )
 
         # Parse critique to extract score
@@ -1028,7 +1032,7 @@ Your response:"""
             response = self.llm_client.generate(
                 prompt=prompt,
                 temperature=self.temperature,
-                max_tokens=500,
+                max_tokens=_ANSWER_MAX_TOKENS,
             )
 
             findings = response.content.strip()
@@ -1600,7 +1604,7 @@ Your response:"""
         response = self.llm_client.generate(
             prompt=prompt,
             temperature=0.3,  # Slight creativity for synthesis
-            max_tokens=400,
+            max_tokens=_ANSWER_MAX_TOKENS,
         )
 
         # Parse decision and reasoning

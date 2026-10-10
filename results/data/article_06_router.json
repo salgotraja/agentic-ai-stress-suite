@@ -1,0 +1,110 @@
+{
+  "timestamp_utc": "2026-10-10T10:28:39Z",
+  "provenance": {
+    "git_commit": "11a953aa20a94c2cdc8e377bdaf8689f578d6e78",
+    "git_dirty": false,
+    "run_date_utc": "2026-10-10T10:28:39Z",
+    "generator_model": null,
+    "anthropic_effort": null,
+    "generator_temperature": 0.7,
+    "router_models": "groq/openai/gpt-oss-20b, groq/openai/gpt-oss-120b"
+  },
+  "config": {
+    "redis_url": "redis://localhost:6379",
+    "embedding_model": "BAAI/bge-base-en-v1.5",
+    "l2_threshold": 0.95,
+    "max_tokens": 2048,
+    "n_queries": 100,
+    "n_runs": 3,
+    "no_llm_mode": false,
+    "sections": [
+      "router"
+    ]
+  },
+  "dataset": {
+    "exact_duplicate": 20,
+    "similar": 30,
+    "unique": 50
+  },
+  "router": {
+    "simple_model": "openai/gpt-oss-20b",
+    "complex_model": "openai/gpt-oss-120b",
+    "baseline_model": "gpt-4o",
+    "baseline_meaning": "repricing estimate: the routed calls' measured tokens priced at GPT-4o rates; GPT-4o was not called",
+    "pricing_per_1m_tokens_usd": {
+      "openai/gpt-oss-20b": {
+        "input": 0.075,
+        "output": 0.3
+      },
+      "openai/gpt-oss-120b": {
+        "input": 0.15,
+        "output": 0.6
+      },
+      "gpt-4o": {
+        "input": 2.5,
+        "output": 10.0
+      }
+    },
+    "pricing_source": "_PRICES in benchmarks/run_article_06.py at the recorded git commit",
+    "runs": [
+      {
+        "simple_queries": 97,
+        "complex_queries": 3,
+        "simple_pct": 97.0,
+        "complex_pct": 3.0,
+        "cost_with_routing_usd": 0.013502850000000025,
+        "cost_no_routing_usd": 0.4264999999999999,
+        "routing_savings_usd": 0.41299714999999987,
+        "routing_savings_pct": 96.8340328253224,
+        "latency_p50_ms": 474.28166649478953,
+        "latency_p95_ms": 956.1117187404305
+      },
+      {
+        "simple_queries": 97,
+        "complex_queries": 3,
+        "simple_pct": 97.0,
+        "complex_pct": 3.0,
+        "cost_with_routing_usd": 0.013410750000000025,
+        "cost_no_routing_usd": 0.4234299999999999,
+        "routing_savings_usd": 0.4100192499999999,
+        "routing_savings_pct": 96.83282951137141,
+        "latency_p50_ms": 412.37627099326346,
+        "latency_p95_ms": 1023.2417795195943
+      },
+      {
+        "simple_queries": 97,
+        "complex_queries": 3,
+        "simple_pct": 97.0,
+        "complex_pct": 3.0,
+        "cost_with_routing_usd": 0.013614150000000023,
+        "cost_no_routing_usd": 0.43021,
+        "routing_savings_usd": 0.41659584999999993,
+        "routing_savings_pct": 96.83546407568396,
+        "latency_p50_ms": 498.45214548986405,
+        "latency_p95_ms": 958.4790193970548
+      }
+    ],
+    "summary": {
+      "simple_queries_mean": 97,
+      "simple_queries_std": 0.0,
+      "complex_queries_mean": 3,
+      "complex_queries_std": 0.0,
+      "simple_pct_mean": 97.0,
+      "simple_pct_std": 0.0,
+      "complex_pct_mean": 3.0,
+      "complex_pct_std": 0.0,
+      "cost_with_routing_usd_mean": 0.013509,
+      "cost_with_routing_usd_std": 0.000102,
+      "cost_no_routing_usd_mean": 0.426713,
+      "cost_no_routing_usd_std": 0.003395,
+      "routing_savings_usd_mean": 0.413204,
+      "routing_savings_usd_std": 0.003293,
+      "routing_savings_pct_mean": 96.834109,
+      "routing_savings_pct_std": 0.001319,
+      "latency_p50_ms_mean": 461.703361,
+      "latency_p50_ms_std": 44.395094,
+      "latency_p95_ms_mean": 979.277506,
+      "latency_p95_ms_std": 38.092572
+    }
+  }
+}

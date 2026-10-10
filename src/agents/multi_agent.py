@@ -553,7 +553,8 @@ Your critique:"""
         """
         lines = critique.strip().split("\n")
         for line in lines[:5]:  # Check first 5 lines
-            if line.strip().upper().startswith("SCORE:"):
+            # Models often bold the label ("**SCORE:** 4"); strip markdown first.
+            if line.strip().lstrip("*_# ").upper().startswith("SCORE:"):
                 score_str = line.split(":", 1)[1].strip()
                 # Extract all consecutive digits
                 digits = ""

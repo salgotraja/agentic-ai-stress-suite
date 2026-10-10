@@ -16,7 +16,7 @@
 #   scripts/run_article_08_local.sh infra-down
 #
 # Settings (env, defaults shown): A08_FAKE_LATENCY_MS=1000, A08_CPUS_PER_WORKER=1.5,
-# A08_MEM_PER_WORKER_GB=2, A08_TIMEOUT_S=30, A08_RECOVERY_S=90, A08_PORT=8088,
+# A08_MEM_PER_WORKER_GB=2, A08_TIMEOUT_S=30, A08_WORKER_HEALTHCHECK_S=5, A08_RECOVERY_S=90, A08_PORT=8088,
 # A08_IMAGE=rag-agent-api:latest, A08_EMBED_CACHE=.cache/embeddings.
 set -euo pipefail
 
@@ -28,6 +28,9 @@ LATENCY_MS="${A08_FAKE_LATENCY_MS:-1000}"
 CPUS_PER_WORKER="${A08_CPUS_PER_WORKER:-1.5}"
 MEM_PER_WORKER_GB="${A08_MEM_PER_WORKER_GB:-2}"
 TIMEOUT_S="${A08_TIMEOUT_S:-30}"
+# uvicorn's supervisor pings each worker (multi-worker mode only) and SIGKILLs
+# one that does not answer within this many seconds. 5 is uvicorn's default.
+WORKER_HEALTHCHECK_S="${A08_WORKER_HEALTHCHECK_S:-5}"
 RECOVERY_S="${A08_RECOVERY_S:-90}"
 EMBED_CACHE="${A08_EMBED_CACHE:-${ROOT}/.cache/embeddings}"
 OUT="${A08_OUT:?set A08_OUT to the output directory}"
@@ -60,14 +63,14 @@ api_up() {
     -e OBSERVABILITY_ENABLED=false -e HF_HUB_OFFLINE=1 \
     -v "${ROOT}/src:/app/src:ro" -v "${EMBED_CACHE}:/app/.cache/embeddings" \
     "$IMAGE" uvicorn src.ops.deployment.api:app --host 0.0.0.0 --port 8000 \
-    --workers "$workers" >/dev/null
+    --workers "$workers" --timeout-worker-healthcheck "$WORKER_HEALTHCHECK_S" >/dev/null
   until curl -sf "${HOST}/ready" >/dev/null; do sleep 2; done
   # Warm every worker: one authenticated /query per worker slot, several times.
   for _ in $(seq 1 $((workers * 4))); do
     curl -sf -o /dev/null -H "Authorization: Bearer $(token)" -H 'content-type: application/json' \
       -d '{"query":"warm up"}' "${HOST}/query"
   done
-  echo "{\"workers\": ${workers}, \"cpus\": ${cpus}, \"memory_gb\": ${mem}, \"fake_latency_ms\": ${LATENCY_MS}, \"health\": \"$([ "$health_async" = async-health ] && echo async || echo sync)\", \"image\": \"$(docker image inspect "$IMAGE" --format '{{.Id}}')\", \"git_commit\": \"$(git -C "$ROOT" rev-parse HEAD)\", \"git_dirty\": $([ -n "$(git -C "$ROOT" status --porcelain -- src scripts benchmarks)" ] && echo true || echo false)}" \
+  echo "{\"workers\": ${workers}, \"cpus\": ${cpus}, \"memory_gb\": ${mem}, \"fake_latency_ms\": ${LATENCY_MS}, \"worker_healthcheck_s\": ${WORKER_HEALTHCHECK_S}, \"health\": \"$([ "$health_async" = async-health ] && echo async || echo sync)\", \"image\": \"$(docker image inspect "$IMAGE" --format '{{.Id}}')\", \"git_commit\": \"$(git -C "$ROOT" rev-parse HEAD)\", \"git_dirty\": $([ -n "$(git -C "$ROOT" status --porcelain -- src scripts benchmarks)" ] && echo true || echo false)}" \
     >"${OUT}/api_config_w${workers}${health_async:+_async}_$(date +%s).json"
   echo "w${workers}${health_async:+_async}_$(date +%s)" >"${OUT}/.current_api"
 }

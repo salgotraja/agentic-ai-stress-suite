@@ -1,0 +1,1 @@
+{"workers": 2, "cpus": 3.0, "memory_gb": 4, "fake_latency_ms": 1000, "worker_healthcheck_s": 5, "health": "sync", "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84", "git_commit": "0514430cb97f363a3eaa08e1362e64843f726bf1", "git_dirty": true}

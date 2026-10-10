@@ -27,6 +27,7 @@ import json
 import os
 import random
 import re
+import subprocess
 import sys
 import time
 from dataclasses import dataclass
@@ -53,6 +54,18 @@ _SCENARIOS: dict[str, str] = {
 
 # Per-scenario configuration, captured here so the article body can quote the
 # exact locust invocation used. Mirrors src/ops/deployment/load_test.py.
+# kubectl top logs captured during the runs. The phase-to-scenario mapping is
+# not written in the logs; it follows the phase numbering and the sample spans
+# (phase 3 is the only 15 s cadence log, matching the 120 s spike). Phase 4 was
+# not captured.
+_KUBECTL_TOP_LOGS: dict[str, str] = {
+    "rampup_r2": "k_top_phase1.log",
+    "sustained_r2": "k_top_phase2.log",
+    "spike_r2": "k_top_phase3.log",
+    "sustained_r5": "k_top_phase5.log",
+}
+_POD_CPU_LIMIT_M = 1500
+
 _SCENARIO_CONFIG: dict[str, dict[str, Any]] = {
     "rampup_r2": {"users": 100, "spawn_rate": 5, "duration_s": 300, "replicas": 2},
     "sustained_r2": {"users": 50, "spawn_rate": 10, "duration_s": 300, "replicas": 2},
@@ -153,6 +166,58 @@ def _ingest_history(prefix: Path) -> list[dict[str, float]]:
     return series
 
 
+def _successful_rps(record: dict[str, Any], duration_s: float) -> float:
+    """Completed-without-error requests per second over the run duration."""
+    return round((record["requests"] - record["failures"]) / duration_s, 3)
+
+
+def _ingest_kubectl_top(path: Path) -> dict[str, Any]:
+    """Parse one kubectl top log into per-pod CPU and memory series.
+
+    Format: '=== t=<seconds>s ===' headers, then '<pod> <cpu>m <mem>Mi' lines,
+    or an 'error: ...' line when metrics were unavailable for a pod.
+    """
+    pods: dict[str, list[dict[str, float]]] = {}
+    errors: list[dict[str, Any]] = []
+    t = 0.0
+    for line in path.read_text().splitlines():
+        header = re.match(r"=== t=(\d+)s ===", line)
+        if header:
+            t = float(header.group(1))
+            continue
+        if line.startswith("error:"):
+            errors.append({"t_s": t, "message": line})
+            continue
+        parts = line.split()
+        if len(parts) == 3 and parts[1].endswith("m") and parts[2].endswith("Mi"):
+            pods.setdefault(parts[0], []).append(
+                {"t_s": t, "cpu_m": float(parts[1][:-1]), "mem_mi": float(parts[2][:-2])}
+            )
+
+    per_pod: dict[str, Any] = {}
+    for pod, samples in pods.items():
+        loaded = [x for x in samples if x["t_s"] > 0]
+        per_pod[pod] = {
+            "samples": len(samples),
+            "cpu_m_max": max(x["cpu_m"] for x in samples),
+            "cpu_m_median_after_t0": (
+                float(np.median([x["cpu_m"] for x in loaded])) if loaded else None
+            ),
+            "mem_mi_t0": samples[0]["mem_mi"],
+            "mem_mi_max": max(x["mem_mi"] for x in samples),
+            "mem_mi_last": samples[-1]["mem_mi"],
+            "mem_mi_change_t0_to_last": samples[-1]["mem_mi"] - samples[0]["mem_mi"],
+        }
+    cpu_max = max((v["cpu_m_max"] for v in per_pod.values()), default=0.0)
+    return {
+        "source": path.name,
+        "per_pod": per_pod,
+        "cpu_m_max_any_pod": cpu_max,
+        "cpu_max_share_of_limit": round(cpu_max / _POD_CPU_LIMIT_M, 3),
+        "errors": errors,
+    }
+
+
 def _derive_throughput_curve(history: list[dict[str, float]]) -> list[dict[str, float]]:
     """Bucket the rampup history by user count and average within each bucket.
 
@@ -200,7 +265,17 @@ def _build_methodology() -> dict[str, Any]:
         "node_count": 1,
         "host_hardware": "Apple M4 Pro, 48GB RAM",
         "transport": "NodePort 30080 (Service-level kube-proxy LB across replicas)",
-        "llm": "Groq openai/gpt-oss-20b (cloud) for /query and /agent",
+        "llm": (
+            "UnifiedLLMClient fallback chain as of f8bf888: Groq llama-3.1-8b-instant "
+            "first, then llama-3.3-70b-versatile and other providers. The bundle does "
+            "not record which model served each call. (An earlier version of this "
+            "field said gpt-oss-20b; the client at f8bf888 has no gpt-oss model.)"
+        ),
+        "temperature": (
+            "effective 0.7 for both endpoints: /query uses the 0.7 default, and the "
+            "ReAct agent's requested 0.0 was replaced by the default because the "
+            "client used `temperature or default`. No override is recorded."
+        ),
         "embedding_model": "BAAI/bge-base-en-v1.5",
         "embedding_device": "cpu (Linux containers cannot use the host MPS backend)",
         "vector_db": "Chroma in-cluster, PVC-backed (5Gi RWO hostpath), naive_rag (338 chunks)",
@@ -208,8 +283,20 @@ def _build_methodology() -> dict[str, Any]:
         "endpoints": {
             "/query": "naive RAG, single dense retriever, top_k=5",
             "/agent": "LangChain ReAct, max_iterations=5",
-            "/health": "no external dependencies",
+            "/health": "no external dependencies; sync def, so it runs in the same "
+            "AnyIO threadpool (40 threads per process) as /query and /agent",
         },
+        "auth": (
+            "none. The CSVs were committed in f8bf888 (2026-05-09 16:31 IST); bearer "
+            "auth on /query and /agent landed in 9a5461f (2026-05-09 23:37 IST). "
+            "load_test.py sent no Authorization header and the sustained runs "
+            "recorded zero failures, consistent with an unauthenticated API."
+        ),
+        "load_model": (
+            "closed loop: each Locust user waits for its response, then thinks "
+            "0.5-2.5 s. User count fixes concurrency, not arrival rate."
+        ),
+        "client_timeout": "none set (requests library default: wait indefinitely)",
         "load_pattern": {
             "task_weights": {"/query [rag]": 7, "/agent": 2, "/health": 1},
             "wait_time_between_requests_s": [0.5, 2.5],
@@ -266,11 +353,12 @@ def _build_replica_comparison(scenarios: dict[str, dict[str, Any]]) -> dict[str,
         "throughput_gain_ratio": round(r5["rps"] / r2["rps"], 3) if r2["rps"] else None,
         "load_at_test_users": 50,
         "interpretation": (
-            "5x replicas at sustained 50 users delivered 8% extra throughput. "
-            "Both runs posted zero failures, so neither was capacity-bound; "
-            "this measures behaviour BELOW the saturation cliff, not at it. "
-            "Whether r=5 raises the cliff (the 200-user spike that broke r=2) "
-            "is unmeasured here -- see future_work in this JSON."
+            f"2.5x the replicas (2 -> 5) at 50 closed-loop users gave a "
+            f"{r5['rps'] / r2['rps']:.3f}x request rate. Both runs had zero failures. In a closed loop the "
+            "offered rate falls as latency rises, so this is an observation at "
+            "one concurrency and think-time policy, not a capacity ceiling, and "
+            "it does not identify which resource limited throughput. Whether "
+            "r=5 survives the 200-user spike that broke r=2 was not measured."
         ),
     }
 
@@ -300,12 +388,9 @@ def _build_saturation_cliff(scenarios: dict[str, dict[str, Any]]) -> dict[str, A
         "failure_rate": round(fail_rate, 4),
         "primary_error": primary_error,
         "errors_by_type": by_error,
-        "post_test_observation": (
-            "Both pods were SIGKILLed by the kubelet liveness probe at t~110s "
-            "(5 consecutive failed /health probes inside the 75s window). The "
-            "Deployment self-healed -- both pods restarted cleanly without "
-            "operator intervention. p50=2ms is the connection-drop signature, "
-            "not a real latency."
+        "p50_note": (
+            "Locust percentiles mix failed and successful requests; p50=2-3 ms "
+            "here is the latency of immediately failed requests, not service."
         ),
     }
 
@@ -313,11 +398,9 @@ def _build_saturation_cliff(scenarios: dict[str, dict[str, Any]]) -> dict[str, A
 def _build_event_loop_contention(scenarios: dict[str, dict[str, Any]]) -> dict[str, Any]:
     """Same code, same r=2, two load levels: the cleanest control variable.
 
-    Phase 1 (rampup_r2, peaks at 100 users): /health p95 = 7200ms.
-    Phase 2 (sustained_r2, 50 users):        /health p95 = 14ms.
-    Halving concurrency frees the request-serving path. Current API routes are
-    synchronous FastAPI endpoints, so the publishable claim is request-worker
-    contention rather than a literal async-event-loop block.
+    rampup_r2 (peaks at 100 users) against sustained_r2 (50 users). This is
+    congestion evidence only: the bundle has no threadpool, queue, embedding,
+    or provider timings, so it cannot isolate the mechanism.
     """
     rampup_health = scenarios["rampup_r2"]["by_endpoint"].get("/health", {})
     sustained_health = scenarios["sustained_r2"]["by_endpoint"].get("/health", {})
@@ -329,73 +412,75 @@ def _build_event_loop_contention(scenarios: dict[str, dict[str, Any]]) -> dict[s
         "medium_load_health_p95_ms": sustained_p95,
         "ratio": round(rampup_p95 / sustained_p95, 1) if sustained_p95 else None,
         "explanation": (
-            "Same code, same replica count; only concurrent user count changes. "
-            "/health has zero external dependencies, so its tail latency is a "
-            "direct measure of request-serving pressure. The current API uses "
-            "synchronous FastAPI endpoints and runs BGE embedding in the request "
-            "path; under load, those long-running /query calls delay even cheap "
-            "health responses. Halving offered load frees the request path."
+            "Same code and replica count; the user count differs (and rampup "
+            "is not steady state). /health has no external dependencies, so a "
+            "slow /health shows request-serving pressure. /health is a sync "
+            "endpoint sharing the threadpool with /query and /agent, which makes "
+            "threadpool queueing a candidate mechanism; this bundle records no "
+            "occupancy data to confirm it."
         ),
     }
 
 
-def _build_memory_behavior() -> dict[str, Any]:
-    """Working-set growth across phases -- debunks a leak hypothesis.
+def _build_unverified_operator_notes() -> list[dict[str, str]]:
+    """Statements from the May 2026 run notes that no committed artifact records.
 
-    Numbers anchored to /tmp/k_top_phase{2,5}.log captured during the runs;
-    when re-running, regenerate those logs and re-compute. This is the only
-    field in the measured JSON that is hand-typed rather than CSV-derived,
-    because kubectl top output isn't recorded as part of the locust outputs.
+    Kept so the history is visible, never used as evidence. The bundle has no
+    pod events, termination reasons, or restart timestamps.
     """
-    return {
-        "phase_2_sustained_r2_5min": {
-            "users_per_pod": 25,
-            "vsf4c_creep_mi": 204,
-            "f4dcr_creep_mi": 9,
-            "asymmetric": True,
-        },
-        "phase_5_sustained_r5_5min": {
-            "users_per_pod": 10,
-            "avg_creep_mi_across_5_pods": 27,
-            "asymmetric": False,
-        },
-        "interpretation": (
-            "What looked like a Phase 2 leak (one pod gaining 204Mi over 5min "
-            "while its peer gained 9Mi) was load-proportional working-set growth: "
-            "at one third the per-pod load in Phase 5 (10 users/pod vs 25), the "
-            "creep dropped roughly 7x. Python does not aggressively return memory "
-            "to the OS under steady load; this is the expected RSS shape, not a leak."
-        ),
-        "source": "kubectl top samples captured at 30s cadence during the runs",
-    }
-
-
-def _build_key_findings() -> list[str]:
-    """Top-line takeaways. The article body expands each into a section."""
     return [
-        "5x replicas at sustained 50 users delivered 8% extra throughput. "
-        "Both runs were below the cliff (zero failures), so this measures "
-        "scaling efficiency, not capacity. Cloud-LLM round-trip latency, "
-        "not pod CPU, was the gating factor at this load.",
-        "/health p95 tracks FastAPI request-worker pressure: 7200ms at peak 100 "
-        "concurrent users, 14ms at sustained 50 users (same code, same r=2). "
-        "Sync embedding inference inside the request path is the cause.",
-        "The 2-replica setup hits a saturation cliff at 200 users: 85% "
-        "RemoteDisconnected failures, both pods SIGKILLed by liveness probe "
-        "at t~110s, cluster self-heals cleanly without operator intervention.",
-        "Default 1s liveness-probe timeout SIGKILLs busy-but-healthy pods. "
-        "Tuned 5s timeout / failureThreshold=5 (75s window) absorbs realistic "
-        "LLM-bound bursts while still killing genuinely stalled pods.",
-        "Apparent memory creep at 25 users/pod (+204Mi/5min on one pod) "
-        "vanishes at 10 users/pod (+27Mi/5min). Working-set growth, not a leak.",
-        "Pod CPU was never the bottleneck: 79% peak during the spike, "
-        "25-30% steady at sustained 50 users. Adding pods does not relieve "
-        "an LLM-egress-bound queue.",
+        {
+            "note": "Both pods were SIGKILLed by the kubelet liveness probe at t~110s "
+            "of spike_r2 and restarted without operator intervention.",
+            "status": "unverified: no kubectl events or termination reasons were saved. "
+            "k_top_phase3.log shows metrics unavailable for one pod at t=120s and "
+            "both pods at about half their prior memory at t=135s, which fits a "
+            "restart but does not say why (memory was 1714-1819Mi of a 2Gi limit).",
+        },
+        {
+            "note": "A 1 s liveness timeout restarted busy-but-healthy pods during an "
+            "earlier attempt; 5 s timeout and failureThreshold=5 were used for these runs.",
+            "status": "unverified: the earlier attempt left no artifact.",
+        },
+        {
+            "note": "Memory creep +204Mi/+9Mi (r=2) and +27Mi average (r=5) over 5 min.",
+            "status": "not reproduced: these figures were hand-typed and do not match "
+            "the committed kubectl_top logs; see kubectl_top in this JSON.",
+        },
+    ]
+
+
+def _build_key_findings(scenarios: dict[str, dict[str, Any]]) -> list[str]:
+    """Bounded takeaways; every number here is computed from the bundle."""
+    s2 = scenarios["sustained_r2"]
+    s5 = scenarios["sustained_r5"]
+    spike = scenarios["spike_r2"]
+    ramp = scenarios["rampup_r2"]
+    return [
+        f"At 50 closed-loop users, 5 replicas completed "
+        f"{s5['aggregate']['requests']} requests against "
+        f"{s2['aggregate']['requests']} for 2 replicas, with zero failures in both. "
+        "An observation at one concurrency, not a capacity ceiling.",
+        f"/health p95 was {ramp['by_endpoint']['/health']['p95_ms']:.0f} ms in the "
+        f"100-user ramp and {s2['by_endpoint']['/health']['p95_ms']:.0f} ms at 50 "
+        "sustained users (r=2): congestion evidence, mechanism not isolated.",
+        f"The 200-user spike at r=2 failed {spike['aggregate']['failures']} of "
+        f"{spike['aggregate']['requests']} requests, mostly RemoteDisconnected. "
+        "Why the pods dropped connections is not recorded.",
+        f"Peak sampled pod CPU during the spike was "
+        f"{spike['kubectl_top']['cpu_m_max_any_pod']:.0f}m of a "
+        f"{_POD_CPU_LIMIT_M}m limit. kubectl top samples every 15-30 s and "
+        "cannot rule out short CPU saturation.",
     ]
 
 
 def _build_future_work() -> list[str]:
     return [
+        "occupancy: record threadpool busy/waiting, embedding and provider "
+        "timings to isolate the congestion mechanism (done locally with a fake "
+        "model in article_08_local_2026-10-10, not on Kubernetes).",
+        "events: save kubectl get events and pod termination reasons with "
+        "timestamps for every run.",
         "spike_r5: rerun the 200-user spike against the 5-replica deployment to "
         "test whether more pods raise the saturation cliff or just multiply the "
         "queue depth at the same throughput ceiling.",
@@ -419,12 +504,19 @@ def build_measured_results(csv_dir: Path) -> dict[str, Any]:
                 f"missing locust output for scenario '{name}': expected {prefix_path}_stats.csv"
             )
         ingested = _ingest_stats(prefix_path)
+        duration_s = float(_SCENARIO_CONFIG[name]["duration_s"])
         scenarios[name] = {
             "config": _SCENARIO_CONFIG[name],
             "aggregate": ingested["aggregate"],
             "by_endpoint": ingested["by_endpoint"],
+            "successful_rps_by_endpoint": {
+                ep: _successful_rps(rec, duration_s) for ep, rec in ingested["by_endpoint"].items()
+            },
             "failures_breakdown": ingested["failures_breakdown"],
         }
+        top_log = csv_dir / "kubectl_top" / _KUBECTL_TOP_LOGS[name]
+        if top_log.exists():
+            scenarios[name]["kubectl_top"] = _ingest_kubectl_top(top_log)
         histories[name] = _ingest_history(prefix_path)
 
     throughput_curve = _derive_throughput_curve(histories["rampup_r2"])
@@ -437,8 +529,8 @@ def build_measured_results(csv_dir: Path) -> dict[str, Any]:
         "replica_comparison": _build_replica_comparison(scenarios),
         "saturation_cliff": _build_saturation_cliff(scenarios),
         "event_loop_contention": _build_event_loop_contention(scenarios),
-        "memory_behavior": _build_memory_behavior(),
-        "key_findings": _build_key_findings(),
+        "unverified_operator_notes": _build_unverified_operator_notes(),
+        "key_findings": _build_key_findings(scenarios),
         "future_work": _build_future_work(),
     }
 
@@ -595,6 +687,19 @@ def _print_summary(results: dict[str, Any]) -> None:
         print(f"  peak_rps={peak['requests_per_sec']} at concurrency={int(peak['concurrency'])}")
 
 
+def _provenance() -> dict[str, Any]:
+    def git(*args: str) -> str:
+        return subprocess.run(
+            ["git", *args], cwd=PROJECT_ROOT, capture_output=True, text=True, check=True
+        ).stdout.strip()
+
+    return {
+        "git_commit": git("rev-parse", "HEAD"),
+        "git_dirty": bool(git("status", "--porcelain", "--", "benchmarks", "src")),
+        "note": "parser run; the load itself ran on 2026-05-09 (see methodology.auth)",
+    }
+
+
 def main(argv: list[str] | None = None) -> None:
     if os.getenv("SMOKE_TEST"):
         print(f"[smoke] {Path(__file__).stem}: imports OK, exiting early")
@@ -607,8 +712,14 @@ def main(argv: list[str] | None = None) -> None:
     else:
         results = build_simulated_results()
     results["timestamp_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    results["provenance"] = _provenance()
     if args.mode == "measured":
-        results["source_csv_dir"] = str(args.csv_dir)
+        csv_dir = args.csv_dir.resolve()
+        results["source_csv_dir"] = (
+            "<bench-worktree>/" + str(csv_dir.relative_to(PROJECT_ROOT.resolve()))
+            if csv_dir.is_relative_to(PROJECT_ROOT.resolve())
+            else csv_dir.name
+        )
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(results, indent=2))

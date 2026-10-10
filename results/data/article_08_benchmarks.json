@@ -5,7 +5,8 @@
     "node_count": 1,
     "host_hardware": "Apple M4 Pro, 48GB RAM",
     "transport": "NodePort 30080 (Service-level kube-proxy LB across replicas)",
-    "llm": "Groq llama-3.1-8b-instant (cloud) for /query and /agent",
+    "llm": "UnifiedLLMClient fallback chain as of f8bf888: Groq llama-3.1-8b-instant first, then llama-3.3-70b-versatile and other providers. The bundle does not record which model served each call. (An earlier version of this field said gpt-oss-20b; the client at f8bf888 has no gpt-oss model.)",
+    "temperature": "effective 0.7 for both endpoints: /query uses the 0.7 default, and the ReAct agent's requested 0.0 was replaced by the default because the client used `temperature or default`. No override is recorded.",
     "embedding_model": "BAAI/bge-base-en-v1.5",
     "embedding_device": "cpu (Linux containers cannot use the host MPS backend)",
     "vector_db": "Chroma in-cluster, PVC-backed (5Gi RWO hostpath), naive_rag (338 chunks)",
@@ -13,8 +14,11 @@
     "endpoints": {
       "/query": "naive RAG, single dense retriever, top_k=5",
       "/agent": "LangChain ReAct, max_iterations=5",
-      "/health": "no external dependencies"
+      "/health": "no external dependencies; sync def, so it runs in the same AnyIO threadpool (40 threads per process) as /query and /agent"
     },
+    "auth": "none. The CSVs were committed in f8bf888 (2026-05-09 16:31 IST); bearer auth on /query and /agent landed in 9a5461f (2026-05-09 23:37 IST). load_test.py sent no Authorization header and the sustained runs recorded zero failures, consistent with an unauthenticated API.",
+    "load_model": "closed loop: each Locust user waits for its response, then thinks 0.5-2.5 s. User count fixes concurrency, not arrival rate.",
+    "client_timeout": "none set (requests library default: wait indefinitely)",
     "load_pattern": {
       "task_weights": {
         "/query [rag]": 7,
@@ -107,7 +111,38 @@
           "avg_ms": 15685.33
         }
       },
-      "failures_breakdown": []
+      "successful_rps_by_endpoint": {
+        "/agent": 0.89,
+        "/health": 0.487,
+        "/query [rag]": 3.147
+      },
+      "failures_breakdown": [],
+      "kubectl_top": {
+        "source": "k_top_phase1.log",
+        "per_pod": {
+          "rag-agent-api-7676c6bfc4-f4dcr": {
+            "samples": 18,
+            "cpu_m_max": 964.0,
+            "cpu_m_median_after_t0": 412.0,
+            "mem_mi_t0": 1081.0,
+            "mem_mi_max": 1515.0,
+            "mem_mi_last": 1485.0,
+            "mem_mi_change_t0_to_last": 404.0
+          },
+          "rag-agent-api-7676c6bfc4-vsf4c": {
+            "samples": 18,
+            "cpu_m_max": 1164.0,
+            "cpu_m_median_after_t0": 433.0,
+            "mem_mi_t0": 982.0,
+            "mem_mi_max": 1412.0,
+            "mem_mi_last": 1381.0,
+            "mem_mi_change_t0_to_last": 399.0
+          }
+        },
+        "cpu_m_max_any_pod": 1164.0,
+        "cpu_max_share_of_limit": 0.776,
+        "errors": []
+      }
     },
     "sustained_r2": {
       "config": {
@@ -162,7 +197,38 @@
           "avg_ms": 9095.85
         }
       },
-      "failures_breakdown": []
+      "successful_rps_by_endpoint": {
+        "/agent": 0.747,
+        "/health": 0.397,
+        "/query [rag]": 2.49
+      },
+      "failures_breakdown": [],
+      "kubectl_top": {
+        "source": "k_top_phase2.log",
+        "per_pod": {
+          "rag-agent-api-7676c6bfc4-f4dcr": {
+            "samples": 12,
+            "cpu_m_max": 678.0,
+            "cpu_m_median_after_t0": 339.0,
+            "mem_mi_t0": 1485.0,
+            "mem_mi_max": 1526.0,
+            "mem_mi_last": 1463.0,
+            "mem_mi_change_t0_to_last": -22.0
+          },
+          "rag-agent-api-7676c6bfc4-vsf4c": {
+            "samples": 12,
+            "cpu_m_max": 777.0,
+            "cpu_m_median_after_t0": 381.0,
+            "mem_mi_t0": 1389.0,
+            "mem_mi_max": 1593.0,
+            "mem_mi_last": 1584.0,
+            "mem_mi_change_t0_to_last": 195.0
+          }
+        },
+        "cpu_m_max_any_pod": 777.0,
+        "cpu_max_share_of_limit": 0.518,
+        "errors": []
+      }
     },
     "spike_r2": {
       "config": {
@@ -217,6 +283,11 @@
           "avg_ms": 3747.12
         }
       },
+      "successful_rps_by_endpoint": {
+        "/agent": 0.983,
+        "/health": 0.508,
+        "/query [rag]": 3.8
+      },
       "failures_breakdown": [
         {
           "method": "POST",
@@ -248,7 +319,38 @@
           "error": "ConnectionResetError(54, 'Connection reset by peer')",
           "occurrences": 65
         }
-      ]
+      ],
+      "kubectl_top": {
+        "source": "k_top_phase3.log",
+        "per_pod": {
+          "rag-agent-api-7676c6bfc4-f4dcr": {
+            "samples": 9,
+            "cpu_m_max": 1179.0,
+            "cpu_m_median_after_t0": 473.0,
+            "mem_mi_t0": 1455.0,
+            "mem_mi_max": 1731.0,
+            "mem_mi_last": 892.0,
+            "mem_mi_change_t0_to_last": -563.0
+          },
+          "rag-agent-api-7676c6bfc4-vsf4c": {
+            "samples": 9,
+            "cpu_m_max": 1181.0,
+            "cpu_m_median_after_t0": 495.5,
+            "mem_mi_t0": 1580.0,
+            "mem_mi_max": 1825.0,
+            "mem_mi_last": 841.0,
+            "mem_mi_change_t0_to_last": -739.0
+          }
+        },
+        "cpu_m_max_any_pod": 1181.0,
+        "cpu_max_share_of_limit": 0.787,
+        "errors": [
+          {
+            "t_s": 120.0,
+            "message": "error: Metrics not available for pod default/rag-agent-api-7676c6bfc4-f4dcr, age: 1h11m15.713225s"
+          }
+        ]
+      }
     },
     "sustained_r5": {
       "config": {
@@ -303,7 +405,65 @@
           "avg_ms": 8901.45
         }
       },
-      "failures_breakdown": []
+      "successful_rps_by_endpoint": {
+        "/agent": 0.767,
+        "/health": 0.427,
+        "/query [rag]": 2.72
+      },
+      "failures_breakdown": [],
+      "kubectl_top": {
+        "source": "k_top_phase5.log",
+        "per_pod": {
+          "rag-agent-api-7676c6bfc4-bm85w": {
+            "samples": 12,
+            "cpu_m_max": 460.0,
+            "cpu_m_median_after_t0": 190.0,
+            "mem_mi_t0": 878.0,
+            "mem_mi_max": 1057.0,
+            "mem_mi_last": 1053.0,
+            "mem_mi_change_t0_to_last": 175.0
+          },
+          "rag-agent-api-7676c6bfc4-d7kdh": {
+            "samples": 12,
+            "cpu_m_max": 417.0,
+            "cpu_m_median_after_t0": 144.0,
+            "mem_mi_t0": 864.0,
+            "mem_mi_max": 1025.0,
+            "mem_mi_last": 1021.0,
+            "mem_mi_change_t0_to_last": 157.0
+          },
+          "rag-agent-api-7676c6bfc4-f4dcr": {
+            "samples": 12,
+            "cpu_m_max": 533.0,
+            "cpu_m_median_after_t0": 188.0,
+            "mem_mi_t0": 743.0,
+            "mem_mi_max": 1066.0,
+            "mem_mi_last": 1066.0,
+            "mem_mi_change_t0_to_last": 323.0
+          },
+          "rag-agent-api-7676c6bfc4-vsf4c": {
+            "samples": 12,
+            "cpu_m_max": 317.0,
+            "cpu_m_median_after_t0": 85.0,
+            "mem_mi_t0": 534.0,
+            "mem_mi_max": 961.0,
+            "mem_mi_last": 959.0,
+            "mem_mi_change_t0_to_last": 425.0
+          },
+          "rag-agent-api-7676c6bfc4-w55ft": {
+            "samples": 12,
+            "cpu_m_max": 451.0,
+            "cpu_m_median_after_t0": 149.0,
+            "mem_mi_t0": 902.0,
+            "mem_mi_max": 1027.0,
+            "mem_mi_last": 1024.0,
+            "mem_mi_change_t0_to_last": 122.0
+          }
+        },
+        "cpu_m_max_any_pod": 533.0,
+        "cpu_max_share_of_limit": 0.355,
+        "errors": []
+      }
     }
   },
   "throughput_curve": [
@@ -487,7 +647,7 @@
     },
     "throughput_gain_ratio": 1.078,
     "load_at_test_users": 50,
-    "interpretation": "5x replicas at sustained 50 users delivered 8% extra throughput. Both runs posted zero failures, so neither was capacity-bound; this measures behaviour BELOW the saturation cliff, not at it. Whether r=5 raises the cliff (the 200-user spike that broke r=2) is unmeasured here -- see future_work in this JSON."
+    "interpretation": "2.5x the replicas (2 -> 5) at 50 closed-loop users gave a 1.078x request rate. Both runs had zero failures. In a closed loop the offered rate falls as latency rises, so this is an observation at one concurrency and think-time policy, not a capacity ceiling, and it does not identify which resource limited throughput. Whether r=5 survives the 200-user spike that broke r=2 was not measured."
   },
   "saturation_cliff": {
     "scenario": "spike_r2",
@@ -502,42 +662,48 @@
       "RemoteDisconnected": 3633,
       "ConnectionResetError": 91
     },
-    "post_test_observation": "Both pods were SIGKILLed by the kubelet liveness probe at t~110s (5 consecutive failed /health probes inside the 75s window). The Deployment self-healed -- both pods restarted cleanly without operator intervention. p50=2ms is the connection-drop signature, not a real latency."
+    "p50_note": "Locust percentiles mix failed and successful requests; p50=2-3 ms here is the latency of immediately failed requests, not service."
   },
   "event_loop_contention": {
     "comparison": "rampup_r2 (peak 100 users) vs sustained_r2 (50 users), both r=2",
     "high_load_health_p95_ms": 7200.0,
     "medium_load_health_p95_ms": 14.0,
     "ratio": 514.3,
-    "explanation": "Same code, same replica count; only concurrent user count changes. /health has zero external dependencies so its tail latency is a direct measure of FastAPI event-loop pressure. BGE embedding runs synchronously inside async handlers, blocking the loop while a /query is mid-embed. Halving the offered load frees the loop."
+    "explanation": "Same code and replica count; the user count differs (and rampup is not steady state). /health has no external dependencies, so a slow /health shows request-serving pressure. /health is a sync endpoint sharing the threadpool with /query and /agent, which makes threadpool queueing a candidate mechanism; this bundle records no occupancy data to confirm it."
   },
-  "memory_behavior": {
-    "phase_2_sustained_r2_5min": {
-      "users_per_pod": 25,
-      "vsf4c_creep_mi": 204,
-      "f4dcr_creep_mi": 9,
-      "asymmetric": true
+  "unverified_operator_notes": [
+    {
+      "note": "Both pods were SIGKILLed by the kubelet liveness probe at t~110s of spike_r2 and restarted without operator intervention.",
+      "status": "unverified: no kubectl events or termination reasons were saved. k_top_phase3.log shows metrics unavailable for one pod at t=120s and both pods at about half their prior memory at t=135s, which fits a restart but does not say why (memory was 1714-1819Mi of a 2Gi limit)."
     },
-    "phase_5_sustained_r5_5min": {
-      "users_per_pod": 10,
-      "avg_creep_mi_across_5_pods": 27,
-      "asymmetric": false
+    {
+      "note": "A 1 s liveness timeout restarted busy-but-healthy pods during an earlier attempt; 5 s timeout and failureThreshold=5 were used for these runs.",
+      "status": "unverified: the earlier attempt left no artifact."
     },
-    "interpretation": "What looked like a Phase 2 leak (one pod gaining 204Mi over 5min while its peer gained 9Mi) was load-proportional working-set growth: at one third the per-pod load in Phase 5 (10 users/pod vs 25), the creep dropped roughly 7x. Python does not aggressively return memory to the OS under steady load; this is the expected RSS shape, not a leak.",
-    "source": "kubectl top samples captured at 30s cadence during the runs"
-  },
+    {
+      "note": "Memory creep +204Mi/+9Mi (r=2) and +27Mi average (r=5) over 5 min.",
+      "status": "not reproduced: these figures were hand-typed and do not match the committed kubectl_top logs; see kubectl_top in this JSON."
+    }
+  ],
   "key_findings": [
-    "5x replicas at sustained 50 users delivered 8% extra throughput. Both runs were below the cliff (zero failures), so this measures scaling efficiency, not capacity. Cloud-LLM round-trip latency, not pod CPU, was the gating factor at this load.",
-    "/health p95 tracks FastAPI event-loop pressure: 7200ms at peak 100 concurrent users, 14ms at sustained 50 users (same code, same r=2). Sync embedding inference inside async handlers is the cause.",
-    "The 2-replica setup hits a saturation cliff at 200 users: 85% RemoteDisconnected failures, both pods SIGKILLed by liveness probe at t~110s, cluster self-heals cleanly without operator intervention.",
-    "Default 1s liveness-probe timeout SIGKILLs busy-but-healthy pods. Tuned 5s timeout / failureThreshold=5 (75s window) absorbs realistic LLM-bound bursts while still killing genuinely stalled pods.",
-    "Apparent memory creep at 25 users/pod (+204Mi/5min on one pod) vanishes at 10 users/pod (+27Mi/5min). Working-set growth, not a leak.",
-    "Pod CPU was never the bottleneck: 79% peak during the spike, 25-30% steady at sustained 50 users. Adding pods does not relieve an LLM-egress-bound queue."
+    "At 50 closed-loop users, 5 replicas completed 1174 requests against 1090 for 2 replicas, with zero failures in both. An observation at one concurrency, not a capacity ceiling.",
+    "/health p95 was 7200 ms in the 100-user ramp and 14 ms at 50 sustained users (r=2): congestion evidence, mechanism not isolated.",
+    "The 200-user spike at r=2 failed 3724 of 4359 requests, mostly RemoteDisconnected. Why the pods dropped connections is not recorded.",
+    "Peak sampled pod CPU during the spike was 1181m of a 1500m limit. kubectl top samples every 15-30 s and cannot rule out short CPU saturation."
   ],
   "future_work": [
+    "occupancy: record threadpool busy/waiting, embedding and provider timings to isolate the congestion mechanism (done locally with a fake model in article_08_local_2026-10-10, not on Kubernetes).",
+    "events: save kubectl get events and pod termination reasons with timestamps for every run.",
     "spike_r5: rerun the 200-user spike against the 5-replica deployment to test whether more pods raise the saturation cliff or just multiply the queue depth at the same throughput ceiling.",
     "hpa_enabled: re-run rampup with HPA at 70% CPU. Per D5 the current run uses fixed replicas; the autoscaler reaction-time story is unmeasured.",
     "30min sustained: extend sustained_r2 from 5min to 30min to confirm the working-set plateau with a longer time horizon.",
     "multi-node: repeat on a 3+ node cluster (kind, k3s, or cloud) to separate scheduling-bound from network-bound effects."
-  ]
+  ],
+  "timestamp_utc": "2026-10-10T12:39:08Z",
+  "provenance": {
+    "git_commit": "9fd78a0e1721d57cc5994d309e7654e4bf0eef9a",
+    "git_dirty": false,
+    "note": "parser run; the load itself ran on 2026-05-09 (see methodology.auth)"
+  },
+  "source_csv_dir": "<bench-worktree>/results/data/article_08_locust_2026-05-09"
 }

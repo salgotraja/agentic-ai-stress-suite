@@ -19,11 +19,13 @@ practice where readiness probes gate traffic, not liveness.
 from __future__ import annotations
 
 import logging
+import os
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import Any, Literal
+from typing import Any, Literal, cast
 
+import anyio.to_thread
 import redis
 from fastapi import Depends, FastAPI, HTTPException
 from llama_index.core import Settings as LlamaIndexSettings
@@ -37,12 +39,38 @@ from src.agents.tools.rag import RAGTool
 from src.core.config import Settings, get_settings
 from src.core.llm_client import UnifiedLLMClient
 from src.ops.deployment.auth import verify_api_key
+from src.ops.deployment.fake_llm import FakeLLMClient
 from src.rag.naive_rag import NaiveRAGPipeline
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_COLLECTION = "naive_rag"
 AGENT_MAX_ITERATIONS = 5
+
+# Load-test switches. All default off, so a normal deployment serves the real
+# model, the canonical collection, a sync /health, and no internal endpoint.
+#
+# API_FAKE_LLM_LATENCY_MS: replace every LLM call with FakeLLMClient blocking
+#   for this many milliseconds. Embedding and retrieval stay real.
+# API_COLLECTION_NAME: Chroma collection to attach (default naive_rag).
+# API_LOADTEST_INSTRUMENTATION: count in-flight requests per path and expose
+#   GET /internal/occupancy (async, so it never waits for a threadpool slot).
+# API_HEALTH_ASYNC: serve /health from the event loop instead of the
+#   threadpool. Exists to test whether /health latency under load is
+#   threadpool queueing.
+
+
+def _env_flag(name: str) -> bool:
+    return os.environ.get(name, "").strip().lower() in {"1", "true", "yes"}
+
+
+def _fake_llm_latency_ms() -> float | None:
+    raw = os.environ.get("API_FAKE_LLM_LATENCY_MS", "").strip()
+    return float(raw) if raw else None
+
+
+def _collection_name() -> str:
+    return os.environ.get("API_COLLECTION_NAME", "").strip() or DEFAULT_COLLECTION
 
 
 class QueryRequest(BaseModel):
@@ -77,18 +105,32 @@ def _build_state(settings: Settings) -> dict[str, Any]:
     try/except has to wrap the pipeline constructor itself, not just the
     collection-attach call.
     """
-    llm_client = UnifiedLLMClient(settings=settings)
+    fake_latency_ms = _fake_llm_latency_ms()
+    fake_llm: FakeLLMClient | None = None
+    if fake_latency_ms is not None:
+        fake_llm = FakeLLMClient(latency_ms=fake_latency_ms)
+        logger.warning(
+            "api.lifespan.FAKE_LLM_MODE latency_ms=%s: every LLM call is a fixed sleep, "
+            "no provider is called",
+            fake_latency_ms,
+        )
+        llm_client = cast(UnifiedLLMClient, fake_llm)
+    else:
+        llm_client = UnifiedLLMClient(settings=settings)
 
+    collection_name = _collection_name()
     pipeline: NaiveRAGPipeline | None = None
     collection: Any = None
     agent: ReActAgent | None = None
 
     try:
         pipeline = NaiveRAGPipeline(
-            collection_name=DEFAULT_COLLECTION,
+            collection_name=collection_name,
             settings=settings,
         )
-        collection = pipeline.chroma_client.get_or_create_collection(name=DEFAULT_COLLECTION)
+        if fake_llm is not None:
+            pipeline.llm_client = llm_client
+        collection = pipeline.chroma_client.get_or_create_collection(name=collection_name)
         vector_store = ChromaVectorStore(chroma_collection=collection)
         storage_context = StorageContext.from_defaults(vector_store=vector_store)
         LlamaIndexSettings.embed_model = pipeline.embed_model
@@ -114,6 +156,7 @@ def _build_state(settings: Settings) -> dict[str, Any]:
         "agent": agent,
         "redis_client": redis_client,
         "collection": collection,
+        "fake_llm": fake_llm,
     }
 
 
@@ -132,10 +175,64 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
 app = FastAPI(title="rag-agent-api", version="1.0", lifespan=lifespan)
 
 
-@app.get("/health")
-def health() -> dict[str, str]:
+class _InFlightCounter:
+    """Pure ASGI middleware: in-flight HTTP requests per path, this process."""
+
+    def __init__(self, asgi_app: Any) -> None:
+        self.app = asgi_app
+
+    async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+        path = scope["path"]
+        _IN_FLIGHT[path] = _IN_FLIGHT.get(path, 0) + 1
+        try:
+            await self.app(scope, receive, send)
+        finally:
+            _IN_FLIGHT[path] -= 1
+
+
+_IN_FLIGHT: dict[str, int] = {}
+
+
+def _health_sync() -> dict[str, str]:
     """Liveness: process is up. No external dependency checks."""
     return {"status": "ok"}
+
+
+async def _health_async() -> dict[str, str]:
+    """Liveness served on the event loop (API_HEALTH_ASYNC=true)."""
+    return {"status": "ok"}
+
+
+async def occupancy() -> dict[str, Any]:
+    """Threadpool occupancy and in-flight requests for this worker process.
+
+    Sync endpoints and sync dependencies run in AnyIO's default thread
+    limiter. borrowed_tokens is the number of threads busy now; tasks_waiting
+    is the number of calls queued for a thread.
+    """
+    limiter = anyio.to_thread.current_default_thread_limiter()
+    stats = limiter.statistics()
+    fake_llm: FakeLLMClient | None = app.state.svc.get("fake_llm")
+    return {
+        "pid": os.getpid(),
+        "ts": time.time(),
+        "threadpool_total": limiter.total_tokens,
+        "threadpool_busy": stats.borrowed_tokens,
+        "threadpool_waiting": stats.tasks_waiting,
+        "in_flight": {k: v for k, v in _IN_FLIGHT.items() if v},
+        "fake_llm_calls": fake_llm.calls if fake_llm is not None else None,
+    }
+
+
+app.add_api_route(
+    "/health", _health_async if _env_flag("API_HEALTH_ASYNC") else _health_sync, methods=["GET"]
+)
+if _env_flag("API_LOADTEST_INSTRUMENTATION"):
+    app.add_middleware(_InFlightCounter)
+    app.add_api_route("/internal/occupancy", occupancy, methods=["GET"])
 
 
 @app.get("/ready")

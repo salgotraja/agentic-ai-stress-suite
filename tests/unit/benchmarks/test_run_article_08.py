@@ -124,3 +124,30 @@ def test_measured_results_include_expected_scenarios() -> None:
     assert set(results["scenarios"]) == {"rampup_r2", "sustained_r2", "spike_r2", "sustained_r5"}
     assert results["mode"] == "measured"
     assert results["saturation_cliff"]["failure_rate"] == pytest.approx(0.8543, rel=1e-3)
+
+
+def test_measured_results_keep_unverified_notes_out_of_computed_fields() -> None:
+    results = run_article_08.build_measured_results(run_article_08._DEFAULT_CSV_DIR)
+
+    assert "post_test_observation" not in results["saturation_cliff"]
+    assert "memory_behavior" not in results
+    notes = results["unverified_operator_notes"]
+    assert any("SIGKILL" in n["note"] and n["status"].startswith("unverified") for n in notes)
+    assert results["methodology"]["auth"].startswith("none")
+
+
+def test_kubectl_top_is_computed_from_committed_logs() -> None:
+    results = run_article_08.build_measured_results(run_article_08._DEFAULT_CSV_DIR)
+
+    spike_top = results["scenarios"]["spike_r2"]["kubectl_top"]
+    assert spike_top["cpu_m_max_any_pod"] == 1181.0
+    assert spike_top["errors"][0]["t_s"] == 120.0
+    sustained = results["scenarios"]["sustained_r2"]
+    assert sustained["successful_rps_by_endpoint"]["/query [rag]"] == round(747 / 300, 3)
+
+
+def test_methodology_names_the_model_chain_of_the_bundle_commit() -> None:
+    results = run_article_08.build_measured_results(run_article_08._DEFAULT_CSV_DIR)
+
+    assert "llama-3.1-8b-instant" in results["methodology"]["llm"]
+    assert results["methodology"]["temperature"].startswith("effective 0.7")

@@ -27,13 +27,11 @@ _L2_KEY_PREFIX = "l2:"
 # task required.
 _L2_INDEX_KEY = "l2:index"
 
-# L2 threshold: 0.95 for technical documentation queries.
-# Why 0.95?
-# - Tech docs have precise, consistent vocabulary ("Spring Boot autoconfiguration")
-# - Lower threshold (0.90) risks false positives: "How do I use async?" ≠ "How do I use sync?"
-# - Higher threshold (0.99) defeats the purpose; near-identical queries → L1 hit anyway
-# - 0.95 is the empirical sweet spot for technical Q&A benchmarks (see Article 6 results)
-# - For conversational chatbots, 0.90 is appropriate; never go below 0.85 (too many false positives)
+# L2 threshold: 0.95 cosine on BGE-base-en-v1.5. A default, not a validated setting.
+# The Article 6 near-miss probe (datasets/synthetic_queries/article_06_near_miss.json)
+# shows one-detail changes such as negation, framework version, and unit direction
+# scoring above 0.95, so no threshold separates them from true paraphrases on this
+# model. Do not enable L2 for queries where such a detail changes the answer.
 _L2_THRESHOLD = 0.95
 
 

@@ -71,11 +71,24 @@ SUCCESS_DEFINITIONS = {
     "its score does not affect success",
     "critic_refinement": "the final draft is non-empty; success does not require the "
     "critic score to reach the acceptance threshold",
-    "parallel": "the concatenated specialist output is non-empty; succeeds even if "
-    "some specialists failed",
+    "parallel": "the concatenated output is non-empty; the failure report is itself "
+    "non-empty, so this succeeds even when every specialist failed",
     "conflict_resolution": "at least one candidate succeeded and the resolver returned "
-    "a non-empty winner (voting) or decision (supervisor)",
+    "a non-empty winner (voting) or decision (supervisor); voting over a single "
+    "surviving option succeeds",
 }
+
+# The stricter check reported next to `success`.
+COMPLETED_DEFINITIONS = {
+    "sequential": "success, the researcher executed a tool, and the final draft was "
+    "not cut off at its token cap",
+    "critic_refinement": "success, the researcher executed a tool, and the final draft "
+    "was not cut off at its token cap",
+    "parallel": "success and every specialist returned an answer",
+    "conflict_resolution": "success and every candidate returned an answer",
+}
+
+_STATED_SCORE = re.compile(r"SCORE\W*?(\d+)", re.IGNORECASE)
 
 # Stop reasons meaning the provider cut the answer off at max_tokens.
 _TRUNCATION_STOP_REASONS = ("length", "max_tokens")
@@ -108,6 +121,28 @@ def is_billing_error(message: str | None) -> bool:
         return False
     lowered = message.lower()
     return any(marker in lowered for marker in _BILLING_ERROR_MARKERS)
+
+
+def stated_critic_score(critique: str | None) -> int | None:
+    """The score the critic wrote, tolerating markdown such as **SCORE:** 4."""
+    match = _STATED_SCORE.search(critique or "")
+    return int(match.group(1)) if match else None
+
+
+def is_completed(
+    pattern: str,
+    success: bool,
+    research: str | None,
+    specialists_failed: int,
+    calls: list[dict[str, Any]],
+) -> bool:
+    """Apply COMPLETED_DEFINITIONS to one trial."""
+    if not success:
+        return False
+    if pattern in ("sequential", "critic_refinement"):
+        drafts = [c for c in calls if c.get("role") in ("writer", "writer_refine")]
+        return research == "executed" and bool(drafts) and not drafts[-1].get("truncated")
+    return specialists_failed == 0
 
 
 def research_outcome(findings: str | None) -> str:
@@ -146,6 +181,9 @@ class TaskResult:
     required_agents: list[str] = field(default_factory=list)
     expected_tools: list[str] = field(default_factory=list)
     output: str = ""
+    completed: bool = False
+    critic_stated_scores: list[int | None] = field(default_factory=list)
+    critic_loop_scores: list[int] = field(default_factory=list)
     research_outcome: str | None = None
     specialists_failed: int = 0
     supervisor_reasoning: str | None = None
@@ -165,6 +203,7 @@ class PatternSummary:
     tokens: dict[str, float] = field(default_factory=dict)
     cost_usd: dict[str, float] = field(default_factory=dict)
     llm_calls: dict[str, float] = field(default_factory=dict)
+    n_completed: int = 0
     trials_with_truncation: int = 0
     truncated_calls: int = 0
 
@@ -510,6 +549,13 @@ def run_task(
     output = inner.get("output", "")
     error = inner.get("error")
     success = bool(output) and not error
+    calls = snap["calls"]
+    critiques = [c.get("content") or "" for c in calls if c.get("role") == "critic"]
+    loop_parser = None
+    if critiques:
+        from src.agents.multi_agent import CriticAgent
+
+        loop_parser = CriticAgent(llm_client=llm)
 
     return TaskResult(
         task_id=task_id,
@@ -528,6 +574,17 @@ def run_task(
         output_chars=len(output),
         error=error,
         output=output,
+        completed=is_completed(
+            pattern,
+            success,
+            inner.get("research_outcome"),
+            int(inner.get("specialists_failed", 0) or 0),
+            calls,
+        ),
+        critic_stated_scores=[stated_critic_score(c) for c in critiques],
+        critic_loop_scores=[loop_parser._extract_score(c) for c in critiques]
+        if loop_parser
+        else [],
         research_outcome=inner.get("research_outcome"),
         specialists_failed=int(inner.get("specialists_failed", 0) or 0),
         supervisor_reasoning=inner.get("supervisor_reasoning"),
@@ -568,6 +625,7 @@ def aggregate(results: list[TaskResult]) -> list[PatternSummary]:
                 tokens=_summarise([float(r.total_tokens) for r in recs]),
                 cost_usd=_summarise([r.cost_usd for r in recs]),
                 llm_calls=_summarise([float(r.llm_calls) for r in recs]),
+                n_completed=sum(1 for r in recs if r.completed),
                 trials_with_truncation=sum(1 for r in recs if r.truncated_calls),
                 truncated_calls=sum(r.truncated_calls for r in recs),
             )
@@ -734,6 +792,7 @@ def main() -> int:
             "aborted_reason": aborted_reason,
         },
         "success_definitions": {p: SUCCESS_DEFINITIONS[p] for p in args.patterns},
+        "completed_definitions": {p: COMPLETED_DEFINITIONS[p] for p in args.patterns},
         "summaries": [asdict(s) for s in summaries],
         "tasks": [asdict(r) for r in results],
     }

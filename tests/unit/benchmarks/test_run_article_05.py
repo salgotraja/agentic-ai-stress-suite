@@ -11,7 +11,9 @@ from benchmarks.run_article_05 import (
     _AccumulatingLLMClient,
     aggregate,
     classify_role,
+    is_completed,
     research_outcome,
+    stated_critic_score,
 )
 from src.core.llm_client import LLMProvider, LLMResponse, UnifiedLLMClient
 
@@ -158,3 +160,30 @@ def test_aggregate_reports_population_stats_and_success_rate() -> None:
         "min": 1000.0,
         "max": 3000.0,
     }
+
+
+@pytest.mark.parametrize(
+    ("critique", "score"),
+    [
+        ("SCORE: 4\nSTRENGTHS: ok", 4),
+        ("**SCORE:** 2\n\n**STRENGTHS:**", 2),
+        ("## Score: 5", 5),
+        ("No score here", None),
+    ],
+)
+def test_stated_critic_score_tolerates_markdown(critique: str, score: int | None) -> None:
+    assert stated_critic_score(critique) == score
+
+
+def test_parallel_is_not_completed_when_a_specialist_failed() -> None:
+    assert is_completed("parallel", True, None, 0, []) is True
+    assert is_completed("parallel", True, None, 3, []) is False
+
+
+def test_critic_pipeline_needs_research_and_an_uncut_final_draft() -> None:
+    draft = {"role": "writer", "truncated": False}
+    cut = {"role": "writer_refine", "truncated": True}
+    assert is_completed("sequential", True, "executed", 0, [draft]) is True
+    assert is_completed("sequential", True, "no_directive", 0, [draft]) is False
+    assert is_completed("critic_refinement", True, "executed", 0, [draft, cut]) is False
+    assert is_completed("sequential", False, "executed", 0, [draft]) is False

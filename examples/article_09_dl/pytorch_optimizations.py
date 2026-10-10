@@ -34,6 +34,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import os
 import platform
 import resource
 import subprocess
@@ -289,6 +290,7 @@ def main() -> None:
 
     torch.set_num_threads(THREADS)
     provenance = git_provenance()
+    load_start = [round(x, 2) for x in os.getloadavg()]
     cpu = subprocess.run(
         ["sysctl", "-n", "machdep.cpu.brand_string"], capture_output=True, text=True, check=False
     ).stdout.strip()
@@ -305,6 +307,9 @@ def main() -> None:
             **provenance,
             "hardware": f"{cpu}, macOS {platform.mac_ver()[0]}",
             "torch_threads": THREADS,
+            "logical_cpus": os.cpu_count(),
+            "load_average_1_5_15_at_start": load_start,
+            "load_average_1_5_15_at_end": [round(x, 2) for x in os.getloadavg()],
             "model": MODEL_NAME,
         },
         "compile": compile_result,

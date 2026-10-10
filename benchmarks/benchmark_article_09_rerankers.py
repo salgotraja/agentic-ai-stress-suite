@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import importlib.metadata as metadata
 import json
+import os
 import platform
 import subprocess
 import sys
@@ -211,6 +212,7 @@ def main() -> None:
     for name in timed:
         for qid in test_ids[:5]:
             scorers[name](questions[qid]["query"], [c["text"] for c in candidates[qid]])
+    load_before = [round(x, 2) for x in os.getloadavg()]
     latencies: dict[str, list[float]] = {name: [] for name in timed}
     for p in range(args.timing_passes):
         for n, qid in enumerate(test_ids):
@@ -265,6 +267,9 @@ def main() -> None:
             "batch": "one call per question, 20 (query, chunk) pairs, max_length 512",
             "passes": args.timing_passes,
             "warmup_calls_per_model": 5,
+            "load_average_1_5_15_before": load_before,
+            "load_average_1_5_15_after": [round(x, 2) for x in os.getloadavg()],
+            "logical_cpus": os.cpu_count(),
             "models": timing,
         },
         "per_query": per_query,

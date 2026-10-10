@@ -1,0 +1,51 @@
+[2026-10-10 16:40:36,950] Jagdishs-MacBook-Pro/INFO/locust.main: Starting Locust 2.43.4
+[2026-10-10 16:40:36,951] Jagdishs-MacBook-Pro/INFO/locust.main: Run time limit set to 300 seconds
+[2026-10-10 16:40:36,951] Jagdishs-MacBook-Pro/INFO/locust.runners: Ramping to 100 users at a rate of 10.00 per second
+[2026-10-10 16:40:45,973] Jagdishs-MacBook-Pro/INFO/locust.runners: All users spawned: {"RAGSystemUser": 100} (100 total users)
+[2026-10-10 16:45:36,789] Jagdishs-MacBook-Pro/INFO/locust.main: --run-time limit reached, shutting down
+[2026-10-10 16:45:36,850] Jagdishs-MacBook-Pro/INFO/locust.main: Shutting down (exit code 1)
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+POST     /agent                                                                           989    14(1.42%) |   6717    3138   12643   6600 |    3.30        0.05
+GET      /health                                                                          485     0(0.00%) |    713       1    2776    630 |    1.62        0.00
+POST     /query [rag]                                                                    3334    36(1.08%) |   4572    1064   10573   4500 |   11.12        0.12
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                      4808    50(1.04%) |   4624       1   12643   4700 |   16.04        0.17
+
+Response time percentiles (approximated)
+Type     Name                                                                                  50%    66%    75%    80%    90%    95%    98%    99%  99.9% 99.99%   100% # reqs
+--------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+POST     /agent                                                                               6600   7000   7300   7400   8000   8900  10000  11000  13000  13000  13000    989
+GET      /health                                                                               630    960   1200   1300   1600   1800   2100   2700   2800   2800   2800    485
+POST     /query [rag]                                                                         4500   4800   5100   5300   5700   6200   7300   7800  10000  11000  11000   3334
+--------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+         Aggregated                                                                           4700   5200   5700   6000   6800   7500   8300   9200  11000  13000  13000   4808
+
+Error report
+# occurrences      Error
+------------------|---------------------------------------------------------------------------------------------------------------------------------------------
+36                 POST /query [rag]: RemoteDisconnected('Remote end closed connection without response')
+14                 POST /agent: RemoteDisconnected('Remote end closed connection without response')
+------------------|---------------------------------------------------------------------------------------------------------------------------------------------
+
+
+=== RAG + Agent Load Test (task 4.27) ===
+
+Three load scenarios (choose one per run):
+
+  Ramp-up   (find saturation point):
+    locust -f src/ops/deployment/load_test.py --headless \
+      -u 100 -r 5 -t 5m --host http://localhost:8000
+
+  Sustained (detect memory leaks):
+    locust -f src/ops/deployment/load_test.py --headless \
+      -u 50 -r 10 -t 30m --host http://localhost:8000
+
+  Spike     (test autoscaler reaction):
+    locust -f src/ops/deployment/load_test.py --headless \
+      -u 200 -r 50 -t 2m --host http://localhost:8000
+
+  UI mode (interactive):
+    locust -f src/ops/deployment/load_test.py --host http://localhost:8000
+    # Open http://localhost:8089
+=========================================

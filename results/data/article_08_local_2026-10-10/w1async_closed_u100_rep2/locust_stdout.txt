@@ -1,0 +1,44 @@
+[2026-10-10 17:36:44,015] Jagdishs-MacBook-Pro/INFO/locust.main: Starting Locust 2.43.4
+[2026-10-10 17:36:44,015] Jagdishs-MacBook-Pro/INFO/locust.main: Run time limit set to 300 seconds
+[2026-10-10 17:36:44,017] Jagdishs-MacBook-Pro/INFO/locust.runners: Ramping to 100 users at a rate of 10.00 per second
+[2026-10-10 17:36:53,052] Jagdishs-MacBook-Pro/INFO/locust.runners: All users spawned: {"RAGSystemUser": 100} (100 total users)
+[2026-10-10 17:41:43,845] Jagdishs-MacBook-Pro/INFO/locust.main: --run-time limit reached, shutting down
+[2026-10-10 17:41:43,907] Jagdishs-MacBook-Pro/INFO/locust.main: Shutting down (exit code 0)
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+POST     /agent                                                                           419     0(0.00%) |  16151   10337   23040  16000 |    1.40        0.00
+GET      /health                                                                          210     0(0.00%) |    151       0    2906     39 |    0.70        0.00
+POST     /query [rag]                                                                    1365     0(0.00%) |  14070    2435   21222  14000 |    4.55        0.00
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                      1994     0(0.00%) |  13041       0   23040  14000 |    6.65        0.00
+
+Response time percentiles (approximated)
+Type     Name                                                                                  50%    66%    75%    80%    90%    95%    98%    99%  99.9% 99.99%   100% # reqs
+--------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+POST     /agent                                                                              16000  17000  18000  18000  19000  21000  22000  22000  23000  23000  23000    419
+GET      /health                                                                                40     59     76     84    160    810   2100   2200   2900   2900   2900    210
+POST     /query [rag]                                                                        14000  15000  15000  16000  17000  18000  18000  19000  21000  21000  21000   1365
+--------|--------------------------------------------------------------------------------|--------|------|------|------|------|------|------|------|------|------|------|------
+         Aggregated                                                                          14000  15000  16000  16000  18000  18000  20000  21000  23000  23000  23000   1994
+
+
+=== RAG + Agent Load Test (task 4.27) ===
+
+Three load scenarios (choose one per run):
+
+  Ramp-up   (find saturation point):
+    locust -f src/ops/deployment/load_test.py --headless \
+      -u 100 -r 5 -t 5m --host http://localhost:8000
+
+  Sustained (detect memory leaks):
+    locust -f src/ops/deployment/load_test.py --headless \
+      -u 50 -r 10 -t 30m --host http://localhost:8000
+
+  Spike     (test autoscaler reaction):
+    locust -f src/ops/deployment/load_test.py --headless \
+      -u 200 -r 50 -t 2m --host http://localhost:8000
+
+  UI mode (interactive):
+    locust -f src/ops/deployment/load_test.py --host http://localhost:8000
+    # Open http://localhost:8089
+=========================================

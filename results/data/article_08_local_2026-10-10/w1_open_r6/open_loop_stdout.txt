@@ -1,0 +1,1 @@
+{"sent": 1800, "offered_rate": 6.0, "duration_s": 300.0, "timeout_s": 30.0}

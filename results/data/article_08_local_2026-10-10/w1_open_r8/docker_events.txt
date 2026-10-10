@@ -1,0 +1,34 @@
+1791629826 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791629826 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791629830 exec_die
+1791629860 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791629860 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791629865 exec_die
+1791629895 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791629895 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791629900 exec_die
+1791629930 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791629930 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791629935 health_status: unhealthy
+1791629935 exec_die
+1791629965 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791629965 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791629970 exec_die
+1791630000 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630000 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630005 exec_die
+1791630035 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630035 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630041 exec_die
+1791630071 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630071 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630076 exec_die
+1791630106 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630106 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630111 exec_die
+1791630141 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630141 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630146 exec_die
+1791630176 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630176 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1
+1791630181 exec_die

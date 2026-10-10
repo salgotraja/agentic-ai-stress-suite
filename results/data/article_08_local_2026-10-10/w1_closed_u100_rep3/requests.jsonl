@@ -1,0 +1,1473 @@
+{"ts": 1791634423.6547048, "name": "/health", "method": "GET", "latency_ms": 144.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634424.75102, "name": "/health", "method": "GET", "latency_ms": 241.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634424.8347552, "name": "/health", "method": "GET", "latency_ms": 325.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634425.754575, "name": "/health", "method": "GET", "latency_ms": 234.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634425.841366, "name": "/health", "method": "GET", "latency_ms": 321.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634430.840564, "name": "/health", "method": "GET", "latency_ms": 3315.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634430.850667, "name": "/query [rag]", "method": "POST", "latency_ms": 8341.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634431.357776, "name": "/query [rag]", "method": "POST", "latency_ms": 8849.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634432.4592068, "name": "/query [rag]", "method": "POST", "latency_ms": 9951.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634432.459421, "name": "/query [rag]", "method": "POST", "latency_ms": 9950.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634433.258833, "name": "/query [rag]", "method": "POST", "latency_ms": 10749.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634433.460772, "name": "/query [rag]", "method": "POST", "latency_ms": 10952.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634433.5505762, "name": "/query [rag]", "method": "POST", "latency_ms": 11041.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634433.658568, "name": "/health", "method": "GET", "latency_ms": 5123.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634433.659752, "name": "/health", "method": "GET", "latency_ms": 5123.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634433.660358, "name": "/query [rag]", "method": "POST", "latency_ms": 11151.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634433.752396, "name": "/query [rag]", "method": "POST", "latency_ms": 11244.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.145646, "name": "/query [rag]", "method": "POST", "latency_ms": 10636.95, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.232578, "name": "/query [rag]", "method": "POST", "latency_ms": 10723.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.2365801, "name": "/query [rag]", "method": "POST", "latency_ms": 10727.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.241104, "name": "/query [rag]", "method": "POST", "latency_ms": 10731.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.244575, "name": "/agent", "method": "POST", "latency_ms": 11739.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.2448199, "name": "/query [rag]", "method": "POST", "latency_ms": 10734.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.254022, "name": "/query [rag]", "method": "POST", "latency_ms": 10744.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.25423, "name": "/health", "method": "GET", "latency_ms": 3701.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.336166, "name": "/health", "method": "GET", "latency_ms": 3782.76, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.437702, "name": "/query [rag]", "method": "POST", "latency_ms": 9927.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.44192, "name": "/query [rag]", "method": "POST", "latency_ms": 9932.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.657436, "name": "/query [rag]", "method": "POST", "latency_ms": 10148.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.746057, "name": "/query [rag]", "method": "POST", "latency_ms": 10236.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634434.746217, "name": "/query [rag]", "method": "POST", "latency_ms": 10236.49, "status": 200, "ok": true, "error": null}
+{"ts": 1791634435.536992, "name": "/agent", "method": "POST", "latency_ms": 12027.22, "status": 200, "ok": true, "error": null}
+{"ts": 1791634436.2492821, "name": "/agent", "method": "POST", "latency_ms": 12739.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634436.259458, "name": "/query [rag]", "method": "POST", "latency_ms": 11749.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634436.25963, "name": "/query [rag]", "method": "POST", "latency_ms": 11749.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634436.260275, "name": "/query [rag]", "method": "POST", "latency_ms": 10740.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634436.2611048, "name": "/query [rag]", "method": "POST", "latency_ms": 11751.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634436.329646, "name": "/query [rag]", "method": "POST", "latency_ms": 10810.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634438.737644, "name": "/query [rag]", "method": "POST", "latency_ms": 13217.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634438.740465, "name": "/query [rag]", "method": "POST", "latency_ms": 13220.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634438.743459, "name": "/query [rag]", "method": "POST", "latency_ms": 12844.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634438.9506078, "name": "/query [rag]", "method": "POST", "latency_ms": 13430.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634438.9629672, "name": "/query [rag]", "method": "POST", "latency_ms": 12440.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.045751, "name": "/query [rag]", "method": "POST", "latency_ms": 13526.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.052991, "name": "/query [rag]", "method": "POST", "latency_ms": 12531.2, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.0561159, "name": "/query [rag]", "method": "POST", "latency_ms": 12011.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.057916, "name": "/query [rag]", "method": "POST", "latency_ms": 12561.34, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.137527, "name": "/query [rag]", "method": "POST", "latency_ms": 13126.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.448016, "name": "/query [rag]", "method": "POST", "latency_ms": 12926.57, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.450399, "name": "/agent", "method": "POST", "latency_ms": 15940.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.4577951, "name": "/query [rag]", "method": "POST", "latency_ms": 12935.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.548749, "name": "/query [rag]", "method": "POST", "latency_ms": 13026.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.6420789, "name": "/agent", "method": "POST", "latency_ms": 14122.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.6515782, "name": "/query [rag]", "method": "POST", "latency_ms": 13129.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.655655, "name": "/agent", "method": "POST", "latency_ms": 14135.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.6578891, "name": "/query [rag]", "method": "POST", "latency_ms": 13135.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.6591942, "name": "/query [rag]", "method": "POST", "latency_ms": 12131.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.6594849, "name": "/query [rag]", "method": "POST", "latency_ms": 13136.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.6608891, "name": "/query [rag]", "method": "POST", "latency_ms": 12132.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.74662, "name": "/query [rag]", "method": "POST", "latency_ms": 12219.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.756175, "name": "/query [rag]", "method": "POST", "latency_ms": 13233.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.756299, "name": "/query [rag]", "method": "POST", "latency_ms": 13233.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.756499, "name": "/query [rag]", "method": "POST", "latency_ms": 12228.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.76638, "name": "/query [rag]", "method": "POST", "latency_ms": 12239.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.766634, "name": "/query [rag]", "method": "POST", "latency_ms": 12239.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.774078, "name": "/query [rag]", "method": "POST", "latency_ms": 11238.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.847875, "name": "/health", "method": "GET", "latency_ms": 4737.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.848038, "name": "/query [rag]", "method": "POST", "latency_ms": 11312.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.848171, "name": "/query [rag]", "method": "POST", "latency_ms": 12321.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.850695, "name": "/agent", "method": "POST", "latency_ms": 12323.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.857975, "name": "/agent", "method": "POST", "latency_ms": 12330.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.858132, "name": "/query [rag]", "method": "POST", "latency_ms": 11322.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.85879, "name": "/health", "method": "GET", "latency_ms": 4333.63, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.861873, "name": "/query [rag]", "method": "POST", "latency_ms": 11843.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.9416802, "name": "/query [rag]", "method": "POST", "latency_ms": 10396.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634439.950412, "name": "/health", "method": "GET", "latency_ms": 3276.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634441.939358, "name": "/query [rag]", "method": "POST", "latency_ms": 13403.22, "status": 200, "ok": true, "error": null}
+{"ts": 1791634441.945893, "name": "/query [rag]", "method": "POST", "latency_ms": 13409.34, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.143592, "name": "/query [rag]", "method": "POST", "latency_ms": 13597.26, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.157019, "name": "/query [rag]", "method": "POST", "latency_ms": 13611.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.157461, "name": "/query [rag]", "method": "POST", "latency_ms": 13612.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.1580741, "name": "/query [rag]", "method": "POST", "latency_ms": 13612.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.240387, "name": "/query [rag]", "method": "POST", "latency_ms": 12687.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.260481, "name": "/query [rag]", "method": "POST", "latency_ms": 12706.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.347672, "name": "/agent", "method": "POST", "latency_ms": 14812.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.350019, "name": "/query [rag]", "method": "POST", "latency_ms": 13803.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.353665, "name": "/query [rag]", "method": "POST", "latency_ms": 13807.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.3539178, "name": "/health", "method": "GET", "latency_ms": 3490.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.3556511, "name": "/query [rag]", "method": "POST", "latency_ms": 13809.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.363594, "name": "/query [rag]", "method": "POST", "latency_ms": 12809.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.363772, "name": "/query [rag]", "method": "POST", "latency_ms": 11809.76, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.364084, "name": "/query [rag]", "method": "POST", "latency_ms": 11809.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.44574, "name": "/query [rag]", "method": "POST", "latency_ms": 13899.76, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.445888, "name": "/query [rag]", "method": "POST", "latency_ms": 12892.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.457688, "name": "/query [rag]", "method": "POST", "latency_ms": 11903.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.457872, "name": "/query [rag]", "method": "POST", "latency_ms": 11902.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.4646988, "name": "/query [rag]", "method": "POST", "latency_ms": 12911.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.46495, "name": "/query [rag]", "method": "POST", "latency_ms": 12911.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.560383, "name": "/query [rag]", "method": "POST", "latency_ms": 12005.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.5605419, "name": "/query [rag]", "method": "POST", "latency_ms": 12006.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.645597, "name": "/query [rag]", "method": "POST", "latency_ms": 12090.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.653528, "name": "/health", "method": "GET", "latency_ms": 2793.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.665324, "name": "/health", "method": "GET", "latency_ms": 2286.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.7469609, "name": "/health", "method": "GET", "latency_ms": 2029.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.759976, "name": "/agent", "method": "POST", "latency_ms": 15223.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.760125, "name": "/query [rag]", "method": "POST", "latency_ms": 12205.52, "status": 200, "ok": true, "error": null}
+{"ts": 1791634443.845479, "name": "/agent", "method": "POST", "latency_ms": 15309.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634444.946382, "name": "/agent", "method": "POST", "latency_ms": 15400.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634445.964641, "name": "/query [rag]", "method": "POST", "latency_ms": 14409.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.1383219, "name": "/query [rag]", "method": "POST", "latency_ms": 17088.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.142317, "name": "/agent", "method": "POST", "latency_ms": 18589.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.240934, "name": "/query [rag]", "method": "POST", "latency_ms": 16676.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.246777, "name": "/agent", "method": "POST", "latency_ms": 18693.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.2552571, "name": "/query [rag]", "method": "POST", "latency_ms": 15807.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.25584, "name": "/query [rag]", "method": "POST", "latency_ms": 14610.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.36271, "name": "/agent", "method": "POST", "latency_ms": 17808.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.432789, "name": "/query [rag]", "method": "POST", "latency_ms": 14391.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.43464, "name": "/query [rag]", "method": "POST", "latency_ms": 15136.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.447201, "name": "/query [rag]", "method": "POST", "latency_ms": 14776.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.5529542, "name": "/agent", "method": "POST", "latency_ms": 16702.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.553246, "name": "/query [rag]", "method": "POST", "latency_ms": 14363.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.554365, "name": "/query [rag]", "method": "POST", "latency_ms": 13882.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.5545259, "name": "/query [rag]", "method": "POST", "latency_ms": 14137.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.5548291, "name": "/agent", "method": "POST", "latency_ms": 14543.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.647082, "name": "/agent", "method": "POST", "latency_ms": 15219.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.647305, "name": "/query [rag]", "method": "POST", "latency_ms": 13736.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.6514409, "name": "/query [rag]", "method": "POST", "latency_ms": 14259.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.658784, "name": "/query [rag]", "method": "POST", "latency_ms": 13136.47, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.658986, "name": "/query [rag]", "method": "POST", "latency_ms": 13748.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.73623, "name": "/query [rag]", "method": "POST", "latency_ms": 13366.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.736691, "name": "/query [rag]", "method": "POST", "latency_ms": 13004.47, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.743419, "name": "/query [rag]", "method": "POST", "latency_ms": 13596.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.743646, "name": "/query [rag]", "method": "POST", "latency_ms": 11097.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.745518, "name": "/agent", "method": "POST", "latency_ms": 14635.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.7481642, "name": "/query [rag]", "method": "POST", "latency_ms": 11748.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.751067, "name": "/query [rag]", "method": "POST", "latency_ms": 11793.85, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.7529469, "name": "/query [rag]", "method": "POST", "latency_ms": 11752.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.845881, "name": "/query [rag]", "method": "POST", "latency_ms": 12003.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.8520808, "name": "/health", "method": "GET", "latency_ms": 5198.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.855231, "name": "/agent", "method": "POST", "latency_ms": 14417.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.85952, "name": "/health", "method": "GET", "latency_ms": 4749.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.8597078, "name": "/health", "method": "GET", "latency_ms": 5027.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.9436579, "name": "/health", "method": "GET", "latency_ms": 4288.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.943788, "name": "/health", "method": "GET", "latency_ms": 4399.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.949995, "name": "/query [rag]", "method": "POST", "latency_ms": 9489.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.951083, "name": "/query [rag]", "method": "POST", "latency_ms": 9504.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634449.961804, "name": "/query [rag]", "method": "POST", "latency_ms": 9538.75, "status": 200, "ok": true, "error": null}
+{"ts": 1791634450.250885, "name": "/query [rag]", "method": "POST", "latency_ms": 9936.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634451.54791, "name": "/agent", "method": "POST", "latency_ms": 15412.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.254611, "name": "/query [rag]", "method": "POST", "latency_ms": 12411.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.255327, "name": "/query [rag]", "method": "POST", "latency_ms": 12263.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.2558, "name": "/agent", "method": "POST", "latency_ms": 16917.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.256566, "name": "/query [rag]", "method": "POST", "latency_ms": 11741.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.2581918, "name": "/query [rag]", "method": "POST", "latency_ms": 11391.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.259726, "name": "/query [rag]", "method": "POST", "latency_ms": 11574.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.350603, "name": "/agent", "method": "POST", "latency_ms": 15233.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.350794, "name": "/query [rag]", "method": "POST", "latency_ms": 10995.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.350915, "name": "/query [rag]", "method": "POST", "latency_ms": 10977.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.351277, "name": "/agent", "method": "POST", "latency_ms": 12154.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.351688, "name": "/query [rag]", "method": "POST", "latency_ms": 10870.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.351994, "name": "/query [rag]", "method": "POST", "latency_ms": 10831.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.435889, "name": "/query [rag]", "method": "POST", "latency_ms": 11105.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.440901, "name": "/query [rag]", "method": "POST", "latency_ms": 10940.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.444681, "name": "/query [rag]", "method": "POST", "latency_ms": 10997.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.465735, "name": "/agent", "method": "POST", "latency_ms": 12341.2, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.465854, "name": "/agent", "method": "POST", "latency_ms": 11827.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.546911, "name": "/agent", "method": "POST", "latency_ms": 12577.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.547062, "name": "/agent", "method": "POST", "latency_ms": 11961.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.550015, "name": "/agent", "method": "POST", "latency_ms": 12701.27, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.5561228, "name": "/query [rag]", "method": "POST", "latency_ms": 10816.22, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.56747, "name": "/agent", "method": "POST", "latency_ms": 11314.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.567589, "name": "/agent", "method": "POST", "latency_ms": 11503.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.5676758, "name": "/health", "method": "GET", "latency_ms": 1672.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.5680242, "name": "/health", "method": "GET", "latency_ms": 1568.3, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.6373188, "name": "/query [rag]", "method": "POST", "latency_ms": 10775.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.64116, "name": "/health", "method": "GET", "latency_ms": 456.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634452.64132, "name": "/health", "method": "GET", "latency_ms": 397.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.632885, "name": "/agent", "method": "POST", "latency_ms": 16032.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.637731, "name": "/query [rag]", "method": "POST", "latency_ms": 16037.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.743021, "name": "/query [rag]", "method": "POST", "latency_ms": 14644.93, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.8422668, "name": "/agent", "method": "POST", "latency_ms": 16281.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.858637, "name": "/query [rag]", "method": "POST", "latency_ms": 16094.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.8600461, "name": "/agent", "method": "POST", "latency_ms": 15981.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.8605309, "name": "/query [rag]", "method": "POST", "latency_ms": 13631.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.954994, "name": "/query [rag]", "method": "POST", "latency_ms": 13542.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.959307, "name": "/query [rag]", "method": "POST", "latency_ms": 13449.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.960117, "name": "/query [rag]", "method": "POST", "latency_ms": 13865.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.960535, "name": "/query [rag]", "method": "POST", "latency_ms": 13372.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.960852, "name": "/query [rag]", "method": "POST", "latency_ms": 13690.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.96105, "name": "/agent", "method": "POST", "latency_ms": 15815.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.9614432, "name": "/query [rag]", "method": "POST", "latency_ms": 12783.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.962002, "name": "/query [rag]", "method": "POST", "latency_ms": 13404.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634457.962125, "name": "/query [rag]", "method": "POST", "latency_ms": 13002.97, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.358641, "name": "/query [rag]", "method": "POST", "latency_ms": 13710.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.3662238, "name": "/agent", "method": "POST", "latency_ms": 16533.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.4474618, "name": "/query [rag]", "method": "POST", "latency_ms": 13004.22, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.453237, "name": "/query [rag]", "method": "POST", "latency_ms": 12995.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.543838, "name": "/agent", "method": "POST", "latency_ms": 14638.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.5440052, "name": "/query [rag]", "method": "POST", "latency_ms": 13126.14, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.54686, "name": "/agent", "method": "POST", "latency_ms": 16293.75, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.5470521, "name": "/query [rag]", "method": "POST", "latency_ms": 12492.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.547498, "name": "/query [rag]", "method": "POST", "latency_ms": 12773.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.642433, "name": "/query [rag]", "method": "POST", "latency_ms": 13100.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.6426518, "name": "/query [rag]", "method": "POST", "latency_ms": 12889.53, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.6428502, "name": "/query [rag]", "method": "POST", "latency_ms": 13400.85, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.643148, "name": "/query [rag]", "method": "POST", "latency_ms": 13238.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.733163, "name": "/health", "method": "GET", "latency_ms": 5591.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.7334988, "name": "/health", "method": "GET", "latency_ms": 5607.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.7338948, "name": "/query [rag]", "method": "POST", "latency_ms": 13492.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.737977, "name": "/health", "method": "GET", "latency_ms": 5548.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.743568, "name": "/health", "method": "GET", "latency_ms": 4567.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.744043, "name": "/health", "method": "GET", "latency_ms": 4403.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.744607, "name": "/query [rag]", "method": "POST", "latency_ms": 12887.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.7481961, "name": "/query [rag]", "method": "POST", "latency_ms": 8592.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.749129, "name": "/agent", "method": "POST", "latency_ms": 13345.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.749475, "name": "/agent", "method": "POST", "latency_ms": 13915.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.749779, "name": "/query [rag]", "method": "POST", "latency_ms": 8480.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.749894, "name": "/query [rag]", "method": "POST", "latency_ms": 8513.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.8579872, "name": "/query [rag]", "method": "POST", "latency_ms": 8449.3, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.858142, "name": "/health", "method": "GET", "latency_ms": 3967.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.858766, "name": "/agent", "method": "POST", "latency_ms": 14057.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634458.9681752, "name": "/query [rag]", "method": "POST", "latency_ms": 8654.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.0487292, "name": "/query [rag]", "method": "POST", "latency_ms": 10602.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.15749, "name": "/agent", "method": "POST", "latency_ms": 14271.95, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.157932, "name": "/query [rag]", "method": "POST", "latency_ms": 10562.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.158147, "name": "/agent", "method": "POST", "latency_ms": 15468.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.1585898, "name": "/query [rag]", "method": "POST", "latency_ms": 10706.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.238009, "name": "/query [rag]", "method": "POST", "latency_ms": 10472.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.24401, "name": "/query [rag]", "method": "POST", "latency_ms": 10729.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.363446, "name": "/agent", "method": "POST", "latency_ms": 11150.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.548525, "name": "/query [rag]", "method": "POST", "latency_ms": 10699.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.552598, "name": "/agent", "method": "POST", "latency_ms": 11192.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.5603259, "name": "/query [rag]", "method": "POST", "latency_ms": 10599.22, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.656926, "name": "/query [rag]", "method": "POST", "latency_ms": 10619.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.659543, "name": "/query [rag]", "method": "POST", "latency_ms": 10207.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.659849, "name": "/query [rag]", "method": "POST", "latency_ms": 10109.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.6601899, "name": "/query [rag]", "method": "POST", "latency_ms": 10076.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634461.660581, "name": "/query [rag]", "method": "POST", "latency_ms": 10163.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634462.060319, "name": "/health", "method": "GET", "latency_ms": 2471.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634462.0612721, "name": "/agent", "method": "POST", "latency_ms": 11683.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634462.0619211, "name": "/health", "method": "GET", "latency_ms": 2139.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634462.148108, "name": "/health", "method": "GET", "latency_ms": 2135.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634462.157813, "name": "/health", "method": "GET", "latency_ms": 1419.78, "status": 200, "ok": true, "error": null}
+{"ts": 1791634462.164577, "name": "/health", "method": "GET", "latency_ms": 1246.78, "status": 200, "ok": true, "error": null}
+{"ts": 1791634462.165473, "name": "/agent", "method": "POST", "latency_ms": 11549.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634463.052309, "name": "/query [rag]", "method": "POST", "latency_ms": 11205.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634465.3585842, "name": "/query [rag]", "method": "POST", "latency_ms": 13774.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634465.359473, "name": "/agent", "method": "POST", "latency_ms": 13885.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.051714, "name": "/query [rag]", "method": "POST", "latency_ms": 15277.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.077195, "name": "/query [rag]", "method": "POST", "latency_ms": 14833.34, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.1557188, "name": "/query [rag]", "method": "POST", "latency_ms": 15110.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.1573179, "name": "/query [rag]", "method": "POST", "latency_ms": 14927.97, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.157486, "name": "/query [rag]", "method": "POST", "latency_ms": 15053.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.159277, "name": "/query [rag]", "method": "POST", "latency_ms": 14897.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.1599412, "name": "/query [rag]", "method": "POST", "latency_ms": 14766.22, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.160084, "name": "/query [rag]", "method": "POST", "latency_ms": 14747.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.160429, "name": "/agent", "method": "POST", "latency_ms": 15489.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.24246, "name": "/agent", "method": "POST", "latency_ms": 16297.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.448113, "name": "/agent", "method": "POST", "latency_ms": 15668.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.547263, "name": "/query [rag]", "method": "POST", "latency_ms": 13830.53, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.643695, "name": "/query [rag]", "method": "POST", "latency_ms": 13725.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.647062, "name": "/query [rag]", "method": "POST", "latency_ms": 14600.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.660865, "name": "/query [rag]", "method": "POST", "latency_ms": 14602.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.6613781, "name": "/query [rag]", "method": "POST", "latency_ms": 14312.49, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.744771, "name": "/query [rag]", "method": "POST", "latency_ms": 14046.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.74493, "name": "/query [rag]", "method": "POST", "latency_ms": 13999.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.745043, "name": "/query [rag]", "method": "POST", "latency_ms": 13966.75, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.750276, "name": "/query [rag]", "method": "POST", "latency_ms": 14500.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.7504299, "name": "/query [rag]", "method": "POST", "latency_ms": 14025.14, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.750535, "name": "/agent", "method": "POST", "latency_ms": 15520.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.75105, "name": "/query [rag]", "method": "POST", "latency_ms": 13603.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.7564092, "name": "/query [rag]", "method": "POST", "latency_ms": 13764.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.756591, "name": "/query [rag]", "method": "POST", "latency_ms": 13794.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.7566879, "name": "/query [rag]", "method": "POST", "latency_ms": 13416.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.756777, "name": "/query [rag]", "method": "POST", "latency_ms": 13273.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.7568629, "name": "/agent", "method": "POST", "latency_ms": 13876.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.8406558, "name": "/query [rag]", "method": "POST", "latency_ms": 13392.76, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.8407922, "name": "/query [rag]", "method": "POST", "latency_ms": 13185.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.8452082, "name": "/query [rag]", "method": "POST", "latency_ms": 13421.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.8453891, "name": "/query [rag]", "method": "POST", "latency_ms": 13505.52, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.845515, "name": "/query [rag]", "method": "POST", "latency_ms": 12855.78, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.854296, "name": "/health", "method": "GET", "latency_ms": 5634.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.855268, "name": "/query [rag]", "method": "POST", "latency_ms": 8861.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.855594, "name": "/health", "method": "GET", "latency_ms": 3710.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.855967, "name": "/query [rag]", "method": "POST", "latency_ms": 9209.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.856408, "name": "/agent", "method": "POST", "latency_ms": 13970.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.8565178, "name": "/query [rag]", "method": "POST", "latency_ms": 9074.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634467.8568509, "name": "/query [rag]", "method": "POST", "latency_ms": 9599.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.1767511, "name": "/query [rag]", "method": "POST", "latency_ms": 11932.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.243645, "name": "/query [rag]", "method": "POST", "latency_ms": 11978.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.337656, "name": "/query [rag]", "method": "POST", "latency_ms": 12047.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.337856, "name": "/query [rag]", "method": "POST", "latency_ms": 11931.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.348769, "name": "/query [rag]", "method": "POST", "latency_ms": 12011.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.543627, "name": "/query [rag]", "method": "POST", "latency_ms": 12116.93, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.546288, "name": "/query [rag]", "method": "POST", "latency_ms": 11808.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.55289, "name": "/query [rag]", "method": "POST", "latency_ms": 11586.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.557247, "name": "/agent", "method": "POST", "latency_ms": 12426.95, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.6318688, "name": "/agent", "method": "POST", "latency_ms": 12553.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.6383429, "name": "/agent", "method": "POST", "latency_ms": 12563.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.638516, "name": "/query [rag]", "method": "POST", "latency_ms": 11698.49, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.648028, "name": "/query [rag]", "method": "POST", "latency_ms": 11674.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.648179, "name": "/query [rag]", "method": "POST", "latency_ms": 11450.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.648278, "name": "/agent", "method": "POST", "latency_ms": 12242.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.648375, "name": "/query [rag]", "method": "POST", "latency_ms": 11548.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.648462, "name": "/agent", "method": "POST", "latency_ms": 12258.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.648546, "name": "/query [rag]", "method": "POST", "latency_ms": 11636.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.655871, "name": "/query [rag]", "method": "POST", "latency_ms": 10988.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.75029, "name": "/query [rag]", "method": "POST", "latency_ms": 11449.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.750433, "name": "/query [rag]", "method": "POST", "latency_ms": 11408.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.7552419, "name": "/query [rag]", "method": "POST", "latency_ms": 11094.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.757835, "name": "/query [rag]", "method": "POST", "latency_ms": 10920.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.757958, "name": "/query [rag]", "method": "POST", "latency_ms": 11392.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.764578, "name": "/query [rag]", "method": "POST", "latency_ms": 11119.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.8442922, "name": "/health", "method": "GET", "latency_ms": 2547.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.844546, "name": "/health", "method": "GET", "latency_ms": 2725.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.844686, "name": "/health", "method": "GET", "latency_ms": 2865.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.8447921, "name": "/health", "method": "GET", "latency_ms": 3026.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.8520682, "name": "/health", "method": "GET", "latency_ms": 1843.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.852434, "name": "/health", "method": "GET", "latency_ms": 1844.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.941513, "name": "/agent", "method": "POST", "latency_ms": 12110.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.9418418, "name": "/query [rag]", "method": "POST", "latency_ms": 11573.63, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.944119, "name": "/query [rag]", "method": "POST", "latency_ms": 11107.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.963218, "name": "/query [rag]", "method": "POST", "latency_ms": 11563.75, "status": 200, "ok": true, "error": null}
+{"ts": 1791634471.963378, "name": "/agent", "method": "POST", "latency_ms": 12255.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.0557802, "name": "/query [rag]", "method": "POST", "latency_ms": 15186.34, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.0559518, "name": "/query [rag]", "method": "POST", "latency_ms": 14835.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.056053, "name": "/query [rag]", "method": "POST", "latency_ms": 15028.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.0567749, "name": "/query [rag]", "method": "POST", "latency_ms": 15103.63, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.057767, "name": "/agent", "method": "POST", "latency_ms": 16045.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.0581949, "name": "/query [rag]", "method": "POST", "latency_ms": 13955.26, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.247134, "name": "/query [rag]", "method": "POST", "latency_ms": 13698.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.24736, "name": "/query [rag]", "method": "POST", "latency_ms": 13743.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.256943, "name": "/query [rag]", "method": "POST", "latency_ms": 13965.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.257797, "name": "/query [rag]", "method": "POST", "latency_ms": 13529.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.25826, "name": "/query [rag]", "method": "POST", "latency_ms": 13670.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.258879, "name": "/query [rag]", "method": "POST", "latency_ms": 13398.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.2590091, "name": "/agent", "method": "POST", "latency_ms": 15038.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.25941, "name": "/query [rag]", "method": "POST", "latency_ms": 13351.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.2603378, "name": "/agent", "method": "POST", "latency_ms": 14158.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.2605069, "name": "/query [rag]", "method": "POST", "latency_ms": 12908.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.260598, "name": "/agent", "method": "POST", "latency_ms": 14330.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.2608352, "name": "/query [rag]", "method": "POST", "latency_ms": 12982.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.2610402, "name": "/query [rag]", "method": "POST", "latency_ms": 11848.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.345396, "name": "/query [rag]", "method": "POST", "latency_ms": 11798.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.346603, "name": "/query [rag]", "method": "POST", "latency_ms": 12056.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.350404, "name": "/query [rag]", "method": "POST", "latency_ms": 11602.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.354207, "name": "/agent", "method": "POST", "latency_ms": 13162.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.360712, "name": "/agent", "method": "POST", "latency_ms": 13582.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.360826, "name": "/query [rag]", "method": "POST", "latency_ms": 12545.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.4396129, "name": "/health", "method": "GET", "latency_ms": 4316.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.439755, "name": "/health", "method": "GET", "latency_ms": 4318.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.449429, "name": "/health", "method": "GET", "latency_ms": 3999.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.537153, "name": "/health", "method": "GET", "latency_ms": 4048.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.54384, "name": "/health", "method": "GET", "latency_ms": 3897.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.5478451, "name": "/health", "method": "GET", "latency_ms": 3843.49, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.548096, "name": "/health", "method": "GET", "latency_ms": 3872.14, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.7479548, "name": "/health", "method": "GET", "latency_ms": 3498.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.8402119, "name": "/health", "method": "GET", "latency_ms": 3178.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634476.9569879, "name": "/query [rag]", "method": "POST", "latency_ms": 8574.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634479.259551, "name": "/query [rag]", "method": "POST", "latency_ms": 12522.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.260829, "name": "/agent", "method": "POST", "latency_ms": 16981.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.261069, "name": "/query [rag]", "method": "POST", "latency_ms": 12973.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.262971, "name": "/query [rag]", "method": "POST", "latency_ms": 11493.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.264013, "name": "/query [rag]", "method": "POST", "latency_ms": 11526.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.336861, "name": "/query [rag]", "method": "POST", "latency_ms": 11357.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.341866, "name": "/query [rag]", "method": "POST", "latency_ms": 11660.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.342182, "name": "/query [rag]", "method": "POST", "latency_ms": 11523.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.3453681, "name": "/query [rag]", "method": "POST", "latency_ms": 11660.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.380012, "name": "/agent", "method": "POST", "latency_ms": 16932.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.442061, "name": "/query [rag]", "method": "POST", "latency_ms": 11820.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.453331, "name": "/query [rag]", "method": "POST", "latency_ms": 11389.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.453501, "name": "/query [rag]", "method": "POST", "latency_ms": 11968.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.453591, "name": "/query [rag]", "method": "POST", "latency_ms": 11382.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.454985, "name": "/agent", "method": "POST", "latency_ms": 11431.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.455102, "name": "/query [rag]", "method": "POST", "latency_ms": 11160.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.455202, "name": "/query [rag]", "method": "POST", "latency_ms": 11285.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.455544, "name": "/agent", "method": "POST", "latency_ms": 12445.53, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.4557881, "name": "/query [rag]", "method": "POST", "latency_ms": 11471.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.458317, "name": "/query [rag]", "method": "POST", "latency_ms": 10685.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.458426, "name": "/agent", "method": "POST", "latency_ms": 11326.85, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.458516, "name": "/agent", "method": "POST", "latency_ms": 12767.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.547391, "name": "/agent", "method": "POST", "latency_ms": 18327.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.547557, "name": "/query [rag]", "method": "POST", "latency_ms": 10693.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.5476549, "name": "/agent", "method": "POST", "latency_ms": 10938.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.5506198, "name": "/query [rag]", "method": "POST", "latency_ms": 10695.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.5545878, "name": "/health", "method": "GET", "latency_ms": 3116.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.554751, "name": "/query [rag]", "method": "POST", "latency_ms": 10694.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.556138, "name": "/health", "method": "GET", "latency_ms": 2818.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.557338, "name": "/query [rag]", "method": "POST", "latency_ms": 11170.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.558326, "name": "/health", "method": "GET", "latency_ms": 1883.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.5586839, "name": "/health", "method": "GET", "latency_ms": 1857.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634480.637843, "name": "/query [rag]", "method": "POST", "latency_ms": 10607.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.3552032, "name": "/query [rag]", "method": "POST", "latency_ms": 15156.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.355387, "name": "/agent", "method": "POST", "latency_ms": 16025.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.44694, "name": "/agent", "method": "POST", "latency_ms": 16115.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.4582882, "name": "/query [rag]", "method": "POST", "latency_ms": 15169.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.5479722, "name": "/agent", "method": "POST", "latency_ms": 15999.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.551904, "name": "/query [rag]", "method": "POST", "latency_ms": 15399.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.556148, "name": "/agent", "method": "POST", "latency_ms": 16261.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.557452, "name": "/query [rag]", "method": "POST", "latency_ms": 13276.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.558062, "name": "/query [rag]", "method": "POST", "latency_ms": 13355.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.558694, "name": "/query [rag]", "method": "POST", "latency_ms": 13328.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.559406, "name": "/query [rag]", "method": "POST", "latency_ms": 12890.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.559668, "name": "/agent", "method": "POST", "latency_ms": 15874.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.5599759, "name": "/query [rag]", "method": "POST", "latency_ms": 13208.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.5600882, "name": "/query [rag]", "method": "POST", "latency_ms": 12920.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.561852, "name": "/query [rag]", "method": "POST", "latency_ms": 12618.78, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.737526, "name": "/query [rag]", "method": "POST", "latency_ms": 12794.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.737754, "name": "/agent", "method": "POST", "latency_ms": 15408.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.852554, "name": "/query [rag]", "method": "POST", "latency_ms": 13419.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.8530948, "name": "/query [rag]", "method": "POST", "latency_ms": 12821.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.8534138, "name": "/agent", "method": "POST", "latency_ms": 13600.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.853693, "name": "/query [rag]", "method": "POST", "latency_ms": 12874.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.85587, "name": "/agent", "method": "POST", "latency_ms": 13526.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.8562272, "name": "/query [rag]", "method": "POST", "latency_ms": 12740.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.856653, "name": "/query [rag]", "method": "POST", "latency_ms": 12758.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.8568199, "name": "/query [rag]", "method": "POST", "latency_ms": 12210.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.947276, "name": "/query [rag]", "method": "POST", "latency_ms": 12799.26, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.9474251, "name": "/query [rag]", "method": "POST", "latency_ms": 11948.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.9475331, "name": "/query [rag]", "method": "POST", "latency_ms": 12324.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634485.947625, "name": "/agent", "method": "POST", "latency_ms": 13243.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634486.152778, "name": "/health", "method": "GET", "latency_ms": 3383.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634486.152982, "name": "/health", "method": "GET", "latency_ms": 3995.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634486.169333, "name": "/query [rag]", "method": "POST", "latency_ms": 12315.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634486.169457, "name": "/query [rag]", "method": "POST", "latency_ms": 12877.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634488.361763, "name": "/query [rag]", "method": "POST", "latency_ms": 14258.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.053051, "name": "/query [rag]", "method": "POST", "latency_ms": 13238.85, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.162672, "name": "/query [rag]", "method": "POST", "latency_ms": 13216.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.162838, "name": "/agent", "method": "POST", "latency_ms": 16964.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.2527208, "name": "/query [rag]", "method": "POST", "latency_ms": 12488.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.252907, "name": "/query [rag]", "method": "POST", "latency_ms": 13043.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.253938, "name": "/query [rag]", "method": "POST", "latency_ms": 13365.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.254234, "name": "/query [rag]", "method": "POST", "latency_ms": 12760.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.254665, "name": "/query [rag]", "method": "POST", "latency_ms": 13267.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.2551198, "name": "/query [rag]", "method": "POST", "latency_ms": 13366.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.256244, "name": "/query [rag]", "method": "POST", "latency_ms": 12505.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.257087, "name": "/query [rag]", "method": "POST", "latency_ms": 12354.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.257303, "name": "/query [rag]", "method": "POST", "latency_ms": 12555.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.3354502, "name": "/query [rag]", "method": "POST", "latency_ms": 12655.28, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.44189, "name": "/query [rag]", "method": "POST", "latency_ms": 12618.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.446563, "name": "/agent", "method": "POST", "latency_ms": 16216.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.447102, "name": "/query [rag]", "method": "POST", "latency_ms": 12503.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.448482, "name": "/query [rag]", "method": "POST", "latency_ms": 13441.3, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.449077, "name": "/agent", "method": "POST", "latency_ms": 16706.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.4500532, "name": "/query [rag]", "method": "POST", "latency_ms": 12095.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.54514, "name": "/query [rag]", "method": "POST", "latency_ms": 11843.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.5452769, "name": "/query [rag]", "method": "POST", "latency_ms": 12249.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.545395, "name": "/agent", "method": "POST", "latency_ms": 16716.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.555925, "name": "/agent", "method": "POST", "latency_ms": 12653.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.556153, "name": "/query [rag]", "method": "POST", "latency_ms": 12159.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.5562618, "name": "/query [rag]", "method": "POST", "latency_ms": 12019.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.559665, "name": "/query [rag]", "method": "POST", "latency_ms": 11911.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.559822, "name": "/query [rag]", "method": "POST", "latency_ms": 13011.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.64431, "name": "/query [rag]", "method": "POST", "latency_ms": 11354.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.6517491, "name": "/query [rag]", "method": "POST", "latency_ms": 11842.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.8355641, "name": "/health", "method": "GET", "latency_ms": 2948.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634490.85105, "name": "/query [rag]", "method": "POST", "latency_ms": 13373.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634494.0658371, "name": "/query [rag]", "method": "POST", "latency_ms": 16458.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.157449, "name": "/agent", "method": "POST", "latency_ms": 18165.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.258145, "name": "/agent", "method": "POST", "latency_ms": 17821.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.346957, "name": "/agent", "method": "POST", "latency_ms": 17747.97, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.3489358, "name": "/agent", "method": "POST", "latency_ms": 17600.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.446789, "name": "/query [rag]", "method": "POST", "latency_ms": 15213.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.448002, "name": "/query [rag]", "method": "POST", "latency_ms": 15353.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.455968, "name": "/query [rag]", "method": "POST", "latency_ms": 15601.95, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.456181, "name": "/query [rag]", "method": "POST", "latency_ms": 15279.26, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.555126, "name": "/query [rag]", "method": "POST", "latency_ms": 15652.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.561335, "name": "/query [rag]", "method": "POST", "latency_ms": 15579.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.5628748, "name": "/query [rag]", "method": "POST", "latency_ms": 15385.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.638885, "name": "/query [rag]", "method": "POST", "latency_ms": 14956.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.639437, "name": "/query [rag]", "method": "POST", "latency_ms": 15077.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.644091, "name": "/query [rag]", "method": "POST", "latency_ms": 14635.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.644259, "name": "/query [rag]", "method": "POST", "latency_ms": 14801.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.644386, "name": "/query [rag]", "method": "POST", "latency_ms": 14608.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.652132, "name": "/query [rag]", "method": "POST", "latency_ms": 14894.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.6523142, "name": "/query [rag]", "method": "POST", "latency_ms": 14539.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.738286, "name": "/query [rag]", "method": "POST", "latency_ms": 14764.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.738497, "name": "/query [rag]", "method": "POST", "latency_ms": 15059.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.738635, "name": "/query [rag]", "method": "POST", "latency_ms": 14641.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.744534, "name": "/query [rag]", "method": "POST", "latency_ms": 14647.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.7446861, "name": "/agent", "method": "POST", "latency_ms": 15270.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.744808, "name": "/query [rag]", "method": "POST", "latency_ms": 14770.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.744915, "name": "/query [rag]", "method": "POST", "latency_ms": 14629.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.74932, "name": "/agent", "method": "POST", "latency_ms": 15019.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.749495, "name": "/agent", "method": "POST", "latency_ms": 15349.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.749654, "name": "/query [rag]", "method": "POST", "latency_ms": 14411.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.752053, "name": "/health", "method": "GET", "latency_ms": 5747.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.847713, "name": "/health", "method": "GET", "latency_ms": 5709.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.854366, "name": "/query [rag]", "method": "POST", "latency_ms": 13877.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.857595, "name": "/query [rag]", "method": "POST", "latency_ms": 14287.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.863341, "name": "/query [rag]", "method": "POST", "latency_ms": 14084.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.9420748, "name": "/health", "method": "GET", "latency_ms": 4813.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634496.9564722, "name": "/health", "method": "GET", "latency_ms": 3997.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634497.440625, "name": "/query [rag]", "method": "POST", "latency_ms": 14605.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634499.954824, "name": "/health", "method": "GET", "latency_ms": 3255.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.1608179, "name": "/query [rag]", "method": "POST", "latency_ms": 13661.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.161313, "name": "/query [rag]", "method": "POST", "latency_ms": 13952.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.161442, "name": "/query [rag]", "method": "POST", "latency_ms": 13419.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.1615481, "name": "/agent", "method": "POST", "latency_ms": 18064.52, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.231311, "name": "/query [rag]", "method": "POST", "latency_ms": 13624.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.3332381, "name": "/query [rag]", "method": "POST", "latency_ms": 17539.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.345097, "name": "/query [rag]", "method": "POST", "latency_ms": 13519.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.347887, "name": "/agent", "method": "POST", "latency_ms": 17527.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.348781, "name": "/query [rag]", "method": "POST", "latency_ms": 13492.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.3547258, "name": "/query [rag]", "method": "POST", "latency_ms": 13470.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.438526, "name": "/query [rag]", "method": "POST", "latency_ms": 13352.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.441911, "name": "/query [rag]", "method": "POST", "latency_ms": 13834.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.4526, "name": "/query [rag]", "method": "POST", "latency_ms": 13197.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.550818, "name": "/query [rag]", "method": "POST", "latency_ms": 13821.97, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.635103, "name": "/query [rag]", "method": "POST", "latency_ms": 13906.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.637604, "name": "/query [rag]", "method": "POST", "latency_ms": 13680.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.64343, "name": "/query [rag]", "method": "POST", "latency_ms": 13298.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.643695, "name": "/query [rag]", "method": "POST", "latency_ms": 13290.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.745585, "name": "/agent", "method": "POST", "latency_ms": 14653.53, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.760628, "name": "/agent", "method": "POST", "latency_ms": 13839.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.760799, "name": "/query [rag]", "method": "POST", "latency_ms": 13200.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.760915, "name": "/query [rag]", "method": "POST", "latency_ms": 12782.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.7610161, "name": "/query [rag]", "method": "POST", "latency_ms": 13041.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.7615612, "name": "/query [rag]", "method": "POST", "latency_ms": 13311.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.845385, "name": "/agent", "method": "POST", "latency_ms": 14020.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.846376, "name": "/query [rag]", "method": "POST", "latency_ms": 12551.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.846756, "name": "/agent", "method": "POST", "latency_ms": 13914.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.8561668, "name": "/query [rag]", "method": "POST", "latency_ms": 13049.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.85667, "name": "/health", "method": "GET", "latency_ms": 2218.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.857497, "name": "/query [rag]", "method": "POST", "latency_ms": 12828.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634500.93633, "name": "/query [rag]", "method": "POST", "latency_ms": 12833.93, "status": 200, "ok": true, "error": null}
+{"ts": 1791634501.04373, "name": "/agent", "method": "POST", "latency_ms": 13931.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.636611, "name": "/agent", "method": "POST", "latency_ms": 18884.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.648177, "name": "/agent", "method": "POST", "latency_ms": 18711.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.648376, "name": "/query [rag]", "method": "POST", "latency_ms": 18651.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.650063, "name": "/agent", "method": "POST", "latency_ms": 18670.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.650381, "name": "/query [rag]", "method": "POST", "latency_ms": 15512.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.650677, "name": "/query [rag]", "method": "POST", "latency_ms": 15409.63, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.651249, "name": "/query [rag]", "method": "POST", "latency_ms": 15090.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.651398, "name": "/query [rag]", "method": "POST", "latency_ms": 15561.28, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.6515431, "name": "/query [rag]", "method": "POST", "latency_ms": 15461.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.651854, "name": "/query [rag]", "method": "POST", "latency_ms": 15362.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.652162, "name": "/query [rag]", "method": "POST", "latency_ms": 14761.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.745623, "name": "/query [rag]", "method": "POST", "latency_ms": 14824.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.748953, "name": "/query [rag]", "method": "POST", "latency_ms": 14670.85, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.7534132, "name": "/query [rag]", "method": "POST", "latency_ms": 15156.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.754745, "name": "/query [rag]", "method": "POST", "latency_ms": 15004.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.754872, "name": "/query [rag]", "method": "POST", "latency_ms": 14371.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.7552068, "name": "/agent", "method": "POST", "latency_ms": 17693.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.755693, "name": "/query [rag]", "method": "POST", "latency_ms": 15124.53, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.7558022, "name": "/query [rag]", "method": "POST", "latency_ms": 14457.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.7568488, "name": "/query [rag]", "method": "POST", "latency_ms": 14418.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.757092, "name": "/query [rag]", "method": "POST", "latency_ms": 14307.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.757216, "name": "/query [rag]", "method": "POST", "latency_ms": 13865.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.757335, "name": "/query [rag]", "method": "POST", "latency_ms": 11226.95, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.8363142, "name": "/query [rag]", "method": "POST", "latency_ms": 13730.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.8367329, "name": "/query [rag]", "method": "POST", "latency_ms": 14305.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.838488, "name": "/agent", "method": "POST", "latency_ms": 14565.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.8421981, "name": "/query [rag]", "method": "POST", "latency_ms": 13513.28, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.8450172, "name": "/query [rag]", "method": "POST", "latency_ms": 14221.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.851904, "name": "/agent", "method": "POST", "latency_ms": 15663.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.8554869, "name": "/health", "method": "GET", "latency_ms": 4691.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.8561668, "name": "/health", "method": "GET", "latency_ms": 4433.63, "status": 200, "ok": true, "error": null}
+{"ts": 1791634506.9489422, "name": "/health", "method": "GET", "latency_ms": 4152.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634510.268523, "name": "/query [rag]", "method": "POST", "latency_ms": 13104.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.640588, "name": "/query [rag]", "method": "POST", "latency_ms": 14044.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.6432588, "name": "/query [rag]", "method": "POST", "latency_ms": 14144.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.649707, "name": "/query [rag]", "method": "POST", "latency_ms": 14103.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.748523, "name": "/query [rag]", "method": "POST", "latency_ms": 13970.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.755498, "name": "/agent", "method": "POST", "latency_ms": 18500.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.767549, "name": "/query [rag]", "method": "POST", "latency_ms": 13769.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.8493161, "name": "/agent", "method": "POST", "latency_ms": 19399.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.850385, "name": "/query [rag]", "method": "POST", "latency_ms": 13619.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.8571332, "name": "/query [rag]", "method": "POST", "latency_ms": 14154.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.857697, "name": "/query [rag]", "method": "POST", "latency_ms": 13242.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.858109, "name": "/query [rag]", "method": "POST", "latency_ms": 13330.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.8585, "name": "/agent", "method": "POST", "latency_ms": 14224.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.858984, "name": "/query [rag]", "method": "POST", "latency_ms": 13620.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.859433, "name": "/query [rag]", "method": "POST", "latency_ms": 13477.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.859998, "name": "/agent", "method": "POST", "latency_ms": 19022.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.860234, "name": "/query [rag]", "method": "POST", "latency_ms": 13094.95, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.8604171, "name": "/query [rag]", "method": "POST", "latency_ms": 13542.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.860597, "name": "/query [rag]", "method": "POST", "latency_ms": 13194.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.861629, "name": "/query [rag]", "method": "POST", "latency_ms": 13149.47, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.8622348, "name": "/query [rag]", "method": "POST", "latency_ms": 13927.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.862709, "name": "/query [rag]", "method": "POST", "latency_ms": 12808.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.8631701, "name": "/query [rag]", "method": "POST", "latency_ms": 13012.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.863596, "name": "/query [rag]", "method": "POST", "latency_ms": 12756.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.864032, "name": "/query [rag]", "method": "POST", "latency_ms": 14330.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.8644211, "name": "/agent", "method": "POST", "latency_ms": 13216.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.8648121, "name": "/agent", "method": "POST", "latency_ms": 14019.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.865243, "name": "/query [rag]", "method": "POST", "latency_ms": 12671.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.865489, "name": "/query [rag]", "method": "POST", "latency_ms": 12483.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.865765, "name": "/agent", "method": "POST", "latency_ms": 13228.57, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.865994, "name": "/health", "method": "GET", "latency_ms": 4378.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.937757, "name": "/agent", "method": "POST", "latency_ms": 19282.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634511.939014, "name": "/health", "method": "GET", "latency_ms": 3915.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.5504582, "name": "/agent", "method": "POST", "latency_ms": 16637.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.563536, "name": "/query [rag]", "method": "POST", "latency_ms": 14478.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.563894, "name": "/query [rag]", "method": "POST", "latency_ms": 14256.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.564134, "name": "/query [rag]", "method": "POST", "latency_ms": 14601.28, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.5648, "name": "/agent", "method": "POST", "latency_ms": 17965.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.6566489, "name": "/query [rag]", "method": "POST", "latency_ms": 16430.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.6572092, "name": "/agent", "method": "POST", "latency_ms": 16573.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.65765, "name": "/query [rag]", "method": "POST", "latency_ms": 13980.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.658096, "name": "/query [rag]", "method": "POST", "latency_ms": 14106.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.658498, "name": "/query [rag]", "method": "POST", "latency_ms": 14118.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.6590679, "name": "/query [rag]", "method": "POST", "latency_ms": 13988.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.6598332, "name": "/query [rag]", "method": "POST", "latency_ms": 13982.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.660799, "name": "/query [rag]", "method": "POST", "latency_ms": 13812.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.661043, "name": "/agent", "method": "POST", "latency_ms": 16747.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.747603, "name": "/query [rag]", "method": "POST", "latency_ms": 13896.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.748003, "name": "/query [rag]", "method": "POST", "latency_ms": 13564.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.75832, "name": "/agent", "method": "POST", "latency_ms": 17906.2, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.758789, "name": "/query [rag]", "method": "POST", "latency_ms": 13843.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.85367, "name": "/agent", "method": "POST", "latency_ms": 14818.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.854188, "name": "/query [rag]", "method": "POST", "latency_ms": 13228.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.854524, "name": "/query [rag]", "method": "POST", "latency_ms": 13190.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.85479, "name": "/query [rag]", "method": "POST", "latency_ms": 13448.26, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.949873, "name": "/agent", "method": "POST", "latency_ms": 18270.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.9503202, "name": "/query [rag]", "method": "POST", "latency_ms": 13673.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.955785, "name": "/query [rag]", "method": "POST", "latency_ms": 13496.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.956029, "name": "/query [rag]", "method": "POST", "latency_ms": 12542.27, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.956352, "name": "/query [rag]", "method": "POST", "latency_ms": 13204.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.956589, "name": "/query [rag]", "method": "POST", "latency_ms": 13971.53, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.963202, "name": "/health", "method": "GET", "latency_ms": 3338.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.963455, "name": "/health", "method": "GET", "latency_ms": 2926.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.963681, "name": "/query [rag]", "method": "POST", "latency_ms": 14723.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634515.9639628, "name": "/health", "method": "GET", "latency_ms": 2832.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634516.046172, "name": "/health", "method": "GET", "latency_ms": 2642.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634516.0579178, "name": "/query [rag]", "method": "POST", "latency_ms": 14148.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634516.058314, "name": "/query [rag]", "method": "POST", "latency_ms": 12831.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634516.151799, "name": "/agent", "method": "POST", "latency_ms": 14263.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.553802, "name": "/agent", "method": "POST", "latency_ms": 19306.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.553985, "name": "/agent", "method": "POST", "latency_ms": 19858.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.638454, "name": "/agent", "method": "POST", "latency_ms": 19728.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.8477771, "name": "/query [rag]", "method": "POST", "latency_ms": 14309.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.8510468, "name": "/agent", "method": "POST", "latency_ms": 18531.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.851295, "name": "/query [rag]", "method": "POST", "latency_ms": 14283.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.851851, "name": "/query [rag]", "method": "POST", "latency_ms": 14473.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.852416, "name": "/query [rag]", "method": "POST", "latency_ms": 14295.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.8536909, "name": "/query [rag]", "method": "POST", "latency_ms": 14003.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.855219, "name": "/agent", "method": "POST", "latency_ms": 18619.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.855357, "name": "/query [rag]", "method": "POST", "latency_ms": 13450.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.855786, "name": "/agent", "method": "POST", "latency_ms": 14634.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.855888, "name": "/query [rag]", "method": "POST", "latency_ms": 13497.78, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.8561332, "name": "/query [rag]", "method": "POST", "latency_ms": 13451.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.856249, "name": "/agent", "method": "POST", "latency_ms": 14121.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.856527, "name": "/query [rag]", "method": "POST", "latency_ms": 14064.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.856736, "name": "/query [rag]", "method": "POST", "latency_ms": 13338.97, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.8570151, "name": "/query [rag]", "method": "POST", "latency_ms": 13644.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.8571641, "name": "/agent", "method": "POST", "latency_ms": 14098.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.857522, "name": "/query [rag]", "method": "POST", "latency_ms": 12988.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.857666, "name": "/query [rag]", "method": "POST", "latency_ms": 13314.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.8579211, "name": "/agent", "method": "POST", "latency_ms": 13735.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.8580291, "name": "/query [rag]", "method": "POST", "latency_ms": 13300.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.947476, "name": "/agent", "method": "POST", "latency_ms": 14097.34, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.947712, "name": "/agent", "method": "POST", "latency_ms": 13543.3, "status": 200, "ok": true, "error": null}
+{"ts": 1791634521.9478989, "name": "/query [rag]", "method": "POST", "latency_ms": 13096.76, "status": 200, "ok": true, "error": null}
+{"ts": 1791634522.047578, "name": "/query [rag]", "method": "POST", "latency_ms": 12921.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634522.1501539, "name": "/health", "method": "GET", "latency_ms": 4308.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634523.345695, "name": "/agent", "method": "POST", "latency_ms": 15091.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634527.555744, "name": "/query [rag]", "method": "POST", "latency_ms": 18500.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634528.544968, "name": "/query [rag]", "method": "POST", "latency_ms": 19835.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.049452, "name": "/query [rag]", "method": "POST", "latency_ms": 17575.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.050931, "name": "/agent", "method": "POST", "latency_ms": 21450.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.051263, "name": "/agent", "method": "POST", "latency_ms": 21493.85, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.052557, "name": "/query [rag]", "method": "POST", "latency_ms": 17664.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.054039, "name": "/query [rag]", "method": "POST", "latency_ms": 17185.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.148528, "name": "/query [rag]", "method": "POST", "latency_ms": 17625.2, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.2478552, "name": "/query [rag]", "method": "POST", "latency_ms": 17587.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.250508, "name": "/query [rag]", "method": "POST", "latency_ms": 17846.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.444319, "name": "/query [rag]", "method": "POST", "latency_ms": 17820.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.5459409, "name": "/agent", "method": "POST", "latency_ms": 21588.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.5578969, "name": "/agent", "method": "POST", "latency_ms": 21868.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.558172, "name": "/query [rag]", "method": "POST", "latency_ms": 17412.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.558812, "name": "/query [rag]", "method": "POST", "latency_ms": 17689.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.559639, "name": "/agent", "method": "POST", "latency_ms": 17812.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.5598578, "name": "/agent", "method": "POST", "latency_ms": 21682.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.560413, "name": "/query [rag]", "method": "POST", "latency_ms": 16784.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.560858, "name": "/agent", "method": "POST", "latency_ms": 17646.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.563479, "name": "/query [rag]", "method": "POST", "latency_ms": 16787.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.563679, "name": "/query [rag]", "method": "POST", "latency_ms": 18353.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.563835, "name": "/agent", "method": "POST", "latency_ms": 17075.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.635637, "name": "/query [rag]", "method": "POST", "latency_ms": 18338.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.635912, "name": "/query [rag]", "method": "POST", "latency_ms": 16672.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.636255, "name": "/agent", "method": "POST", "latency_ms": 17193.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.646533, "name": "/query [rag]", "method": "POST", "latency_ms": 16512.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.646934, "name": "/query [rag]", "method": "POST", "latency_ms": 16888.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.7506711, "name": "/query [rag]", "method": "POST", "latency_ms": 16499.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.8475058, "name": "/query [rag]", "method": "POST", "latency_ms": 16516.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.847685, "name": "/query [rag]", "method": "POST", "latency_ms": 17059.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.847818, "name": "/query [rag]", "method": "POST", "latency_ms": 16721.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634530.951638, "name": "/agent", "method": "POST", "latency_ms": 17436.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634531.049574, "name": "/health", "method": "GET", "latency_ms": 7344.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634531.059086, "name": "/query [rag]", "method": "POST", "latency_ms": 16766.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634531.060674, "name": "/agent", "method": "POST", "latency_ms": 17675.57, "status": 200, "ok": true, "error": null}
+{"ts": 1791634531.063998, "name": "/query [rag]", "method": "POST", "latency_ms": 14558.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634531.064121, "name": "/query [rag]", "method": "POST", "latency_ms": 14589.2, "status": 200, "ok": true, "error": null}
+{"ts": 1791634531.1448572, "name": "/agent", "method": "POST", "latency_ms": 17500.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634532.544658, "name": "/query [rag]", "method": "POST", "latency_ms": 16195.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.042526, "name": "/health", "method": "GET", "latency_ms": 5329.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.3549209, "name": "/query [rag]", "method": "POST", "latency_ms": 19780.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.3552341, "name": "/query [rag]", "method": "POST", "latency_ms": 19846.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.3562438, "name": "/query [rag]", "method": "POST", "latency_ms": 19644.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.3564339, "name": "/agent", "method": "POST", "latency_ms": 22208.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.357057, "name": "/query [rag]", "method": "POST", "latency_ms": 18920.26, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.537539, "name": "/query [rag]", "method": "POST", "latency_ms": 19059.49, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.537974, "name": "/query [rag]", "method": "POST", "latency_ms": 19492.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.5500832, "name": "/query [rag]", "method": "POST", "latency_ms": 18870.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.550897, "name": "/agent", "method": "POST", "latency_ms": 20043.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.5510569, "name": "/query [rag]", "method": "POST", "latency_ms": 19881.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.5518951, "name": "/query [rag]", "method": "POST", "latency_ms": 18780.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634536.63868, "name": "/query [rag]", "method": "POST", "latency_ms": 19694.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.438355, "name": "/agent", "method": "POST", "latency_ms": 20924.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.440693, "name": "/query [rag]", "method": "POST", "latency_ms": 20118.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.549977, "name": "/query [rag]", "method": "POST", "latency_ms": 20251.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.5501912, "name": "/query [rag]", "method": "POST", "latency_ms": 19982.93, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.5503092, "name": "/query [rag]", "method": "POST", "latency_ms": 19709.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.635196, "name": "/agent", "method": "POST", "latency_ms": 20604.93, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.639154, "name": "/query [rag]", "method": "POST", "latency_ms": 20247.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.639352, "name": "/query [rag]", "method": "POST", "latency_ms": 19755.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.6411788, "name": "/query [rag]", "method": "POST", "latency_ms": 19435.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.6606069, "name": "/query [rag]", "method": "POST", "latency_ms": 19722.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.6612449, "name": "/query [rag]", "method": "POST", "latency_ms": 19525.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634537.945357, "name": "/health", "method": "GET", "latency_ms": 6687.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634538.055352, "name": "/health", "method": "GET", "latency_ms": 6469.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634538.651951, "name": "/health", "method": "GET", "latency_ms": 6801.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634539.051113, "name": "/query [rag]", "method": "POST", "latency_ms": 20934.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634539.0568058, "name": "/health", "method": "GET", "latency_ms": 6255.85, "status": 200, "ok": true, "error": null}
+{"ts": 1791634539.057019, "name": "/health", "method": "GET", "latency_ms": 6296.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634539.1435862, "name": "/agent", "method": "POST", "latency_ms": 21107.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634539.5561569, "name": "/query [rag]", "method": "POST", "latency_ms": 21053.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634544.039291, "name": "/query [rag]", "method": "POST", "latency_ms": 25876.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634544.34657, "name": "/agent", "method": "POST", "latency_ms": 26140.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634545.650254, "name": "/query [rag]", "method": "POST", "latency_ms": 23096.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634545.6574268, "name": "/query [rag]", "method": "POST", "latency_ms": 27348.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634545.657902, "name": "/agent", "method": "POST", "latency_ms": 27282.93, "status": 200, "ok": true, "error": null}
+{"ts": 1791634545.6598442, "name": "/agent", "method": "POST", "latency_ms": 27355.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634545.744181, "name": "/query [rag]", "method": "POST", "latency_ms": 22197.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634545.8428311, "name": "/agent", "method": "POST", "latency_ms": 27536.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634545.861838, "name": "/query [rag]", "method": "POST", "latency_ms": 23089.52, "status": 200, "ok": true, "error": null}
+{"ts": 1791634545.940493, "name": "/query [rag]", "method": "POST", "latency_ms": 22291.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634545.945338, "name": "/agent", "method": "POST", "latency_ms": 28646.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634545.9455092, "name": "/query [rag]", "method": "POST", "latency_ms": 22770.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.048703, "name": "/query [rag]", "method": "POST", "latency_ms": 23601.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.049784, "name": "/health", "method": "GET", "latency_ms": 7842.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.051202, "name": "/query [rag]", "method": "POST", "latency_ms": 23348.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.1508071, "name": "/health", "method": "GET", "latency_ms": 7738.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.151343, "name": "/query [rag]", "method": "POST", "latency_ms": 23269.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.238833, "name": "/query [rag]", "method": "POST", "latency_ms": 23122.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.239481, "name": "/query [rag]", "method": "POST", "latency_ms": 22087.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.239784, "name": "/query [rag]", "method": "POST", "latency_ms": 22861.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.240245, "name": "/query [rag]", "method": "POST", "latency_ms": 22535.53, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.54771, "name": "/query [rag]", "method": "POST", "latency_ms": 22540.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.548, "name": "/query [rag]", "method": "POST", "latency_ms": 22817.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.54815, "name": "/query [rag]", "method": "POST", "latency_ms": 23504.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.731054, "name": "/agent", "method": "POST", "latency_ms": 23139.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.739799, "name": "/query [rag]", "method": "POST", "latency_ms": 23360.47, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.73997, "name": "/query [rag]", "method": "POST", "latency_ms": 22757.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.740206, "name": "/query [rag]", "method": "POST", "latency_ms": 22678.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.744735, "name": "/query [rag]", "method": "POST", "latency_ms": 22426.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.744938, "name": "/agent", "method": "POST", "latency_ms": 24007.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.945655, "name": "/query [rag]", "method": "POST", "latency_ms": 22839.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.950363, "name": "/agent", "method": "POST", "latency_ms": 23245.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634546.9576142, "name": "/query [rag]", "method": "POST", "latency_ms": 18326.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634547.038444, "name": "/agent", "method": "POST", "latency_ms": 24517.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634547.24786, "name": "/agent", "method": "POST", "latency_ms": 23204.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634547.338101, "name": "/agent", "method": "POST", "latency_ms": 23295.47, "status": 200, "ok": true, "error": null}
+{"ts": 1791634549.751355, "name": "/agent", "method": "POST", "latency_ms": 25540.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634549.850209, "name": "/query [rag]", "method": "POST", "latency_ms": 19224.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634549.952371, "name": "/query [rag]", "method": "POST", "latency_ms": 19259.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634554.364325, "name": "/query [rag]", "method": "POST", "latency_ms": 30019.47, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634555.451641, "name": "/query [rag]", "method": "POST", "latency_ms": 24456.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.4587982, "name": "/query [rag]", "method": "POST", "latency_ms": 24201.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.543426, "name": "/query [rag]", "method": "POST", "latency_ms": 24355.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.546724, "name": "/query [rag]", "method": "POST", "latency_ms": 24191.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.651354, "name": "/health", "method": "GET", "latency_ms": 9450.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.6515682, "name": "/query [rag]", "method": "POST", "latency_ms": 24360.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.7488189, "name": "/query [rag]", "method": "POST", "latency_ms": 24171.47, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.8438778, "name": "/query [rag]", "method": "POST", "latency_ms": 24731.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.8440819, "name": "/query [rag]", "method": "POST", "latency_ms": 24371.57, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.8467178, "name": "/query [rag]", "method": "POST", "latency_ms": 24229.28, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.874161, "name": "/health", "method": "GET", "latency_ms": 9005.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.8744261, "name": "/query [rag]", "method": "POST", "latency_ms": 24478.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.874582, "name": "/query [rag]", "method": "POST", "latency_ms": 24228.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634555.941364, "name": "/query [rag]", "method": "POST", "latency_ms": 24248.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.04119, "name": "/query [rag]", "method": "POST", "latency_ms": 24362.26, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.136939, "name": "/query [rag]", "method": "POST", "latency_ms": 24302.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.137163, "name": "/agent", "method": "POST", "latency_ms": 24505.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.137331, "name": "/query [rag]", "method": "POST", "latency_ms": 24433.3, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.1374521, "name": "/query [rag]", "method": "POST", "latency_ms": 24256.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.15188, "name": "/query [rag]", "method": "POST", "latency_ms": 23571.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.1520472, "name": "/query [rag]", "method": "POST", "latency_ms": 23346.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.15218, "name": "/query [rag]", "method": "POST", "latency_ms": 23243.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.152769, "name": "/query [rag]", "method": "POST", "latency_ms": 23221.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.153086, "name": "/query [rag]", "method": "POST", "latency_ms": 24171.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.153346, "name": "/health", "method": "GET", "latency_ms": 8658.53, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.3504379, "name": "/query [rag]", "method": "POST", "latency_ms": 23295.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.568507, "name": "/health", "method": "GET", "latency_ms": 8221.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.643635, "name": "/query [rag]", "method": "POST", "latency_ms": 24808.76, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.6451142, "name": "/health", "method": "GET", "latency_ms": 7476.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634556.740609, "name": "/query [rag]", "method": "POST", "latency_ms": 24320.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634560.054927, "name": "/query [rag]", "method": "POST", "latency_ms": 27800.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634560.6606588, "name": "/query [rag]", "method": "POST", "latency_ms": 28091.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634562.30248, "name": "/agent", "method": "POST", "latency_ms": 30005.73, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634562.410622, "name": "/agent", "method": "POST", "latency_ms": 30010.88, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634563.0688808, "name": "/query [rag]", "method": "POST", "latency_ms": 30004.22, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634563.152648, "name": "/query [rag]", "method": "POST", "latency_ms": 24699.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634564.648871, "name": "/query [rag]", "method": "POST", "latency_ms": 27194.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634565.753546, "name": "/query [rag]", "method": "POST", "latency_ms": 28531.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634565.756503, "name": "/query [rag]", "method": "POST", "latency_ms": 27368.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634565.761611, "name": "/query [rag]", "method": "POST", "latency_ms": 27443.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634565.762358, "name": "/query [rag]", "method": "POST", "latency_ms": 27179.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634565.8539178, "name": "/query [rag]", "method": "POST", "latency_ms": 28272.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634565.854295, "name": "/query [rag]", "method": "POST", "latency_ms": 28651.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634565.8549628, "name": "/query [rag]", "method": "POST", "latency_ms": 27676.95, "status": 200, "ok": true, "error": null}
+{"ts": 1791634565.855169, "name": "/query [rag]", "method": "POST", "latency_ms": 27706.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634565.855572, "name": "/query [rag]", "method": "POST", "latency_ms": 27064.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634565.943796, "name": "/query [rag]", "method": "POST", "latency_ms": 26225.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.0428958, "name": "/query [rag]", "method": "POST", "latency_ms": 28296.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.053108, "name": "/agent", "method": "POST", "latency_ms": 27904.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.05338, "name": "/query [rag]", "method": "POST", "latency_ms": 27558.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.144728, "name": "/query [rag]", "method": "POST", "latency_ms": 27335.57, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.151956, "name": "/query [rag]", "method": "POST", "latency_ms": 27342.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.152798, "name": "/query [rag]", "method": "POST", "latency_ms": 25351.75, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.153255, "name": "/query [rag]", "method": "POST", "latency_ms": 26959.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.160759, "name": "/agent", "method": "POST", "latency_ms": 27320.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.1616619, "name": "/agent", "method": "POST", "latency_ms": 25296.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.24625, "name": "/agent", "method": "POST", "latency_ms": 26114.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.3393762, "name": "/query [rag]", "method": "POST", "latency_ms": 25817.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.439749, "name": "/agent", "method": "POST", "latency_ms": 27479.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.441752, "name": "/agent", "method": "POST", "latency_ms": 26793.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.660674, "name": "/query [rag]", "method": "POST", "latency_ms": 25348.28, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.745636, "name": "/health", "method": "GET", "latency_ms": 8569.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.747769, "name": "/query [rag]", "method": "POST", "latency_ms": 25541.97, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.8324149, "name": "/health", "method": "GET", "latency_ms": 7881.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634566.952916, "name": "/agent", "method": "POST", "latency_ms": 25779.47, "status": 200, "ok": true, "error": null}
+{"ts": 1791634568.353621, "name": "/health", "method": "GET", "latency_ms": 4233.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634568.456042, "name": "/agent", "method": "POST", "latency_ms": 28661.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634571.370985, "name": "/agent", "method": "POST", "latency_ms": 30004.91, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634572.7599318, "name": "/query [rag]", "method": "POST", "latency_ms": 26857.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634573.05371, "name": "/query [rag]", "method": "POST", "latency_ms": 25925.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634573.0540302, "name": "/query [rag]", "method": "POST", "latency_ms": 25526.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634573.135838, "name": "/query [rag]", "method": "POST", "latency_ms": 25656.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634573.240952, "name": "/query [rag]", "method": "POST", "latency_ms": 26767.14, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.2466292, "name": "/query [rag]", "method": "POST", "latency_ms": 27055.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.3534489, "name": "/query [rag]", "method": "POST", "latency_ms": 26796.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.3536892, "name": "/health", "method": "GET", "latency_ms": 7832.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.3538518, "name": "/query [rag]", "method": "POST", "latency_ms": 27547.2, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.540304, "name": "/query [rag]", "method": "POST", "latency_ms": 28254.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.541234, "name": "/query [rag]", "method": "POST", "latency_ms": 27093.75, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.5414772, "name": "/query [rag]", "method": "POST", "latency_ms": 27013.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.541752, "name": "/query [rag]", "method": "POST", "latency_ms": 26984.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.549765, "name": "/query [rag]", "method": "POST", "latency_ms": 26568.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.5500958, "name": "/query [rag]", "method": "POST", "latency_ms": 26935.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.550257, "name": "/agent", "method": "POST", "latency_ms": 27917.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.550433, "name": "/query [rag]", "method": "POST", "latency_ms": 26399.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.6333098, "name": "/query [rag]", "method": "POST", "latency_ms": 26652.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.633461, "name": "/query [rag]", "method": "POST", "latency_ms": 25781.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.636217, "name": "/agent", "method": "POST", "latency_ms": 27157.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.638601, "name": "/agent", "method": "POST", "latency_ms": 26940.76, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.6467168, "name": "/query [rag]", "method": "POST", "latency_ms": 25797.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.647109, "name": "/query [rag]", "method": "POST", "latency_ms": 25739.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.74451, "name": "/query [rag]", "method": "POST", "latency_ms": 26850.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.744877, "name": "/query [rag]", "method": "POST", "latency_ms": 26098.22, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.745074, "name": "/query [rag]", "method": "POST", "latency_ms": 26314.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.749396, "name": "/query [rag]", "method": "POST", "latency_ms": 25607.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.839286, "name": "/agent", "method": "POST", "latency_ms": 26809.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.847313, "name": "/agent", "method": "POST", "latency_ms": 27078.75, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.942816, "name": "/health", "method": "GET", "latency_ms": 7660.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634574.956119, "name": "/health", "method": "GET", "latency_ms": 7251.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634575.061404, "name": "/query [rag]", "method": "POST", "latency_ms": 26715.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634575.0623941, "name": "/query [rag]", "method": "POST", "latency_ms": 23567.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634575.249533, "name": "/query [rag]", "method": "POST", "latency_ms": 26285.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634575.2497401, "name": "/query [rag]", "method": "POST", "latency_ms": 24106.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634575.249907, "name": "/query [rag]", "method": "POST", "latency_ms": 26544.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634575.539377, "name": "/health", "method": "GET", "latency_ms": 7423.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634575.745583, "name": "/health", "method": "GET", "latency_ms": 5269.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634581.541735, "name": "/query [rag]", "method": "POST", "latency_ms": 29664.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634583.738046, "name": "/query [rag]", "method": "POST", "latency_ms": 27333.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634583.8636138, "name": "/query [rag]", "method": "POST", "latency_ms": 27024.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634583.936658, "name": "/query [rag]", "method": "POST", "latency_ms": 27031.52, "status": 200, "ok": true, "error": null}
+{"ts": 1791634583.9468749, "name": "/agent", "method": "POST", "latency_ms": 27240.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634583.9471529, "name": "/query [rag]", "method": "POST", "latency_ms": 26912.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634583.947296, "name": "/query [rag]", "method": "POST", "latency_ms": 26835.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634583.9474251, "name": "/query [rag]", "method": "POST", "latency_ms": 27558.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634583.9493382, "name": "/agent", "method": "POST", "latency_ms": 27031.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634583.9495108, "name": "/query [rag]", "method": "POST", "latency_ms": 26563.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634583.949625, "name": "/agent", "method": "POST", "latency_ms": 27242.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.047766, "name": "/query [rag]", "method": "POST", "latency_ms": 26518.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.048042, "name": "/agent", "method": "POST", "latency_ms": 26624.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.048179, "name": "/query [rag]", "method": "POST", "latency_ms": 25910.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.048314, "name": "/query [rag]", "method": "POST", "latency_ms": 26529.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.1436338, "name": "/query [rag]", "method": "POST", "latency_ms": 25988.27, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.151818, "name": "/query [rag]", "method": "POST", "latency_ms": 26911.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.152988, "name": "/query [rag]", "method": "POST", "latency_ms": 26151.28, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.153431, "name": "/query [rag]", "method": "POST", "latency_ms": 26604.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.154631, "name": "/query [rag]", "method": "POST", "latency_ms": 26476.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.154779, "name": "/query [rag]", "method": "POST", "latency_ms": 26609.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.242374, "name": "/health", "method": "GET", "latency_ms": 8830.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.24311, "name": "/health", "method": "GET", "latency_ms": 8859.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.244919, "name": "/query [rag]", "method": "POST", "latency_ms": 26024.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.2455628, "name": "/query [rag]", "method": "POST", "latency_ms": 26588.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.246256, "name": "/query [rag]", "method": "POST", "latency_ms": 25886.3, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.246965, "name": "/query [rag]", "method": "POST", "latency_ms": 26360.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.247176, "name": "/health", "method": "GET", "latency_ms": 8597.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.248255, "name": "/agent", "method": "POST", "latency_ms": 26509.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.249331, "name": "/health", "method": "GET", "latency_ms": 8024.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.547037, "name": "/health", "method": "GET", "latency_ms": 7826.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.560509, "name": "/agent", "method": "POST", "latency_ms": 26778.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634584.560749, "name": "/health", "method": "GET", "latency_ms": 7904.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634585.954439, "name": "/query [rag]", "method": "POST", "latency_ms": 22746.26, "status": 200, "ok": true, "error": null}
+{"ts": 1791634588.035728, "name": "/agent", "method": "POST", "latency_ms": 30004.71, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634588.2781088, "name": "/agent", "method": "POST", "latency_ms": 30006.1, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634588.559078, "name": "/query [rag]", "method": "POST", "latency_ms": 30004.48, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634590.138848, "name": "/query [rag]", "method": "POST", "latency_ms": 26494.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634590.5545359, "name": "/query [rag]", "method": "POST", "latency_ms": 29269.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634591.20487, "name": "/query [rag]", "method": "POST", "latency_ms": 30001.56, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634592.8524082, "name": "/query [rag]", "method": "POST", "latency_ms": 28442.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.05642, "name": "/query [rag]", "method": "POST", "latency_ms": 25992.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.056677, "name": "/query [rag]", "method": "POST", "latency_ms": 25874.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.0573492, "name": "/query [rag]", "method": "POST", "latency_ms": 26726.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.059741, "name": "/query [rag]", "method": "POST", "latency_ms": 26155.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.060021, "name": "/query [rag]", "method": "POST", "latency_ms": 26123.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.060333, "name": "/query [rag]", "method": "POST", "latency_ms": 25429.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.134036, "name": "/agent", "method": "POST", "latency_ms": 26166.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.1403131, "name": "/query [rag]", "method": "POST", "latency_ms": 25973.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.1462998, "name": "/query [rag]", "method": "POST", "latency_ms": 25268.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.248574, "name": "/query [rag]", "method": "POST", "latency_ms": 25429.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.434361, "name": "/agent", "method": "POST", "latency_ms": 26195.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.437805, "name": "/agent", "method": "POST", "latency_ms": 26111.49, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.4380128, "name": "/query [rag]", "method": "POST", "latency_ms": 25533.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.440212, "name": "/query [rag]", "method": "POST", "latency_ms": 25487.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.4436622, "name": "/query [rag]", "method": "POST", "latency_ms": 25424.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.446371, "name": "/agent", "method": "POST", "latency_ms": 26452.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.4465768, "name": "/query [rag]", "method": "POST", "latency_ms": 25331.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.537309, "name": "/query [rag]", "method": "POST", "latency_ms": 25839.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.537722, "name": "/agent", "method": "POST", "latency_ms": 25976.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.5379572, "name": "/query [rag]", "method": "POST", "latency_ms": 25311.27, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.5381289, "name": "/query [rag]", "method": "POST", "latency_ms": 25235.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.7434309, "name": "/health", "method": "GET", "latency_ms": 8160.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.743634, "name": "/health", "method": "GET", "latency_ms": 8028.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.843395, "name": "/health", "method": "GET", "latency_ms": 7687.97, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.854133, "name": "/health", "method": "GET", "latency_ms": 7440.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.943254, "name": "/health", "method": "GET", "latency_ms": 4820.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.9511712, "name": "/query [rag]", "method": "POST", "latency_ms": 25180.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634593.965489, "name": "/query [rag]", "method": "POST", "latency_ms": 25932.78, "status": 200, "ok": true, "error": null}
+{"ts": 1791634594.044472, "name": "/query [rag]", "method": "POST", "latency_ms": 20401.34, "status": 200, "ok": true, "error": null}
+{"ts": 1791634594.0447, "name": "/health", "method": "GET", "latency_ms": 1623.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634594.04739, "name": "/query [rag]", "method": "POST", "latency_ms": 26139.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634597.147769, "name": "/query [rag]", "method": "POST", "latency_ms": 23150.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634598.119762, "name": "/agent", "method": "POST", "latency_ms": 30003.76, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634598.540284, "name": "/query [rag]", "method": "POST", "latency_ms": 23448.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634599.963038, "name": "/agent", "method": "POST", "latency_ms": 30006.12, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634602.1850932, "name": "/query [rag]", "method": "POST", "latency_ms": 30007.09, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634602.953811, "name": "/query [rag]", "method": "POST", "latency_ms": 27627.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.352181, "name": "/query [rag]", "method": "POST", "latency_ms": 28027.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.531992, "name": "/query [rag]", "method": "POST", "latency_ms": 28330.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.547958, "name": "/query [rag]", "method": "POST", "latency_ms": 28173.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.5509, "name": "/query [rag]", "method": "POST", "latency_ms": 27454.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.551669, "name": "/query [rag]", "method": "POST", "latency_ms": 27777.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.55232, "name": "/query [rag]", "method": "POST", "latency_ms": 27744.76, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.5524821, "name": "/query [rag]", "method": "POST", "latency_ms": 27778.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.552639, "name": "/query [rag]", "method": "POST", "latency_ms": 27929.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.552863, "name": "/query [rag]", "method": "POST", "latency_ms": 27321.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.553142, "name": "/query [rag]", "method": "POST", "latency_ms": 27036.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.63989, "name": "/query [rag]", "method": "POST", "latency_ms": 27056.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.656843, "name": "/query [rag]", "method": "POST", "latency_ms": 27785.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.657177, "name": "/query [rag]", "method": "POST", "latency_ms": 28126.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.738862, "name": "/query [rag]", "method": "POST", "latency_ms": 27918.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.7390609, "name": "/query [rag]", "method": "POST", "latency_ms": 29839.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.73919, "name": "/query [rag]", "method": "POST", "latency_ms": 28150.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.740575, "name": "/agent", "method": "POST", "latency_ms": 28641.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.750196, "name": "/agent", "method": "POST", "latency_ms": 27757.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.750371, "name": "/query [rag]", "method": "POST", "latency_ms": 27365.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.843486, "name": "/query [rag]", "method": "POST", "latency_ms": 26676.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.8438442, "name": "/query [rag]", "method": "POST", "latency_ms": 27209.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.945493, "name": "/query [rag]", "method": "POST", "latency_ms": 27224.22, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.9512992, "name": "/health", "method": "GET", "latency_ms": 9681.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.95246, "name": "/query [rag]", "method": "POST", "latency_ms": 27164.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634603.953304, "name": "/query [rag]", "method": "POST", "latency_ms": 26790.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634604.143728, "name": "/query [rag]", "method": "POST", "latency_ms": 27468.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634604.144002, "name": "/health", "method": "GET", "latency_ms": 8905.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634604.144192, "name": "/query [rag]", "method": "POST", "latency_ms": 27184.28, "status": 200, "ok": true, "error": null}
+{"ts": 1791634604.145025, "name": "/query [rag]", "method": "POST", "latency_ms": 26613.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634604.2433321, "name": "/health", "method": "GET", "latency_ms": 8761.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634604.348824, "name": "/query [rag]", "method": "POST", "latency_ms": 22064.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634604.364102, "name": "/health", "method": "GET", "latency_ms": 9130.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634606.99599, "name": "/agent", "method": "POST", "latency_ms": 30004.3, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634611.257215, "name": "/query [rag]", "method": "POST", "latency_ms": 26191.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.258275, "name": "/query [rag]", "method": "POST", "latency_ms": 26283.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.2585049, "name": "/query [rag]", "method": "POST", "latency_ms": 26145.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.258681, "name": "/query [rag]", "method": "POST", "latency_ms": 26506.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.2588558, "name": "/query [rag]", "method": "POST", "latency_ms": 26266.63, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.3471, "name": "/agent", "method": "POST", "latency_ms": 26238.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.347374, "name": "/query [rag]", "method": "POST", "latency_ms": 25838.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.347501, "name": "/query [rag]", "method": "POST", "latency_ms": 26888.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.347636, "name": "/query [rag]", "method": "POST", "latency_ms": 26263.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.348284, "name": "/query [rag]", "method": "POST", "latency_ms": 26054.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.348429, "name": "/query [rag]", "method": "POST", "latency_ms": 26264.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.348545, "name": "/query [rag]", "method": "POST", "latency_ms": 25709.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.348951, "name": "/query [rag]", "method": "POST", "latency_ms": 25458.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.349547, "name": "/query [rag]", "method": "POST", "latency_ms": 24997.57, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.349926, "name": "/query [rag]", "method": "POST", "latency_ms": 25067.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.3504362, "name": "/agent", "method": "POST", "latency_ms": 26246.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.3507662, "name": "/query [rag]", "method": "POST", "latency_ms": 25636.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.3515022, "name": "/query [rag]", "method": "POST", "latency_ms": 25285.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.352083, "name": "/query [rag]", "method": "POST", "latency_ms": 25844.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.352463, "name": "/query [rag]", "method": "POST", "latency_ms": 24851.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.353146, "name": "/query [rag]", "method": "POST", "latency_ms": 24995.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.3533351, "name": "/agent", "method": "POST", "latency_ms": 26756.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.3542469, "name": "/agent", "method": "POST", "latency_ms": 26704.63, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.4482949, "name": "/query [rag]", "method": "POST", "latency_ms": 24971.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.448544, "name": "/query [rag]", "method": "POST", "latency_ms": 26289.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.450243, "name": "/query [rag]", "method": "POST", "latency_ms": 25242.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.457302, "name": "/query [rag]", "method": "POST", "latency_ms": 24876.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.458438, "name": "/query [rag]", "method": "POST", "latency_ms": 24649.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.45907, "name": "/query [rag]", "method": "POST", "latency_ms": 21538.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.460329, "name": "/query [rag]", "method": "POST", "latency_ms": 22121.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634611.538296, "name": "/agent", "method": "POST", "latency_ms": 25131.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634620.8946528, "name": "/query [rag]", "method": "POST", "latency_ms": 30018.83, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634623.24943, "name": "/agent", "method": "POST", "latency_ms": 30006.34, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634623.846406, "name": "/query [rag]", "method": "POST", "latency_ms": 30003.44, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.219924, "name": "/query [rag]", "method": "POST", "latency_ms": 30007.32, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.4015942, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.65, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.406152, "name": "/query [rag]", "method": "POST", "latency_ms": 30000.36, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.4428349, "name": "/query [rag]", "method": "POST", "latency_ms": 29744.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.531958, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.63, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.555834, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.99, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.599683, "name": "/query [rag]", "method": "POST", "latency_ms": 30003.51, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.746994, "name": "/query [rag]", "method": "POST", "latency_ms": 29951.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.77248, "name": "/agent", "method": "POST", "latency_ms": 30004.07, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.799226, "name": "/query [rag]", "method": "POST", "latency_ms": 30003.05, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.8121269, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.45, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.849699, "name": "/query [rag]", "method": "POST", "latency_ms": 29083.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.850249, "name": "/query [rag]", "method": "POST", "latency_ms": 29845.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.875832, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.8, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634624.942642, "name": "/query [rag]", "method": "POST", "latency_ms": 29287.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.942969, "name": "/query [rag]", "method": "POST", "latency_ms": 29407.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.943169, "name": "/query [rag]", "method": "POST", "latency_ms": 29427.76, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.943302, "name": "/query [rag]", "method": "POST", "latency_ms": 29408.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.943409, "name": "/query [rag]", "method": "POST", "latency_ms": 29229.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.943989, "name": "/query [rag]", "method": "POST", "latency_ms": 29593.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.949247, "name": "/query [rag]", "method": "POST", "latency_ms": 29285.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.949627, "name": "/query [rag]", "method": "POST", "latency_ms": 26243.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.950322, "name": "/query [rag]", "method": "POST", "latency_ms": 24122.49, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.950451, "name": "/query [rag]", "method": "POST", "latency_ms": 26674.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.950569, "name": "/query [rag]", "method": "POST", "latency_ms": 28647.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.9568589, "name": "/query [rag]", "method": "POST", "latency_ms": 21241.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634624.9570508, "name": "/query [rag]", "method": "POST", "latency_ms": 20736.63, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.04061, "name": "/query [rag]", "method": "POST", "latency_ms": 21014.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.0412722, "name": "/agent", "method": "POST", "latency_ms": 28800.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.044147, "name": "/health", "method": "GET", "latency_ms": 12785.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.050207, "name": "/agent", "method": "POST", "latency_ms": 29265.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.050443, "name": "/health", "method": "GET", "latency_ms": 12232.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.2257879, "name": "/agent", "method": "POST", "latency_ms": 30006.38, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634625.238982, "name": "/query [rag]", "method": "POST", "latency_ms": 20781.26, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.2392151, "name": "/query [rag]", "method": "POST", "latency_ms": 20407.57, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.240136, "name": "/health", "method": "GET", "latency_ms": 11841.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.541909, "name": "/agent", "method": "POST", "latency_ms": 29570.93, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.542112, "name": "/query [rag]", "method": "POST", "latency_ms": 20293.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.552723, "name": "/agent", "method": "POST", "latency_ms": 29713.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634625.559614, "name": "/query [rag]", "method": "POST", "latency_ms": 23479.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634629.049634, "name": "/query [rag]", "method": "POST", "latency_ms": 24228.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634631.958074, "name": "/query [rag]", "method": "POST", "latency_ms": 27307.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.055512, "name": "/agent", "method": "POST", "latency_ms": 27788.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.353846, "name": "/query [rag]", "method": "POST", "latency_ms": 27095.86, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.356322, "name": "/query [rag]", "method": "POST", "latency_ms": 27639.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.4399512, "name": "/query [rag]", "method": "POST", "latency_ms": 27389.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.642485, "name": "/query [rag]", "method": "POST", "latency_ms": 27366.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.752689, "name": "/query [rag]", "method": "POST", "latency_ms": 27486.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.855951, "name": "/agent", "method": "POST", "latency_ms": 27632.53, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.856714, "name": "/query [rag]", "method": "POST", "latency_ms": 27450.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.856908, "name": "/query [rag]", "method": "POST", "latency_ms": 27542.75, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.85785, "name": "/query [rag]", "method": "POST", "latency_ms": 27491.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.859403, "name": "/query [rag]", "method": "POST", "latency_ms": 27069.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.859858, "name": "/query [rag]", "method": "POST", "latency_ms": 27046.52, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.860946, "name": "/query [rag]", "method": "POST", "latency_ms": 27131.52, "status": 200, "ok": true, "error": null}
+{"ts": 1791634632.947628, "name": "/query [rag]", "method": "POST", "latency_ms": 26623.75, "status": 200, "ok": true, "error": null}
+{"ts": 1791634633.455107, "name": "/query [rag]", "method": "POST", "latency_ms": 27733.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634633.4562728, "name": "/agent", "method": "POST", "latency_ms": 27726.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634633.4564888, "name": "/agent", "method": "POST", "latency_ms": 27589.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634633.8519309, "name": "/health", "method": "GET", "latency_ms": 7707.95, "status": 200, "ok": true, "error": null}
+{"ts": 1791634634.24074, "name": "/query [rag]", "method": "POST", "latency_ms": 27949.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634634.2421482, "name": "/health", "method": "GET", "latency_ms": 7928.78, "status": 200, "ok": true, "error": null}
+{"ts": 1791634634.243608, "name": "/query [rag]", "method": "POST", "latency_ms": 28592.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634634.2445, "name": "/health", "method": "GET", "latency_ms": 7931.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634634.7426062, "name": "/health", "method": "GET", "latency_ms": 7778.02, "status": 200, "ok": true, "error": null}
+{"ts": 1791634634.8741791, "name": "/agent", "method": "POST", "latency_ms": 28930.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634635.039382, "name": "/health", "method": "GET", "latency_ms": 8132.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634635.0396469, "name": "/query [rag]", "method": "POST", "latency_ms": 28807.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634635.039802, "name": "/query [rag]", "method": "POST", "latency_ms": 29250.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634635.047675, "name": "/query [rag]", "method": "POST", "latency_ms": 29280.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634635.1145952, "name": "/query [rag]", "method": "POST", "latency_ms": 30007.02, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634636.193507, "name": "/query [rag]", "method": "POST", "latency_ms": 30004.8, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634636.539781, "name": "/agent", "method": "POST", "latency_ms": 30006.24, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634638.314466, "name": "/query [rag]", "method": "POST", "latency_ms": 30008.82, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634641.8406699, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.57, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634641.9440482, "name": "/query [rag]", "method": "POST", "latency_ms": 30004.9, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.076216, "name": "/query [rag]", "method": "POST", "latency_ms": 30006.41, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.091848, "name": "/query [rag]", "method": "POST", "latency_ms": 30003.41, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.101394, "name": "/agent", "method": "POST", "latency_ms": 30002.42, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.158131, "name": "/query [rag]", "method": "POST", "latency_ms": 30006.71, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.344417, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.52, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.5026371, "name": "/query [rag]", "method": "POST", "latency_ms": 30008.94, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.536126, "name": "/query [rag]", "method": "POST", "latency_ms": 30006.26, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.739276, "name": "/query [rag]", "method": "POST", "latency_ms": 30004.47, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.7394838, "name": "/query [rag]", "method": "POST", "latency_ms": 30001.8, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.9304268, "name": "/query [rag]", "method": "POST", "latency_ms": 30003.55, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.930614, "name": "/agent", "method": "POST", "latency_ms": 30003.32, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634642.9596958, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.79, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.0819929, "name": "/agent", "method": "POST", "latency_ms": 30003.03, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.094018, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.27, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.142477, "name": "/query [rag]", "method": "POST", "latency_ms": 30009.57, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.299102, "name": "/query [rag]", "method": "POST", "latency_ms": 30000.96, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.3438542, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.76, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.346621, "name": "/agent", "method": "POST", "latency_ms": 30008.23, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.435133, "name": "/query [rag]", "method": "POST", "latency_ms": 30003.77, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.456335, "name": "/query [rag]", "method": "POST", "latency_ms": 30007.5, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.535014, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.5, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.5468318, "name": "/query [rag]", "method": "POST", "latency_ms": 30003.36, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.6295512, "name": "/query [rag]", "method": "POST", "latency_ms": 30003.56, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.808554, "name": "/query [rag]", "method": "POST", "latency_ms": 30001.17, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.810111, "name": "/agent", "method": "POST", "latency_ms": 30000.45, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634643.857398, "name": "/query [rag]", "method": "POST", "latency_ms": 30004.5, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634648.9584372, "name": "/health", "method": "GET", "latency_ms": 15183.57, "status": 200, "ok": true, "error": null}
+{"ts": 1791634649.152122, "name": "/health", "method": "GET", "latency_ms": 14611.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634649.355526, "name": "/query [rag]", "method": "POST", "latency_ms": 23620.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634650.439171, "name": "/health", "method": "GET", "latency_ms": 14898.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634650.447775, "name": "/query [rag]", "method": "POST", "latency_ms": 25317.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634650.64556, "name": "/health", "method": "GET", "latency_ms": 6722.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634651.234314, "name": "/health", "method": "GET", "latency_ms": 6711.93, "status": 200, "ok": true, "error": null}
+{"ts": 1791634651.488032, "name": "/agent", "method": "POST", "latency_ms": 30014.09, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634652.4499998, "name": "/health", "method": "GET", "latency_ms": 9617.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634652.5558982, "name": "/query [rag]", "method": "POST", "latency_ms": 26780.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634652.75021, "name": "/query [rag]", "method": "POST", "latency_ms": 26837.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634652.7535, "name": "/query [rag]", "method": "POST", "latency_ms": 26785.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634652.944278, "name": "/query [rag]", "method": "POST", "latency_ms": 27253.3, "status": 200, "ok": true, "error": null}
+{"ts": 1791634653.951911, "name": "/query [rag]", "method": "POST", "latency_ms": 29350.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634654.1512399, "name": "/query [rag]", "method": "POST", "latency_ms": 28892.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634654.2436008, "name": "/query [rag]", "method": "POST", "latency_ms": 28461.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634655.0389261, "name": "/agent", "method": "POST", "latency_ms": 29198.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634655.6354408, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.41, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634655.857512, "name": "/query [rag]", "method": "POST", "latency_ms": 30003.67, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.0474439, "name": "/query [rag]", "method": "POST", "latency_ms": 30004.41, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.094309, "name": "/query [rag]", "method": "POST", "latency_ms": 30006.01, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.094499, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.85, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.157971, "name": "/query [rag]", "method": "POST", "latency_ms": 30006.04, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.298264, "name": "/agent", "method": "POST", "latency_ms": 30005.83, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.345076, "name": "/agent", "method": "POST", "latency_ms": 30001.17, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.390887, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.67, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.5878668, "name": "/query [rag]", "method": "POST", "latency_ms": 30001.0, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.7839, "name": "/query [rag]", "method": "POST", "latency_ms": 30003.01, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.784897, "name": "/agent", "method": "POST", "latency_ms": 30003.7, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.7864692, "name": "/query [rag]", "method": "POST", "latency_ms": 30000.5, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.86523, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.8, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.889602, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.21, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634656.961144, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.07, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.030977, "name": "/agent", "method": "POST", "latency_ms": 30002.89, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.089848, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.8, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.1241431, "name": "/query [rag]", "method": "POST", "latency_ms": 30006.73, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.1337018, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.25, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.2344398, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.41, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.348992, "name": "/query [rag]", "method": "POST", "latency_ms": 30007.04, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.392292, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.83, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.392541, "name": "/agent", "method": "POST", "latency_ms": 30005.58, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.4373639, "name": "/query [rag]", "method": "POST", "latency_ms": 30002.36, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.469412, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.58, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634657.482202, "name": "/query [rag]", "method": "POST", "latency_ms": 30001.8, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634661.099357, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.91, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634661.946788, "name": "/health", "method": "GET", "latency_ms": 11442.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634661.9543738, "name": "/query [rag]", "method": "POST", "latency_ms": 28440.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.145869, "name": "/query [rag]", "method": "POST", "latency_ms": 27497.57, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.1461499, "name": "/query [rag]", "method": "POST", "latency_ms": 28453.49, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.15626, "name": "/agent", "method": "POST", "latency_ms": 28618.14, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.157196, "name": "/query [rag]", "method": "POST", "latency_ms": 27443.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.157606, "name": "/agent", "method": "POST", "latency_ms": 28614.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.246002, "name": "/query [rag]", "method": "POST", "latency_ms": 28492.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.246217, "name": "/query [rag]", "method": "POST", "latency_ms": 28341.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.440202, "name": "/agent", "method": "POST", "latency_ms": 28972.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.445342, "name": "/query [rag]", "method": "POST", "latency_ms": 26696.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.445535, "name": "/query [rag]", "method": "POST", "latency_ms": 27572.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.450948, "name": "/query [rag]", "method": "POST", "latency_ms": 26704.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.451108, "name": "/query [rag]", "method": "POST", "latency_ms": 26218.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.5466838, "name": "/query [rag]", "method": "POST", "latency_ms": 27644.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.547306, "name": "/agent", "method": "POST", "latency_ms": 28247.95, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.5474691, "name": "/query [rag]", "method": "POST", "latency_ms": 26888.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.638892, "name": "/query [rag]", "method": "POST", "latency_ms": 26872.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.653323, "name": "/query [rag]", "method": "POST", "latency_ms": 26277.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.654025, "name": "/agent", "method": "POST", "latency_ms": 27362.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.749195, "name": "/health", "method": "GET", "latency_ms": 5585.85, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.7499158, "name": "/query [rag]", "method": "POST", "latency_ms": 26026.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.756514, "name": "/query [rag]", "method": "POST", "latency_ms": 19405.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.783214, "name": "/health", "method": "GET", "latency_ms": 4732.2, "status": 200, "ok": true, "error": null}
+{"ts": 1791634662.783432, "name": "/health", "method": "GET", "latency_ms": 5359.14, "status": 200, "ok": true, "error": null}
+{"ts": 1791634663.033303, "name": "/agent", "method": "POST", "latency_ms": 28100.26, "status": 200, "ok": true, "error": null}
+{"ts": 1791634663.943715, "name": "/query [rag]", "method": "POST", "latency_ms": 26748.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634665.70305, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.84, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634665.989336, "name": "/query [rag]", "method": "POST", "latency_ms": 30005.62, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634666.1698182, "name": "/query [rag]", "method": "POST", "latency_ms": 30001.32, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634666.338485, "name": "/agent", "method": "POST", "latency_ms": 30006.04, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634667.306389, "name": "/query [rag]", "method": "POST", "latency_ms": 30007.45, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634667.333762, "name": "/agent", "method": "POST", "latency_ms": 30005.67, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634667.365432, "name": "/query [rag]", "method": "POST", "latency_ms": 30007.37, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634668.857517, "name": "/query [rag]", "method": "POST", "latency_ms": 30007.84, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634671.751194, "name": "/query [rag]", "method": "POST", "latency_ms": 28756.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634671.851087, "name": "/query [rag]", "method": "POST", "latency_ms": 28060.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634671.971475, "name": "/query [rag]", "method": "POST", "latency_ms": 28563.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.038597, "name": "/health", "method": "GET", "latency_ms": 9371.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.250072, "name": "/query [rag]", "method": "POST", "latency_ms": 28272.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.254154, "name": "/query [rag]", "method": "POST", "latency_ms": 28765.97, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.254349, "name": "/query [rag]", "method": "POST", "latency_ms": 28176.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.3425112, "name": "/query [rag]", "method": "POST", "latency_ms": 28007.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.3576581, "name": "/query [rag]", "method": "POST", "latency_ms": 28177.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.458495, "name": "/query [rag]", "method": "POST", "latency_ms": 27985.49, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.45964, "name": "/query [rag]", "method": "POST", "latency_ms": 28117.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.558549, "name": "/agent", "method": "POST", "latency_ms": 29128.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.5587761, "name": "/query [rag]", "method": "POST", "latency_ms": 27871.14, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.6551611, "name": "/query [rag]", "method": "POST", "latency_ms": 28208.22, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.763523, "name": "/query [rag]", "method": "POST", "latency_ms": 27840.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.763891, "name": "/query [rag]", "method": "POST", "latency_ms": 27285.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.765588, "name": "/agent", "method": "POST", "latency_ms": 28363.08, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.7676852, "name": "/query [rag]", "method": "POST", "latency_ms": 27528.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.768212, "name": "/query [rag]", "method": "POST", "latency_ms": 27573.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.7696471, "name": "/query [rag]", "method": "POST", "latency_ms": 27577.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.8357859, "name": "/agent", "method": "POST", "latency_ms": 28354.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.837395, "name": "/agent", "method": "POST", "latency_ms": 30003.38, "status": 0, "ok": false, "error": "ReadTimeout"}
+{"ts": 1791634672.838565, "name": "/agent", "method": "POST", "latency_ms": 27717.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.849399, "name": "/agent", "method": "POST", "latency_ms": 27985.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634672.8498602, "name": "/query [rag]", "method": "POST", "latency_ms": 26565.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634673.152194, "name": "/query [rag]", "method": "POST", "latency_ms": 21038.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634673.243871, "name": "/query [rag]", "method": "POST", "latency_ms": 19709.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634673.250463, "name": "/query [rag]", "method": "POST", "latency_ms": 22498.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634673.2553868, "name": "/health", "method": "GET", "latency_ms": 8811.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634674.334306, "name": "/query [rag]", "method": "POST", "latency_ms": 21342.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634674.43996, "name": "/health", "method": "GET", "latency_ms": 7340.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634674.453426, "name": "/health", "method": "GET", "latency_ms": 6370.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634674.4539049, "name": "/query [rag]", "method": "POST", "latency_ms": 22937.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634674.455251, "name": "/query [rag]", "method": "POST", "latency_ms": 20835.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634675.5335732, "name": "/query [rag]", "method": "POST", "latency_ms": 19047.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634675.8612218, "name": "/query [rag]", "method": "POST", "latency_ms": 20638.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634676.337821, "name": "/query [rag]", "method": "POST", "latency_ms": 21603.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634676.3479319, "name": "/query [rag]", "method": "POST", "latency_ms": 18606.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634676.348598, "name": "/query [rag]", "method": "POST", "latency_ms": 23528.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.0500932, "name": "/health", "method": "GET", "latency_ms": 4021.3, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.052216, "name": "/agent", "method": "POST", "latency_ms": 27048.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.250871, "name": "/query [rag]", "method": "POST", "latency_ms": 19900.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.251286, "name": "/query [rag]", "method": "POST", "latency_ms": 21482.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.258442, "name": "/query [rag]", "method": "POST", "latency_ms": 22152.22, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.258764, "name": "/query [rag]", "method": "POST", "latency_ms": 23165.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.260113, "name": "/query [rag]", "method": "POST", "latency_ms": 20851.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.338764, "name": "/query [rag]", "method": "POST", "latency_ms": 20126.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.345485, "name": "/query [rag]", "method": "POST", "latency_ms": 20330.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.346081, "name": "/query [rag]", "method": "POST", "latency_ms": 19646.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.437749, "name": "/query [rag]", "method": "POST", "latency_ms": 20804.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.4415948, "name": "/query [rag]", "method": "POST", "latency_ms": 18713.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.442388, "name": "/query [rag]", "method": "POST", "latency_ms": 18884.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.536941, "name": "/query [rag]", "method": "POST", "latency_ms": 19117.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.543209, "name": "/health", "method": "GET", "latency_ms": 3776.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.549438, "name": "/query [rag]", "method": "POST", "latency_ms": 19686.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.549616, "name": "/agent", "method": "POST", "latency_ms": 19184.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.5497541, "name": "/query [rag]", "method": "POST", "latency_ms": 18407.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.552394, "name": "/query [rag]", "method": "POST", "latency_ms": 18437.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.55252, "name": "/agent", "method": "POST", "latency_ms": 20030.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.5528388, "name": "/query [rag]", "method": "POST", "latency_ms": 18776.49, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.641195, "name": "/query [rag]", "method": "POST", "latency_ms": 18975.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.641715, "name": "/agent", "method": "POST", "latency_ms": 22741.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.6445272, "name": "/query [rag]", "method": "POST", "latency_ms": 18446.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.7375019, "name": "/health", "method": "GET", "latency_ms": 3129.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.737691, "name": "/query [rag]", "method": "POST", "latency_ms": 18960.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.7526, "name": "/query [rag]", "method": "POST", "latency_ms": 18824.2, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.760579, "name": "/agent", "method": "POST", "latency_ms": 19980.73, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.835489, "name": "/query [rag]", "method": "POST", "latency_ms": 18208.3, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.9390452, "name": "/health", "method": "GET", "latency_ms": 3209.84, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.939539, "name": "/health", "method": "GET", "latency_ms": 2163.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634677.946721, "name": "/health", "method": "GET", "latency_ms": 2412.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634680.452446, "name": "/agent", "method": "POST", "latency_ms": 21916.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634683.254834, "name": "/agent", "method": "POST", "latency_ms": 25135.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634684.961306, "name": "/agent", "method": "POST", "latency_ms": 25659.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634684.961549, "name": "/query [rag]", "method": "POST", "latency_ms": 21294.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634684.9617238, "name": "/query [rag]", "method": "POST", "latency_ms": 21680.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634684.962042, "name": "/query [rag]", "method": "POST", "latency_ms": 21230.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634684.962548, "name": "/query [rag]", "method": "POST", "latency_ms": 21797.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634684.963257, "name": "/query [rag]", "method": "POST", "latency_ms": 21312.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.060787, "name": "/query [rag]", "method": "POST", "latency_ms": 22125.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.141132, "name": "/query [rag]", "method": "POST", "latency_ms": 21542.53, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.14204, "name": "/query [rag]", "method": "POST", "latency_ms": 22603.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.151225, "name": "/query [rag]", "method": "POST", "latency_ms": 21870.09, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.151412, "name": "/query [rag]", "method": "POST", "latency_ms": 20470.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.151531, "name": "/query [rag]", "method": "POST", "latency_ms": 21395.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.1526458, "name": "/query [rag]", "method": "POST", "latency_ms": 20987.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.166419, "name": "/query [rag]", "method": "POST", "latency_ms": 20312.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.23635, "name": "/query [rag]", "method": "POST", "latency_ms": 21866.72, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.237924, "name": "/query [rag]", "method": "POST", "latency_ms": 21193.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.2570822, "name": "/query [rag]", "method": "POST", "latency_ms": 20074.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.257215, "name": "/query [rag]", "method": "POST", "latency_ms": 20822.17, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.257717, "name": "/query [rag]", "method": "POST", "latency_ms": 20546.55, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.257947, "name": "/query [rag]", "method": "POST", "latency_ms": 21501.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.344909, "name": "/query [rag]", "method": "POST", "latency_ms": 17912.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.3451579, "name": "/agent", "method": "POST", "latency_ms": 22014.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.345313, "name": "/agent", "method": "POST", "latency_ms": 22122.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.351752, "name": "/health", "method": "GET", "latency_ms": 7174.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.4633741, "name": "/query [rag]", "method": "POST", "latency_ms": 20753.28, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.5417862, "name": "/query [rag]", "method": "POST", "latency_ms": 20367.51, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.636087, "name": "/query [rag]", "method": "POST", "latency_ms": 15463.47, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.6521118, "name": "/health", "method": "GET", "latency_ms": 5745.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.652288, "name": "/query [rag]", "method": "POST", "latency_ms": 18151.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634685.658425, "name": "/health", "method": "GET", "latency_ms": 5662.2, "status": 200, "ok": true, "error": null}
+{"ts": 1791634689.748388, "name": "/query [rag]", "method": "POST", "latency_ms": 19920.77, "status": 200, "ok": true, "error": null}
+{"ts": 1791634691.8513029, "name": "/query [rag]", "method": "POST", "latency_ms": 26881.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634691.851777, "name": "/query [rag]", "method": "POST", "latency_ms": 18482.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634691.852004, "name": "/query [rag]", "method": "POST", "latency_ms": 18481.93, "status": 200, "ok": true, "error": null}
+{"ts": 1791634691.8521779, "name": "/query [rag]", "method": "POST", "latency_ms": 19023.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634691.8528059, "name": "/query [rag]", "method": "POST", "latency_ms": 18510.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634691.853173, "name": "/query [rag]", "method": "POST", "latency_ms": 18816.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634691.941625, "name": "/query [rag]", "method": "POST", "latency_ms": 18600.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.1389089, "name": "/agent", "method": "POST", "latency_ms": 24883.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.149719, "name": "/query [rag]", "method": "POST", "latency_ms": 18739.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.248715, "name": "/agent", "method": "POST", "latency_ms": 27505.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.263181, "name": "/agent", "method": "POST", "latency_ms": 26097.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.263883, "name": "/agent", "method": "POST", "latency_ms": 23781.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.2641852, "name": "/agent", "method": "POST", "latency_ms": 18918.11, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.264609, "name": "/health", "method": "GET", "latency_ms": 6670.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.3473291, "name": "/query [rag]", "method": "POST", "latency_ms": 18832.68, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.348264, "name": "/query [rag]", "method": "POST", "latency_ms": 18170.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.435015, "name": "/query [rag]", "method": "POST", "latency_ms": 18866.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.435942, "name": "/query [rag]", "method": "POST", "latency_ms": 18287.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.4432828, "name": "/query [rag]", "method": "POST", "latency_ms": 18726.3, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.4435709, "name": "/query [rag]", "method": "POST", "latency_ms": 18642.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.5478342, "name": "/query [rag]", "method": "POST", "latency_ms": 18771.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.548518, "name": "/query [rag]", "method": "POST", "latency_ms": 17981.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.567096, "name": "/query [rag]", "method": "POST", "latency_ms": 17746.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.567446, "name": "/query [rag]", "method": "POST", "latency_ms": 18446.99, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.632847, "name": "/query [rag]", "method": "POST", "latency_ms": 18424.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.648288, "name": "/query [rag]", "method": "POST", "latency_ms": 17840.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634692.6486778, "name": "/query [rag]", "method": "POST", "latency_ms": 17818.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634693.052661, "name": "/query [rag]", "method": "POST", "latency_ms": 18243.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634693.053177, "name": "/query [rag]", "method": "POST", "latency_ms": 18330.31, "status": 200, "ok": true, "error": null}
+{"ts": 1791634693.053345, "name": "/query [rag]", "method": "POST", "latency_ms": 18027.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634693.843387, "name": "/health", "method": "GET", "latency_ms": 8007.47, "status": 200, "ok": true, "error": null}
+{"ts": 1791634694.040582, "name": "/health", "method": "GET", "latency_ms": 7774.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634694.247854, "name": "/health", "method": "GET", "latency_ms": 7679.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634694.248019, "name": "/health", "method": "GET", "latency_ms": 7766.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634694.338325, "name": "/health", "method": "GET", "latency_ms": 6902.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634694.442027, "name": "/query [rag]", "method": "POST", "latency_ms": 18524.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634694.534086, "name": "/query [rag]", "method": "POST", "latency_ms": 17898.94, "status": 200, "ok": true, "error": null}
+{"ts": 1791634694.534283, "name": "/health", "method": "GET", "latency_ms": 3620.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634694.5344598, "name": "/agent", "method": "POST", "latency_ms": 20990.97, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.745641, "name": "/query [rag]", "method": "POST", "latency_ms": 21745.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.7460108, "name": "/query [rag]", "method": "POST", "latency_ms": 20789.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.757062, "name": "/query [rag]", "method": "POST", "latency_ms": 19740.8, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.7577999, "name": "/query [rag]", "method": "POST", "latency_ms": 19287.04, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.757963, "name": "/query [rag]", "method": "POST", "latency_ms": 19573.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.7589571, "name": "/query [rag]", "method": "POST", "latency_ms": 20381.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.759103, "name": "/query [rag]", "method": "POST", "latency_ms": 19211.97, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.7592251, "name": "/query [rag]", "method": "POST", "latency_ms": 19583.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.759779, "name": "/query [rag]", "method": "POST", "latency_ms": 19907.56, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.761024, "name": "/query [rag]", "method": "POST", "latency_ms": 19365.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.761204, "name": "/query [rag]", "method": "POST", "latency_ms": 20423.07, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.8403358, "name": "/query [rag]", "method": "POST", "latency_ms": 20159.6, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.8471072, "name": "/query [rag]", "method": "POST", "latency_ms": 19287.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.847585, "name": "/query [rag]", "method": "POST", "latency_ms": 19639.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.943593, "name": "/query [rag]", "method": "POST", "latency_ms": 18974.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.94382, "name": "/query [rag]", "method": "POST", "latency_ms": 18794.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.943965, "name": "/query [rag]", "method": "POST", "latency_ms": 18769.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.94419, "name": "/query [rag]", "method": "POST", "latency_ms": 18922.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634697.961452, "name": "/agent", "method": "POST", "latency_ms": 19812.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634698.054393, "name": "/agent", "method": "POST", "latency_ms": 19448.78, "status": 200, "ok": true, "error": null}
+{"ts": 1791634698.0545862, "name": "/query [rag]", "method": "POST", "latency_ms": 18962.9, "status": 200, "ok": true, "error": null}
+{"ts": 1791634698.0547168, "name": "/query [rag]", "method": "POST", "latency_ms": 18733.74, "status": 200, "ok": true, "error": null}
+{"ts": 1791634698.240927, "name": "/agent", "method": "POST", "latency_ms": 19810.79, "status": 200, "ok": true, "error": null}
+{"ts": 1791634698.3563478, "name": "/query [rag]", "method": "POST", "latency_ms": 18864.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634698.7700071, "name": "/query [rag]", "method": "POST", "latency_ms": 18970.27, "status": 200, "ok": true, "error": null}
+{"ts": 1791634698.945716, "name": "/agent", "method": "POST", "latency_ms": 20413.44, "status": 200, "ok": true, "error": null}
+{"ts": 1791634701.855862, "name": "/health", "method": "GET", "latency_ms": 6192.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634704.24124, "name": "/query [rag]", "method": "POST", "latency_ms": 24715.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634704.651916, "name": "/query [rag]", "method": "POST", "latency_ms": 25008.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634704.7466712, "name": "/agent", "method": "POST", "latency_ms": 25728.71, "status": 200, "ok": true, "error": null}
+{"ts": 1791634704.841436, "name": "/agent", "method": "POST", "latency_ms": 25510.27, "status": 200, "ok": true, "error": null}
+{"ts": 1791634704.8547058, "name": "/agent", "method": "POST", "latency_ms": 25588.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634704.962045, "name": "/agent", "method": "POST", "latency_ms": 25312.91, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.1489, "name": "/agent", "method": "POST", "latency_ms": 23489.66, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.153722, "name": "/agent", "method": "POST", "latency_ms": 25107.27, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.153923, "name": "/agent", "method": "POST", "latency_ms": 26014.57, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.739593, "name": "/query [rag]", "method": "POST", "latency_ms": 19964.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.745603, "name": "/agent", "method": "POST", "latency_ms": 25722.33, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.746179, "name": "/query [rag]", "method": "POST", "latency_ms": 19831.34, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.845301, "name": "/query [rag]", "method": "POST", "latency_ms": 19289.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.849598, "name": "/query [rag]", "method": "POST", "latency_ms": 19398.7, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.8637629, "name": "/query [rag]", "method": "POST", "latency_ms": 19907.87, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.93988, "name": "/query [rag]", "method": "POST", "latency_ms": 20105.76, "status": 200, "ok": true, "error": null}
+{"ts": 1791634705.952678, "name": "/query [rag]", "method": "POST", "latency_ms": 20169.54, "status": 200, "ok": true, "error": null}
+{"ts": 1791634706.957087, "name": "/query [rag]", "method": "POST", "latency_ms": 20614.92, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.031327, "name": "/query [rag]", "method": "POST", "latency_ms": 20550.19, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.049334, "name": "/query [rag]", "method": "POST", "latency_ms": 20319.89, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.052217, "name": "/agent", "method": "POST", "latency_ms": 20699.0, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.053836, "name": "/query [rag]", "method": "POST", "latency_ms": 20003.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.141702, "name": "/agent", "method": "POST", "latency_ms": 21045.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.246382, "name": "/query [rag]", "method": "POST", "latency_ms": 20687.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.337363, "name": "/query [rag]", "method": "POST", "latency_ms": 19745.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.3419058, "name": "/health", "method": "GET", "latency_ms": 7559.35, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.3446422, "name": "/health", "method": "GET", "latency_ms": 7510.01, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.350364, "name": "/query [rag]", "method": "POST", "latency_ms": 19838.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.355535, "name": "/query [rag]", "method": "POST", "latency_ms": 20056.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.35654, "name": "/query [rag]", "method": "POST", "latency_ms": 19719.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.35774, "name": "/agent", "method": "POST", "latency_ms": 21319.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.3590558, "name": "/query [rag]", "method": "POST", "latency_ms": 19490.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.359783, "name": "/agent", "method": "POST", "latency_ms": 20768.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.437113, "name": "/agent", "method": "POST", "latency_ms": 20748.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.437529, "name": "/query [rag]", "method": "POST", "latency_ms": 14231.93, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.4453728, "name": "/agent", "method": "POST", "latency_ms": 20757.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.453948, "name": "/health", "method": "GET", "latency_ms": 4453.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634707.4541, "name": "/agent", "method": "POST", "latency_ms": 20209.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.0560472, "name": "/health", "method": "GET", "latency_ms": 4387.61, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.343571, "name": "/health", "method": "GET", "latency_ms": 4265.36, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.4425101, "name": "/health", "method": "GET", "latency_ms": 3498.83, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.4477131, "name": "/query [rag]", "method": "POST", "latency_ms": 17216.05, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.44788, "name": "/query [rag]", "method": "POST", "latency_ms": 17135.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.448001, "name": "/query [rag]", "method": "POST", "latency_ms": 17319.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.4483001, "name": "/query [rag]", "method": "POST", "latency_ms": 17487.52, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.4485672, "name": "/query [rag]", "method": "POST", "latency_ms": 17050.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.448789, "name": "/query [rag]", "method": "POST", "latency_ms": 17372.42, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.553362, "name": "/query [rag]", "method": "POST", "latency_ms": 23026.69, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.561149, "name": "/query [rag]", "method": "POST", "latency_ms": 16763.67, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.565136, "name": "/query [rag]", "method": "POST", "latency_ms": 17359.81, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.6487098, "name": "/query [rag]", "method": "POST", "latency_ms": 16882.2, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.6497972, "name": "/query [rag]", "method": "POST", "latency_ms": 17971.58, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.6529422, "name": "/query [rag]", "method": "POST", "latency_ms": 17420.95, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.74744, "name": "/query [rag]", "method": "POST", "latency_ms": 17360.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.7476869, "name": "/query [rag]", "method": "POST", "latency_ms": 17443.45, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.747817, "name": "/query [rag]", "method": "POST", "latency_ms": 16909.48, "status": 200, "ok": true, "error": null}
+{"ts": 1791634710.747941, "name": "/query [rag]", "method": "POST", "latency_ms": 16810.65, "status": 200, "ok": true, "error": null}
+{"ts": 1791634711.041197, "name": "/query [rag]", "method": "POST", "latency_ms": 17222.52, "status": 200, "ok": true, "error": null}
+{"ts": 1791634711.047186, "name": "/query [rag]", "method": "POST", "latency_ms": 16963.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634711.151795, "name": "/query [rag]", "method": "POST", "latency_ms": 16826.12, "status": 200, "ok": true, "error": null}
+{"ts": 1791634711.24239, "name": "/query [rag]", "method": "POST", "latency_ms": 16981.23, "status": 200, "ok": true, "error": null}
+{"ts": 1791634711.250174, "name": "/query [rag]", "method": "POST", "latency_ms": 16913.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634711.251242, "name": "/query [rag]", "method": "POST", "latency_ms": 16747.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634711.251362, "name": "/query [rag]", "method": "POST", "latency_ms": 16792.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634711.2524889, "name": "/query [rag]", "method": "POST", "latency_ms": 16938.39, "status": 200, "ok": true, "error": null}
+{"ts": 1791634712.837245, "name": "/health", "method": "GET", "latency_ms": 5075.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634713.152707, "name": "/agent", "method": "POST", "latency_ms": 19195.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634713.159235, "name": "/health", "method": "GET", "latency_ms": 5227.38, "status": 200, "ok": true, "error": null}
+{"ts": 1791634713.445128, "name": "/query [rag]", "method": "POST", "latency_ms": 18596.88, "status": 200, "ok": true, "error": null}
+{"ts": 1791634713.449366, "name": "/query [rag]", "method": "POST", "latency_ms": 18561.27, "status": 200, "ok": true, "error": null}
+{"ts": 1791634713.647407, "name": "/health", "method": "GET", "latency_ms": 3972.59, "status": 200, "ok": true, "error": null}
+{"ts": 1791634713.648468, "name": "/agent", "method": "POST", "latency_ms": 19548.18, "status": 200, "ok": true, "error": null}
+{"ts": 1791634713.7475011, "name": "/agent", "method": "POST", "latency_ms": 19190.25, "status": 200, "ok": true, "error": null}
+{"ts": 1791634713.7478888, "name": "/query [rag]", "method": "POST", "latency_ms": 18833.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634713.762451, "name": "/query [rag]", "method": "POST", "latency_ms": 18098.37, "status": 200, "ok": true, "error": null}
+{"ts": 1791634714.066706, "name": "/query [rag]", "method": "POST", "latency_ms": 19030.21, "status": 200, "ok": true, "error": null}
+{"ts": 1791634718.558298, "name": "/query [rag]", "method": "POST", "latency_ms": 22954.62, "status": 200, "ok": true, "error": null}
+{"ts": 1791634718.856107, "name": "/query [rag]", "method": "POST", "latency_ms": 23123.85, "status": 200, "ok": true, "error": null}
+{"ts": 1791634718.856725, "name": "/health", "method": "GET", "latency_ms": 5890.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634718.857436, "name": "/query [rag]", "method": "POST", "latency_ms": 23539.64, "status": 200, "ok": true, "error": null}
+{"ts": 1791634718.947318, "name": "/query [rag]", "method": "POST", "latency_ms": 22291.1, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.1409621, "name": "/query [rag]", "method": "POST", "latency_ms": 20397.78, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.255336, "name": "/agent", "method": "POST", "latency_ms": 23543.85, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.255975, "name": "/query [rag]", "method": "POST", "latency_ms": 20584.52, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.3437529, "name": "/health", "method": "GET", "latency_ms": 6140.15, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.343967, "name": "/health", "method": "GET", "latency_ms": 6008.43, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.344139, "name": "/query [rag]", "method": "POST", "latency_ms": 21030.24, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.349432, "name": "/query [rag]", "method": "POST", "latency_ms": 23300.98, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.3496408, "name": "/query [rag]", "method": "POST", "latency_ms": 20441.5, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.350284, "name": "/query [rag]", "method": "POST", "latency_ms": 20327.29, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.3505511, "name": "/query [rag]", "method": "POST", "latency_ms": 20061.4, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.442784, "name": "/query [rag]", "method": "POST", "latency_ms": 20070.82, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.560627, "name": "/query [rag]", "method": "POST", "latency_ms": 20361.06, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.560998, "name": "/query [rag]", "method": "POST", "latency_ms": 20381.16, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.5611541, "name": "/query [rag]", "method": "POST", "latency_ms": 20422.03, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.5614169, "name": "/query [rag]", "method": "POST", "latency_ms": 20641.46, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.561954, "name": "/query [rag]", "method": "POST", "latency_ms": 19948.13, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.562745, "name": "/query [rag]", "method": "POST", "latency_ms": 20628.41, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.562878, "name": "/query [rag]", "method": "POST", "latency_ms": 20192.32, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.642424, "name": "/query [rag]", "method": "POST", "latency_ms": 20949.28, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.642866, "name": "/query [rag]", "method": "POST", "latency_ms": 19730.96, "status": 200, "ok": true, "error": null}
+{"ts": 1791634719.645744, "name": "/query [rag]", "method": "POST", "latency_ms": 20636.86, "status": 200, "ok": true, "error": null}

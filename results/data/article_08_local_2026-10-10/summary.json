@@ -1,0 +1,3534 @@
+{
+  "mode": "measured_local_fake_model",
+  "note": "Every LLM call in these runs is FakeLLMClient: a blocking sleep of fake_latency_ms with a fixed reply. Embedding (BGE on CPU), Chroma retrieval, auth, FastAPI routing and the threadpool are real. The numbers describe the serving stack, not any provider.",
+  "provenance": {
+    "runs_executed_at_commit": "904842c for runs started before 2026-10-10T11:38Z (api_config_w1, w1_async, w2 without git_commit); later runs record git_commit in their api_config",
+    "git_commit": "2446ce33e35cf3fa2d2d80e21e531e09368bc5c7",
+    "git_dirty": false,
+    "summarized_utc": "2026-10-10T12:35:06Z",
+    "generator_model": "none (fake model)",
+    "judge_model": "none",
+    "runs_dir": "<bench-worktree>/results/data/article_08_local_2026-10-10"
+  },
+  "api_configs": {
+    "w1": {
+      "workers": 1,
+      "cpus": 1.5,
+      "memory_gb": 2,
+      "fake_latency_ms": 1000,
+      "health": "sync",
+      "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84"
+    },
+    "w1_1791633587": {
+      "workers": 1,
+      "cpus": 1.5,
+      "memory_gb": 2,
+      "fake_latency_ms": 1000,
+      "worker_healthcheck_s": 5,
+      "health": "sync",
+      "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84",
+      "git_commit": "2446ce33e35cf3fa2d2d80e21e531e09368bc5c7",
+      "git_dirty": false
+    },
+    "w1_1791634421": {
+      "workers": 1,
+      "cpus": 1.5,
+      "memory_gb": 2,
+      "fake_latency_ms": 1000,
+      "worker_healthcheck_s": 5,
+      "health": "sync",
+      "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84",
+      "git_commit": "2446ce33e35cf3fa2d2d80e21e531e09368bc5c7",
+      "git_dirty": false
+    },
+    "w1_1791635256": {
+      "workers": 1,
+      "cpus": 1.5,
+      "memory_gb": 2,
+      "fake_latency_ms": 1000,
+      "worker_healthcheck_s": 5,
+      "health": "sync",
+      "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84",
+      "git_commit": "2446ce33e35cf3fa2d2d80e21e531e09368bc5c7",
+      "git_dirty": false
+    },
+    "w1_async": {
+      "workers": 1,
+      "cpus": 1.5,
+      "memory_gb": 2,
+      "fake_latency_ms": 1000,
+      "health": "async",
+      "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84"
+    },
+    "w1_async_1791634002": {
+      "workers": 1,
+      "cpus": 1.5,
+      "memory_gb": 2,
+      "fake_latency_ms": 1000,
+      "worker_healthcheck_s": 5,
+      "health": "async",
+      "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84",
+      "git_commit": "2446ce33e35cf3fa2d2d80e21e531e09368bc5c7",
+      "git_dirty": false
+    },
+    "w1_async_1791634844": {
+      "workers": 1,
+      "cpus": 1.5,
+      "memory_gb": 2,
+      "fake_latency_ms": 1000,
+      "worker_healthcheck_s": 5,
+      "health": "async",
+      "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84",
+      "git_commit": "2446ce33e35cf3fa2d2d80e21e531e09368bc5c7",
+      "git_dirty": false
+    },
+    "w2": {
+      "workers": 2,
+      "cpus": 3.0,
+      "memory_gb": 4,
+      "fake_latency_ms": 1000,
+      "health": "sync",
+      "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84"
+    },
+    "w2_1791632349": {
+      "workers": 2,
+      "cpus": 3.0,
+      "memory_gb": 4,
+      "fake_latency_ms": 1000,
+      "worker_healthcheck_s": 5,
+      "health": "sync",
+      "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84",
+      "git_commit": "0514430cb97f363a3eaa08e1362e64843f726bf1",
+      "git_dirty": true
+    },
+    "w2_1791633166": {
+      "workers": 2,
+      "cpus": 3.0,
+      "memory_gb": 4,
+      "fake_latency_ms": 1000,
+      "worker_healthcheck_s": 60,
+      "health": "sync",
+      "image": "sha256:f06691e18631d82c8534840fc498c6532e44e35897cef1bbbd603e53be311b84",
+      "git_commit": "2446ce33e35cf3fa2d2d80e21e531e09368bc5c7",
+      "git_dirty": false
+    }
+  },
+  "server_log_events": [
+    {
+      "log": "api_log_w2_1791632349.txt",
+      "ts_utc": "2026-10-10T11:45:50.289885134Z",
+      "message": "INFO:     Waiting for child process [9]"
+    },
+    {
+      "log": "api_log_w2_1791632349.txt",
+      "ts_utc": "2026-10-10T11:45:50.740785926Z",
+      "message": "INFO:     Child process [9] died"
+    },
+    {
+      "log": "api_log_w2_1791632349.txt",
+      "ts_utc": "2026-10-10T11:47:39.692136088Z",
+      "message": "INFO:     Waiting for child process [8]"
+    },
+    {
+      "log": "api_log_w2_1791632349.txt",
+      "ts_utc": "2026-10-10T11:47:40.072993713Z",
+      "message": "INFO:     Child process [8] died"
+    },
+    {
+      "log": "api_log_w2_1791632349.txt",
+      "ts_utc": "2026-10-10T11:48:46.078180674Z",
+      "message": "INFO:     Waiting for child process [3985]"
+    },
+    {
+      "log": "api_log_w2_1791632349.txt",
+      "ts_utc": "2026-10-10T11:48:46.272829757Z",
+      "message": "INFO:     Child process [3985] died"
+    },
+    {
+      "log": "api_log_w2_1791632349.txt",
+      "ts_utc": "2026-10-10T11:50:23.182727052Z",
+      "message": "INFO:     Waiting for child process [4601]"
+    },
+    {
+      "log": "api_log_w2_1791632349.txt",
+      "ts_utc": "2026-10-10T11:50:23.389756094Z",
+      "message": "INFO:     Child process [4601] died"
+    }
+  ],
+  "runs": {
+    "w1_closed_u100": {
+      "run": {
+        "kind": "closed",
+        "users": 100,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 456,
+          "successes": 456,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.52,
+          "latency_success": {
+            "n": 456,
+            "p50_ms": 14218.6,
+            "p95_ms": 16697.6,
+            "p99_ms": 17534.3,
+            "max_ms": 18624.3
+          },
+          "latency_all": {
+            "n": 456,
+            "p50_ms": 14218.6,
+            "p95_ms": 16697.6,
+            "p99_ms": 17534.3,
+            "max_ms": 18624.3
+          }
+        },
+        "/health": {
+          "requests": 236,
+          "successes": 236,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 0.787,
+          "latency_success": {
+            "n": 236,
+            "p50_ms": 2895.6,
+            "p95_ms": 5175.0,
+            "p99_ms": 5664.8,
+            "max_ms": 5926.6
+          },
+          "latency_all": {
+            "n": 236,
+            "p50_ms": 2895.6,
+            "p95_ms": 5175.0,
+            "p99_ms": 5664.8,
+            "max_ms": 5926.6
+          }
+        },
+        "/query [rag]": {
+          "requests": 1554,
+          "successes": 1554,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 5.18,
+          "latency_success": {
+            "n": 1554,
+            "p50_ms": 11700.6,
+            "p95_ms": 15121.5,
+            "p99_ms": 16358.1,
+            "max_ms": 18246.1
+          },
+          "latency_all": {
+            "n": 1554,
+            "p50_ms": 11700.6,
+            "p95_ms": 15121.5,
+            "p99_ms": 16358.1,
+            "max_ms": 18246.1
+          }
+        },
+        "_business_successful_rps": 6.7
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 102,
+          "timeouts_5s": 7,
+          "other_errors": 0,
+          "over_1s": 80,
+          "latency": {
+            "n": 95,
+            "p50_ms": 2919.0,
+            "p95_ms": 5192.9,
+            "p99_ms": 5696.7,
+            "max_ms": 5700.6
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 87,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 2,
+          "latency": {
+            "n": 87,
+            "p50_ms": 3.1,
+            "p95_ms": 8.4,
+            "p99_ms": 1645.1,
+            "max_ms": 3906.2
+          }
+        },
+        "probe_recovered_after_s": 6.0,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 598,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 39.5,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.875,
+          "waiting_mean": 48.2,
+          "waiting_p95": 61.0,
+          "waiting_max": 63.0,
+          "pids_seen": [
+            1
+          ],
+          "async_endpoint_latency": {
+            "n": 598,
+            "p50_ms": 33.4,
+            "p95_ms": 94.2,
+            "p99_ms": 138.4,
+            "max_ms": 299.1
+          }
+        },
+        "threadpool_drained_after_s": 10.3
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 150.0,
+        "cpu_pct_max": 156.8,
+        "mem_gib_max": 1.726,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791629052 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629052 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629056 exec_die",
+        "1791629086 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629086 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629090 exec_die",
+        "1791629120 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629120 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629121 exec_die",
+        "1791629151 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629151 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629153 exec_die",
+        "1791629183 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629183 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629185 exec_die",
+        "1791629215 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629215 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629216 exec_die",
+        "1791629246 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629246 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629251 exec_die",
+        "1791629281 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629281 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629283 exec_die",
+        "1791629313 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629313 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629316 exec_die",
+        "1791629346 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629346 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629346 exec_die",
+        "1791629376 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629376 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629376 exec_die",
+        "1791629406 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629406 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629406 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 3065,
+        "calls_serving_successes": 2922,
+        "wasted_share": 0.047
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1": 0.7
+        }
+      },
+      "oom_kill_start": null,
+      "oom_kill_end": null,
+      "load_start_utc": "2026-10-10T10:43:43Z"
+    },
+    "w1_closed_u100_rep2": {
+      "run": {
+        "kind": "closed",
+        "users": 100,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 402,
+          "successes": 402,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.34,
+          "latency_success": {
+            "n": 402,
+            "p50_ms": 14609.8,
+            "p95_ms": 18418.0,
+            "p99_ms": 19829.4,
+            "max_ms": 21287.1
+          },
+          "latency_all": {
+            "n": 402,
+            "p50_ms": 14609.8,
+            "p95_ms": 18418.0,
+            "p99_ms": 19829.4,
+            "max_ms": 21287.1
+          }
+        },
+        "/health": {
+          "requests": 224,
+          "successes": 224,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 0.747,
+          "latency_success": {
+            "n": 224,
+            "p50_ms": 3475.7,
+            "p95_ms": 6231.1,
+            "p99_ms": 7770.0,
+            "max_ms": 8114.0
+          },
+          "latency_all": {
+            "n": 224,
+            "p50_ms": 3475.7,
+            "p95_ms": 6231.1,
+            "p99_ms": 7770.0,
+            "max_ms": 8114.0
+          }
+        },
+        "/query [rag]": {
+          "requests": 1424,
+          "successes": 1424,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 4.747,
+          "latency_success": {
+            "n": 1424,
+            "p50_ms": 13228.6,
+            "p95_ms": 17238.4,
+            "p99_ms": 19027.4,
+            "max_ms": 21702.8
+          },
+          "latency_all": {
+            "n": 1424,
+            "p50_ms": 13228.6,
+            "p95_ms": 17238.4,
+            "p99_ms": 19027.4,
+            "max_ms": 21702.8
+          }
+        },
+        "_business_successful_rps": 6.087
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 93,
+          "timeouts_5s": 11,
+          "other_errors": 0,
+          "over_1s": 74,
+          "latency": {
+            "n": 82,
+            "p50_ms": 3146.4,
+            "p95_ms": 5275.7,
+            "p99_ms": 5495.8,
+            "max_ms": 5501.2
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 88,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 2,
+          "latency": {
+            "n": 88,
+            "p50_ms": 5.2,
+            "p95_ms": 21.0,
+            "p99_ms": 1993.2,
+            "max_ms": 3393.1
+          }
+        },
+        "probe_recovered_after_s": 7.4,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 588,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 39.5,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.854,
+          "waiting_mean": 49.3,
+          "waiting_p95": 62.0,
+          "waiting_max": 63.0,
+          "pids_seen": [
+            1
+          ],
+          "async_endpoint_latency": {
+            "n": 588,
+            "p50_ms": 40.9,
+            "p95_ms": 126.9,
+            "p99_ms": 325.4,
+            "max_ms": 2995.6
+          }
+        },
+        "threadpool_drained_after_s": 11.0
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 149.6,
+        "cpu_pct_max": 166.4,
+        "mem_gib_max": 1.573,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791633606 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633606 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633610 exec_die",
+        "1791633640 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633640 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633644 exec_die",
+        "1791633674 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633674 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633679 exec_die",
+        "1791633709 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633709 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633714 exec_die",
+        "1791633744 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633744 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633747 exec_die",
+        "1791633777 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633777 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633780 exec_die",
+        "1791633810 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633810 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633813 exec_die",
+        "1791633843 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633843 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633846 exec_die",
+        "1791633876 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633876 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633881 exec_die",
+        "1791633911 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633911 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633911 exec_die",
+        "1791633941 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633941 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633941 exec_die",
+        "1791633971 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633971 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633972 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 2763,
+        "calls_serving_successes": 2630,
+        "wasted_share": 0.048
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1": 1.1
+        }
+      },
+      "oom_kill_start": 0,
+      "oom_kill_end": 0,
+      "load_start_utc": "2026-10-10T11:59:47Z"
+    },
+    "w1_closed_u100_rep3": {
+      "run": {
+        "kind": "closed",
+        "users": 100,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 284,
+          "successes": 258,
+          "errors": {
+            "ReadTimeout": 26
+          },
+          "error_rate": 0.0915,
+          "successful_rps": 0.86,
+          "latency_success": {
+            "n": 258,
+            "p50_ms": 18299.0,
+            "p95_ms": 28400.8,
+            "p99_ms": 29227.2,
+            "max_ms": 29713.2
+          },
+          "latency_all": {
+            "n": 284,
+            "p50_ms": 19192.7,
+            "p95_ms": 30004.6,
+            "p99_ms": 30006.7,
+            "max_ms": 30014.1
+          }
+        },
+        "/health": {
+          "requests": 166,
+          "successes": 166,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 0.553,
+          "latency_success": {
+            "n": 166,
+            "p50_ms": 4924.2,
+            "p95_ms": 9575.7,
+            "p99_ms": 14712.2,
+            "max_ms": 15183.6
+          },
+          "latency_all": {
+            "n": 166,
+            "p50_ms": 4924.2,
+            "p95_ms": 9575.7,
+            "p99_ms": 14712.2,
+            "max_ms": 15183.6
+          }
+        },
+        "/query [rag]": {
+          "requests": 1023,
+          "successes": 952,
+          "errors": {
+            "ReadTimeout": 71
+          },
+          "error_rate": 0.0694,
+          "successful_rps": 3.173,
+          "latency_success": {
+            "n": 952,
+            "p50_ms": 17392.6,
+            "p95_ms": 27995.2,
+            "p99_ms": 29318.4,
+            "max_ms": 29951.3
+          },
+          "latency_all": {
+            "n": 1023,
+            "p50_ms": 18481.9,
+            "p95_ms": 30002.8,
+            "p99_ms": 30007.1,
+            "max_ms": 30019.5
+          }
+        },
+        "_business_successful_rps": 4.033
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 76,
+          "timeouts_5s": 26,
+          "other_errors": 0,
+          "over_1s": 69,
+          "latency": {
+            "n": 50,
+            "p50_ms": 3466.7,
+            "p95_ms": 5370.0,
+            "p99_ms": 5711.2,
+            "max_ms": 5819.4
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 81,
+          "timeouts_5s": 1,
+          "other_errors": 0,
+          "over_1s": 3,
+          "latency": {
+            "n": 80,
+            "p50_ms": 5.2,
+            "p95_ms": 90.7,
+            "p99_ms": 2119.8,
+            "max_ms": 3692.1
+          }
+        },
+        "probe_recovered_after_s": 15.5,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 586,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 39.4,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.833,
+          "waiting_mean": 53.4,
+          "waiting_p95": 65.0,
+          "waiting_max": 92.0,
+          "pids_seen": [
+            1
+          ],
+          "async_endpoint_latency": {
+            "n": 586,
+            "p50_ms": 70.0,
+            "p95_ms": 294.0,
+            "p99_ms": 584.6,
+            "max_ms": 3799.4
+          }
+        },
+        "threadpool_drained_after_s": 18.9
+      },
+      "container": {
+        "samples": 149,
+        "cpu_pct_mean": 149.6,
+        "cpu_pct_max": 164.5,
+        "mem_gib_max": 1.547,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791634442 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634442 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634443 exec_die",
+        "1791634473 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634473 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634476 exec_die",
+        "1791634506 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634506 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634511 exec_die",
+        "1791634541 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634541 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634547 exec_die",
+        "1791634577 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634577 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634582 exec_die",
+        "1791634612 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634612 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634617 health_status: unhealthy",
+        "1791634617 exec_die",
+        "1791634647 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634647 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634652 exec_die",
+        "1791634652 health_status: healthy",
+        "1791634682 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634682 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634685 exec_die",
+        "1791634715 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634715 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634720 exec_die",
+        "1791634750 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634750 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634750 exec_die",
+        "1791634780 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634780 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634781 exec_die",
+        "1791634811 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634811 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634811 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 2020,
+        "calls_serving_successes": 1726,
+        "wasted_share": 0.146
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1": 1.2
+        }
+      },
+      "oom_kill_start": 0,
+      "oom_kill_end": 0,
+      "load_start_utc": "2026-10-10T12:13:41Z"
+    },
+    "w1_closed_u50": {
+      "run": {
+        "kind": "closed",
+        "users": 50,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 370,
+          "successes": 370,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.233,
+          "latency_success": {
+            "n": 370,
+            "p50_ms": 8128.9,
+            "p95_ms": 10429.5,
+            "p99_ms": 11339.5,
+            "max_ms": 11649.0
+          },
+          "latency_all": {
+            "n": 370,
+            "p50_ms": 8128.9,
+            "p95_ms": 10429.5,
+            "p99_ms": 11339.5,
+            "max_ms": 11649.0
+          }
+        },
+        "/health": {
+          "requests": 207,
+          "successes": 207,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 0.69,
+          "latency_success": {
+            "n": 207,
+            "p50_ms": 100.8,
+            "p95_ms": 686.8,
+            "p99_ms": 1100.8,
+            "max_ms": 1504.5
+          },
+          "latency_all": {
+            "n": 207,
+            "p50_ms": 100.8,
+            "p95_ms": 686.8,
+            "p99_ms": 1100.8,
+            "max_ms": 1504.5
+          }
+        },
+        "/query [rag]": {
+          "requests": 1394,
+          "successes": 1394,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 4.647,
+          "latency_success": {
+            "n": 1394,
+            "p50_ms": 6258.1,
+            "p95_ms": 8552.3,
+            "p99_ms": 9328.8,
+            "max_ms": 10060.2
+          },
+          "latency_all": {
+            "n": 1394,
+            "p50_ms": 6258.1,
+            "p95_ms": 8552.3,
+            "p99_ms": 9328.8,
+            "max_ms": 10060.2
+          }
+        },
+        "_business_successful_rps": 5.88
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 296,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 15,
+          "latency": {
+            "n": 296,
+            "p50_ms": 157.6,
+            "p95_ms": 997.0,
+            "p99_ms": 1352.7,
+            "max_ms": 1906.0
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 90,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 0,
+          "latency": {
+            "n": 90,
+            "p50_ms": 4.9,
+            "p95_ms": 7.1,
+            "p99_ms": 110.4,
+            "max_ms": 214.9
+          }
+        },
+        "probe_recovered_after_s": 1.4,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 599,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 37.7,
+          "busy_max": 41.0,
+          "share_of_samples_at_limit": 0.461,
+          "waiting_mean": 1.6,
+          "waiting_p95": 7.0,
+          "waiting_max": 11.0,
+          "pids_seen": [
+            1
+          ],
+          "async_endpoint_latency": {
+            "n": 599,
+            "p50_ms": 34.0,
+            "p95_ms": 107.8,
+            "p99_ms": 190.4,
+            "max_ms": 342.2
+          }
+        },
+        "threadpool_drained_after_s": 6.3
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 149.3,
+        "cpu_pct_max": 158.9,
+        "mem_gib_max": 1.675,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791628659 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628659 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628659 exec_die",
+        "1791628689 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628689 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628689 exec_die",
+        "1791628719 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628719 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628719 exec_die",
+        "1791628749 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628749 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628750 exec_die",
+        "1791628780 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628780 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628780 exec_die",
+        "1791628810 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628810 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628810 exec_die",
+        "1791628840 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628840 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628840 exec_die",
+        "1791628870 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628870 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628871 exec_die",
+        "1791628901 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628901 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628901 exec_die",
+        "1791628931 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628931 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628932 exec_die",
+        "1791628962 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628962 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628962 exec_die",
+        "1791628992 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628992 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791628992 exec_die",
+        "1791629022 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629022 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629022 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 2566,
+        "calls_serving_successes": 2504,
+        "wasted_share": 0.024
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1": 0.2
+        }
+      },
+      "oom_kill_start": null,
+      "oom_kill_end": null,
+      "load_start_utc": "2026-10-10T10:37:13Z"
+    },
+    "w1_open_r6": {
+      "run": {
+        "kind": "open",
+        "rate_rps": 6,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 364,
+          "successes": 364,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.213,
+          "latency_success": {
+            "n": 364,
+            "p50_ms": 3168.3,
+            "p95_ms": 3286.0,
+            "p99_ms": 3484.8,
+            "max_ms": 3776.4
+          },
+          "latency_all": {
+            "n": 364,
+            "p50_ms": 3168.3,
+            "p95_ms": 3286.0,
+            "p99_ms": 3484.8,
+            "max_ms": 3776.4
+          }
+        },
+        "/health": {
+          "requests": 182,
+          "successes": 182,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 0.607,
+          "latency_success": {
+            "n": 182,
+            "p50_ms": 1.5,
+            "p95_ms": 9.4,
+            "p99_ms": 50.3,
+            "max_ms": 54.3
+          },
+          "latency_all": {
+            "n": 182,
+            "p50_ms": 1.5,
+            "p95_ms": 9.4,
+            "p99_ms": 50.3,
+            "max_ms": 54.3
+          }
+        },
+        "/query [rag]": {
+          "requests": 1254,
+          "successes": 1254,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 4.18,
+          "latency_success": {
+            "n": 1254,
+            "p50_ms": 1062.7,
+            "p95_ms": 1226.9,
+            "p99_ms": 1369.6,
+            "max_ms": 1788.7
+          },
+          "latency_all": {
+            "n": 1254,
+            "p50_ms": 1062.7,
+            "p95_ms": 1226.9,
+            "p99_ms": 1369.6,
+            "max_ms": 1788.7
+          }
+        },
+        "_business_successful_rps": 5.393
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 299,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 0,
+          "latency": {
+            "n": 299,
+            "p50_ms": 2.3,
+            "p95_ms": 7.4,
+            "p99_ms": 45.2,
+            "max_ms": 71.1
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 91,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 0,
+          "latency": {
+            "n": 91,
+            "p50_ms": 4.5,
+            "p95_ms": 6.5,
+            "p99_ms": 8.5,
+            "max_ms": 13.1
+          }
+        },
+        "probe_recovered_after_s": 0.5,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 597,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 8.5,
+          "busy_max": 16.0,
+          "share_of_samples_at_limit": 0.0,
+          "waiting_mean": 0.0,
+          "waiting_p95": 0.0,
+          "waiting_max": 0.0,
+          "pids_seen": [
+            1
+          ],
+          "async_endpoint_latency": {
+            "n": 597,
+            "p50_ms": 1.9,
+            "p95_ms": 5.0,
+            "p99_ms": 41.0,
+            "max_ms": 60.8
+          }
+        },
+        "threadpool_drained_after_s": 3.0
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 79.0,
+        "cpu_pct_max": 150.5,
+        "mem_gib_max": 1.572,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791629436 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629436 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629436 exec_die",
+        "1791629466 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629466 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629466 exec_die",
+        "1791629496 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629496 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629496 exec_die",
+        "1791629526 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629526 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629526 exec_die",
+        "1791629556 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629556 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629556 exec_die",
+        "1791629586 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629586 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629586 exec_die",
+        "1791629616 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629616 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629616 exec_die",
+        "1791629646 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629646 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629646 exec_die",
+        "1791629676 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629676 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629676 exec_die",
+        "1791629706 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629706 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629706 exec_die",
+        "1791629736 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629736 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629736 exec_die",
+        "1791629766 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629766 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629766 exec_die",
+        "1791629796 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629796 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629796 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 2346,
+        "calls_serving_successes": 2346,
+        "wasted_share": 0.0
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1": 1.0
+        }
+      },
+      "oom_kill_start": null,
+      "oom_kill_end": null,
+      "load_start_utc": "2026-10-10T10:50:14Z",
+      "offered_rps": 6,
+      "sent": 1800,
+      "send_lag_ms_p99": 2.3,
+      "straggler_wait_s": 2.0
+    },
+    "w1_open_r8": {
+      "run": {
+        "kind": "open",
+        "rate_rps": 8,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 481,
+          "successes": 58,
+          "errors": {
+            "TimeoutError": 423
+          },
+          "error_rate": 0.8794,
+          "successful_rps": 0.193,
+          "latency_success": {
+            "n": 58,
+            "p50_ms": 18423.4,
+            "p95_ms": 29045.4,
+            "p99_ms": 30100.3,
+            "max_ms": 30270.8
+          },
+          "latency_all": {
+            "n": 481,
+            "p50_ms": 30383.1,
+            "p95_ms": 30883.5,
+            "p99_ms": 30884.2,
+            "max_ms": 30885.2
+          }
+        },
+        "/health": {
+          "requests": 235,
+          "successes": 72,
+          "errors": {
+            "TimeoutError": 163
+          },
+          "error_rate": 0.6936,
+          "successful_rps": 0.24,
+          "latency_success": {
+            "n": 72,
+            "p50_ms": 13203.5,
+            "p95_ms": 29196.3,
+            "p99_ms": 30089.2,
+            "max_ms": 30860.4
+          },
+          "latency_all": {
+            "n": 235,
+            "p50_ms": 30257.2,
+            "p95_ms": 30883.2,
+            "p99_ms": 30884.2,
+            "max_ms": 30885.6
+          }
+        },
+        "/query [rag]": {
+          "requests": 1684,
+          "successes": 219,
+          "errors": {
+            "TimeoutError": 1465
+          },
+          "error_rate": 0.87,
+          "successful_rps": 0.73,
+          "latency_success": {
+            "n": 219,
+            "p50_ms": 16625.3,
+            "p95_ms": 29747.7,
+            "p99_ms": 30153.6,
+            "max_ms": 30569.7
+          },
+          "latency_all": {
+            "n": 1684,
+            "p50_ms": 30383.1,
+            "p95_ms": 30883.1,
+            "p99_ms": 30884.1,
+            "max_ms": 30886.1
+          }
+        },
+        "_business_successful_rps": 0.923
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 60,
+          "timeouts_5s": 46,
+          "other_errors": 0,
+          "over_1s": 51,
+          "latency": {
+            "n": 14,
+            "p50_ms": 209.1,
+            "p95_ms": 4060.0,
+            "p99_ms": 4579.1,
+            "max_ms": 4708.9
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 16,
+          "timeouts_5s": 16,
+          "other_errors": 0,
+          "over_1s": 16,
+          "latency": {
+            "n": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "max_ms": null
+          }
+        },
+        "probe_recovered_after_s": null,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 597,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 39.3,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.826,
+          "waiting_mean": 485.5,
+          "waiting_p95": 979.4,
+          "waiting_max": 1054.0,
+          "pids_seen": [
+            1
+          ],
+          "async_endpoint_latency": {
+            "n": 597,
+            "p50_ms": 52.3,
+            "p95_ms": 173.8,
+            "p99_ms": 236.7,
+            "max_ms": 379.9
+          }
+        },
+        "threadpool_drained_after_s": null
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 150.3,
+        "cpu_pct_max": 160.1,
+        "mem_gib_max": 1.723,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791629826 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629826 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629830 exec_die",
+        "1791629860 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629860 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629865 exec_die",
+        "1791629895 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629895 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629900 exec_die",
+        "1791629930 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629930 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629935 health_status: unhealthy",
+        "1791629935 exec_die",
+        "1791629965 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629965 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791629970 exec_die",
+        "1791630000 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630000 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630005 exec_die",
+        "1791630035 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630035 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630041 exec_die",
+        "1791630071 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630071 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630076 exec_die",
+        "1791630106 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630106 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630111 exec_die",
+        "1791630141 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630141 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630146 exec_die",
+        "1791630176 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630176 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630181 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 2576,
+        "calls_serving_successes": 393,
+        "wasted_share": 0.847
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1": 0.9
+        }
+      },
+      "oom_kill_start": null,
+      "oom_kill_end": null,
+      "load_start_utc": "2026-10-10T10:56:45Z",
+      "offered_rps": 8,
+      "sent": 2400,
+      "send_lag_ms_p99": 2.4,
+      "straggler_wait_s": 30.0
+    },
+    "w1_open_r8_rep2": {
+      "run": {
+        "kind": "open",
+        "rate_rps": 8,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 481,
+          "successes": 47,
+          "errors": {
+            "TimeoutError": 434
+          },
+          "error_rate": 0.9023,
+          "successful_rps": 0.157,
+          "latency_success": {
+            "n": 47,
+            "p50_ms": 16154.2,
+            "p95_ms": 27581.3,
+            "p99_ms": 29319.8,
+            "max_ms": 29345.1
+          },
+          "latency_all": {
+            "n": 481,
+            "p50_ms": 30465.7,
+            "p95_ms": 30964.7,
+            "p99_ms": 30966.1,
+            "max_ms": 30966.6
+          }
+        },
+        "/health": {
+          "requests": 235,
+          "successes": 99,
+          "errors": {
+            "TimeoutError": 136
+          },
+          "error_rate": 0.5787,
+          "successful_rps": 0.33,
+          "latency_success": {
+            "n": 99,
+            "p50_ms": 15440.7,
+            "p95_ms": 29243.0,
+            "p99_ms": 30411.2,
+            "max_ms": 30852.1
+          },
+          "latency_all": {
+            "n": 235,
+            "p50_ms": 30214.6,
+            "p95_ms": 30964.5,
+            "p99_ms": 30966.3,
+            "max_ms": 30967.9
+          }
+        },
+        "/query [rag]": {
+          "requests": 1684,
+          "successes": 182,
+          "errors": {
+            "TimeoutError": 1502
+          },
+          "error_rate": 0.8919,
+          "successful_rps": 0.607,
+          "latency_success": {
+            "n": 182,
+            "p50_ms": 14793.2,
+            "p95_ms": 29584.9,
+            "p99_ms": 30254.7,
+            "max_ms": 30587.6
+          },
+          "latency_all": {
+            "n": 1684,
+            "p50_ms": 30464.2,
+            "p95_ms": 30964.7,
+            "p99_ms": 30966.0,
+            "max_ms": 30967.0
+          }
+        },
+        "_business_successful_rps": 0.763
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 64,
+          "timeouts_5s": 46,
+          "other_errors": 0,
+          "over_1s": 51,
+          "latency": {
+            "n": 18,
+            "p50_ms": 120.6,
+            "p95_ms": 3926.5,
+            "p99_ms": 4053.9,
+            "max_ms": 4085.8
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 15,
+          "timeouts_5s": 15,
+          "other_errors": 0,
+          "over_1s": 15,
+          "latency": {
+            "n": 0,
+            "p50_ms": null,
+            "p95_ms": null,
+            "p99_ms": null,
+            "max_ms": null
+          }
+        },
+        "probe_recovered_after_s": null,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 598,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 39.0,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.841,
+          "waiting_mean": 495.8,
+          "waiting_p95": 916.4,
+          "waiting_max": 1038.0,
+          "pids_seen": [
+            1
+          ],
+          "async_endpoint_latency": {
+            "n": 598,
+            "p50_ms": 50.0,
+            "p95_ms": 150.2,
+            "p99_ms": 203.8,
+            "max_ms": 276.3
+          }
+        },
+        "threadpool_drained_after_s": null
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 150.2,
+        "cpu_pct_max": 161.3,
+        "mem_gib_max": 1.577,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791635282 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635282 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635287 exec_die",
+        "1791635317 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635317 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635322 exec_die",
+        "1791635352 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635352 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635357 health_status: unhealthy",
+        "1791635357 exec_die",
+        "1791635387 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635387 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635392 exec_die",
+        "1791635422 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635422 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635428 exec_die",
+        "1791635458 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635458 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635463 exec_die",
+        "1791635493 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635493 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635498 exec_die",
+        "1791635528 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635528 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635533 exec_die",
+        "1791635563 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635563 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635568 exec_die",
+        "1791635598 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635598 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635603 exec_die",
+        "1791635633 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635633 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635638 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 3012,
+        "calls_serving_successes": 323,
+        "wasted_share": 0.893
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1": 0.3
+        }
+      },
+      "oom_kill_start": 0,
+      "oom_kill_end": 0,
+      "load_start_utc": "2026-10-10T12:27:36Z",
+      "offered_rps": 8,
+      "sent": 2400,
+      "send_lag_ms_p99": 2.4,
+      "straggler_wait_s": 30.0
+    },
+    "w1async_closed_u100": {
+      "run": {
+        "kind": "closed",
+        "users": 100,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 248,
+          "successes": 175,
+          "errors": {
+            "ReadTimeout": 73
+          },
+          "error_rate": 0.2944,
+          "successful_rps": 0.583,
+          "latency_success": {
+            "n": 175,
+            "p50_ms": 27166.2,
+            "p95_ms": 29556.8,
+            "p99_ms": 29811.9,
+            "max_ms": 29958.3
+          },
+          "latency_all": {
+            "n": 248,
+            "p50_ms": 28306.5,
+            "p95_ms": 30011.0,
+            "p99_ms": 30014.4,
+            "max_ms": 30027.1
+          }
+        },
+        "/health": {
+          "requests": 112,
+          "successes": 112,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 0.373,
+          "latency_success": {
+            "n": 112,
+            "p50_ms": 70.5,
+            "p95_ms": 333.2,
+            "p99_ms": 1556.5,
+            "max_ms": 2188.2
+          },
+          "latency_all": {
+            "n": 112,
+            "p50_ms": 70.5,
+            "p95_ms": 333.2,
+            "p99_ms": 1556.5,
+            "max_ms": 2188.2
+          }
+        },
+        "/query [rag]": {
+          "requests": 791,
+          "successes": 742,
+          "errors": {
+            "ReadTimeout": 49
+          },
+          "error_rate": 0.0619,
+          "successful_rps": 2.473,
+          "latency_success": {
+            "n": 742,
+            "p50_ms": 25234.4,
+            "p95_ms": 29080.5,
+            "p99_ms": 29789.9,
+            "max_ms": 29970.2
+          },
+          "latency_all": {
+            "n": 791,
+            "p50_ms": 25441.9,
+            "p95_ms": 30002.3,
+            "p99_ms": 30011.2,
+            "max_ms": 30014.1
+          }
+        },
+        "_business_successful_rps": 3.057
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 297,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 3,
+          "latency": {
+            "n": 297,
+            "p50_ms": 79.4,
+            "p95_ms": 475.8,
+            "p99_ms": 929.4,
+            "max_ms": 2048.8
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 91,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 0,
+          "latency": {
+            "n": 91,
+            "p50_ms": 4.0,
+            "p95_ms": 53.7,
+            "p99_ms": 106.6,
+            "max_ms": 465.6
+          }
+        },
+        "probe_recovered_after_s": 1.2,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 583,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 39.5,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.834,
+          "waiting_mean": 53.6,
+          "waiting_p95": 63.0,
+          "waiting_max": 74.0,
+          "pids_seen": [
+            1
+          ],
+          "async_endpoint_latency": {
+            "n": 583,
+            "p50_ms": 81.3,
+            "p95_ms": 401.2,
+            "p99_ms": 812.7,
+            "max_ms": 2281.3
+          }
+        },
+        "threadpool_drained_after_s": 13.4
+      },
+      "container": {
+        "samples": 149,
+        "cpu_pct_mean": 149.0,
+        "cpu_pct_max": 162.2,
+        "mem_gib_max": 1.514,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791630242 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630242 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630243 exec_die",
+        "1791630273 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630273 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630273 exec_die",
+        "1791630303 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630303 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630304 exec_die",
+        "1791630334 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630334 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630335 exec_die",
+        "1791630365 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630365 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630365 exec_die",
+        "1791630395 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630395 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630396 exec_die",
+        "1791630426 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630426 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630426 exec_die",
+        "1791630456 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630456 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630456 exec_die",
+        "1791630486 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630486 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630487 exec_die",
+        "1791630517 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630517 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630517 exec_die",
+        "1791630547 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630547 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630548 exec_die",
+        "1791630578 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630578 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630578 exec_die",
+        "1791630608 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630608 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630608 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 1658,
+        "calls_serving_successes": 1267,
+        "wasted_share": 0.236
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1": 0.6
+        }
+      },
+      "oom_kill_start": null,
+      "oom_kill_end": null,
+      "load_start_utc": "2026-10-10T11:03:41Z"
+    },
+    "w1async_closed_u100_rep2": {
+      "run": {
+        "kind": "closed",
+        "users": 100,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 419,
+          "successes": 419,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.397,
+          "latency_success": {
+            "n": 419,
+            "p50_ms": 15809.5,
+            "p95_ms": 20915.0,
+            "p99_ms": 22415.9,
+            "max_ms": 23040.2
+          },
+          "latency_all": {
+            "n": 419,
+            "p50_ms": 15809.5,
+            "p95_ms": 20915.0,
+            "p99_ms": 22415.9,
+            "max_ms": 23040.2
+          }
+        },
+        "/health": {
+          "requests": 210,
+          "successes": 210,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 0.7,
+          "latency_success": {
+            "n": 210,
+            "p50_ms": 39.2,
+            "p95_ms": 629.2,
+            "p99_ms": 2227.4,
+            "max_ms": 2906.7
+          },
+          "latency_all": {
+            "n": 210,
+            "p50_ms": 39.2,
+            "p95_ms": 629.2,
+            "p99_ms": 2227.4,
+            "max_ms": 2906.7
+          }
+        },
+        "/query [rag]": {
+          "requests": 1365,
+          "successes": 1365,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 4.55,
+          "latency_success": {
+            "n": 1365,
+            "p50_ms": 13885.4,
+            "p95_ms": 17949.6,
+            "p99_ms": 19043.2,
+            "max_ms": 21222.9
+          },
+          "latency_all": {
+            "n": 1365,
+            "p50_ms": 13885.4,
+            "p95_ms": 17949.6,
+            "p99_ms": 19043.2,
+            "max_ms": 21222.9
+          }
+        },
+        "_business_successful_rps": 5.947
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 296,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 3,
+          "latency": {
+            "n": 296,
+            "p50_ms": 42.4,
+            "p95_ms": 166.9,
+            "p99_ms": 465.9,
+            "max_ms": 2925.4
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 90,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 0,
+          "latency": {
+            "n": 90,
+            "p50_ms": 4.0,
+            "p95_ms": 13.2,
+            "p99_ms": 87.8,
+            "max_ms": 283.2
+          }
+        },
+        "probe_recovered_after_s": 2.0,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 584,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 39.5,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.853,
+          "waiting_mean": 48.3,
+          "waiting_p95": 60.0,
+          "waiting_max": 60.0,
+          "pids_seen": [
+            1
+          ],
+          "async_endpoint_latency": {
+            "n": 584,
+            "p50_ms": 48.1,
+            "p95_ms": 132.7,
+            "p99_ms": 331.0,
+            "max_ms": 2921.5
+          }
+        },
+        "threadpool_drained_after_s": 10.0
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 148.6,
+        "cpu_pct_max": 169.1,
+        "mem_gib_max": 1.562,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791634026 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634026 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634026 exec_die",
+        "1791634056 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634056 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634056 exec_die",
+        "1791634086 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634086 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634087 exec_die",
+        "1791634117 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634117 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634117 exec_die",
+        "1791634147 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634147 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634147 exec_die",
+        "1791634177 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634177 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634178 exec_die",
+        "1791634208 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634208 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634209 exec_die",
+        "1791634239 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634239 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634240 exec_die",
+        "1791634270 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634270 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634270 exec_die",
+        "1791634300 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634300 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634301 exec_die",
+        "1791634331 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634331 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634331 exec_die",
+        "1791634361 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634361 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634361 exec_die",
+        "1791634391 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634391 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634391 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 2731,
+        "calls_serving_successes": 2622,
+        "wasted_share": 0.04
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1": 0.7
+        }
+      },
+      "oom_kill_start": 0,
+      "oom_kill_end": 0,
+      "load_start_utc": "2026-10-10T12:06:43Z"
+    },
+    "w1async_closed_u100_rep3": {
+      "run": {
+        "kind": "closed",
+        "users": 100,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 304,
+          "successes": 296,
+          "errors": {
+            "ReadTimeout": 8
+          },
+          "error_rate": 0.0263,
+          "successful_rps": 0.987,
+          "latency_success": {
+            "n": 296,
+            "p50_ms": 20163.4,
+            "p95_ms": 26678.4,
+            "p99_ms": 28781.0,
+            "max_ms": 29196.2
+          },
+          "latency_all": {
+            "n": 304,
+            "p50_ms": 20339.1,
+            "p95_ms": 27701.8,
+            "p99_ms": 30006.0,
+            "max_ms": 30015.7
+          }
+        },
+        "/health": {
+          "requests": 168,
+          "successes": 168,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 0.56,
+          "latency_success": {
+            "n": 168,
+            "p50_ms": 51.0,
+            "p95_ms": 509.8,
+            "p99_ms": 1501.1,
+            "max_ms": 1778.0
+          },
+          "latency_all": {
+            "n": 168,
+            "p50_ms": 51.0,
+            "p95_ms": 509.8,
+            "p99_ms": 1501.1,
+            "max_ms": 1778.0
+          }
+        },
+        "/query [rag]": {
+          "requests": 1067,
+          "successes": 1058,
+          "errors": {
+            "ReadTimeout": 9
+          },
+          "error_rate": 0.0084,
+          "successful_rps": 3.527,
+          "latency_success": {
+            "n": 1058,
+            "p50_ms": 18135.0,
+            "p95_ms": 25712.9,
+            "p99_ms": 27548.3,
+            "max_ms": 29949.1
+          },
+          "latency_all": {
+            "n": 1067,
+            "p50_ms": 18183.0,
+            "p95_ms": 26011.7,
+            "p99_ms": 29906.2,
+            "max_ms": 30005.5
+          }
+        },
+        "_business_successful_rps": 4.513
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 298,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 2,
+          "latency": {
+            "n": 298,
+            "p50_ms": 64.9,
+            "p95_ms": 325.5,
+            "p99_ms": 799.9,
+            "max_ms": 1874.2
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 90,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 0,
+          "latency": {
+            "n": 90,
+            "p50_ms": 4.6,
+            "p95_ms": 27.4,
+            "p99_ms": 106.9,
+            "max_ms": 107.9
+          }
+        },
+        "probe_recovered_after_s": 7.8,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 584,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 39.5,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.846,
+          "waiting_mean": 51.2,
+          "waiting_p95": 60.0,
+          "waiting_max": 67.0,
+          "pids_seen": [
+            1
+          ],
+          "async_endpoint_latency": {
+            "n": 584,
+            "p50_ms": 72.6,
+            "p95_ms": 354.5,
+            "p99_ms": 790.7,
+            "max_ms": 2443.2
+          }
+        },
+        "threadpool_drained_after_s": 13.7
+      },
+      "container": {
+        "samples": 149,
+        "cpu_pct_mean": 149.0,
+        "cpu_pct_max": 161.5,
+        "mem_gib_max": 1.558,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791634866 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634866 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634867 exec_die",
+        "1791634897 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634897 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634898 exec_die",
+        "1791634928 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634928 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634928 exec_die",
+        "1791634958 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634958 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634959 exec_die",
+        "1791634989 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634989 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791634989 exec_die",
+        "1791635019 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635019 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635020 exec_die",
+        "1791635050 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635050 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635050 exec_die",
+        "1791635080 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635080 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635081 exec_die",
+        "1791635111 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635111 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635112 exec_die",
+        "1791635142 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635142 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635143 exec_die",
+        "1791635173 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635173 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635173 exec_die",
+        "1791635203 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635203 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635203 exec_die",
+        "1791635233 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635233 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791635233 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 2104,
+        "calls_serving_successes": 1946,
+        "wasted_share": 0.075
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1": 0.9
+        }
+      },
+      "oom_kill_start": 0,
+      "oom_kill_end": 0,
+      "load_start_utc": "2026-10-10T12:20:44Z"
+    },
+    "w2_closed_u100": {
+      "run": {
+        "kind": "closed",
+        "users": 100,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 989,
+          "successes": 975,
+          "errors": {
+            "RemoteDisconnected": 14
+          },
+          "error_rate": 0.0142,
+          "successful_rps": 3.25,
+          "latency_success": {
+            "n": 975,
+            "p50_ms": 6611.2,
+            "p95_ms": 8678.3,
+            "p99_ms": 10242.9,
+            "max_ms": 11589.6
+          },
+          "latency_all": {
+            "n": 989,
+            "p50_ms": 6620.8,
+            "p95_ms": 8855.0,
+            "p99_ms": 10556.3,
+            "max_ms": 12643.4
+          }
+        },
+        "/health": {
+          "requests": 485,
+          "successes": 485,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.617,
+          "latency_success": {
+            "n": 485,
+            "p50_ms": 628.4,
+            "p95_ms": 1805.6,
+            "p99_ms": 2472.8,
+            "max_ms": 2776.1
+          },
+          "latency_all": {
+            "n": 485,
+            "p50_ms": 628.4,
+            "p95_ms": 1805.6,
+            "p99_ms": 2472.8,
+            "max_ms": 2776.1
+          }
+        },
+        "/query [rag]": {
+          "requests": 3334,
+          "successes": 3298,
+          "errors": {
+            "RemoteDisconnected": 36
+          },
+          "error_rate": 0.0108,
+          "successful_rps": 10.993,
+          "latency_success": {
+            "n": 3298,
+            "p50_ms": 4528.3,
+            "p95_ms": 6110.8,
+            "p99_ms": 7638.2,
+            "max_ms": 10573.1
+          },
+          "latency_all": {
+            "n": 3334,
+            "p50_ms": 4534.3,
+            "p95_ms": 6199.0,
+            "p99_ms": 7830.2,
+            "max_ms": 10573.1
+          }
+        },
+        "_business_successful_rps": 14.243
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 279,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 29,
+          "latency": {
+            "n": 279,
+            "p50_ms": 48.6,
+            "p95_ms": 1595.7,
+            "p99_ms": 2183.8,
+            "max_ms": 3190.4
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 90,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 0,
+          "latency": {
+            "n": 90,
+            "p50_ms": 4.6,
+            "p95_ms": 17.7,
+            "p99_ms": 37.0,
+            "max_ms": 82.2
+          }
+        },
+        "probe_recovered_after_s": 0.9,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 596,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 20.6,
+          "busy_max": 41.0,
+          "share_of_samples_at_limit": 0.25,
+          "waiting_mean": 6.8,
+          "waiting_p95": 43.2,
+          "waiting_max": 61.0,
+          "pids_seen": [
+            8,
+            9,
+            1340
+          ],
+          "async_endpoint_latency": {
+            "n": 596,
+            "p50_ms": 7.0,
+            "p95_ms": 78.5,
+            "p99_ms": 107.8,
+            "max_ms": 1113.7
+          }
+        },
+        "threadpool_drained_after_s": 0.6
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 298.3,
+        "cpu_pct_max": 322.1,
+        "mem_gib_max": 2.929,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791630653 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630653 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630654 exec_die",
+        "1791630684 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630684 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630684 exec_die",
+        "1791630714 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630714 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630715 exec_die",
+        "1791630745 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630745 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630745 exec_die",
+        "1791630775 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630775 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630776 exec_die",
+        "1791630806 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630806 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630806 exec_die",
+        "1791630836 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630836 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630836 exec_die",
+        "1791630866 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630866 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630867 exec_die",
+        "1791630897 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630897 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630897 exec_die",
+        "1791630927 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630927 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630927 exec_die",
+        "1791630957 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630957 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630957 exec_die",
+        "1791630987 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630987 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791630988 exec_die",
+        "1791631018 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631018 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631018 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 6286,
+        "calls_serving_successes": 6223,
+        "wasted_share": 0.01
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "9": 0.7,
+          "8": 2.2,
+          "1340": 148.7
+        }
+      },
+      "oom_kill_start": null,
+      "oom_kill_end": null,
+      "load_start_utc": "2026-10-10T11:10:36Z"
+    },
+    "w2_closed_u200": {
+      "run": {
+        "kind": "closed",
+        "users": 200,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 952,
+          "successes": 940,
+          "errors": {
+            "RemoteDisconnected": 12
+          },
+          "error_rate": 0.0126,
+          "successful_rps": 3.133,
+          "latency_success": {
+            "n": 940,
+            "p50_ms": 13592.5,
+            "p95_ms": 17220.3,
+            "p99_ms": 19075.2,
+            "max_ms": 20013.5
+          },
+          "latency_all": {
+            "n": 952,
+            "p50_ms": 13534.4,
+            "p95_ms": 17210.3,
+            "p99_ms": 19063.0,
+            "max_ms": 20013.5
+          }
+        },
+        "/health": {
+          "requests": 533,
+          "successes": 533,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.777,
+          "latency_success": {
+            "n": 533,
+            "p50_ms": 3945.9,
+            "p95_ms": 5837.8,
+            "p99_ms": 6749.4,
+            "max_ms": 9500.5
+          },
+          "latency_all": {
+            "n": 533,
+            "p50_ms": 3945.9,
+            "p95_ms": 5837.8,
+            "p99_ms": 6749.4,
+            "max_ms": 9500.5
+          }
+        },
+        "/query [rag]": {
+          "requests": 3330,
+          "successes": 3287,
+          "errors": {
+            "RemoteDisconnected": 43
+          },
+          "error_rate": 0.0129,
+          "successful_rps": 10.957,
+          "latency_success": {
+            "n": 3287,
+            "p50_ms": 10146.2,
+            "p95_ms": 15095.4,
+            "p99_ms": 17506.8,
+            "max_ms": 18838.7
+          },
+          "latency_all": {
+            "n": 3330,
+            "p50_ms": 10123.0,
+            "p95_ms": 15090.5,
+            "p99_ms": 17502.6,
+            "max_ms": 18838.7
+          }
+        },
+        "_business_successful_rps": 14.09
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 192,
+          "timeouts_5s": 5,
+          "other_errors": 0,
+          "over_1s": 47,
+          "latency": {
+            "n": 187,
+            "p50_ms": 6.8,
+            "p95_ms": 3969.4,
+            "p99_ms": 4985.4,
+            "max_ms": 5337.1
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 88,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 1,
+          "latency": {
+            "n": 88,
+            "p50_ms": 5.0,
+            "p95_ms": 12.7,
+            "p99_ms": 572.1,
+            "max_ms": 4209.7
+          }
+        },
+        "probe_recovered_after_s": 5.0,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 595,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 12.9,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.274,
+          "waiting_mean": 38.3,
+          "waiting_p95": 160.3,
+          "waiting_max": 162.0,
+          "pids_seen": [
+            9,
+            1340,
+            2587
+          ],
+          "async_endpoint_latency": {
+            "n": 595,
+            "p50_ms": 4.2,
+            "p95_ms": 80.8,
+            "p99_ms": 281.0,
+            "max_ms": 1269.2
+          }
+        },
+        "threadpool_drained_after_s": 0.3
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 299.4,
+        "cpu_pct_max": 339.9,
+        "mem_gib_max": 2.733,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791631048 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631048 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631051 exec_die",
+        "1791631081 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631081 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631086 exec_die",
+        "1791631116 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631116 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631116 exec_die",
+        "1791631147 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631147 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631148 exec_die",
+        "1791631178 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631178 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631179 exec_die",
+        "1791631209 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631209 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631209 exec_die",
+        "1791631239 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631239 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631239 exec_die",
+        "1791631269 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631269 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631270 exec_die",
+        "1791631300 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631300 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631300 exec_die",
+        "1791631330 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631330 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631330 exec_die",
+        "1791631360 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631360 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631361 exec_die",
+        "1791631391 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631391 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631391 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 6271,
+        "calls_serving_successes": 6107,
+        "wasted_share": 0.026
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "1340": 1.2,
+          "9": 2.2,
+          "2587": 60.1
+        }
+      },
+      "oom_kill_start": null,
+      "oom_kill_end": null,
+      "load_start_utc": "2026-10-10T11:17:07Z"
+    },
+    "w2_open_r12": {
+      "run": {
+        "kind": "open",
+        "rate_rps": 12,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 721,
+          "successes": 714,
+          "errors": {
+            "ServerDisconnectedError": 7
+          },
+          "error_rate": 0.0097,
+          "successful_rps": 2.38,
+          "latency_success": {
+            "n": 714,
+            "p50_ms": 3084.6,
+            "p95_ms": 7245.4,
+            "p99_ms": 9046.6,
+            "max_ms": 9850.9
+          },
+          "latency_all": {
+            "n": 721,
+            "p50_ms": 3084.7,
+            "p95_ms": 7387.1,
+            "p99_ms": 9045.0,
+            "max_ms": 9850.9
+          }
+        },
+        "/health": {
+          "requests": 346,
+          "successes": 346,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.153,
+          "latency_success": {
+            "n": 346,
+            "p50_ms": 1.3,
+            "p95_ms": 951.6,
+            "p99_ms": 2126.4,
+            "max_ms": 3033.0
+          },
+          "latency_all": {
+            "n": 346,
+            "p50_ms": 1.3,
+            "p95_ms": 951.6,
+            "p99_ms": 2126.4,
+            "max_ms": 3033.0
+          }
+        },
+        "/query [rag]": {
+          "requests": 2533,
+          "successes": 2506,
+          "errors": {
+            "ServerDisconnectedError": 27
+          },
+          "error_rate": 0.0107,
+          "successful_rps": 8.353,
+          "latency_success": {
+            "n": 2506,
+            "p50_ms": 1059.0,
+            "p95_ms": 5029.6,
+            "p99_ms": 6720.1,
+            "max_ms": 7695.7
+          },
+          "latency_all": {
+            "n": 2533,
+            "p50_ms": 1059.2,
+            "p95_ms": 5243.5,
+            "p99_ms": 7217.5,
+            "max_ms": 9388.6
+          }
+        },
+        "_business_successful_rps": 10.733
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 295,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 7,
+          "latency": {
+            "n": 295,
+            "p50_ms": 2.7,
+            "p95_ms": 405.3,
+            "p99_ms": 1217.4,
+            "max_ms": 2915.0
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 90,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 0,
+          "latency": {
+            "n": 90,
+            "p50_ms": 4.6,
+            "p95_ms": 8.0,
+            "p99_ms": 26.0,
+            "max_ms": 26.5
+          }
+        },
+        "probe_recovered_after_s": 0.9,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 581,
+          "sample_errors": 1,
+          "threadpool_total": 40,
+          "busy_mean": 6.8,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.069,
+          "waiting_mean": 1.5,
+          "waiting_p95": 13.0,
+          "waiting_max": 49.0,
+          "pids_seen": [
+            9,
+            2587,
+            3578
+          ],
+          "async_endpoint_latency": {
+            "n": 581,
+            "p50_ms": 2.4,
+            "p95_ms": 43.8,
+            "p99_ms": 73.4,
+            "max_ms": 3042.5
+          }
+        },
+        "threadpool_drained_after_s": 2.2
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 180.1,
+        "cpu_pct_max": 326.6,
+        "mem_gib_max": 2.514,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791631421 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631421 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631423 exec_die",
+        "1791631453 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631453 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631453 exec_die",
+        "1791631483 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631483 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631483 exec_die",
+        "1791631513 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631513 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631513 exec_die",
+        "1791631543 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631543 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631543 exec_die",
+        "1791631573 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631573 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631573 exec_die",
+        "1791631603 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631603 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631604 exec_die",
+        "1791631634 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631634 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631634 exec_die",
+        "1791631664 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631664 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631664 exec_die",
+        "1791631694 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631694 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631694 exec_die",
+        "1791631724 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631724 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631725 exec_die",
+        "1791631755 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631755 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631755 exec_die",
+        "1791631785 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631785 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631786 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 4650,
+        "calls_serving_successes": 4648,
+        "wasted_share": 0.0
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "2587": 0.9,
+          "9": 1.9,
+          "3578": 38.4
+        }
+      },
+      "oom_kill_start": null,
+      "oom_kill_end": null,
+      "load_start_utc": "2026-10-10T11:23:39Z",
+      "offered_rps": 12,
+      "sent": 3600,
+      "send_lag_ms_p99": 2.2,
+      "straggler_wait_s": 3.0
+    },
+    "w2_open_r16": {
+      "run": {
+        "kind": "open",
+        "rate_rps": 16,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 951,
+          "successes": 919,
+          "errors": {
+            "ServerDisconnectedError": 32
+          },
+          "error_rate": 0.0336,
+          "successful_rps": 3.063,
+          "latency_success": {
+            "n": 919,
+            "p50_ms": 7539.4,
+            "p95_ms": 14633.9,
+            "p99_ms": 15456.1,
+            "max_ms": 15887.3
+          },
+          "latency_all": {
+            "n": 951,
+            "p50_ms": 7581.6,
+            "p95_ms": 14651.8,
+            "p99_ms": 15558.5,
+            "max_ms": 18784.8
+          }
+        },
+        "/health": {
+          "requests": 457,
+          "successes": 457,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.523,
+          "latency_success": {
+            "n": 457,
+            "p50_ms": 1414.1,
+            "p95_ms": 5389.5,
+            "p99_ms": 6471.5,
+            "max_ms": 6968.4
+          },
+          "latency_all": {
+            "n": 457,
+            "p50_ms": 1414.1,
+            "p95_ms": 5389.5,
+            "p99_ms": 6471.5,
+            "max_ms": 6968.4
+          }
+        },
+        "/query [rag]": {
+          "requests": 3392,
+          "successes": 3251,
+          "errors": {
+            "ServerDisconnectedError": 141
+          },
+          "error_rate": 0.0416,
+          "successful_rps": 10.837,
+          "latency_success": {
+            "n": 3251,
+            "p50_ms": 5532.1,
+            "p95_ms": 12585.0,
+            "p99_ms": 13678.7,
+            "max_ms": 14952.8
+          },
+          "latency_all": {
+            "n": 3392,
+            "p50_ms": 5554.8,
+            "p95_ms": 12745.2,
+            "p99_ms": 14370.9,
+            "max_ms": 19348.3
+          }
+        },
+        "_business_successful_rps": 13.9
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 255,
+          "timeouts_5s": 3,
+          "other_errors": 0,
+          "over_1s": 20,
+          "latency": {
+            "n": 252,
+            "p50_ms": 4.0,
+            "p95_ms": 1768.9,
+            "p99_ms": 3747.7,
+            "max_ms": 4869.1
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 91,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 0,
+          "latency": {
+            "n": 91,
+            "p50_ms": 5.0,
+            "p95_ms": 13.7,
+            "p99_ms": 31.8,
+            "max_ms": 34.2
+          }
+        },
+        "probe_recovered_after_s": 0.1,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 596,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 12.5,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.181,
+          "waiting_mean": 17.5,
+          "waiting_p95": 119.0,
+          "waiting_max": 165.0,
+          "pids_seen": [
+            2587,
+            3578,
+            5659
+          ],
+          "async_endpoint_latency": {
+            "n": 596,
+            "p50_ms": 3.4,
+            "p95_ms": 71.7,
+            "p99_ms": 193.0,
+            "max_ms": 1342.3
+          }
+        },
+        "threadpool_drained_after_s": 1.9
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 280.8,
+        "cpu_pct_max": 333.4,
+        "mem_gib_max": 2.847,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791631816 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631816 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631821 exec_die",
+        "1791631851 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631851 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631855 exec_die",
+        "1791631885 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631885 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631885 exec_die",
+        "1791631915 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631915 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631916 exec_die",
+        "1791631946 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631946 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631948 exec_die",
+        "1791631978 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631978 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791631978 exec_die",
+        "1791632008 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632008 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632008 exec_die",
+        "1791632038 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632038 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632039 exec_die",
+        "1791632069 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632069 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632069 exec_die",
+        "1791632099 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632099 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632099 exec_die",
+        "1791632129 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632129 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632129 exec_die",
+        "1791632159 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632159 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632160 exec_die",
+        "1791632190 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632190 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632191 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 6062,
+        "calls_serving_successes": 6008,
+        "wasted_share": 0.009
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "3578": 0.6,
+          "2587": 1.6,
+          "5659": 51.1
+        }
+      },
+      "oom_kill_start": null,
+      "oom_kill_end": null,
+      "load_start_utc": "2026-10-10T11:30:10Z",
+      "offered_rps": 16,
+      "sent": 4800,
+      "send_lag_ms_p99": 2.3,
+      "straggler_wait_s": 3.0
+    },
+    "w2_open_r16_rep2": {
+      "run": {
+        "kind": "open",
+        "rate_rps": 16,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 951,
+          "successes": 951,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 3.17,
+          "latency_success": {
+            "n": 951,
+            "p50_ms": 3095.4,
+            "p95_ms": 7076.5,
+            "p99_ms": 8018.7,
+            "max_ms": 8838.1
+          },
+          "latency_all": {
+            "n": 951,
+            "p50_ms": 3095.4,
+            "p95_ms": 7076.5,
+            "p99_ms": 8018.7,
+            "max_ms": 8838.1
+          }
+        },
+        "/health": {
+          "requests": 457,
+          "successes": 457,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.523,
+          "latency_success": {
+            "n": 457,
+            "p50_ms": 1.4,
+            "p95_ms": 150.2,
+            "p99_ms": 468.4,
+            "max_ms": 664.5
+          },
+          "latency_all": {
+            "n": 457,
+            "p50_ms": 1.4,
+            "p95_ms": 150.2,
+            "p99_ms": 468.4,
+            "max_ms": 664.5
+          }
+        },
+        "/query [rag]": {
+          "requests": 3392,
+          "successes": 3392,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 11.307,
+          "latency_success": {
+            "n": 3392,
+            "p50_ms": 1065.1,
+            "p95_ms": 5053.5,
+            "p99_ms": 6174.7,
+            "max_ms": 7411.2
+          },
+          "latency_all": {
+            "n": 3392,
+            "p50_ms": 1065.1,
+            "p95_ms": 5053.5,
+            "p99_ms": 6174.7,
+            "max_ms": 7411.2
+          }
+        },
+        "_business_successful_rps": 14.477
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 300,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 1,
+          "latency": {
+            "n": 300,
+            "p50_ms": 3.1,
+            "p95_ms": 207.2,
+            "p99_ms": 748.0,
+            "max_ms": 1131.8
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 90,
+          "timeouts_5s": 0,
+          "other_errors": 0,
+          "over_1s": 0,
+          "latency": {
+            "n": 90,
+            "p50_ms": 4.8,
+            "p95_ms": 7.8,
+            "p99_ms": 13.7,
+            "max_ms": 16.9
+          }
+        },
+        "probe_recovered_after_s": 0.8,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 599,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 14.5,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.048,
+          "waiting_mean": 0.2,
+          "waiting_p95": 1.0,
+          "waiting_max": 9.0,
+          "pids_seen": [
+            8,
+            9
+          ],
+          "async_endpoint_latency": {
+            "n": 599,
+            "p50_ms": 2.3,
+            "p95_ms": 45.3,
+            "p99_ms": 78.5,
+            "max_ms": 452.6
+          }
+        },
+        "threadpool_drained_after_s": 3.5
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 223.7,
+        "cpu_pct_max": 359.7,
+        "mem_gib_max": 2.849,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791632370 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632370 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632370 exec_die",
+        "1791632400 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632400 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632400 exec_die",
+        "1791632430 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632430 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632430 exec_die",
+        "1791632460 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632460 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632461 exec_die",
+        "1791632491 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632491 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632491 exec_die",
+        "1791632521 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632521 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632521 exec_die",
+        "1791632551 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632551 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632551 exec_die",
+        "1791632581 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632581 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632581 exec_die",
+        "1791632611 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632611 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632612 exec_die",
+        "1791632642 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632642 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632642 exec_die",
+        "1791632672 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632672 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632672 exec_die",
+        "1791632702 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632702 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632702 exec_die",
+        "1791632732 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632732 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632733 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 6245,
+        "calls_serving_successes": 6245,
+        "wasted_share": 0.0
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "8": 0.2,
+          "9": 0.7
+        }
+      },
+      "oom_kill_start": 0,
+      "oom_kill_end": 0,
+      "load_start_utc": "2026-10-10T11:39:10Z",
+      "offered_rps": 16,
+      "sent": 4800,
+      "send_lag_ms_p99": 2.2,
+      "straggler_wait_s": 3.0
+    },
+    "w2_open_r18": {
+      "run": {
+        "kind": "open",
+        "rate_rps": 18,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 1075,
+          "successes": 444,
+          "errors": {
+            "ServerDisconnectedError": 135,
+            "TimeoutError": 496
+          },
+          "error_rate": 0.587,
+          "successful_rps": 1.48,
+          "latency_success": {
+            "n": 444,
+            "p50_ms": 21716.5,
+            "p95_ms": 28961.1,
+            "p99_ms": 29900.3,
+            "max_ms": 30737.5
+          },
+          "latency_all": {
+            "n": 1075,
+            "p50_ms": 28700.2,
+            "p95_ms": 30868.1,
+            "p99_ms": 30962.3,
+            "max_ms": 30977.2
+          }
+        },
+        "/health": {
+          "requests": 512,
+          "successes": 477,
+          "errors": {
+            "ServerDisconnectedError": 1,
+            "TimeoutError": 34
+          },
+          "error_rate": 0.0684,
+          "successful_rps": 1.59,
+          "latency_success": {
+            "n": 477,
+            "p50_ms": 11931.8,
+            "p95_ms": 24142.9,
+            "p99_ms": 28672.5,
+            "max_ms": 30420.0
+          },
+          "latency_all": {
+            "n": 512,
+            "p50_ms": 12665.4,
+            "p95_ms": 30295.7,
+            "p99_ms": 30740.0,
+            "max_ms": 30961.7
+          }
+        },
+        "/query [rag]": {
+          "requests": 3813,
+          "successes": 1718,
+          "errors": {
+            "ServerDisconnectedError": 429,
+            "TimeoutError": 1666
+          },
+          "error_rate": 0.5494,
+          "successful_rps": 5.727,
+          "latency_success": {
+            "n": 1718,
+            "p50_ms": 20100.0,
+            "p95_ms": 29137.9,
+            "p99_ms": 30214.3,
+            "max_ms": 30872.3
+          },
+          "latency_all": {
+            "n": 3813,
+            "p50_ms": 27383.7,
+            "p95_ms": 30853.7,
+            "p99_ms": 30962.2,
+            "max_ms": 30964.6
+          }
+        },
+        "_business_successful_rps": 7.207
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 72,
+          "timeouts_5s": 42,
+          "other_errors": 0,
+          "over_1s": 52,
+          "latency": {
+            "n": 30,
+            "p50_ms": 168.8,
+            "p95_ms": 4738.2,
+            "p99_ms": 4913.3,
+            "max_ms": 4970.4
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 80,
+          "timeouts_5s": 2,
+          "other_errors": 0,
+          "over_1s": 3,
+          "latency": {
+            "n": 78,
+            "p50_ms": 4.5,
+            "p95_ms": 43.9,
+            "p99_ms": 370.2,
+            "max_ms": 1455.7
+          }
+        },
+        "probe_recovered_after_s": 12.8,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 589,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 36.7,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.778,
+          "waiting_mean": 270.4,
+          "waiting_p95": 548.6,
+          "waiting_max": 597.0,
+          "pids_seen": [
+            8,
+            9,
+            3362,
+            3985,
+            4601
+          ],
+          "async_endpoint_latency": {
+            "n": 589,
+            "p50_ms": 18.9,
+            "p95_ms": 96.1,
+            "p99_ms": 373.4,
+            "max_ms": 3030.6
+          }
+        },
+        "threadpool_drained_after_s": 10.0
+      },
+      "container": {
+        "samples": 149,
+        "cpu_pct_mean": 301.0,
+        "cpu_pct_max": 355.4,
+        "mem_gib_max": 2.877,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791632763 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632763 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632767 exec_die",
+        "1791632797 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632797 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632802 exec_die",
+        "1791632832 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632832 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632837 exec_die",
+        "1791632867 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632867 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632875 exec_die",
+        "1791632875 health_status: unhealthy",
+        "1791632905 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632905 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632905 exec_die",
+        "1791632905 health_status: healthy",
+        "1791632935 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632935 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632940 exec_die",
+        "1791632970 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632970 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791632975 exec_die",
+        "1791633005 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633005 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633010 health_status: unhealthy",
+        "1791633010 exec_die",
+        "1791633040 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633040 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633045 exec_die",
+        "1791633075 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633075 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633075 exec_die",
+        "1791633075 health_status: healthy",
+        "1791633105 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633105 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633105 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 6252,
+        "calls_serving_successes": 3050,
+        "wasted_share": 0.512
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "8": 1.0,
+          "9": 1.5,
+          "3362": 39.4,
+          "3985": 147.7,
+          "4601": 214.0,
+          "5225": 310.0
+        }
+      },
+      "oom_kill_start": 0,
+      "oom_kill_end": 0,
+      "load_start_utc": "2026-10-10T11:45:41Z",
+      "offered_rps": 18,
+      "sent": 5400,
+      "send_lag_ms_p99": 2.2,
+      "straggler_wait_s": 29.0
+    },
+    "w2hc60_open_r18": {
+      "run": {
+        "kind": "open",
+        "rate_rps": 18,
+        "duration_s": 300,
+        "timeout_s": 30
+      },
+      "load_window_s": 300.0,
+      "business": {
+        "/agent": {
+          "requests": 1075,
+          "successes": 1068,
+          "errors": {
+            "TimeoutError": 7
+          },
+          "error_rate": 0.0065,
+          "successful_rps": 3.56,
+          "latency_success": {
+            "n": 1068,
+            "p50_ms": 4296.3,
+            "p95_ms": 23785.8,
+            "p99_ms": 28513.2,
+            "max_ms": 29786.5
+          },
+          "latency_all": {
+            "n": 1075,
+            "p50_ms": 4326.2,
+            "p95_ms": 24209.3,
+            "p99_ms": 29359.3,
+            "max_ms": 30974.0
+          }
+        },
+        "/health": {
+          "requests": 512,
+          "successes": 512,
+          "errors": {},
+          "error_rate": 0.0,
+          "successful_rps": 1.707,
+          "latency_success": {
+            "n": 512,
+            "p50_ms": 17.1,
+            "p95_ms": 8065.2,
+            "p99_ms": 13043.6,
+            "max_ms": 14562.9
+          },
+          "latency_all": {
+            "n": 512,
+            "p50_ms": 17.1,
+            "p95_ms": 8065.2,
+            "p99_ms": 13043.6,
+            "max_ms": 14562.9
+          }
+        },
+        "/query [rag]": {
+          "requests": 3813,
+          "successes": 3800,
+          "errors": {
+            "ServerDisconnectedError": 3,
+            "TimeoutError": 10
+          },
+          "error_rate": 0.0034,
+          "successful_rps": 12.667,
+          "latency_success": {
+            "n": 3800,
+            "p50_ms": 2117.5,
+            "p95_ms": 22469.3,
+            "p99_ms": 27974.5,
+            "max_ms": 30345.0
+          },
+          "latency_all": {
+            "n": 3813,
+            "p50_ms": 2124.9,
+            "p95_ms": 22553.7,
+            "p99_ms": 28287.0,
+            "max_ms": 30863.7
+          }
+        },
+        "_business_successful_rps": 16.227
+      },
+      "probe": {
+        "health_probe_during_load": {
+          "probes": 224,
+          "timeouts_5s": 8,
+          "other_errors": 0,
+          "over_1s": 32,
+          "latency": {
+            "n": 216,
+            "p50_ms": 4.9,
+            "p95_ms": 2984.0,
+            "p99_ms": 4531.3,
+            "max_ms": 4923.2
+          }
+        },
+        "health_probe_after_load": {
+          "probes": 78,
+          "timeouts_5s": 2,
+          "other_errors": 0,
+          "over_1s": 2,
+          "latency": {
+            "n": 76,
+            "p50_ms": 4.7,
+            "p95_ms": 12.7,
+            "p99_ms": 60.9,
+            "max_ms": 68.3
+          }
+        },
+        "probe_recovered_after_s": 14.8,
+        "recovery_rule": "5 consecutive probes <= 100 ms",
+        "occupancy_during_load": {
+          "samples": 597,
+          "sample_errors": 0,
+          "threadpool_total": 40,
+          "busy_mean": 25.5,
+          "busy_max": 40.0,
+          "share_of_samples_at_limit": 0.345,
+          "waiting_mean": 32.6,
+          "waiting_p95": 155.0,
+          "waiting_max": 177.0,
+          "pids_seen": [
+            8,
+            9
+          ],
+          "async_endpoint_latency": {
+            "n": 597,
+            "p50_ms": 4.9,
+            "p95_ms": 80.3,
+            "p99_ms": 97.4,
+            "max_ms": 1566.8
+          }
+        },
+        "threadpool_drained_after_s": 18.4
+      },
+      "container": {
+        "samples": 150,
+        "cpu_pct_mean": 277.4,
+        "cpu_pct_max": 334.4,
+        "mem_gib_max": 2.849,
+        "note": "docker stats CPU%: 100 = one core; the cap is cpus x 100"
+      },
+      "container_state": {
+        "oom_killed": false,
+        "restart_count": 0,
+        "status": "running"
+      },
+      "docker_events": [
+        "1791633181 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633181 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633182 exec_die",
+        "1791633212 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633212 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633212 exec_die",
+        "1791633242 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633242 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633242 exec_die",
+        "1791633272 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633272 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633272 exec_die",
+        "1791633302 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633302 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633303 exec_die",
+        "1791633333 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633333 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633333 exec_die",
+        "1791633363 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633363 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633364 exec_die",
+        "1791633394 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633394 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633397 exec_die",
+        "1791633427 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633427 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633432 exec_die",
+        "1791633462 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633462 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633465 exec_die",
+        "1791633495 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633495 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633495 exec_die",
+        "1791633525 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633525 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633525 exec_die",
+        "1791633555 exec_create: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633555 exec_start: /bin/sh -c curl -fsS http://127.0.0.1:8000/health || exit 1",
+        "1791633557 exec_die"
+      ],
+      "model_work": {
+        "server_model_calls": 7035,
+        "calls_serving_successes": 7004,
+        "wasted_share": 0.004
+      },
+      "worker_pids": {
+        "first_seen_s": {
+          "9": 0.3,
+          "8": 0.8
+        }
+      },
+      "oom_kill_start": 0,
+      "oom_kill_end": 0,
+      "load_start_utc": "2026-10-10T11:52:47Z",
+      "offered_rps": 18,
+      "sent": 5400,
+      "send_lag_ms_p99": 1.4,
+      "straggler_wait_s": 18.0
+    }
+  }
+}

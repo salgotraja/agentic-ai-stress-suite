@@ -1,0 +1,3 @@
+Method,Name,Error,Occurrences
+POST,/query [rag],"ReadTimeout(ReadTimeoutError(""HTTPConnectionPool(host='localhost', port=8088): Read timed out. (read timeout=30.0)""))",49
+POST,/agent,"ReadTimeout(ReadTimeoutError(""HTTPConnectionPool(host='localhost', port=8088): Read timed out. (read timeout=30.0)""))",73

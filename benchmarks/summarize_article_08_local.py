@@ -218,7 +218,7 @@ def _git(*args: str) -> str:
     ).stdout.strip()
 
 
-def build(runs_dir: Path) -> dict[str, Any]:
+def build(runs_dir: Path, run_commit: str | None = None) -> dict[str, Any]:
     configs = {
         p.stem.removeprefix("api_config_"): json.loads(p.read_text())
         for p in sorted(runs_dir.glob("api_config_*.json"))
@@ -237,6 +237,7 @@ def build(runs_dir: Path) -> dict[str, Any]:
             "numbers describe the serving stack, not any provider."
         ),
         "provenance": {
+            "runs_executed_at_commit": run_commit,
             "git_commit": _git("rev-parse", "HEAD"),
             "git_dirty": bool(_git("status", "--porcelain", "--", "src", "benchmarks", "scripts")),
             "summarized_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -255,8 +256,9 @@ def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--runs-dir", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--run-commit", help="commit the runs executed at, if not HEAD")
     args = parser.parse_args(argv)
-    result = build(args.runs_dir)
+    result = build(args.runs_dir, args.run_commit)
     args.output.write_text(json.dumps(result, indent=2) + "\n")
     for name, run in result["runs"].items():
         b = run["business"]

@@ -67,12 +67,21 @@ api_up() {
     curl -sf -o /dev/null -H "Authorization: Bearer $(token)" -H 'content-type: application/json' \
       -d '{"query":"warm up"}' "${HOST}/query"
   done
-  echo "{\"workers\": ${workers}, \"cpus\": ${cpus}, \"memory_gb\": ${mem}, \"fake_latency_ms\": ${LATENCY_MS}, \"health\": \"$([ "$health_async" = async-health ] && echo async || echo sync)\", \"image\": \"$(docker image inspect "$IMAGE" --format '{{.Id}}')\"}" \
-    >"${OUT}/api_config_w${workers}${health_async:+_async}.json"
+  echo "{\"workers\": ${workers}, \"cpus\": ${cpus}, \"memory_gb\": ${mem}, \"fake_latency_ms\": ${LATENCY_MS}, \"health\": \"$([ "$health_async" = async-health ] && echo async || echo sync)\", \"image\": \"$(docker image inspect "$IMAGE" --format '{{.Id}}')\", \"git_commit\": \"$(git -C "$ROOT" rev-parse HEAD)\", \"git_dirty\": $([ -n "$(git -C "$ROOT" status --porcelain -- src scripts benchmarks)" ] && echo true || echo false)}" \
+    >"${OUT}/api_config_w${workers}${health_async:+_async}_$(date +%s).json"
+  echo "w${workers}${health_async:+_async}_$(date +%s)" >"${OUT}/.current_api"
+}
+
+api_down() {
+  # Keep the server log (worker restarts, tracebacks) with Docker timestamps.
+  docker logs --timestamps a08-api >"${OUT}/api_log_$(cat "${OUT}/.current_api").txt" 2>&1 || true
+  docker rm -f a08-api >/dev/null
 }
 
 samplers_start() {
   local dir="$1" seconds="$2"
+  # cgroup v2 memory.events: oom_kill counts processes the kernel OOM-killed.
+  docker exec a08-api cat /sys/fs/cgroup/memory.events >"${dir}/memory_events_start.txt" 2>&1 || true
   (cd "$ROOT" && uv run --no-sync python benchmarks/article_08_local_load.py probe --host "$HOST" \
     --duration "$seconds" --out "${dir}/probe.jsonl") &
   PROBE_PID=$!
@@ -91,6 +100,7 @@ samplers_start() {
 samplers_stop() {
   wait "$PROBE_PID" "$STATS_PID" || true
   kill "$EVENTS_PID" 2>/dev/null || true
+  docker exec a08-api cat /sys/fs/cgroup/memory.events >"$1/memory_events_end.txt" 2>&1 || true
   docker inspect a08-api --format '{"oom_killed": {{.State.OOMKilled}}, "restart_count": {{.RestartCount}}, "status": "{{.State.Status}}"}' >"$1/container_state.json"
 }
 
@@ -127,7 +137,7 @@ case "${1:-}" in
   api-up) api_up "$2" "${3:-}" ;;
   closed) closed "$2" "$3" "$4" ;;
   open) open_loop "$2" "$3" "$4" ;;
-  api-down) docker rm -f a08-api >/dev/null ;;
+  api-down) api_down ;;
   infra-down) docker rm -f a08-chroma a08-redis >/dev/null; docker network rm a08-net >/dev/null ;;
   *) sed -n '2,20p' "$0"; exit 2 ;;
 esac

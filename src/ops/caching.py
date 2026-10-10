@@ -122,23 +122,27 @@ class SemanticCache:
         keys = list(members)
         raws = self._redis.mget(keys)
         stale: list[Any] = []
-        match: str | None = None
+        best_similarity = -1.0
+        best_response: str | None = None
+        # SMEMBERS order is arbitrary, so the first entry above threshold is not
+        # necessarily the closest one. Sweep every entry and keep the best.
         for key, raw in zip(keys, raws, strict=False):
             if raw is None:
                 stale.append(key)
                 continue
-            if match is not None:
-                continue
             try:
                 entry = json.loads(raw.decode() if isinstance(raw, bytes) else raw)
                 similarity = self._cosine_similarity(query_emb, entry["embedding"])
-                if similarity >= self._l2_threshold:
-                    match = str(entry["response"])
+                if similarity > best_similarity:
+                    best_similarity = similarity
+                    best_response = str(entry["response"])
             except (json.JSONDecodeError, KeyError, ValueError):
                 continue
         if stale:
             self._redis.srem(_L2_INDEX_KEY, *stale)
-        return match
+        if best_similarity >= self._l2_threshold:
+            return best_response
+        return None
 
     def get(self, query: str) -> str | None:
         """Look up query in L1 then L2 cache.

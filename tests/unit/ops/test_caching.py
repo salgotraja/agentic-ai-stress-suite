@@ -166,3 +166,18 @@ def test_purge_empty_cache_returns_zero() -> None:
     cache = SemanticCache(redis_client=mock_redis)
     assert cache.purge() == 0
     mock_redis.delete.assert_not_called()
+
+
+def test_l2_returns_most_similar_entry_not_first_above_threshold() -> None:
+    """With two entries above threshold, L2 returns the closer one regardless of order."""
+    mock_redis = MagicMock()
+    mock_redis.get.return_value = None
+    near = json.dumps({"embedding": [1.0, 0.0, 0.0], "response": "near"}).encode()
+    far = json.dumps({"embedding": [0.96, 0.28, 0.0], "response": "far"}).encode()
+    mock_redis.smembers.return_value = [b"l2:far", b"l2:near"]
+    mock_redis.mget.return_value = [far, near]
+
+    cache = SemanticCache(
+        redis_client=mock_redis, embed_fn=lambda _q: [1.0, 0.0, 0.0], l2_threshold=0.95
+    )
+    assert cache.get("What is FastAPI?") == "near"

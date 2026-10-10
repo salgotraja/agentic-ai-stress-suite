@@ -7,8 +7,9 @@ reciprocal rank fusion, SentenceSplitter 500/50) with reranking disabled and
 top_k=20, the reranking_top_k default.
 
 Every reranker and every training run then reads this one file, so all
-models score identical candidates. The file stores each distinct candidate
-chunk's text once, keyed by document and character offsets, with a SHA-256.
+models score identical candidates. Each question maps to its ranked
+[chunk key, RRF score] list; each distinct chunk's text is stored once, keyed
+by document and character offsets.
 
 Retrieval depends on the checkout path: LlamaIndex embeds each chunk's
 metadata, including its absolute file path, with the chunk text (see the
@@ -21,7 +22,6 @@ Usage:
 
 from __future__ import annotations
 
-import hashlib
 import json
 import subprocess
 import sys
@@ -64,8 +64,8 @@ def chunk_key(node: Any) -> str:
     return f"{rel}{page_part}#{node.start_char_idx}-{node.end_char_idx}"
 
 
-def _sha(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+def doc_of(key: str) -> str:
+    return key.split("#")[0].split("@")[0]
 
 
 def corpus_chunks() -> dict[str, dict[str, str]]:
@@ -73,24 +73,21 @@ def corpus_chunks() -> dict[str, dict[str, str]]:
     out: dict[str, dict[str, str]] = {}
     for node in _chunk_corpus():
         key = chunk_key(node)
-        out[key] = {"key": key, "doc": key.split("#")[0].split("@")[0], "text": node.get_content()}
+        out[key] = {"key": key, "doc": doc_of(key), "text": node.get_content()}
     return out
 
 
 def load_candidates(path: Path) -> dict[str, list[dict[str, Any]]]:
-    """Frozen candidates per question id, with chunk text attached and hash-checked."""
+    """Frozen candidates per question id: rank, key, document, RRF score, text."""
     data = json.loads(Path(path).read_text())
     texts: dict[str, str] = data["chunks"]
-    out: dict[str, list[dict[str, Any]]] = {}
-    for qid, ranked in data["candidates"].items():
-        restored = []
-        for c in ranked:
-            text = texts[c["key"]]
-            if _sha(text) != c["sha256"]:
-                raise ValueError(f"chunk text does not match its hash for {c['key']}")
-            restored.append({**c, "text": text})
-        out[qid] = restored
-    return out
+    return {
+        qid: [
+            {"rank": rank, "key": key, "doc": doc_of(key), "rrf_score": score, "text": texts[key]}
+            for rank, (key, score) in enumerate(ranked, start=1)
+        ]
+        for qid, ranked in data["candidates"].items()
+    }
 
 
 def _git(*args: str) -> str:
@@ -110,19 +107,12 @@ def main() -> None:
     documents = pipeline.load_documents(DOCS_DIR)
     pipeline.build_index(documents)
 
-    candidates: dict[str, list[dict[str, Any]]] = {}
+    candidates: dict[str, list[list[Any]]] = {}
     chunk_texts: dict[str, str] = {}
     for item in load_questions():
         nodes = pipeline.retrieve(item["query"], top_k=TOP_K)
         candidates[item["id"]] = [
-            {
-                "rank": rank,
-                "key": chunk_key(n.node),
-                "doc": chunk_key(n.node).split("#")[0].split("@")[0],
-                "rrf_score": round(float(n.score or 0.0), 6),
-                "sha256": _sha(n.node.get_content()),
-            }
-            for rank, n in enumerate(nodes, start=1)
+            [chunk_key(n.node), round(float(n.score or 0.0), 6)] for n in nodes
         ]
         for n in nodes:
             chunk_texts[chunk_key(n.node)] = n.node.get_content()

@@ -128,6 +128,8 @@ class LLMResponse:
     cache_creation_tokens: int = 0  # Tokens written to cache (higher cost)
     cache_read_tokens: int = 0  # Tokens read from cache (lower cost)
     cache_hit: bool = False  # Whether this request benefited from caching
+    # Provider's reason for stopping ("length"/"max_tokens" means the answer was cut off)
+    stop_reason: str | None = None
 
 
 @dataclass
@@ -389,6 +391,7 @@ class UnifiedLLMClient:
             )
 
         return LLMResponse(
+            stop_reason=response.choices[0].finish_reason,
             content=content,
             provider=LLMProvider.GROQ,
             model=model.value,
@@ -579,6 +582,7 @@ class UnifiedLLMClient:
             regular_input_tokens = response.usage.input_tokens - cache_read_tokens
 
         return LLMResponse(
+            stop_reason=response.stop_reason,
             content=content,
             provider=LLMProvider.ANTHROPIC,
             model=model,

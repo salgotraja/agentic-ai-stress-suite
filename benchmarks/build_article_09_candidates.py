@@ -146,7 +146,7 @@ def main() -> None:
         "candidates": candidates,
         "chunks": dict(sorted(chunk_texts.items())),
     }
-    out.write_text(json.dumps(payload, indent=1) + "\n")
+    out.write_text(json.dumps(payload, separators=(",", ":")) + "\n")
     print(f"Wrote {out} ({len(candidates)} questions)")
 
 

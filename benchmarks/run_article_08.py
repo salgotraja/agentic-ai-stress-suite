@@ -265,7 +265,17 @@ def _build_methodology() -> dict[str, Any]:
         "node_count": 1,
         "host_hardware": "Apple M4 Pro, 48GB RAM",
         "transport": "NodePort 30080 (Service-level kube-proxy LB across replicas)",
-        "llm": "Groq openai/gpt-oss-20b (cloud) for /query and /agent",
+        "llm": (
+            "UnifiedLLMClient fallback chain as of f8bf888: Groq llama-3.1-8b-instant "
+            "first, then llama-3.3-70b-versatile and other providers. The bundle does "
+            "not record which model served each call. (An earlier version of this "
+            "field said gpt-oss-20b; the client at f8bf888 has no gpt-oss model.)"
+        ),
+        "temperature": (
+            "effective 0.7 for both endpoints: /query uses the 0.7 default, and the "
+            "ReAct agent's requested 0.0 was replaced by the default because the "
+            "client used `temperature or default`. No override is recorded."
+        ),
         "embedding_model": "BAAI/bge-base-en-v1.5",
         "embedding_device": "cpu (Linux containers cannot use the host MPS backend)",
         "vector_db": "Chroma in-cluster, PVC-backed (5Gi RWO hostpath), naive_rag (338 chunks)",

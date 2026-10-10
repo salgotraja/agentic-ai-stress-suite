@@ -144,3 +144,10 @@ def test_kubectl_top_is_computed_from_committed_logs() -> None:
     assert spike_top["errors"][0]["t_s"] == 120.0
     sustained = results["scenarios"]["sustained_r2"]
     assert sustained["successful_rps_by_endpoint"]["/query [rag]"] == round(747 / 300, 3)
+
+
+def test_methodology_names_the_model_chain_of_the_bundle_commit() -> None:
+    results = run_article_08.build_measured_results(run_article_08._DEFAULT_CSV_DIR)
+
+    assert "llama-3.1-8b-instant" in results["methodology"]["llm"]
+    assert results["methodology"]["temperature"].startswith("effective 0.7")

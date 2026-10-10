@@ -301,7 +301,11 @@ _ANSWER_MAX_TOKENS = 2000
 # Tools signal failure by returning text with one of these prefixes instead of
 # raising (see the tools under src/agents/tools/).
 _TOOL_ERROR_PREFIXES = ("Error", "Syntax Error", "Security Error")
-_TOOL_EVENT_PREVIEW_CHARS = 500
+_TOOL_EVENT_INPUT_CHARS = 500
+# Long enough for every tool output in the Article 4 runs (database rows, RAG
+# chunks, search results). A 500-character cap hid most of a 18-row query
+# result from the judge, which then rejected a correct count as unsupported.
+_TOOL_EVENT_OUTPUT_CHARS = 8000
 
 
 def _tool_event(
@@ -319,10 +323,11 @@ def _tool_event(
     """
     return {
         "tool": tool_name,
-        "input": (tool_input or "")[:_TOOL_EVENT_PREVIEW_CHARS],
+        "input": (tool_input or "")[:_TOOL_EVENT_INPUT_CHARS],
         "status": status,
         "output_is_error": output.lstrip().startswith(_TOOL_ERROR_PREFIXES),
-        "output_preview": output[:_TOOL_EVENT_PREVIEW_CHARS],
+        "output_preview": output[:_TOOL_EVENT_OUTPUT_CHARS],
+        "output_chars": len(output),
     }
 
 

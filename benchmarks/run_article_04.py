@@ -91,8 +91,9 @@ JUDGE_MODEL = "gpt-4o-mini"
 JUDGE_MAX_ATTEMPTS = 2
 # Bump when the judge prompt or parsing changes, so artifacts say which judge
 # scored them. 1: first full run (2026-10-10). 2: exact criterion count in the
-# prompt and one retry on an unusable reply.
-JUDGE_REVISION = 2
+# prompt and one retry on an unusable reply. 3: the judge sees tool outputs up
+# to 8,000 characters instead of 500.
+JUDGE_REVISION = 3
 
 
 class _AccumulatingLLMClient(UnifiedLLMClient):
@@ -205,7 +206,8 @@ def build_judge_prompt(query: dict[str, Any], result: AgentBenchmarkResult) -> s
                 "input": e.get("input"),
                 "status": e.get("status"),
                 "output_is_error": e.get("output_is_error"),
-                "output_preview": e.get("output_preview"),
+                "output": e.get("output_preview"),
+                "output_chars": e.get("output_chars"),
             }
             for e in result.tool_events
         ],
@@ -221,7 +223,8 @@ Acceptance criteria:
 
 Known correct values (may be empty): {ground_truth}
 
-Tool calls the agent actually made, with status and output previews:
+Tool calls the agent actually made, with status and output (truncated outputs
+show "output_chars", the full length):
 {events}
 
 Agent's final answer:

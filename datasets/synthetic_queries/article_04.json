@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "version": "1.1",
+    "version": "1.2",
     "created_date": "2026-02-15",
     "description": "Complex multi-tool queries for Article 4: Single-agent workflows testing ReAct vs Plan-and-Execute",
     "total_queries": 28,
@@ -10,209 +10,541 @@
       "4_tools": 5
     },
     "category_distribution": {
-      "rag_calculation": 8,
-      "database_analysis": 7,
-      "code_execution": 6,
-      "multi_framework": 4,
-      "failure_scenarios": 3
-    }
+      "rag_calculation": 4,
+      "multi_framework": 7,
+      "code_execution": 9,
+      "database_analysis": 4,
+      "failure_scenarios": 4
+    },
+    "revised_date": "2026-10-10",
+    "acceptance_policy": "Each query lists acceptance criteria for a complete answer. Criteria were written by an AI model (Claude) before any agent run under this policy, and have not been reviewed by a person. Where the answer can be computed exactly, ground_truth records it: database counts were computed with SQL against datasets/tech_docs.db (framework names are stored in lower case; text matches use case-insensitive LIKE), and arithmetic was computed directly. Criteria that refer to web search or database results accept an honest report of no results. A judge scoring against these criteria and the recorded tool outputs measures evidence-consistency; it is ground-truth correctness only for criteria backed by ground_truth."
   },
   "queries": [
     {
       "id": "q001",
       "query": "What are React hooks? Count how many React documents mention 'useState'.",
-      "expected_tools": ["rag", "database"],
+      "expected_tools": [
+        "rag",
+        "database"
+      ],
       "difficulty": "moderate",
-      "category": "rag_calculation"
+      "category": "rag_calculation",
+      "acceptance": [
+        "explains what React hooks are",
+        "states that 28 React documents mention 'useState'"
+      ],
+      "ground_truth": {
+        "react_docs_mentioning_useState": 28
+      }
     },
     {
       "id": "q002",
       "query": "Search for Spring Boot async best practices, then query our database for FastAPI async patterns.",
-      "expected_tools": ["search", "database"],
+      "expected_tools": [
+        "search",
+        "database"
+      ],
       "difficulty": "moderate",
-      "category": "multi_framework"
+      "category": "multi_framework",
+      "acceptance": [
+        "reports Spring Boot async best practices found by web search, or says the search returned nothing",
+        "reports what the database query returned for FastAPI async patterns, without inventing documents"
+      ]
     },
     {
       "id": "q003",
       "query": "Execute code: print(len([x for x in range(100) if x % 7 == 0])), then calculate 2 to the power of 10.",
-      "expected_tools": ["code_exec", "calculator"],
+      "expected_tools": [
+        "code_exec",
+        "calculator"
+      ],
       "difficulty": "moderate",
-      "category": "code_execution"
+      "category": "code_execution",
+      "acceptance": [
+        "states the code prints 15",
+        "states 2 to the power of 10 is 1024"
+      ],
+      "ground_truth": {
+        "code_output": 15,
+        "two_pow_10": 1024
+      }
     },
     {
       "id": "q004",
       "query": "What is FastAPI dependency injection? Calculate the factorial of 6.",
-      "expected_tools": ["rag", "calculator"],
+      "expected_tools": [
+        "rag",
+        "calculator"
+      ],
       "difficulty": "moderate",
-      "category": "rag_calculation"
+      "category": "rag_calculation",
+      "acceptance": [
+        "explains FastAPI dependency injection",
+        "states 6 factorial is 720"
+      ],
+      "ground_truth": {
+        "factorial_6": 720
+      }
     },
     {
       "id": "q005",
       "query": "Query database for all Pydantic documents with difficulty 'beginner', count them, explain what Pydantic is.",
-      "expected_tools": ["database", "calculator", "rag"],
+      "expected_tools": [
+        "database",
+        "calculator",
+        "rag"
+      ],
       "difficulty": "moderate",
-      "category": "database_analysis"
+      "category": "database_analysis",
+      "acceptance": [
+        "states there are 18 beginner Pydantic documents",
+        "explains what Pydantic is"
+      ],
+      "ground_truth": {
+        "pydantic_beginner_docs": 18
+      }
     },
     {
       "id": "q006",
       "query": "Search web for 'React useEffect cleanup', execute code showing a counter, explain cleanup in our docs.",
-      "expected_tools": ["search", "code_exec", "rag"],
+      "expected_tools": [
+        "search",
+        "code_exec",
+        "rag"
+      ],
       "difficulty": "hard",
-      "category": "multi_framework"
+      "category": "multi_framework",
+      "acceptance": [
+        "reports what the web search found on React useEffect cleanup, or says it found nothing",
+        "shows or describes a counter program that was actually executed",
+        "explains useEffect cleanup"
+      ]
     },
     {
       "id": "q007",
       "query": "What's the difference between Spring @Bean and @Component? Calculate 3 factorial.",
-      "expected_tools": ["rag", "calculator"],
+      "expected_tools": [
+        "rag",
+        "calculator"
+      ],
       "difficulty": "moderate",
-      "category": "rag_calculation"
+      "category": "rag_calculation",
+      "acceptance": [
+        "explains the difference between Spring @Bean and @Component",
+        "states 3 factorial is 6"
+      ],
+      "ground_truth": {
+        "factorial_3": 6
+      }
     },
     {
       "id": "q008",
       "query": "Execute code to find primes up to 20, query database for Spring 'async' docs, count results.",
-      "expected_tools": ["code_exec", "database", "calculator"],
+      "expected_tools": [
+        "code_exec",
+        "database",
+        "calculator"
+      ],
       "difficulty": "hard",
-      "category": "code_execution"
+      "category": "code_execution",
+      "acceptance": [
+        "lists the primes up to 20: 2, 3, 5, 7, 11, 13, 17, 19",
+        "states that 19 Spring documents mention async"
+      ],
+      "ground_truth": {
+        "primes_to_20": [
+          2,
+          3,
+          5,
+          7,
+          11,
+          13,
+          17,
+          19
+        ],
+        "spring_docs_mentioning_async": 19
+      }
     },
     {
       "id": "q009",
       "query": "What are FastAPI path parameters? Query database for examples, count total Spring documents.",
-      "expected_tools": ["rag", "database", "calculator"],
+      "expected_tools": [
+        "rag",
+        "database",
+        "calculator"
+      ],
       "difficulty": "moderate",
-      "category": "rag_calculation"
+      "category": "rag_calculation",
+      "acceptance": [
+        "explains FastAPI path parameters",
+        "reports database examples of path parameters, or says none were found",
+        "states there are 50 Spring documents"
+      ],
+      "ground_truth": {
+        "spring_docs": 50
+      }
     },
     {
       "id": "q010",
       "query": "Search 'Python async tutorial', execute fibonacci(10), query FastAPI async examples, synthesize.",
-      "expected_tools": ["search", "code_exec", "rag", "database"],
+      "expected_tools": [
+        "search",
+        "code_exec",
+        "rag",
+        "database"
+      ],
       "difficulty": "very_hard",
-      "category": "multi_framework"
+      "category": "multi_framework",
+      "acceptance": [
+        "reports what the web search found for a Python async tutorial, or says it found nothing",
+        "states fibonacci(10) is 55",
+        "reports FastAPI async examples from the database, or says none were found",
+        "gives a synthesis that connects the parts"
+      ],
+      "ground_truth": {
+        "fibonacci_10": 55
+      }
     },
     {
       "id": "q011",
       "query": "Execute: import math; print(math.pi * 10**2), explain what area this calculates.",
-      "expected_tools": ["code_exec", "calculator"],
+      "expected_tools": [
+        "code_exec",
+        "calculator"
+      ],
       "difficulty": "moderate",
-      "category": "code_execution"
+      "category": "code_execution",
+      "acceptance": [
+        "states the code prints about 314.159",
+        "states this is the area of a circle with radius 10"
+      ],
+      "ground_truth": {
+        "code_output_approx": 314.159
+      }
     },
     {
       "id": "q012",
       "query": "TIMEOUT_TEST: Search for an extremely specific obscure technical query.",
-      "expected_tools": ["search"],
+      "expected_tools": [
+        "search"
+      ],
       "difficulty": "moderate",
-      "category": "failure_scenarios"
+      "category": "failure_scenarios",
+      "acceptance": [
+        "reports the outcome of the search honestly: results, no results, or a timeout or error",
+        "does not fabricate search results"
+      ]
     },
     {
       "id": "q013",
       "query": "Execute INVALID code: print(undefined_var), then calculate 5 * 9.",
-      "expected_tools": ["code_exec", "calculator"],
+      "expected_tools": [
+        "code_exec",
+        "calculator"
+      ],
       "difficulty": "hard",
-      "category": "failure_scenarios"
+      "category": "failure_scenarios",
+      "acceptance": [
+        "reports that print(undefined_var) fails with a NameError or equivalent error",
+        "does not claim the invalid code printed a value",
+        "states 5 * 9 is 45"
+      ],
+      "ground_truth": {
+        "product": 45
+      }
     },
     {
       "id": "q014",
       "query": "Query database for 'NonExistentFramework', then search for React hooks.",
-      "expected_tools": ["database", "search"],
+      "expected_tools": [
+        "database",
+        "search"
+      ],
       "difficulty": "moderate",
-      "category": "failure_scenarios"
+      "category": "failure_scenarios",
+      "acceptance": [
+        "reports that the database has no documents for NonExistentFramework",
+        "reports what the web search found for React hooks, or says it found nothing",
+        "does not invent documents for NonExistentFramework"
+      ],
+      "ground_truth": {
+        "nonexistent_framework_docs": 0
+      }
     },
     {
       "id": "q015",
       "query": "What is Pydantic BaseModel? Execute code creating a dataclass example.",
-      "expected_tools": ["rag", "code_exec"],
+      "expected_tools": [
+        "rag",
+        "code_exec"
+      ],
       "difficulty": "moderate",
-      "category": "code_execution"
+      "category": "code_execution",
+      "acceptance": [
+        "explains what Pydantic BaseModel is",
+        "shows or describes a dataclass example that was actually executed"
+      ]
     },
     {
       "id": "q016",
       "query": "Search 'React Context API', query database for advanced React docs, execute context demo.",
-      "expected_tools": ["search", "database", "code_exec"],
+      "expected_tools": [
+        "search",
+        "database",
+        "code_exec"
+      ],
       "difficulty": "hard",
-      "category": "multi_framework"
+      "category": "multi_framework",
+      "acceptance": [
+        "reports what the web search found on the React Context API, or says it found nothing",
+        "reports what the database returned for advanced React documents",
+        "shows or describes a context demo that was actually executed"
+      ]
     },
     {
       "id": "q017",
       "query": "Calculate sum of squares 1-10, explain the mathematical formula.",
-      "expected_tools": ["code_exec", "calculator"],
+      "expected_tools": [
+        "code_exec",
+        "calculator"
+      ],
       "difficulty": "moderate",
-      "category": "code_execution"
+      "category": "code_execution",
+      "acceptance": [
+        "states the sum of squares from 1 to 10 is 385",
+        "gives the formula n(n+1)(2n+1)/6 or an equivalent"
+      ],
+      "ground_truth": {
+        "sum_of_squares_1_10": 385
+      }
     },
     {
       "id": "q018",
       "query": "What are Spring Bean scopes? Query database for Spring docs, calculate average docs per framework.",
-      "expected_tools": ["rag", "database", "calculator"],
+      "expected_tools": [
+        "rag",
+        "database",
+        "calculator"
+      ],
       "difficulty": "hard",
-      "category": "database_analysis"
+      "category": "database_analysis",
+      "acceptance": [
+        "explains Spring bean scopes",
+        "states there are 50 Spring documents",
+        "states the average is 51.5 documents per framework (206 documents across 4 frameworks)"
+      ],
+      "ground_truth": {
+        "spring_docs": 50,
+        "total_docs": 206,
+        "frameworks": 4,
+        "avg_docs_per_framework": 51.5
+      }
     },
     {
       "id": "q019",
       "query": "Execute even numbers 0-20, query FastAPI docs, search 'Python list comprehensions'.",
-      "expected_tools": ["code_exec", "database", "search"],
+      "expected_tools": [
+        "code_exec",
+        "database",
+        "search"
+      ],
       "difficulty": "hard",
-      "category": "code_execution"
+      "category": "code_execution",
+      "acceptance": [
+        "lists the even numbers from 0 to 20",
+        "reports what the database returned for FastAPI documents",
+        "reports what the web search found on Python list comprehensions, or says it found nothing"
+      ],
+      "ground_truth": {
+        "evens_0_20": [
+          0,
+          2,
+          4,
+          6,
+          8,
+          10,
+          12,
+          14,
+          16,
+          18,
+          20
+        ]
+      }
     },
     {
       "id": "q020",
       "query": "Compare FastAPI vs Spring dependency injection. Calculate 7 factorial.",
-      "expected_tools": ["rag", "database", "calculator"],
+      "expected_tools": [
+        "rag",
+        "database",
+        "calculator"
+      ],
       "difficulty": "hard",
-      "category": "multi_framework"
+      "category": "multi_framework",
+      "acceptance": [
+        "compares FastAPI and Spring dependency injection correctly",
+        "states 7 factorial is 5040"
+      ],
+      "ground_truth": {
+        "factorial_7": 5040
+      }
     },
     {
       "id": "q021",
       "query": "Search 'Python decorators', execute decorator demo, find FastAPI decorator examples.",
-      "expected_tools": ["search", "code_exec", "rag"],
+      "expected_tools": [
+        "search",
+        "code_exec",
+        "rag"
+      ],
       "difficulty": "hard",
-      "category": "code_execution"
+      "category": "code_execution",
+      "acceptance": [
+        "reports what the web search found on Python decorators, or says it found nothing",
+        "shows or describes a decorator demo that was actually executed",
+        "gives FastAPI decorator examples from the docs, or says none were found"
+      ]
     },
     {
       "id": "q022",
       "query": "Execute [x**2 for x in range(5)], query Pydantic validators, count total documents.",
-      "expected_tools": ["code_exec", "database", "calculator"],
+      "expected_tools": [
+        "code_exec",
+        "database",
+        "calculator"
+      ],
       "difficulty": "moderate",
-      "category": "database_analysis"
+      "category": "database_analysis",
+      "acceptance": [
+        "states the code produces [0, 1, 4, 9, 16]",
+        "reports what the database returned for Pydantic validators",
+        "states there are 206 documents in total"
+      ],
+      "ground_truth": {
+        "code_output": [
+          0,
+          1,
+          4,
+          9,
+          16
+        ],
+        "total_docs": 206
+      }
     },
     {
       "id": "q023",
       "query": "What is React useCallback? Search optimization tips, execute timing demo.",
-      "expected_tools": ["rag", "search", "code_exec"],
+      "expected_tools": [
+        "rag",
+        "search",
+        "code_exec"
+      ],
       "difficulty": "hard",
-      "category": "code_execution"
+      "category": "code_execution",
+      "acceptance": [
+        "explains React useCallback",
+        "reports what the web search found on optimization tips, or says it found nothing",
+        "shows or describes a timing demo that was actually executed"
+      ]
     },
     {
       "id": "q024",
       "query": "SECURITY_TEST: Execute import os; os.system('ls'), then query database.",
-      "expected_tools": ["code_exec", "database"],
+      "expected_tools": [
+        "code_exec",
+        "database"
+      ],
       "difficulty": "hard",
-      "category": "failure_scenarios"
+      "category": "failure_scenarios",
+      "acceptance": [
+        "reports that the os import or os.system call was blocked and did not run",
+        "does not claim a directory listing was produced",
+        "reports the result of the database query"
+      ]
     },
     {
       "id": "q025",
       "query": "What is Pydantic Field validation? Execute validated model, query examples, search best practices.",
-      "expected_tools": ["rag", "code_exec", "database", "search"],
+      "expected_tools": [
+        "rag",
+        "code_exec",
+        "database",
+        "search"
+      ],
       "difficulty": "very_hard",
-      "category": "multi_framework"
+      "category": "multi_framework",
+      "acceptance": [
+        "explains Pydantic Field validation",
+        "shows or describes a validated model that was actually executed",
+        "reports database examples, or says none were found",
+        "reports what the web search found on best practices, or says it found nothing"
+      ]
     },
     {
       "id": "q026",
       "query": "Calculate fibonacci to 10 terms, query database for 'recursion' mentions.",
-      "expected_tools": ["code_exec", "database"],
+      "expected_tools": [
+        "code_exec",
+        "database"
+      ],
       "difficulty": "moderate",
-      "category": "code_execution"
+      "category": "code_execution",
+      "acceptance": [
+        "lists the first 10 Fibonacci numbers (0, 1, 1, 2, 3, 5, 8, 13, 21, 34, or the same sequence starting 1, 1)",
+        "states that no documents mention recursion"
+      ],
+      "ground_truth": {
+        "fibonacci_first_10": [
+          0,
+          1,
+          1,
+          2,
+          3,
+          5,
+          8,
+          13,
+          21,
+          34
+        ],
+        "docs_mentioning_recursion": 0
+      }
     },
     {
       "id": "q027",
       "query": "What is Spring Boot auto-configuration? Execute config demo, query examples.",
-      "expected_tools": ["rag", "code_exec", "database"],
+      "expected_tools": [
+        "rag",
+        "code_exec",
+        "database"
+      ],
       "difficulty": "hard",
-      "category": "database_analysis"
+      "category": "database_analysis",
+      "acceptance": [
+        "explains Spring Boot auto-configuration",
+        "shows or describes a configuration demo that was actually executed",
+        "reports database examples, or says none were found"
+      ]
     },
     {
       "id": "q028",
       "query": "Search 'async patterns', execute async simulation, query FastAPI async, count async frameworks.",
-      "expected_tools": ["search", "code_exec", "rag", "database"],
+      "expected_tools": [
+        "search",
+        "code_exec",
+        "rag",
+        "database"
+      ],
       "difficulty": "very_hard",
-      "category": "multi_framework"
+      "category": "multi_framework",
+      "acceptance": [
+        "reports what the web search found on async patterns, or says it found nothing",
+        "shows or describes an async simulation that was actually executed",
+        "reports FastAPI async documents from the database",
+        "states that 4 frameworks have documents mentioning async"
+      ],
+      "ground_truth": {
+        "frameworks_mentioning_async": 4
+      }
     }
   ]
 }

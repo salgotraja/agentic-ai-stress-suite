@@ -99,9 +99,10 @@ def load_prompts(csv_path: Path) -> list[dict[str, str]]:
         lines = [line for line in fh if not line.startswith("#")]
 
     reader = csv.DictReader(lines)
-    for row in reader:
+    for index, row in enumerate(reader, start=1):
         rows.append(
             {
+                "id": f"rt{index:03d}",
                 "prompt": row["prompt"].strip(),
                 "category": row["category"].strip(),
                 "severity": row["severity"].strip(),
@@ -159,8 +160,13 @@ class _PromptGuardClassifier(LlamaGuardClassifier):
         self._model = model
         self._threshold = threshold
         self._fail_open = fail_open
+        # One record per classifier call: latency of the API call alone, the
+        # parsed score, and the failure kind if any. The benchmark reads this
+        # to report classifier-only latency apart from whole-stack latency.
+        self.calls: list[dict[str, Any]] = []
 
     def classify(self, text: str) -> GuardResult:
+        start = time.perf_counter()
         try:
             resp = self._client.chat.completions.create(
                 model=self._model,
@@ -172,9 +178,11 @@ class _PromptGuardClassifier(LlamaGuardClassifier):
         except Exception as exc:
             # Network / API failure. The exception text is not copied into
             # the reason: reasons reach the audit log.
+            self._record(start, None, type(exc).__name__)
             return self._classifier_failure(f"call failed ({type(exc).__name__})")
 
         score = parse_probability(raw)
+        self._record(start, score, None if score is not None else "invalid_score")
         if score is None:
             # Junk, NaN, infinity, or a value outside [0, 1] is a classifier
             # failure, not an "allowed" verdict, so it follows fail_open.
@@ -187,6 +195,15 @@ class _PromptGuardClassifier(LlamaGuardClassifier):
                 rail="prompt_guard",
             )
         return GuardResult(blocked=False)
+
+    def _record(self, start: float, score: float | None, failure: str | None) -> None:
+        self.calls.append(
+            {
+                "latency_ms": (time.perf_counter() - start) * 1000,
+                "score": score,
+                "failure": failure,
+            }
+        )
 
     def _classifier_failure(self, what: str) -> GuardResult:
         if self._fail_open:
@@ -209,26 +226,61 @@ def parse_probability(raw: object) -> float | None:
     return score
 
 
+def _latency_summary(prefix: str, values: list[float]) -> dict[str, float]:
+    return {
+        f"{prefix}_p50_ms": round(_percentile(values, 50), 4),
+        f"{prefix}_p95_ms": round(_percentile(values, 95), 4),
+        f"{prefix}_p99_ms": round(_percentile(values, 99), 4),
+        f"{prefix}_mean_ms": round(statistics.mean(values), 4) if values else 0.0,
+    }
+
+
 def run_security_benchmark(
     prompts: list[dict[str, str]],
     manager: GuardrailsManager,
     label: str,
+    classifier: _PromptGuardClassifier | None = None,
+    pace_s: float = 0.0,
 ) -> dict[str, Any]:
     """Run check_input() on every prompt and compute security metrics.
 
-    Reports per-severity block rate, false-positive rate, and latency
-    percentiles. The label distinguishes regex-only from regex+prompt-guard
-    runs in the aggregated JSON.
+    Two latencies are reported and must not be confused:
+        stack_latency_*      whole check_input() per prompt, all prompts,
+                             including regex blocks that never reach the
+                             classifier.
+        classifier_latency_* the classifier API call alone, only for the
+                             prompts that passed regex (n = classifier_calls).
+
+    pace_s sleeps before each prompt, outside the timed region, so the
+    classifier stays under the provider's per-minute quota and its latency
+    is not throttle latency.
     """
     latencies_ms: list[float] = []
     blocked_expected: list[dict[str, str]] = []
     pass_through_expected: list[dict[str, str]] = []
+    per_prompt: list[dict[str, Any]] = []
 
     for row in prompts:
+        if pace_s > 0:
+            time.sleep(pace_s)
+        n_calls_before = len(classifier.calls) if classifier is not None else 0
         start = time.perf_counter()
         result = manager.check_input(row["prompt"])
         latency_ms = (time.perf_counter() - start) * 1000
         latencies_ms.append(latency_ms)
+
+        call = None
+        if classifier is not None and len(classifier.calls) > n_calls_before:
+            call = classifier.calls[-1]
+        per_prompt.append(
+            {
+                "id": row.get("id", ""),
+                "blocked": result.blocked,
+                "rail": result.rail or "",
+                "classifier_score": call["score"] if call else None,
+                "classifier_failure": call["failure"] if call else None,
+            }
+        )
 
         row_with_result = {
             **row,
@@ -274,6 +326,13 @@ def run_security_benchmark(
     total_attacks = len(blocked_expected)
     overall_tp_rate = total_blocked / total_attacks if total_attacks else 0.0
 
+    calls = classifier.calls if classifier is not None else []
+    classifier_stats: dict[str, Any] = {
+        "classifier_calls": len(calls),
+        "classifier_failures": sum(1 for c in calls if c["failure"] is not None),
+        **_latency_summary("classifier_latency", [c["latency_ms"] for c in calls]),
+    }
+
     return {
         "label": label,
         "block_rate_by_severity": {
@@ -281,16 +340,15 @@ def run_security_benchmark(
         },
         "overall_true_positive_rate": round(overall_tp_rate, 4),
         "false_positive_rate": round(false_positive_rate, 4),
-        "latency_p50_ms": round(_percentile(latencies_ms, 50), 4),
-        "latency_p95_ms": round(_percentile(latencies_ms, 95), 4),
-        "latency_p99_ms": round(_percentile(latencies_ms, 99), 4),
-        "latency_mean_ms": round(statistics.mean(latencies_ms), 4) if latencies_ms else 0.0,
+        **_latency_summary("stack_latency", latencies_ms),
+        **classifier_stats,
         "block_rate_by_category": {k: round(v, 4) for k, v in block_rate_by_category.items()},
         "block_rail_breakdown": rail_breakdown,
         "total_prompts": len(prompts),
         "prompts_blocked": total_blocked,
         "prompts_expected_blocked": total_attacks,
         "prompts_expected_passthrough": len(pass_through_expected),
+        "per_prompt": per_prompt,
     }
 
 
@@ -354,11 +412,18 @@ def print_summary(results: dict[str, Any]) -> None:
             rate = summary["block_rate_by_severity"][lvl]["mean"]
             mark = "OK" if rate >= 0.90 else "BELOW TARGET"
             print(f"    {lvl}: {rate:>6.1%}  ({mark})")
-        print("  Latency (mean / std across runs, ms):")
+        print("  Whole-stack latency, all prompts (mean / std across runs, ms):")
         for pct in ("p50", "p95", "p99"):
-            mean = summary[f"latency_{pct}_ms_mean"]
-            std = summary[f"latency_{pct}_ms_std"]
+            mean = summary[f"stack_latency_{pct}_ms_mean"]
+            std = summary[f"stack_latency_{pct}_ms_std"]
             print(f"    {pct}: {mean:>8.3f}  (std {std:.3f})")
+        if summary.get("classifier_calls_mean"):
+            print(
+                f"  Classifier-only latency over {summary['classifier_calls_mean']:.0f} calls "
+                f"({summary['classifier_failures_mean']:.0f} failures), ms:"
+            )
+            for pct in ("p50", "p95", "p99"):
+                print(f"    {pct}: {summary[f'classifier_latency_{pct}_ms_mean']:>8.3f}")
         rail_breakdown = summary.get("block_rail_breakdown") or {}
         if rail_breakdown:
             print("  Blocked by rail (mean count):")
@@ -384,6 +449,7 @@ def _execute_stack(
     n_runs: int,
     n_warmup: int,
     per_run_pause_s: float,
+    pace_s: float = 0.0,
 ) -> dict[str, Any]:
     """Run a guardrail stack n_warmup + n_runs times.
 
@@ -409,12 +475,14 @@ def _execute_stack(
         is_warmup = i < n_warmup
         tag = f"warmup {i + 1}/{n_warmup}" if is_warmup else f"run {i - n_warmup + 1}/{n_runs}"
         print(f"[{tag}] {label} stack...")
-        manager = manager_factory()
-        result = run_security_benchmark(prompts, manager, label)
+        manager, classifier = manager_factory()
+        result = run_security_benchmark(prompts, manager, label, classifier, pace_s)
         print(
             f"  TP={result['overall_true_positive_rate']:.1%}  "
             f"FP={result['false_positive_rate']:.1%}  "
-            f"p50={result['latency_p50_ms']:.2f}ms"
+            f"stack p50={result['stack_latency_p50_ms']:.2f}ms  "
+            f"classifier calls={result['classifier_calls']} "
+            f"failures={result['classifier_failures']}"
         )
         if is_warmup:
             warmup.append(result)
@@ -740,6 +808,15 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--pace-s",
+        type=float,
+        default=0.0,
+        help=(
+            "Sleep this many seconds before each prompt in the prompt-guard stack, "
+            "outside the timed region, to stay under the provider's per-minute quota."
+        ),
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         default=_OUTPUT_JSON,
@@ -789,6 +866,8 @@ def main() -> None:
         parser.error("--warmup must be >= 0")
     if args.per_run_pause_s < 0:
         parser.error("--per-run-pause-s must be >= 0")
+    if args.pace_s < 0:
+        parser.error("--pace-s must be >= 0")
     if args.chaos_top_k < 1:
         parser.error("--chaos-top-k must be >= 1")
     if args.chaos_runs < 1:
@@ -837,6 +916,7 @@ def main() -> None:
             "n_runs": args.runs,
             "n_warmup_runs": args.warmup,
             "per_run_pause_s": args.per_run_pause_s,
+            "pace_s": args.pace_s,
         },
         "dataset": distribution,
     }
@@ -848,7 +928,7 @@ def main() -> None:
     results["regex_only"] = _execute_stack(
         label="regex_only",
         prompts=prompts,
-        manager_factory=lambda: GuardrailsManager(),
+        manager_factory=lambda: (GuardrailsManager(), None),
         n_runs=args.runs,
         n_warmup=args.warmup,
         per_run_pause_s=0.0,
@@ -868,16 +948,20 @@ def main() -> None:
         )
         from groq import Groq
 
-        groq_client = Groq(api_key=settings.groq_api_key)
+        # max_retries=0: an SDK retry after a 429 would hide inside the
+        # classifier latency. A failed call is counted in classifier_failures
+        # and, with fail_open=True, allows the prompt, so a run with failures
+        # understates recall and the artifact says so.
+        groq_client = Groq(api_key=settings.groq_api_key, max_retries=0)
 
-        def _layered_factory() -> GuardrailsManager:
+        def _layered_factory() -> tuple[GuardrailsManager, _PromptGuardClassifier]:
             prompt_guard_clf = _PromptGuardClassifier(
                 client=groq_client,
                 model=_PROMPT_GUARD_MODEL,
                 threshold=args.threshold,
                 fail_open=True,
             )
-            return GuardrailsManager(llama_guard=prompt_guard_clf)
+            return GuardrailsManager(llama_guard=prompt_guard_clf), prompt_guard_clf
 
         results["regex_plus_prompt_guard"] = _execute_stack(
             label="regex_plus_prompt_guard",
@@ -886,6 +970,7 @@ def main() -> None:
             n_runs=args.runs,
             n_warmup=args.warmup,
             per_run_pause_s=args.per_run_pause_s,
+            pace_s=args.pace_s,
         )
 
     out_path = _resolve_output_path(args.output)

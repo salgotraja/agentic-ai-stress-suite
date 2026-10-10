@@ -11,36 +11,62 @@ Teaching note: WHY contrastive training pairs?
   are the strongest signal for domain fine-tuning.
 
 Data strategy:
-  - Positive pairs: (query, expected_answer) from article_01 synthetic queries
-    The expected_answer text matches the style of the tech docs corpus, so
-    the embedding space should learn to align them.
-  - Hard negatives: top-K BM25 results that are NOT the correct document.
-    BM25 errors are particularly valuable: if BM25 finds a doc with many
-    matching keywords but wrong semantics, training on it teaches the model
-    to go beyond keyword overlap.
-  - Split: 80% train / 20% validation (stratified by difficulty)
+  - Questions: datasets/synthetic_queries/article_01.json (142) plus
+    datasets/golden_set/qa_pairs.json (50), 192 in total.
+  - Split first, then build pairs. Questions are grouped (same normalised
+    text, question-embedding cosine >= 0.90, or identical source_docs set)
+    and whole groups go to train or test. The first version expanded each
+    question into several triples and split the triples, so every validation
+    question also appeared in training.
+  - The split is written to datasets/dl_training_split.json, which is
+    committed. Only train questions produce training pairs; test questions
+    are scored by benchmarks/benchmark_custom_embeddings.py and
+    benchmarks/benchmark_article_09_rerankers.py.
+  - Answer triples (train.json): (query, expected_answer, BM25 document that
+    is not any listed source). This is the original objective.
+  - Chunk triples (train_chunk.json, needs --candidates): (query, highest
+    ranked retrieved chunk from a listed source, retrieved chunk from a
+    document that is not a listed source). This matches what the retriever
+    embeds at inference.
 
-Output schema (each line is a JSON object):
-  {"query": str, "positive": str, "negative": str}
+Output schema (JSON list): {"query": str, "positive": str, "negative": str}
 
 Usage:
-    uv run python scripts/prepare_dl_training_data.py --output datasets/dl_training/
-    uv run python scripts/prepare_dl_training_data.py --output datasets/dl_training/ --max-pairs 500
+    uv run python scripts/prepare_dl_training_data.py
+    uv run python scripts/prepare_dl_training_data.py \
+        --candidates results/data/article_09/candidates_2026-10-10.json
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
-import math
-import random
+import sys
 from pathlib import Path
+from typing import Any
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from benchmarks.article_09_eval import group_questions, split_groups  # noqa: E402
+
+QUERY_FILES = {
+    "article_01": Path("datasets/synthetic_queries/article_01.json"),
+    "golden_set": Path("datasets/golden_set/qa_pairs.json"),
+}
+SPLIT_MANIFEST = Path("datasets/dl_training_split.json")
+GROUP_MODEL = "BAAI/bge-base-en-v1.5"
+GROUP_THRESHOLD = 0.90
+TEST_FRACTION = 0.4
+NEGATIVES_PER_QUERY = 6
 
 
 def load_tech_docs(docs_dir: Path) -> dict[str, str]:
     """Load all tech doc markdown files as {relative_path: content}."""
     docs: dict[str, str] = {}
-    for md_file in docs_dir.rglob("*.md"):
+    for md_file in sorted(docs_dir.rglob("*.md")):
         if md_file.name == "attribution.md":
             continue
         # Use path relative to docs_dir as key so it matches source_docs field
@@ -93,185 +119,157 @@ def bm25_top_k(
     return [doc_ids[i] for i in ranked[:k]]
 
 
-def build_pairs(
-    queries: list[dict],  # type: ignore[type-arg]
+def load_questions() -> list[dict[str, Any]]:
+    """All questions with their origin file; ids are unique across both files."""
+    article_01 = json.loads(QUERY_FILES["article_01"].read_text())["queries"]
+    golden = json.loads(QUERY_FILES["golden_set"].read_text())["qa_pairs"]
+    rows = [{**q, "origin": "article_01"} for q in article_01]
+    rows += [{**q, "origin": "golden_set"} for q in golden]
+    return rows
+
+
+def build_split_manifest(questions: list[dict[str, Any]], seed: int) -> dict[str, Any]:
+    """Group questions, assign whole groups to train or test, describe the rule."""
+    from sentence_transformers import SentenceTransformer
+
+    model = SentenceTransformer(GROUP_MODEL, device="cpu")
+    texts = [q["query"] for q in questions]
+    emb = model.encode(texts, normalize_embeddings=True, show_progress_bar=False)
+    similarity = emb @ emb.T
+    sources = [frozenset(q.get("source_docs", [])) for q in questions]
+    groups = group_questions(texts, sources, similarity, GROUP_THRESHOLD)
+    splits = split_groups(groups, TEST_FRACTION, seed)
+
+    train_docs = {d for q, s in zip(questions, splits) if s == "train" for d in q["source_docs"]}
+    return {
+        "rule": (
+            "Questions share a group when their normalised text is equal, when the cosine "
+            f"similarity of their {GROUP_MODEL} question embeddings (no instruction prefix) "
+            f"is >= {GROUP_THRESHOLD}, or when their source_docs sets are identical. Groups are "
+            f"shuffled with the seed and assigned to test until {TEST_FRACTION:.0%} of "
+            "questions are in test. No dev split: nothing is selected on held-out data."
+        ),
+        "seed": seed,
+        "group_threshold": GROUP_THRESHOLD,
+        "test_fraction": TEST_FRACTION,
+        "inputs": {
+            name: hashlib.sha256(path.read_bytes()).hexdigest()
+            for name, path in QUERY_FILES.items()
+        },
+        "counts": {
+            "questions": len(questions),
+            "groups": len(set(groups)),
+            "train": splits.count("train"),
+            "test": splits.count("test"),
+            "test_groups": len({g for g, s in zip(groups, splits) if s == "test"}),
+            "test_with_a_source_doc_also_labelled_in_train": sum(
+                1
+                for q, s in zip(questions, splits)
+                if s == "test" and set(q["source_docs"]) & train_docs
+            ),
+        },
+        "questions": [
+            {"id": q["id"], "origin": q["origin"], "group": g, "split": s}
+            for q, g, s in zip(questions, groups, splits)
+        ],
+    }
+
+
+def build_answer_triples(
+    train_questions: list[dict[str, Any]],
     docs: dict[str, str],
     doc_ids: list[str],
     tokenised_docs: list[list[str]],
-    max_pairs: int,
-    rng: random.Random,
-    negatives_per_query: int = 6,
 ) -> list[dict[str, str]]:
-    """Build (query, positive, hard_negative) triples.
+    """(query, expected_answer, BM25 negative) for train questions only.
 
-    Teaching note on positive selection:
-      We use expected_answer text as the positive rather than the raw source doc.
-      This trains the model to align query representations with concise answer
-      text - useful because at inference time the LLM response (not the raw doc)
-      is what gets cached and reused via semantic cache (Article 6).
-
-    Teaching note on hard_negative selection:
-      We retrieve top-K BM25 docs for each query, then drop correct source docs.
-      Each remaining candidate becomes a separate training triple with the same
-      (query, positive) - this multiplies the dataset size by negatives_per_query
-      while keeping each negative distinct. Using multiple negatives per query is
-      standard practice (MultipleNegativesRankingLoss uses all in-batch negatives
-      simultaneously, but for simplicity we emit one-negative-per-example files).
-
-    Dataset size math:
-      350 queries × 6 negatives each = 2100 triples → select up to max_pairs
+    Negatives skip every listed source document, not only the first one.
     """
-    pairs: list[dict[str, str]] = []
-    fallback_count = 0
-
-    rng.shuffle(queries)
-    for item in queries:
-        if len(pairs) >= max_pairs:
-            break
-
-        query_text: str = item["query"]
-        positive_text: str = item["expected_answer"]
-        correct_sources: set[str] = set(item.get("source_docs", []))
-
-        if not positive_text.strip():
-            continue
-
-        # BM25 hard-negative mining - retrieve more candidates to pick N from
-        query_tokens = query_text.lower().split()
-        candidates = bm25_top_k(query_tokens, doc_ids, tokenised_docs, k=20)
-        hard_negatives = [c for c in candidates if c not in correct_sources]
-
-        # Pick up to negatives_per_query hard negatives
-        chosen = hard_negatives[:negatives_per_query]
-        if len(chosen) < negatives_per_query:
-            # Pad with random docs not already chosen or correct
-            exclude = correct_sources | set(chosen)
-            fallback_pool = [d for d in doc_ids if d not in exclude]
-            rng.shuffle(fallback_pool)
-            needed = negatives_per_query - len(chosen)
-            chosen.extend(fallback_pool[:needed])
-            fallback_count += needed
-
-        for neg_doc_id in chosen:
-            if len(pairs) >= max_pairs:
-                break
-            # Truncate doc to first 512 words to keep negative manageable
-            negative_text = " ".join(docs[neg_doc_id].split()[:512])
-            pairs.append(
+    triples: list[dict[str, str]] = []
+    for item in train_questions:
+        sources = set(item.get("source_docs", []))
+        candidates = bm25_top_k(item["query"].lower().split(), doc_ids, tokenised_docs, k=20)
+        negatives = [c for c in candidates if c not in sources][:NEGATIVES_PER_QUERY]
+        for neg in negatives:
+            triples.append(
                 {
-                    "query": query_text,
-                    "positive": positive_text,
-                    "negative": negative_text,
+                    "query": item["query"],
+                    "positive": item["expected_answer"],
+                    "negative": " ".join(docs[neg].split()[:512]),
                 }
             )
-
-    if fallback_count:
-        print(
-            f"  Info: {fallback_count}/{len(pairs)} negatives used random fallback "
-            "(BM25 had fewer than {negatives_per_query} hard negatives)"
-        )
-
-    return pairs
+    return triples
 
 
-def stratified_split(
-    pairs: list[dict[str, str]],
-    train_ratio: float,
-    rng: random.Random,
-) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
-    """80/20 split, shuffled.
+def build_chunk_triples(
+    train_questions: list[dict[str, Any]], candidates_path: Path
+) -> tuple[list[dict[str, str]], int]:
+    """(query, source chunk, non-source chunk) from frozen retriever candidates."""
+    from benchmarks.build_article_09_candidates import load_candidates
 
-    Teaching note: Stratification by difficulty would require keeping
-    difficulty labels through the pipeline. Here we do a simple random
-    split after shuffling - acceptable because the dataset is synthesised
-    and already balanced by construction (article_01.json was built with
-    equal difficulty distribution).
-    """
-    shuffled = list(pairs)
-    rng.shuffle(shuffled)
-    cut = math.floor(len(shuffled) * train_ratio)
-    return shuffled[:cut], shuffled[cut:]
+    frozen = load_candidates(candidates_path)
+    triples: list[dict[str, str]] = []
+    skipped = 0
+    for item in train_questions:
+        sources = set(item["source_docs"])
+        ranked = frozen[item["id"]]
+        positives = [c for c in ranked if c["doc"] in sources]
+        negatives = [c for c in ranked if c["doc"] not in sources][:NEGATIVES_PER_QUERY]
+        if not positives:
+            skipped += 1
+            continue
+        for neg in negatives:
+            triples.append(
+                {"query": item["query"], "positive": positives[0]["text"], "negative": neg["text"]}
+            )
+    return triples, skipped
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Prepare DL training data")
+    parser = argparse.ArgumentParser(description="Prepare Article 9 split and training pairs")
+    parser.add_argument("--output", type=Path, default=Path("datasets/dl_training"))
+    parser.add_argument("--seed", type=int, default=42)
     parser.add_argument(
-        "--output",
+        "--candidates",
         type=Path,
-        default=Path("datasets/dl_training"),
-        help="Output directory (default: datasets/dl_training/)",
-    )
-    parser.add_argument(
-        "--max-pairs",
-        type=int,
-        default=2000,
-        help="Max training pairs to generate (default: 2000)",
-    )
-    parser.add_argument(
-        "--seed",
-        type=int,
-        default=42,
-        help="Random seed for reproducibility",
+        default=None,
+        help="Frozen retriever candidates; also writes train_chunk.json",
     )
     args = parser.parse_args()
+    args.output.mkdir(parents=True, exist_ok=True)
 
-    rng = random.Random(args.seed)
-    output_dir: Path = args.output
-    output_dir.mkdir(parents=True, exist_ok=True)
+    questions = load_questions()
+    print(f"Questions: {len(questions)}")
 
-    print("Loading tech docs...")
-    docs_dir = Path("datasets/tech_docs")
-    docs = load_tech_docs(docs_dir)
-    print(f"  Loaded {len(docs)} documents")
+    if SPLIT_MANIFEST.exists():
+        manifest = json.loads(SPLIT_MANIFEST.read_text())
+        print(f"Using existing split manifest {SPLIT_MANIFEST}")
+    else:
+        manifest = build_split_manifest(questions, args.seed)
+        SPLIT_MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n")
+        print(f"Wrote split manifest {SPLIT_MANIFEST}")
+    split_of = {q["id"]: q["split"] for q in manifest["questions"]}
+    train_questions = [q for q in questions if split_of[q["id"]] == "train"]
+    print(f"  {manifest['counts']}")
 
-    print("Building BM25 index...")
-    doc_ids, tokenised_docs = build_bm25_index(docs)
+    docs = load_tech_docs(Path("datasets/tech_docs"))
+    doc_ids, tokenised = build_bm25_index(docs)
+    answer_triples = build_answer_triples(train_questions, docs, doc_ids, tokenised)
+    (args.output / "train.json").write_text(json.dumps(answer_triples, indent=2))
+    print(f"Answer triples: {len(answer_triples)} from {len(train_questions)} train questions")
 
-    print("Loading synthetic queries...")
-    with open("datasets/synthetic_queries/article_01.json") as f:
-        article_01 = json.load(f)
-    queries_01 = article_01["queries"]  # 300 queries
-
-    # Also load golden set for higher-quality positives
-    with open("datasets/golden_set/qa_pairs.json") as f:
-        golden_data = json.load(f)
-    golden_queries = golden_data["qa_pairs"]  # 50 pairs
-
-    all_queries = queries_01 + golden_queries
-    print(f"  Total query pool: {len(all_queries)}")
-
-    print(f"Building up to {args.max_pairs} training pairs (hard-negative mining)...")
-    pairs = build_pairs(all_queries, docs, doc_ids, tokenised_docs, args.max_pairs, rng)
-    print(f"  Generated {len(pairs)} pairs")
-
-    print("Splitting 80/20...")
-    train_pairs, val_pairs = stratified_split(pairs, train_ratio=0.8, rng=rng)
-    print(f"  Train: {len(train_pairs)}  Val: {len(val_pairs)}")
-
-    train_path = output_dir / "train.json"
-    val_path = output_dir / "val.json"
-
-    with open(train_path, "w") as f:
-        json.dump(train_pairs, f, indent=2)
-    with open(val_path, "w") as f:
-        json.dump(val_pairs, f, indent=2)
-
-    # Write metadata
-    meta = {
-        "source_queries": len(all_queries),
-        "total_pairs": len(pairs),
-        "train": len(train_pairs),
-        "val": len(val_pairs),
-        "seed": args.seed,
-        "negative_strategy": "bm25_hard_negative",
-        "positive_source": "expected_answer",
+    meta: dict[str, Any] = {
+        "split_manifest": str(SPLIT_MANIFEST),
+        "train_questions": len(train_questions),
+        "answer_triples": len(answer_triples),
+        "negatives_per_query": NEGATIVES_PER_QUERY,
     }
-    with open(output_dir / "metadata.json", "w") as f:
-        json.dump(meta, f, indent=2)
-
-    print(f"\nWrote: {train_path} ({len(train_pairs)} pairs)")
-    print(f"       {val_path} ({len(val_pairs)} pairs)")
-    print(f"       {output_dir}/metadata.json")
+    if args.candidates is not None:
+        chunk_triples, skipped = build_chunk_triples(train_questions, args.candidates)
+        (args.output / "train_chunk.json").write_text(json.dumps(chunk_triples, indent=2))
+        meta.update({"chunk_triples": len(chunk_triples), "chunk_questions_skipped": skipped})
+        print(f"Chunk triples: {len(chunk_triples)} ({skipped} questions had no source chunk)")
+    (args.output / "metadata.json").write_text(json.dumps(meta, indent=2))
 
 
 if __name__ == "__main__":

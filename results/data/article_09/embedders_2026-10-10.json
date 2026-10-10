@@ -1,0 +1,3061 @@
+{
+  "provenance": {
+    "git_commit": "c1799ac1422c359e7b9cfc75edd61354a8657f90",
+    "git_dirty": false,
+    "run_date": "2026-10-10",
+    "versions": {
+      "torch": "2.11.0",
+      "sentence-transformers": "5.4.1"
+    },
+    "split_manifest": "datasets/dl_training_split.json"
+  },
+  "protocol": {
+    "questions": "test split only",
+    "corpus": "1389 chunks, SentenceSplitter(500, 50), plain text",
+    "query_prefix": "Represent this sentence for searching relevant passages: ",
+    "recall_at_5": "fraction of source_docs among the documents of the top 5 chunks",
+    "mrr": "1 / rank of the first source chunk within the top 20, else 0"
+  },
+  "test_questions": 77,
+  "test_groups": 9,
+  "training": {
+    "answer_seed13": {
+      "model": "BAAI/bge-base-en-v1.5",
+      "device": "mps",
+      "seed": 13,
+      "epochs": 2,
+      "batch_size": 16,
+      "learning_rate": 5e-05,
+      "train_file": "train.json",
+      "train_triples": 690,
+      "training_seconds": 141.4,
+      "torch": "2.11.0"
+    },
+    "answer_seed21": {
+      "model": "BAAI/bge-base-en-v1.5",
+      "device": "mps",
+      "seed": 21,
+      "epochs": 2,
+      "batch_size": 16,
+      "learning_rate": 5e-05,
+      "train_file": "train.json",
+      "train_triples": 690,
+      "training_seconds": 149.5,
+      "torch": "2.11.0"
+    },
+    "answer_seed42": {
+      "model": "BAAI/bge-base-en-v1.5",
+      "device": "mps",
+      "seed": 42,
+      "epochs": 2,
+      "batch_size": 16,
+      "learning_rate": 5e-05,
+      "train_file": "train.json",
+      "train_triples": 690,
+      "training_seconds": 164.4,
+      "torch": "2.11.0"
+    },
+    "chunk_seed13": {
+      "model": "BAAI/bge-base-en-v1.5",
+      "device": "mps",
+      "seed": 13,
+      "epochs": 2,
+      "batch_size": 16,
+      "learning_rate": 5e-05,
+      "train_file": "train_chunk.json",
+      "train_triples": 678,
+      "training_seconds": 352.1,
+      "torch": "2.11.0"
+    },
+    "chunk_seed21": {
+      "model": "BAAI/bge-base-en-v1.5",
+      "device": "mps",
+      "seed": 21,
+      "epochs": 2,
+      "batch_size": 16,
+      "learning_rate": 5e-05,
+      "train_file": "train_chunk.json",
+      "train_triples": 678,
+      "training_seconds": 3966.5,
+      "torch": "2.11.0"
+    },
+    "chunk_seed42": {
+      "model": "BAAI/bge-base-en-v1.5",
+      "device": "mps",
+      "seed": 42,
+      "epochs": 2,
+      "batch_size": 16,
+      "learning_rate": 5e-05,
+      "train_file": "train_chunk.json",
+      "train_triples": 678,
+      "training_seconds": 672.3,
+      "torch": "2.11.0"
+    }
+  },
+  "quality": {
+    "stock": {
+      "recall_at_5": 0.8117,
+      "mrr": 0.8476,
+      "hit_at_1": 0.7532
+    },
+    "answer_seed13": {
+      "recall_at_5": 0.684,
+      "mrr": 0.6037,
+      "hit_at_1": 0.4545
+    },
+    "answer_seed21": {
+      "recall_at_5": 0.684,
+      "mrr": 0.5223,
+      "hit_at_1": 0.2857
+    },
+    "answer_seed42": {
+      "recall_at_5": 0.645,
+      "mrr": 0.6058,
+      "hit_at_1": 0.4545
+    },
+    "chunk_seed13": {
+      "recall_at_5": 0.8961,
+      "mrr": 0.8538,
+      "hit_at_1": 0.7532
+    },
+    "chunk_seed21": {
+      "recall_at_5": 0.8052,
+      "mrr": 0.883,
+      "hit_at_1": 0.8182
+    },
+    "chunk_seed42": {
+      "recall_at_5": 0.8225,
+      "mrr": 0.9095,
+      "hit_at_1": 0.8701
+    }
+  },
+  "comparisons": {
+    "answer_seed13_minus_stock": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": -0.24391642041766684,
+        "ci95": [
+          -0.34128242137075215,
+          -0.14605239023621633
+        ],
+        "wins": 8,
+        "ties": 31,
+        "losses": 38,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.45113853586199704,
+          -0.09277210884353741
+        ],
+        "established": true
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": -0.1277056277056277,
+        "ci95": [
+          -0.21861471861471865,
+          -0.03896103896103896
+        ],
+        "wins": 7,
+        "ties": 49,
+        "losses": 21,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.20833333333333331,
+          -0.03676470588235294
+        ],
+        "established": true
+      }
+    },
+    "answer_seed21_minus_stock": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": -0.3253525514889151,
+        "ci95": [
+          -0.4116491269372763,
+          -0.23667083637862868
+        ],
+        "wins": 6,
+        "ties": 25,
+        "losses": 46,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.537742946708464,
+          -0.15251552514945377
+        ],
+        "established": true
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": -0.1277056277056277,
+        "ci95": [
+          -0.21645021645021642,
+          -0.04112554112554112
+        ],
+        "wins": 5,
+        "ties": 52,
+        "losses": 20,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.20786567194233016,
+          -0.03623188405797101
+        ],
+        "established": true
+      }
+    },
+    "answer_seed42_minus_stock": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": -0.24187807806228856,
+        "ci95": [
+          -0.33564050819689917,
+          -0.1455826147015057
+        ],
+        "wins": 7,
+        "ties": 34,
+        "losses": 36,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.5184081706670524,
+          -0.04330065359477124
+        ],
+        "established": true
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": -0.16666666666666669,
+        "ci95": [
+          -0.2597402597402597,
+          -0.07575757575757576
+        ],
+        "wins": 5,
+        "ties": 47,
+        "losses": 25,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.2700440128037247,
+          -0.04716981132075472
+        ],
+        "established": true
+      }
+    },
+    "chunk_seed13_minus_stock": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": 0.006153370439084726,
+        "ci95": [
+          -0.055197510822510815,
+          0.06796884662956086
+        ],
+        "wins": 13,
+        "ties": 52,
+        "losses": 12,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.08871344908931314,
+          0.10489993098688752
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.08441558441558442,
+        "ci95": [
+          0.01731601731601732,
+          0.1471861471861472
+        ],
+        "wins": 18,
+        "ties": 56,
+        "losses": 3,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.035714285714285705,
+          0.22428181386514717
+        ],
+        "established": false
+      }
+    },
+    "chunk_seed21_minus_stock": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": 0.035327767470624605,
+        "ci95": [
+          -0.018552875695732832,
+          0.09067911255411254
+        ],
+        "wins": 11,
+        "ties": 58,
+        "losses": 8,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.037037037037037035,
+          0.11781076066790352
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": -0.006493506493506488,
+        "ci95": [
+          -0.0779220779220779,
+          0.06277056277056277
+        ],
+        "wins": 11,
+        "ties": 55,
+        "losses": 11,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.13052208835341364,
+          0.15351304397357024
+        ],
+        "established": false
+      }
+    },
+    "chunk_seed42_minus_stock": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": 0.061904761904761914,
+        "ci95": [
+          0.007714904143475571,
+          0.11847557204700061
+        ],
+        "wins": 12,
+        "ties": 59,
+        "losses": 6,
+        "n_groups": 9,
+        "ci95_group": [
+          0.0,
+          0.16944217160548403
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.010822510822510824,
+        "ci95": [
+          -0.05627705627705626,
+          0.0735930735930736
+        ],
+        "wins": 11,
+        "ties": 57,
+        "losses": 9,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.09935897435897435,
+          0.1463963963963964
+        ],
+        "established": false
+      }
+    }
+  },
+  "per_query": {
+    "stock": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q011": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q014": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q040": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q049": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q050": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q114": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q162": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q183": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q234": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q248": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q294": {
+        "recall_at_5": 0.0,
+        "mrr": 0.14285714285714285,
+        "hit_at_1": 0.0
+      },
+      "q297": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "answer_seed13": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q011": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "q014": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q040": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q049": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q050": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q058": {
+        "recall_at_5": 0.0,
+        "mrr": 0.09090909090909091,
+        "hit_at_1": 0.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q122": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "q124": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q141": {
+        "recall_at_5": 0.0,
+        "mrr": 0.058823529411764705,
+        "hit_at_1": 0.0
+      },
+      "q143": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q234": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q248": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.0,
+        "mrr": 0.07142857142857142,
+        "hit_at_1": 0.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q297": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0625,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_027": {
+        "recall_at_5": 0.0,
+        "mrr": 0.05555555555555555,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.05263157894736842,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 0.0,
+        "mrr": 0.1111111111111111,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "answer_seed21": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q011": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "q014": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q040": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q049": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q050": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q101": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q107": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q114": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q122": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "q124": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q141": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "q143": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q162": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q234": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q248": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q284": {
+        "recall_at_5": 0.0,
+        "mrr": 0.1,
+        "hit_at_1": 0.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q297": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0625,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 0.0,
+        "mrr": 0.14285714285714285,
+        "hit_at_1": 0.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_027": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.1111111111111111,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 0.0,
+        "mrr": 0.09090909090909091,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "answer_seed42": {
+      "q005": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q014": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q039": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q040": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q049": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q050": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q101": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q122": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "q124": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 0.0,
+        "mrr": 0.07692307692307693,
+        "hit_at_1": 0.0
+      },
+      "q143": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q234": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q248": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q270": {
+        "recall_at_5": 0.0,
+        "mrr": 0.05263157894736842,
+        "hit_at_1": 0.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q297": {
+        "recall_at_5": 0.0,
+        "mrr": 0.05555555555555555,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.0,
+        "mrr": 0.1111111111111111,
+        "hit_at_1": 0.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_027": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0625,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.0,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 0.0,
+        "mrr": 0.14285714285714285,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "chunk_seed13": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q014": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q022": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q039": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q040": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q049": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q050": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q234": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q248": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q297": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q299": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "chunk_seed21": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q014": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q022": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q039": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q040": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q050": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q183": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q234": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q248": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q297": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q299": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 0.0,
+        "mrr": 0.07142857142857142,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "chunk_seed42": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q014": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q022": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q039": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q040": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q050": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q193": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q234": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q248": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q297": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q299": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 0.0,
+        "mrr": 0.1,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 0.0,
+        "mrr": 0.14285714285714285,
+        "hit_at_1": 0.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    }
+  }
+}

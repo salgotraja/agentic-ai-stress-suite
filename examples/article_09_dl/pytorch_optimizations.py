@@ -1,42 +1,45 @@
-"""PyTorch inference optimizations for embedding models - tasks 5.5, 5.6, 5.7.
+"""PyTorch inference optimizations for the BGE embedder - tasks 5.5, 5.6, 5.7.
 
-Teaching note: WHY optimise the embedding model?
-  In a high-traffic RAG pipeline, the embedding step runs on every query:
-    - Semantic cache lookup (Article 6): query must be embedded to find similar cache entries
-    - Retrieval: query embedded to search vector DB
-  At 100 req/sec (Article 8 target), embedding latency directly caps throughput.
-  Three standard optimisation techniques are benchmarked:
+What this measures, all on CPU with a fixed thread count:
 
-  1. torch.compile() - graph compilation
-     PyTorch's JIT compiler fuses ops into optimised kernels. First call
-     is slow (trace overhead ~1-3s), but subsequent calls are 20-50% faster.
-     Best for models with stable input shapes (fixed sequence length).
-     Caveat on MPS: torch.compile has partial MPS support; CPU backend is used
-     for reliable benchmarking.
+  1. torch.compile
+     Eager vs two backends. ``aot_eager`` traces the graph through Dynamo and
+     AOTAutograd but generates no new kernels, so it cannot fuse anything.
+     ``inductor`` generates C++ kernels for CPU. Graph breaks are counted with
+     torch._dynamo.explain rather than assumed.
 
-  2. Dynamic INT8 quantization
-     Replaces 32-bit float weights with 8-bit integers in Linear layers.
-     Cuts model size by ~4x and speeds up CPU inference by 30-70%.
-     Quality impact: embeddings stay accurate (cosine similarity within 1%)
-     because INT8 quantization error is below the noise floor for most tasks.
-     Note: INT8 quantization is CPU-only in PyTorch (no GPU/MPS support yet).
-
-  3. torch.profiler - bottleneck identification
-     Records operator-level execution times. The profile reveals which ops
-     dominate inference time (usually attention and layer norm), guiding
-     targeted optimisation effort.
-     Output: trace.json for chrome://tracing visualisation.
+  2. Dynamic INT8 quantization (torch.ao, qnnpack engine on Apple Silicon)
+     Only nn.Linear weights become INT8; the embedding tables and LayerNorms
+     stay FP32. The first version assumed a 4x smaller model
+     (int8_size_mb = fp32_size_mb / 4). This version measures:
+       - serialized size: bytes of torch.save(state_dict) on disk
+       - runtime memory: in a fresh process per variant, resident memory after
+         loading the model and encoding one query (garbage collected), and peak
+         RSS. Dynamic quantization starts from the FP32 model, so the INT8
+         peak includes the FP32 load.
+       - retrieval quality: document-level Recall@5 and MRR over the full chunk
+         corpus, FP32 vs INT8, paired per question
+     The first version also mean-pooled token embeddings; BGE uses the [CLS]
+     token (1_Pooling/config.json), so its 0.983 cosine compared embeddings the
+     retriever never uses. Encoding here goes through SentenceTransformer, so
+     pooling and normalisation match the retriever.
 
 Usage:
     uv run python examples/article_09_dl/pytorch_optimizations.py
-    # Outputs: results/data/pytorch_optimizations.json
-    #          results/charts/article_09/03_speedup_comparison.png
-    #          results/data/trace.json  (open in chrome://tracing)
+    # Output: results/data/article_09/pytorch_optimizations_<date>.json
 """
 
 from __future__ import annotations
 
+import argparse
+import copy
 import json
+import os
+import platform
+import resource
+import subprocess
+import sys
+import tempfile
 import time
 import warnings
 from pathlib import Path
@@ -44,318 +47,279 @@ from typing import Any
 
 import numpy as np
 import torch
-from transformers import AutoModel, AutoTokenizer
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 MODEL_NAME = "BAAI/bge-base-en-v1.5"
 SAMPLE_QUERY = "What is FastAPI dependency injection?"
+THREADS = 4
 WARMUP_RUNS = 5
 BENCH_RUNS = 50
 
 
-def _load_model_and_tokenizer() -> tuple[torch.nn.Module, Any]:
-    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)  # type: ignore[no-untyped-call]
-    model: torch.nn.Module = AutoModel.from_pretrained(MODEL_NAME)
-    model.eval()
-    return model, tokenizer
+def _load_st(device: str = "cpu") -> Any:
+    from sentence_transformers import SentenceTransformer
+
+    return SentenceTransformer(MODEL_NAME, device=device)
 
 
-def _tokenize(query: str, tokenizer: Any) -> dict[str, torch.Tensor]:
-    return tokenizer(
-        query,
-        return_tensors="pt",
-        padding="max_length",
-        truncation=True,
-        max_length=128,
+def _quantize(st_model: Any) -> Any:
+    """Dynamic INT8 on every nn.Linear inside the transformer; returns a copy."""
+    torch.backends.quantized.engine = "qnnpack"
+    quantized = copy.deepcopy(st_model)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", DeprecationWarning)
+        # In place: sentence-transformers 5 does not accept a replacement
+        # auto_model by assignment, which silently left the model FP32.
+        torch.ao.quantization.quantize_dynamic(  # type: ignore[no-untyped-call]
+            quantized[0].auto_model, {torch.nn.Linear}, dtype=torch.qint8, inplace=True
+        )
+    n_dynamic = sum(
+        1
+        for m in quantized[0].auto_model.modules()
+        if type(m).__module__.startswith("torch.ao.nn.quantized.dynamic")
     )
+    if n_dynamic == 0:
+        raise RuntimeError("quantize_dynamic replaced no Linear layers")
+    return quantized
 
 
-def _mean_pool(token_embeddings: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
-    """Mean pooling over non-padding tokens - standard for BGE models."""
-    mask_expanded = attention_mask.unsqueeze(-1).float()
-    return (token_embeddings * mask_expanded).sum(1) / mask_expanded.sum(1).clamp(min=1e-9)
+def _inputs(st_model: Any) -> dict[str, torch.Tensor]:
+    tok = st_model.tokenizer
+    out: dict[str, torch.Tensor] = tok(
+        SAMPLE_QUERY, return_tensors="pt", padding="max_length", truncation=True, max_length=128
+    )
+    return out
 
 
-def _encode(
-    model: torch.nn.Module,
-    inputs: dict[str, torch.Tensor],
-) -> torch.Tensor:
-    with torch.no_grad():
-        out = model(**inputs)
-    return _mean_pool(out.last_hidden_state, inputs["attention_mask"])
-
-
-def measure_latency_ms(
-    model: torch.nn.Module,
-    inputs: dict[str, torch.Tensor],
-    runs: int = BENCH_RUNS,
-) -> float:
-    """Median inference latency in milliseconds (CPU, no grad)."""
+def _median_ms(fn: Any) -> float:
     for _ in range(WARMUP_RUNS):
-        _encode(model, inputs)
-
-    times: list[float] = []
-    for _ in range(runs):
+        fn()
+    times = []
+    for _ in range(BENCH_RUNS):
         t0 = time.perf_counter()
-        _encode(model, inputs)
+        fn()
         times.append((time.perf_counter() - t0) * 1000)
     return float(np.median(times))
 
 
-# ---------------------------------------------------------------------------
-# Benchmark: eager vs torch.compile
-# ---------------------------------------------------------------------------
+def benchmark_compile(st_model: Any) -> dict[str, Any]:
+    """Eager vs torch.compile backends on the bare transformer forward pass."""
+    bert = st_model[0].auto_model.eval()
+    inputs = _inputs(st_model)
+
+    def run(m: Any) -> Any:
+        with torch.no_grad():
+            return m(**inputs).last_hidden_state[:, 0]
+
+    result: dict[str, Any] = {"device": "cpu", "threads": THREADS, "input": "1 x 128 tokens"}
+    result["eager_ms"] = round(_median_ms(lambda: run(bert)), 2)
+
+    explanation = torch._dynamo.explain(bert)(**inputs)
+    result["dynamo_graph_count"] = explanation.graph_count
+    result["dynamo_graph_break_count"] = explanation.graph_break_count
+    result["dynamo_break_reasons"] = [str(r.reason) for r in explanation.break_reasons][:5]
+
+    for backend in ("aot_eager", "inductor"):
+        torch._dynamo.reset()
+        entry: dict[str, Any] = {}
+        try:
+            compiled = torch.compile(bert, backend=backend)
+            t0 = time.perf_counter()
+            run(compiled)
+            entry["first_call_ms"] = round((time.perf_counter() - t0) * 1000, 1)
+            entry["steady_ms"] = round(_median_ms(lambda m=compiled: run(m)), 2)
+            entry["speedup_vs_eager"] = round(result["eager_ms"] / entry["steady_ms"], 3)
+        except Exception as exc:  # noqa: BLE001 - record why a backend failed
+            lines = str(exc).splitlines()
+            cause = next((ln for ln in lines if "error:" in ln), lines[0] if lines else "")
+            entry["error"] = f"{type(exc).__name__}: {cause.replace(str(Path.home()), '~')}"
+        result[backend] = entry
+    torch._dynamo.reset()
+    return result
 
 
-def benchmark_compile(
-    model: torch.nn.Module,
-    inputs: dict[str, torch.Tensor],
-) -> dict[str, float]:
-    """Compare eager mode vs torch.compile on CPU.
+def _state_dict_bytes(module: torch.nn.Module) -> int:
+    with tempfile.TemporaryDirectory() as tmp:
+        path = Path(tmp) / "model.pt"
+        torch.save(module.state_dict(), path)
+        return path.stat().st_size
 
-    Teaching note: torch.compile is most effective on hardware with
-    dedicated CUDA tensor cores. On CPU (and MPS which has partial support),
-    gains are more modest - typically 10-25% for transformer inference.
-    The lesson is the code path, not the exact speedup number.
+
+def _rss_bytes() -> int:
+    # ru_maxrss is bytes on macOS, kilobytes on Linux.
+    peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    return int(peak if sys.platform == "darwin" else peak * 1024)
+
+
+def memory_probe(mode: str, path: str | None) -> None:
+    """Run in a fresh process: print resident and peak memory around one forward pass.
+
+    mode "checkpoint": load a whole pickled transformer module from ``path``
+    (FP32 or already-quantized INT8), so only that model is ever resident.
+    mode "quantize_at_startup": load FP32, quantize, drop the original.
     """
-    print("  [eager] measuring...")
-    eager_ms = measure_latency_ms(model, inputs)
-    print(f"    Eager: {eager_ms:.2f}ms")
+    import gc
 
-    print("  [compile] compiling (first call slow, subsequent fast)...")
-    # aot_eager is a CPU-compatible backend that works without CUDA.
-    # The full inductor backend (default) requires triton which is CUDA-only.
-    compiled: torch.nn.Module = torch.compile(model, backend="aot_eager")  # type: ignore[assignment]
-    # First call triggers compilation - not included in benchmark
-    _encode(compiled, inputs)
+    import psutil
+    from transformers import AutoTokenizer
 
-    print("  [compile] measuring compiled model...")
-    compiled_ms = measure_latency_ms(compiled, inputs)
-    speedup = eager_ms / compiled_ms
-    print(f"    Compiled: {compiled_ms:.2f}ms  speedup: {speedup:.2f}x")
-
-    return {
-        "eager_ms": round(eager_ms, 2),
-        "compiled_ms": round(compiled_ms, 2),
-        "speedup": round(speedup, 2),
-    }
-
-
-# ---------------------------------------------------------------------------
-# Benchmark: float32 vs INT8 quantization
-# ---------------------------------------------------------------------------
-
-
-def benchmark_quantization(
-    model: torch.nn.Module,
-    inputs: dict[str, torch.Tensor],
-) -> dict[str, float]:
-    """Dynamic INT8 quantization of Linear layers.
-
-    Teaching note: torch.quantization.quantize_dynamic replaces specified
-    layer types (here: nn.Linear) with INT8 equivalents at runtime. No
-    calibration dataset required - hence 'dynamic' (vs static quantization).
-    The tradeoff:
-      - Pro: 4x smaller weights (float32 → int8), faster GEMM on CPU
-      - Con: slight accuracy loss (< 1% cosine similarity drift for BGE)
-      - Limitation: CPU-only; GPU and MPS don't benefit from INT8 in PyTorch yet
-
-    Engine note: PyTorch requires an explicit quantization backend on ARM
-    (Apple Silicon, Raspberry Pi). QNNPACK targets ARM NEON intrinsics and
-    is the correct choice here. FBGEMM targets x86 AVX2 and won't load on M4.
-    Note: torch.ao.quantization is deprecated as of PyTorch 2.9 in favour of
-    torchao, but the legacy API remains functional for teaching purposes.
-
-    QNNPACK vs FBGEMM result: on Apple Silicon, QNNPACK INT8 is actually
-    SLOWER than FP32 because Apple's CPU doesn't have x86-style VNNI
-    instructions - size reduction is real (4x) but latency benefit requires x86.
-    """
-    fp32_ms = measure_latency_ms(model, inputs)
-    fp32_size_mb = sum(p.numel() * 4 for p in model.parameters()) / 1e6
-
-    # QNNPACK is the ARM-native quantization engine (vs FBGEMM for x86 AVX2).
-    # Must be set before quantize_dynamic; the default is 'none' on non-x86.
+    torch.set_num_threads(THREADS)
     torch.backends.quantized.engine = "qnnpack"
-
-    # Dynamic quantization of all Linear layers.
-    # Suppress DeprecationWarning: torch.ao.quantization deprecated in PyTorch 2.9.
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore", DeprecationWarning)
-        quantized: torch.nn.Module = torch.quantization.quantize_dynamic(  # type: ignore[attr-defined]
-            model,
-            {torch.nn.Linear},
-            dtype=torch.qint8,
+    proc = psutil.Process()
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    before = proc.memory_info().rss
+    if mode == "checkpoint":
+        module = torch.load(str(path), weights_only=False)
+    else:
+        st = _load_st()
+        module = _quantize(st)[0].auto_model
+        del st
+    inputs = tokenizer(SAMPLE_QUERY, return_tensors="pt")
+    with torch.no_grad():
+        module(**inputs)
+    gc.collect()
+    print(
+        json.dumps(
+            {"rss_before": before, "rss_after": proc.memory_info().rss, "rss_peak": _rss_bytes()}
         )
+    )
 
-    # Quantized Linear layers store weights as packed INT8 tensors that don't
-    # show up as standard parameters - approximate size as fp32_size / 4.
-    int8_size_mb = fp32_size_mb / 4.0
 
-    int8_ms = measure_latency_ms(quantized, inputs)
-    speedup = fp32_ms / int8_ms
-
-    # Cosine similarity between FP32 and INT8 embeddings (quality check)
-    fp32_emb = _encode(model, inputs)
-    int8_emb = _encode(quantized, inputs)
-    cos_sim = float(torch.nn.functional.cosine_similarity(fp32_emb, int8_emb, dim=-1).mean().item())
-
-    print(f"    FP32: {fp32_ms:.2f}ms  {fp32_size_mb:.0f}MB")
-    print(f"    INT8: {int8_ms:.2f}ms  {int8_size_mb:.0f}MB  speedup: {speedup:.2f}x")
-    print(f"    Cosine similarity (FP32 vs INT8): {cos_sim:.6f}")
-
+def _probe(mode: str, path: Path | None = None) -> dict[str, float]:
+    cmd = [sys.executable, __file__, "--memory-probe", mode]
+    if path is not None:
+        cmd += ["--path", str(path)]
+    out = subprocess.run(cmd, capture_output=True, text=True, check=True, cwd=PROJECT_ROOT)
+    data = json.loads(out.stdout.strip().splitlines()[-1])
     return {
-        "fp32_ms": round(fp32_ms, 2),
-        "int8_ms": round(int8_ms, 2),
-        "speedup": round(speedup, 2),
-        "fp32_size_mb": round(fp32_size_mb, 1),
-        "int8_size_mb": round(int8_size_mb, 1),
-        "size_reduction": round(fp32_size_mb / max(int8_size_mb, 1), 2),
-        "cosine_similarity": round(cos_sim, 6),
+        "resident_growth_mb": round((data["rss_after"] - data["rss_before"]) / 1e6, 1),
+        "peak_rss_mb": round(data["rss_peak"] / 1e6, 1),
     }
 
 
-# ---------------------------------------------------------------------------
-# Profiling
-# ---------------------------------------------------------------------------
+def _runtime_memory(fp32_bert: torch.nn.Module, int8_bert: torch.nn.Module) -> dict[str, Any]:
+    with tempfile.TemporaryDirectory() as tmp:
+        fp32_path, int8_path = Path(tmp) / "fp32.pt", Path(tmp) / "int8.pt"
+        torch.save(fp32_bert, fp32_path)
+        torch.save(int8_bert, int8_path)
+        return {
+            "fp32_checkpoint": _probe("checkpoint", fp32_path),
+            "int8_checkpoint": _probe("checkpoint", int8_path),
+            "int8_quantize_at_startup": _probe("quantize_at_startup"),
+            "pickled_module_mb": {
+                "fp32": round(fp32_path.stat().st_size / 1e6, 1),
+                "int8": round(int8_path.stat().st_size / 1e6, 1),
+            },
+        }
 
 
-def profile_inference(
-    model: torch.nn.Module,
-    inputs: dict[str, torch.Tensor],
-    output_path: Path,
-    n_steps: int = 10,
-) -> None:
-    """Record operator-level profile; export Chrome trace for visualisation.
+def benchmark_quantization(st_model: Any) -> dict[str, Any]:
+    from benchmarks.article_09_eval import paired_summary
+    from benchmarks.benchmark_custom_embeddings import evaluate, mean_metrics
+    from benchmarks.build_article_09_candidates import corpus_chunks
+    from scripts.prepare_dl_training_data import load_questions
 
-    Teaching note: The Chrome trace format (chrome://tracing) shows a
-    timeline of every PyTorch operator. For transformer inference the typical
-    hotspot is the attention SDPA (scaled dot-product attention) and the
-    two Linear projections in each FFN block. Identifying these guides whether
-    to pursue:
-      - Fused kernels (torch.compile / FlashAttention)
-      - Operator pruning (reducing layers)
-      - Quantization (replacing GEMM precision)
-    """
-    with torch.profiler.profile(
-        activities=[torch.profiler.ProfilerActivity.CPU],
-        record_shapes=True,
-        with_flops=True,
-    ) as prof:
-        for _ in range(n_steps):
-            with torch.profiler.record_function("encode"):
-                _encode(model, inputs)
+    quantized = _quantize(st_model)
+    fp32_bert = st_model[0].auto_model
+    int8_bert = quantized[0].auto_model
+    linear_params = sum(
+        m.weight.numel() for m in fp32_bert.modules() if isinstance(m, torch.nn.Linear)
+    )
+    all_params = sum(p.numel() for p in fp32_bert.parameters())
 
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    prof.export_chrome_trace(str(output_path))
+    result: dict[str, Any] = {
+        "engine": torch.backends.quantized.engine,
+        "quantized_modules": "torch.nn.Linear only",
+        "linear_weight_share_of_params": round(linear_params / all_params, 4),
+        "serialized_state_dict_mb": {
+            "fp32": round(_state_dict_bytes(fp32_bert) / 1e6, 1),
+            "int8": round(_state_dict_bytes(int8_bert) / 1e6, 1),
+        },
+        "runtime_memory": _runtime_memory(fp32_bert, int8_bert),
+        "latency_ms_single_query": {
+            "fp32": round(_median_ms(lambda: st_model.encode([SAMPLE_QUERY])), 2),
+            "int8": round(_median_ms(lambda: quantized.encode([SAMPLE_QUERY])), 2),
+        },
+    }
+    sizes = result["serialized_state_dict_mb"]
+    result["serialized_size_ratio"] = round(sizes["fp32"] / sizes["int8"], 2)
 
-    # Print top-10 ops by CPU time
-    print("  Top operators by CPU time:")
-    top_ops = prof.key_averages().table(sort_by="cpu_time_total", row_limit=10)
-    for line in top_ops.split("\n")[:14]:
-        if line.strip():
-            print(f"    {line}")
-    print(f"  Chrome trace saved: {output_path}")
-    print("  View at: chrome://tracing → Load → select trace.json")
+    fp_emb = st_model.encode([SAMPLE_QUERY], normalize_embeddings=True)
+    q_emb = quantized.encode([SAMPLE_QUERY], normalize_embeddings=True)
+    result["cls_cosine_fp32_vs_int8_sample_query"] = round(float((fp_emb * q_emb).sum()), 6)
 
-
-# ---------------------------------------------------------------------------
-# Chart
-# ---------------------------------------------------------------------------
-
-
-def plot_speedup(
-    compile_results: dict[str, float],
-    quant_results: dict[str, float],
-    output_path: Path,
-) -> None:
-    try:
-        import matplotlib
-
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-
-        labels = ["Eager\n(baseline)", "torch.compile", "INT8\nquantized"]
-        eager_ms = compile_results["eager_ms"]
-        values: list[float] = [
-            eager_ms,
-            compile_results["compiled_ms"],
-            quant_results["int8_ms"],
-        ]
-        colors = ["#adb5bd", "#457b9d", "#e63946"]
-
-        fig, ax = plt.subplots(figsize=(7, 5))
-        bars = ax.bar(labels, values, color=colors, width=0.5)
-        ax.set_ylabel("Median latency (ms) - lower is better")
-        ax.set_title("PyTorch Inference Optimizations\n(BGE-base-en-v1.5, CPU, 128-token input)")
-        ax.set_ylim(0, max(values) * 1.3)
-
-        for bar, val in zip(bars, values):
-            speedup = eager_ms / val
-            ax.text(
-                bar.get_x() + bar.get_width() / 2,
-                bar.get_height() + max(values) * 0.02,
-                f"{val:.1f}ms\n({speedup:.2f}x)",
-                ha="center",
-                va="bottom",
-                fontsize=9,
+    split = {
+        q["id"]: q
+        for q in json.loads(Path("datasets/dl_training_split.json").read_text())["questions"]
+    }
+    questions = {q["id"]: q for q in load_questions()}
+    ids = list(questions)
+    test_ids = [i for i in ids if split[i]["split"] == "test"]
+    chunks = corpus_chunks()
+    fp_pq = evaluate(st_model, ids, questions, chunks)
+    q_pq = evaluate(quantized, ids, questions, chunks)
+    result["retrieval_quality"] = {
+        "note": "stock model, never trained here, so all 192 questions are fair to use",
+        "all_questions": {"fp32": mean_metrics(fp_pq, ids), "int8": mean_metrics(q_pq, ids)},
+        "test_split": {"fp32": mean_metrics(fp_pq, test_ids), "int8": mean_metrics(q_pq, test_ids)},
+        "int8_minus_fp32_all": {
+            m: paired_summary(
+                [fp_pq[i][m] for i in ids],
+                [q_pq[i][m] for i in ids],
+                groups=[split[i]["group"] for i in ids],
             )
-
-        ax.grid(axis="y", alpha=0.4)
-        plt.tight_layout()
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        plt.savefig(output_path, dpi=150, bbox_inches="tight")
-        plt.close()
-        print(f"  Saved chart: {output_path}")
-    except ImportError:
-        print("  [skip] matplotlib not available")
-
-
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
+            for m in ("mrr", "recall_at_5")
+        },
+    }
+    return result
 
 
 def main() -> None:
-    print(f"Model: {MODEL_NAME}")
-    print("Device: CPU (torch.compile and INT8 quant are CPU-only)\n")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--memory-probe", choices=["checkpoint", "quantize_at_startup"])
+    parser.add_argument("--path")
+    args = parser.parse_args()
+    if args.memory_probe:
+        memory_probe(args.memory_probe, args.path)
+        return
 
-    model, tokenizer = _load_model_and_tokenizer()
-    inputs = _tokenize(SAMPLE_QUERY, tokenizer)
+    from benchmarks.benchmark_custom_embeddings import git_provenance
 
-    results: dict[str, dict[str, float]] = {}
+    torch.set_num_threads(THREADS)
+    provenance = git_provenance()
+    load_start = [round(x, 2) for x in os.getloadavg()]
+    cpu = subprocess.run(
+        ["sysctl", "-n", "machdep.cpu.brand_string"], capture_output=True, text=True, check=False
+    ).stdout.strip()
 
     print("[torch.compile]")
-    results["compile"] = benchmark_compile(model, inputs)
+    compile_result = benchmark_compile(_load_st())
+    print(json.dumps(compile_result, indent=1))
+    print("[INT8 quantization]")
+    quant_result = benchmark_quantization(_load_st())
+    print(json.dumps({k: v for k, v in quant_result.items() if k != "retrieval_quality"}, indent=1))
 
-    # Reload fresh model for quantization (compiled model can't be re-quantized)
-    model2, _ = _load_model_and_tokenizer()
-    inputs2 = _tokenize(SAMPLE_QUERY, tokenizer)
-
-    print("\n[INT8 quantization]")
-    results["quantization"] = benchmark_quantization(model2, inputs2)
-
-    print("\n[torch.profiler]")
-    model3, _ = _load_model_and_tokenizer()
-    inputs3 = _tokenize(SAMPLE_QUERY, tokenizer)
-    trace_path = Path("results/data/trace.json")
-    profile_inference(model3, inputs3, trace_path)
-
-    # Chart
-    plot_speedup(
-        results["compile"],
-        results["quantization"],
-        Path("results/charts/article_09/03_speedup_comparison.png"),
-    )
-
-    # Save results
-    out = Path("results/data/pytorch_optimizations.json")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with open(out, "w") as f:
-        json.dump(results, f, indent=2)
-    print(f"\nResults saved: {out}")
+    results = {
+        "provenance": {
+            **provenance,
+            "hardware": f"{cpu}, macOS {platform.mac_ver()[0]}",
+            "torch_threads": THREADS,
+            "logical_cpus": os.cpu_count(),
+            "load_average_1_5_15_at_start": load_start,
+            "load_average_1_5_15_at_end": [round(x, 2) for x in os.getloadavg()],
+            "model": MODEL_NAME,
+        },
+        "compile": compile_result,
+        "quantization": quant_result,
+    }
+    out_dir = PROJECT_ROOT / "results" / "data" / "article_09"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / f"pytorch_optimizations_{provenance['run_date']}.json"
+    out.write_text(json.dumps(results, indent=2) + "\n")
+    print(f"Results saved: {out}")
 
 
 if __name__ == "__main__":

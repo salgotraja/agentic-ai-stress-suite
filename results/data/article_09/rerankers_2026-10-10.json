@@ -1,0 +1,3711 @@
+{
+  "provenance": {
+    "git_commit": "5a18dfccc1a0ca6e069a2864e10288c38a71d361",
+    "git_dirty": false,
+    "run_date": "2026-10-10",
+    "candidates": "results/data/article_09/candidates_2026-10-10.json",
+    "split_manifest": "datasets/dl_training_split.json",
+    "trained_seeds": [
+      13,
+      21,
+      42
+    ],
+    "hardware": "Apple M4 Pro, macOS 27.0.1",
+    "versions": {
+      "torch": "2.11.0",
+      "sentence-transformers": "5.4.1",
+      "onnxruntime": "1.26.0",
+      "flashrank": "0.2.10"
+    },
+    "flashrank": {
+      "onnx_file": "flashrank-MiniLM-L-12-v2_Q.onnx",
+      "onnx_bytes": 34004051
+    }
+  },
+  "definitions": {
+    "recall_at_5": "fraction of a question's source_docs among the documents of the top 5 chunks",
+    "mrr": "1 / rank of the first chunk from a source document, 0 if none in the 20",
+    "hit_at_1": "top chunk comes from a source document",
+    "ci95": "paired percentile bootstrap over questions, 10000 resamples",
+    "ci95_group": "paired bootstrap resampling whole question groups",
+    "established": "both intervals exclude zero"
+  },
+  "test_questions": 77,
+  "test_groups": 9,
+  "test_questions_source_doc_seen_in_train": 33,
+  "candidate_recall_at_20": 0.9545,
+  "quality": {
+    "retriever": {
+      "all": {
+        "recall_at_5": 0.7727,
+        "mrr": 0.7955,
+        "hit_at_1": 0.6883
+      },
+      "source_doc_seen_in_train": {
+        "recall_at_5": 0.8283,
+        "mrr": 0.9369,
+        "hit_at_1": 0.9091
+      },
+      "source_doc_unseen_in_train": {
+        "recall_at_5": 0.7311,
+        "mrr": 0.6895,
+        "hit_at_1": 0.5227
+      }
+    },
+    "stock_l6": {
+      "all": {
+        "recall_at_5": 0.7987,
+        "mrr": 0.7443,
+        "hit_at_1": 0.5844
+      },
+      "source_doc_seen_in_train": {
+        "recall_at_5": 0.7727,
+        "mrr": 0.8051,
+        "hit_at_1": 0.697
+      },
+      "source_doc_unseen_in_train": {
+        "recall_at_5": 0.8182,
+        "mrr": 0.6987,
+        "hit_at_1": 0.5
+      }
+    },
+    "trained_l6_seed13": {
+      "all": {
+        "recall_at_5": 0.803,
+        "mrr": 0.8108,
+        "hit_at_1": 0.6753
+      },
+      "source_doc_seen_in_train": {
+        "recall_at_5": 0.7626,
+        "mrr": 0.8907,
+        "hit_at_1": 0.8485
+      },
+      "source_doc_unseen_in_train": {
+        "recall_at_5": 0.8333,
+        "mrr": 0.7509,
+        "hit_at_1": 0.5455
+      }
+    },
+    "trained_l6_seed21": {
+      "all": {
+        "recall_at_5": 0.829,
+        "mrr": 0.8153,
+        "hit_at_1": 0.6883
+      },
+      "source_doc_seen_in_train": {
+        "recall_at_5": 0.8131,
+        "mrr": 0.8116,
+        "hit_at_1": 0.697
+      },
+      "source_doc_unseen_in_train": {
+        "recall_at_5": 0.8409,
+        "mrr": 0.818,
+        "hit_at_1": 0.6818
+      }
+    },
+    "trained_l6_seed42": {
+      "all": {
+        "recall_at_5": 0.8268,
+        "mrr": 0.8348,
+        "hit_at_1": 0.7143
+      },
+      "source_doc_seen_in_train": {
+        "recall_at_5": 0.803,
+        "mrr": 0.8535,
+        "hit_at_1": 0.7576
+      },
+      "source_doc_unseen_in_train": {
+        "recall_at_5": 0.8447,
+        "mrr": 0.8207,
+        "hit_at_1": 0.6818
+      }
+    },
+    "stock_l12": {
+      "all": {
+        "recall_at_5": 0.803,
+        "mrr": 0.7044,
+        "hit_at_1": 0.5065
+      },
+      "source_doc_seen_in_train": {
+        "recall_at_5": 0.7778,
+        "mrr": 0.7051,
+        "hit_at_1": 0.5152
+      },
+      "source_doc_unseen_in_train": {
+        "recall_at_5": 0.822,
+        "mrr": 0.704,
+        "hit_at_1": 0.5
+      }
+    },
+    "flashrank_l12": {
+      "all": {
+        "recall_at_5": 0.7554,
+        "mrr": 0.7123,
+        "hit_at_1": 0.5325
+      },
+      "source_doc_seen_in_train": {
+        "recall_at_5": 0.7273,
+        "mrr": 0.7361,
+        "hit_at_1": 0.5758
+      },
+      "source_doc_unseen_in_train": {
+        "recall_at_5": 0.7765,
+        "mrr": 0.6944,
+        "hit_at_1": 0.5
+      }
+    },
+    "trained_l6_seed_mean": {
+      "all": {
+        "recall_at_5": 0.8196,
+        "mrr": 0.8203,
+        "hit_at_1": 0.6926
+      },
+      "source_doc_seen_in_train": {
+        "recall_at_5": 0.7929,
+        "mrr": 0.8519,
+        "hit_at_1": 0.7677
+      },
+      "source_doc_unseen_in_train": {
+        "recall_at_5": 0.8396,
+        "mrr": 0.7965,
+        "hit_at_1": 0.6364
+      }
+    }
+  },
+  "comparisons": {
+    "stock_l6_minus_retriever": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": -0.05122655122655123,
+        "ci95": [
+          -0.1275316944959802,
+          0.023201917130488556
+        ],
+        "wins": 12,
+        "ties": 48,
+        "losses": 17,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.11122448979591837,
+          -0.0002710027100270966
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.025974025974025976,
+        "ci95": [
+          -0.03030303030303031,
+          0.08658008658008658
+        ],
+        "wins": 10,
+        "ties": 59,
+        "losses": 8,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.05555555555555555,
+          0.09343434343434344
+        ],
+        "established": false
+      }
+    },
+    "stock_l12_minus_retriever": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": -0.09106885178313749,
+        "ci95": [
+          -0.1688690476190476,
+          -0.014444573283859015
+        ],
+        "wins": 13,
+        "ties": 43,
+        "losses": 21,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.2051735544217687,
+          0.004991457876411011
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.030303030303030304,
+        "ci95": [
+          -0.03463203463203463,
+          0.09740259740259741
+        ],
+        "wins": 11,
+        "ties": 57,
+        "losses": 9,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.08035714285714284,
+          0.11494252873563218
+        ],
+        "established": false
+      }
+    },
+    "flashrank_l12_minus_retriever": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": -0.08322510822510823,
+        "ci95": [
+          -0.1595256132756133,
+          -0.008977015048443627
+        ],
+        "wins": 12,
+        "ties": 46,
+        "losses": 19,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.17167487684729069,
+          -0.005951719576719579
+        ],
+        "established": true
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": -0.017316017316017313,
+        "ci95": [
+          -0.08874458874458872,
+          0.05194805194805195
+        ],
+        "wins": 8,
+        "ties": 58,
+        "losses": 11,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.10770061728395061,
+          0.0603448275862069
+        ],
+        "established": false
+      }
+    },
+    "trained_l6_seed_mean_minus_retriever": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": 0.0247852676424105,
+        "ci95": [
+          -0.04086889301175015,
+          0.09201728166013873
+        ],
+        "wins": 15,
+        "ties": 46,
+        "losses": 16,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.08555555555555555,
+          0.12533922889302337
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.04689754689754689,
+        "ci95": [
+          -0.0028860028860028886,
+          0.10101010101010101
+        ],
+        "wins": 14,
+        "ties": 54,
+        "losses": 9,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.027213672354187576,
+          0.11822301587301587
+        ],
+        "established": false
+      }
+    },
+    "trained_l6_seed_mean_minus_stock_l6": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": 0.07601181886896173,
+        "ci95": [
+          0.027086425479282625,
+          0.12652073455644886
+        ],
+        "wins": 26,
+        "ties": 44,
+        "losses": 7,
+        "n_groups": 9,
+        "ci95_group": [
+          0.006427270361696586,
+          0.13982687255693235
+        ],
+        "established": true
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.020923520923520924,
+        "ci95": [
+          -0.01587301587301588,
+          0.06204906204906205
+        ],
+        "wins": 11,
+        "ties": 60,
+        "losses": 6,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.02439159891598917,
+          0.052469135802469126
+        ],
+        "established": false
+      }
+    },
+    "trained_l6_seed13_minus_stock_l6": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": 0.06655844155844155,
+        "ci95": [
+          0.01978818800247372,
+          0.11787724180581316
+        ],
+        "wins": 16,
+        "ties": 56,
+        "losses": 5,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.0022538163163163157,
+          0.13052995391705066
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.004329004329004328,
+        "ci95": [
+          -0.043290043290043295,
+          0.049783549783549784
+        ],
+        "wins": 6,
+        "ties": 67,
+        "losses": 4,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.03401553803339518,
+          0.03286384976525821
+        ],
+        "established": false
+      }
+    },
+    "trained_l6_seed21_minus_stock_l6": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": 0.07098021026592458,
+        "ci95": [
+          0.013945578231292522,
+          0.13059678416821274
+        ],
+        "wins": 22,
+        "ties": 46,
+        "losses": 9,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.010961309523809516,
+          0.15895989974937344
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.0303030303030303,
+        "ci95": [
+          -0.01948051948051948,
+          0.08008658008658008
+        ],
+        "wins": 10,
+        "ties": 64,
+        "losses": 3,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.03333333333333333,
+          0.0798611111111111
+        ],
+        "established": false
+      }
+    },
+    "trained_l6_seed42_minus_stock_l6": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": 0.09049680478251906,
+        "ci95": [
+          0.030179344465058752,
+          0.15295995670995668
+        ],
+        "wins": 24,
+        "ties": 48,
+        "losses": 5,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.00446103641843692,
+          0.18643467643467643
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.028138528138528136,
+        "ci95": [
+          -0.006493506493506494,
+          0.06926406926406926
+        ],
+        "wins": 6,
+        "ties": 69,
+        "losses": 2,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.016341208614593383,
+          0.05737780813600485
+        ],
+        "established": false
+      }
+    },
+    "trained_l6_seed_mean_minus_flashrank_l12": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": 0.10801037586751872,
+        "ci95": [
+          0.061257129114271974,
+          0.15792645846217276
+        ],
+        "wins": 28,
+        "ties": 42,
+        "losses": 7,
+        "n_groups": 9,
+        "ci95_group": [
+          0.03647239990523572,
+          0.16608603047491932
+        ],
+        "established": true
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.06421356421356422,
+        "ci95": [
+          0.02453102453102453,
+          0.11111111111111113
+        ],
+        "wins": 16,
+        "ties": 58,
+        "losses": 3,
+        "n_groups": 9,
+        "ci95_group": [
+          0.0030010273431326064,
+          0.10641627543035992
+        ],
+        "established": true
+      }
+    },
+    "stock_l12_minus_stock_l6": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": -0.039842300556586274,
+        "ci95": [
+          -0.08659554730983302,
+          0.0049632807668521925
+        ],
+        "wins": 8,
+        "ties": 56,
+        "losses": 13,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.11091269841269845,
+          0.013358332240484935
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": 0.00432900432900433,
+        "ci95": [
+          -0.025974025974025976,
+          0.04112554112554113
+        ],
+        "wins": 3,
+        "ties": 71,
+        "losses": 3,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.0367965367965368,
+          0.03482587064676617
+        ],
+        "established": false
+      }
+    },
+    "flashrank_l12_minus_stock_l12": {
+      "mrr": {
+        "n": 77,
+        "mean_diff": 0.00784374355802927,
+        "ci95": [
+          -0.01030741084312513,
+          0.03315334467120182
+        ],
+        "wins": 2,
+        "ties": 67,
+        "losses": 8,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.014484126984126985,
+          0.04338512800605187
+        ],
+        "established": false
+      },
+      "recall_at_5": {
+        "n": 77,
+        "mean_diff": -0.04761904761904762,
+        "ci95": [
+          -0.09523809523809525,
+          -0.00865800865800866
+        ],
+        "wins": 0,
+        "ties": 72,
+        "losses": 5,
+        "n_groups": 9,
+        "ci95_group": [
+          -0.08333333333333334,
+          0.0
+        ],
+        "established": false
+      }
+    }
+  },
+  "timing": {
+    "device": "cpu",
+    "threads": 4,
+    "batch": "one call per question, 20 (query, chunk) pairs, max_length 512",
+    "passes": 3,
+    "warmup_calls_per_model": 5,
+    "load_average_1_5_15_before": [
+      10.55,
+      8.91,
+      7.18
+    ],
+    "load_average_1_5_15_after": [
+      15.14,
+      12.18,
+      9.59
+    ],
+    "logical_cpus": 14,
+    "models": {
+      "stock_l6": {
+        "median_ms": 263.98,
+        "p90_ms": 292.39,
+        "n_calls": 231
+      },
+      "trained_l6_seed13": {
+        "median_ms": 262.14,
+        "p90_ms": 292.55,
+        "n_calls": 231
+      },
+      "stock_l12": {
+        "median_ms": 515.63,
+        "p90_ms": 572.29,
+        "n_calls": 231
+      },
+      "flashrank_l12": {
+        "median_ms": 1089.75,
+        "p90_ms": 1207.15,
+        "n_calls": 231
+      }
+    }
+  },
+  "per_query": {
+    "retriever": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q014": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q040": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q049": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q050": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.0,
+        "mrr": 0.14285714285714285,
+        "hit_at_1": 0.0
+      },
+      "q058": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q113": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q154": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q183": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q201": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q234": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q248": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q297": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_012": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.1,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 0.0,
+        "mrr": 0.1111111111111111,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "stock_l6": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q014": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q040": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q049": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q050": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q234": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q248": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q297": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 0.0,
+        "mrr": 0.14285714285714285,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.1,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      }
+    },
+    "trained_l6_seed13": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q014": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 0.0,
+        "mrr": 0.14285714285714285,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q040": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q049": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q050": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q234": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q248": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q297": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "trained_l6_seed21": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q014": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q040": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q049": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q050": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q114": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q234": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q248": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q297": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "trained_l6_seed42": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q014": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q040": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q049": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q050": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q234": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q248": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q297": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.1111111111111111,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "stock_l12": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q014": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q040": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q049": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q050": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q234": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q248": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q297": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "flashrank_l12": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q014": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 0.0,
+        "mrr": 0.14285714285714285,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q040": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q049": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q050": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 0.25,
+        "hit_at_1": 0.0
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q114": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q234": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q248": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q297": {
+        "recall_at_5": 0.5,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 0.0,
+        "mrr": 0.1111111111111111,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 0.0,
+        "mrr": 0.16666666666666666,
+        "hit_at_1": 0.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.125,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2,
+        "hit_at_1": 0.0
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    },
+    "trained_l6_seed_mean": {
+      "q005": {
+        "recall_at_5": 1.0,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "q006": {
+        "recall_at_5": 1.0,
+        "mrr": 0.6666666666666666,
+        "hit_at_1": 0.3333333333333333
+      },
+      "q011": {
+        "recall_at_5": 0.5,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "q014": {
+        "recall_at_5": 0.7777777777777777,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q018": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.21428571428571427,
+        "hit_at_1": 0.0
+      },
+      "q022": {
+        "recall_at_5": 0.5,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q039": {
+        "recall_at_5": 0.5,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "q040": {
+        "recall_at_5": 0.5555555555555555,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q044": {
+        "recall_at_5": 0.5,
+        "mrr": 0.6666666666666666,
+        "hit_at_1": 0.3333333333333333
+      },
+      "q049": {
+        "recall_at_5": 0.5,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "q050": {
+        "recall_at_5": 0.8333333333333334,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q054": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q058": {
+        "recall_at_5": 0.5,
+        "mrr": 0.6666666666666666,
+        "hit_at_1": 0.3333333333333333
+      },
+      "q059": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q062": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "q075": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q086": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q087": {
+        "recall_at_5": 0.5,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "q091": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q095": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q101": {
+        "recall_at_5": 0.4444444444444444,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q107": {
+        "recall_at_5": 1.0,
+        "mrr": 0.27777777777777773,
+        "hit_at_1": 0.0
+      },
+      "q113": {
+        "recall_at_5": 0.5555555555555555,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q114": {
+        "recall_at_5": 0.8333333333333334,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q122": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q124": {
+        "recall_at_5": 0.4444444444444444,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q141": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q143": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q145": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q149": {
+        "recall_at_5": 1.0,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "q154": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q161": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q162": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "q167": {
+        "recall_at_5": 1.0,
+        "mrr": 0.6666666666666666,
+        "hit_at_1": 0.3333333333333333
+      },
+      "q168": {
+        "recall_at_5": 1.0,
+        "mrr": 0.6666666666666666,
+        "hit_at_1": 0.3333333333333333
+      },
+      "q172": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q174": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q178": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q182": {
+        "recall_at_5": 1.0,
+        "mrr": 0.6666666666666666,
+        "hit_at_1": 0.3333333333333333
+      },
+      "q183": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q193": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "q200": {
+        "recall_at_5": 1.0,
+        "mrr": 0.38888888888888884,
+        "hit_at_1": 0.0
+      },
+      "q201": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q203": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q207": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q212": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q215": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q221": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q224": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q225": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q231": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q234": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q240": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q248": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "q251": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q258": {
+        "recall_at_5": 0.8333333333333334,
+        "mrr": 0.38888888888888884,
+        "hit_at_1": 0.0
+      },
+      "q268": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q270": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q278": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q281": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q284": {
+        "recall_at_5": 0.5,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "q294": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3611111111111111,
+        "hit_at_1": 0.0
+      },
+      "q297": {
+        "recall_at_5": 0.3333333333333333,
+        "mrr": 0.20555555555555557,
+        "hit_at_1": 0.0
+      },
+      "q299": {
+        "recall_at_5": 0.6666666666666666,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "q300": {
+        "recall_at_5": 0.5,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_002": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_007": {
+        "recall_at_5": 1.0,
+        "mrr": 0.2611111111111111,
+        "hit_at_1": 0.0
+      },
+      "golden_012": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      },
+      "golden_016": {
+        "recall_at_5": 1.0,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "golden_020": {
+        "recall_at_5": 1.0,
+        "mrr": 0.3333333333333333,
+        "hit_at_1": 0.0
+      },
+      "golden_022": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_027": {
+        "recall_at_5": 1.0,
+        "mrr": 0.6666666666666666,
+        "hit_at_1": 0.3333333333333333
+      },
+      "golden_033": {
+        "recall_at_5": 0.0,
+        "mrr": 0.12037037037037036,
+        "hit_at_1": 0.0
+      },
+      "golden_036": {
+        "recall_at_5": 1.0,
+        "mrr": 0.8333333333333334,
+        "hit_at_1": 0.6666666666666666
+      },
+      "golden_041": {
+        "recall_at_5": 1.0,
+        "mrr": 0.5,
+        "hit_at_1": 0.0
+      },
+      "golden_045": {
+        "recall_at_5": 1.0,
+        "mrr": 0.4444444444444444,
+        "hit_at_1": 0.0
+      },
+      "golden_049": {
+        "recall_at_5": 1.0,
+        "mrr": 1.0,
+        "hit_at_1": 1.0
+      }
+    }
+  }
+}

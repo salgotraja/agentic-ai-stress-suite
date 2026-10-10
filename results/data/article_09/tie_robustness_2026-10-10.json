@@ -1,0 +1,72 @@
+{
+  "provenance": {
+    "git_commit": "34bc5024c3c804b897203b61c047500b988126e3",
+    "git_dirty": false,
+    "run_date": "2026-10-10",
+    "versions": {
+      "torch": "2.11.0",
+      "sentence-transformers": "5.4.1"
+    },
+    "candidates": "results/data/article_09/candidates_2026-10-10.json",
+    "rerankers": "results/data/article_09/rerankers_2026-10-10.json"
+  },
+  "shuffles": 1000,
+  "test_questions": 77,
+  "test_questions_with_tied_rrf_scores": 65,
+  "retriever_baseline_under_tie_shuffles": {
+    "recall_at_5": {
+      "min": 0.7532,
+      "p2_5": 0.7532,
+      "median": 0.7662,
+      "p97_5": 0.7727,
+      "max": 0.7727
+    },
+    "mrr": {
+      "min": 0.7945,
+      "p2_5": 0.7945,
+      "median": 0.7953,
+      "p97_5": 0.7958,
+      "max": 0.7958
+    },
+    "hit_at_1": {
+      "min": 0.6883,
+      "p2_5": 0.6883,
+      "median": 0.6883,
+      "p97_5": 0.6883,
+      "max": 0.6883
+    }
+  },
+  "recorded_means": {
+    "retriever": {
+      "recall_at_5": 0.7727,
+      "mrr": 0.7955,
+      "hit_at_1": 0.6883
+    },
+    "stock_l6": {
+      "recall_at_5": 0.7987,
+      "mrr": 0.7443,
+      "hit_at_1": 0.5844
+    },
+    "trained_l6_seed_mean": {
+      "recall_at_5": 0.8196,
+      "mrr": 0.8203,
+      "hit_at_1": 0.6926
+    },
+    "stock_l12": {
+      "recall_at_5": 0.803,
+      "mrr": 0.7044,
+      "hit_at_1": 0.5065
+    },
+    "flashrank_l12": {
+      "recall_at_5": 0.7554,
+      "mrr": 0.7123,
+      "hit_at_1": 0.5325
+    }
+  },
+  "share_of_shuffles_where_baseline_mrr_exceeds": {
+    "stock_l6": 1.0,
+    "trained_l6_seed_mean": 0.0,
+    "stock_l12": 1.0,
+    "flashrank_l12": 1.0
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "provenance": {
+    "git_commit": "5a18dfccc1a0ca6e069a2864e10288c38a71d361",
+    "git_dirty": false,
+    "run_date": "2026-10-10",
+    "versions": {
+      "torch": "2.11.0",
+      "sentence-transformers": "5.4.1"
+    },
+    "hardware": "Apple M4 Pro, macOS 27.0.1",
+    "torch_threads": 4,
+    "logical_cpus": 14,
+    "load_average_1_5_15_at_start": [
+      7.17,
+      4.37,
+      4.65
+    ],
+    "load_average_1_5_15_at_end": [
+      8.04,
+      7.41,
+      6.29
+    ],
+    "model": "BAAI/bge-base-en-v1.5"
+  },
+  "compile": {
+    "device": "cpu",
+    "threads": 4,
+    "input": "1 x 128 tokens",
+    "eager_ms": 24.31,
+    "dynamo_graph_count": 1,
+    "dynamo_graph_break_count": 0,
+    "dynamo_break_reasons": [],
+    "aot_eager": {
+      "first_call_ms": 848.2,
+      "steady_ms": 23.66,
+      "speedup_vs_eager": 1.027
+    },
+    "inductor": {
+      "error": "InductorError: clang++: error: no such file or directory: 'Support/uv/python/cpython-3.11.14-macos-aarch64-none/lib'"
+    }
+  },
+  "quantization": {
+    "engine": "qnnpack",
+    "quantized_modules": "torch.nn.Linear only",
+    "linear_weight_share_of_params": 0.7812,
+    "serialized_state_dict_mb": {
+      "fp32": 438.0,
+      "int8": 181.5
+    },
+    "runtime_memory": {
+      "fp32_checkpoint": {
+        "resident_growth_mb": 464.7,
+        "peak_rss_mb": 935.6
+      },
+      "int8_checkpoint": {
+        "resident_growth_mb": 287.7,
+        "peak_rss_mb": 759.1
+      },
+      "int8_quantize_at_startup": {
+        "resident_growth_mb": 646.9,
+        "peak_rss_mb": 1603.5
+      },
+      "pickled_module_mb": {
+        "fp32": 438.0,
+        "int8": 181.5
+      }
+    },
+    "latency_ms_single_query": {
+      "fp32": 14.43,
+      "int8": 15.19
+    },
+    "serialized_size_ratio": 2.41,
+    "cls_cosine_fp32_vs_int8_sample_query": 0.979742,
+    "retrieval_quality": {
+      "note": "stock model, never trained here, so all 192 questions are fair to use",
+      "all_questions": {
+        "fp32": {
+          "recall_at_5": 0.8498,
+          "mrr": 0.8196,
+          "hit_at_1": 0.7135
+        },
+        "int8": {
+          "recall_at_5": 0.862,
+          "mrr": 0.8276,
+          "hit_at_1": 0.7188
+        }
+      },
+      "test_split": {
+        "fp32": {
+          "recall_at_5": 0.8117,
+          "mrr": 0.8476,
+          "hit_at_1": 0.7532
+        },
+        "int8": {
+          "recall_at_5": 0.8485,
+          "mrr": 0.8503,
+          "hit_at_1": 0.7532
+        }
+      },
+      "int8_minus_fp32_all": {
+        "mrr": {
+          "n": 192,
+          "mean_diff": 0.007942708333333336,
+          "ci95": [
+            -0.016716424851190476,
+            0.03183314732142857
+          ],
+          "wins": 23,
+          "ties": 156,
+          "losses": 13,
+          "n_groups": 37,
+          "ci95_group": [
+            -0.01623655231829574,
+            0.028408908671629894
+          ],
+          "established": false
+        },
+        "recall_at_5": {
+          "n": 192,
+          "mean_diff": 0.012152777777777778,
+          "ci95": [
+            -0.01736111111111111,
+            0.041666666666666664
+          ],
+          "wins": 10,
+          "ties": 177,
+          "losses": 5,
+          "n_groups": 37,
+          "ci95_group": [
+            -0.02763819095477387,
+            0.04183273653026221
+          ],
+          "established": false
+        }
+      }
+    }
+  }
+}

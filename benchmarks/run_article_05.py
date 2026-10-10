@@ -24,14 +24,15 @@ alternatives. They are not benchmarked here for two reasons:
 The article's prose calls these "implementation comparison only, not measured
 in this benchmark" rather than fabricating numbers we did not run.
 
-Each task runs once with a real Groq fallback chain. Tokens and cost are
-captured by wrapping UnifiedLLMClient.generate() in an accumulator before
-injecting it into the agent constructors.
+Each task run uses the real LLM fallback chain. Tokens and cost are captured
+by wrapping UnifiedLLMClient.generate() in an accumulator before injecting it
+into the agent constructors.
 
 Usage:
     uv run python benchmarks/run_article_05.py
     uv run python benchmarks/run_article_05.py --tasks q001 q003 q006
     uv run python benchmarks/run_article_05.py --max-refinements 2
+    uv run python benchmarks/run_article_05.py --collection-name a05_verify
 """
 
 from __future__ import annotations
@@ -44,6 +45,7 @@ import sys
 import time
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from threading import Lock
 from typing import Any
 
 PROJECT_ROOT = Path(__file__).parent.parent.resolve()
@@ -81,6 +83,9 @@ class TaskResult:
     output_chars: int = 0
     error: str | None = None
     run_index: int = 0
+    difficulty: str | None = None
+    required_agents: list[str] = field(default_factory=list)
+    expected_tools: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -107,32 +112,36 @@ class _AccumulatingLLMClient(UnifiedLLMClient):
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self._acc_lock = Lock()
         super().__init__(*args, **kwargs)
         self.reset_accumulator()
 
     def reset_accumulator(self) -> None:
-        self._acc_prompt = 0
-        self._acc_completion = 0
-        self._acc_total = 0
-        self._acc_cost = 0.0
-        self._acc_calls = 0
+        with self._acc_lock:
+            self._acc_prompt = 0
+            self._acc_completion = 0
+            self._acc_total = 0
+            self._acc_cost = 0.0
+            self._acc_calls = 0
 
     def snapshot(self) -> dict[str, Any]:
-        return {
-            "prompt_tokens": self._acc_prompt,
-            "completion_tokens": self._acc_completion,
-            "total_tokens": self._acc_total,
-            "cost_usd": self._acc_cost,
-            "llm_calls": self._acc_calls,
-        }
+        with self._acc_lock:
+            return {
+                "prompt_tokens": self._acc_prompt,
+                "completion_tokens": self._acc_completion,
+                "total_tokens": self._acc_total,
+                "cost_usd": self._acc_cost,
+                "llm_calls": self._acc_calls,
+            }
 
     def generate(self, *args: Any, **kwargs: Any) -> LLMResponse:
         response = super().generate(*args, **kwargs)
-        self._acc_prompt += response.prompt_tokens
-        self._acc_completion += response.completion_tokens
-        self._acc_total += response.total_tokens
-        self._acc_cost += response.cost_usd
-        self._acc_calls += 1
+        with self._acc_lock:
+            self._acc_prompt += response.prompt_tokens
+            self._acc_completion += response.completion_tokens
+            self._acc_total += response.total_tokens
+            self._acc_cost += response.cost_usd
+            self._acc_calls += 1
         return response
 
 
@@ -337,6 +346,11 @@ def run_task(
     task_id = task["id"]
     pattern = task["pattern"]
     task_text = task["task"]
+    task_metadata = {
+        "difficulty": task.get("difficulty"),
+        "required_agents": list(task.get("required_agents", [])),
+        "expected_tools": list(task.get("expected_tools", [])),
+    }
 
     llm.reset_accumulator()
     start = time.time()
@@ -366,6 +380,7 @@ def run_task(
                 llm_calls=0,
                 agents_used=0,
                 error=f"unsupported pattern: {pattern}",
+                **task_metadata,
             )
     except Exception as e:
         elapsed_ms = (time.time() - start) * 1000.0
@@ -383,6 +398,7 @@ def run_task(
             llm_calls=snap["llm_calls"],
             agents_used=0,
             error=f"pipeline_error: {e}",
+            **task_metadata,
         )
 
     elapsed_ms = (time.time() - start) * 1000.0
@@ -407,6 +423,7 @@ def run_task(
         critic_score=inner.get("critic_score"),
         output_chars=len(output),
         error=error,
+        **task_metadata,
     )
 
 
@@ -489,6 +506,11 @@ def main() -> int:
         default=3,
         help="Number of times to repeat each task for mean/std reporting (default: 3)",
     )
+    parser.add_argument(
+        "--collection-name",
+        default="a05",
+        help="Chroma collection name for the shared RAG index (default: a05)",
+    )
 
     args = parser.parse_args()
 
@@ -506,6 +528,7 @@ def main() -> int:
     print(f"Patterns: {args.patterns}")
     print(f"Max refinements: {args.max_refinements}")
     print(f"Runs per task: {args.runs}")
+    print(f"RAG collection: {args.collection_name}")
     print("=" * 70)
 
     tasks = load_tasks(args.dataset)
@@ -518,8 +541,8 @@ def main() -> int:
     # One shared RAG tool: building Chroma + indexing the docs corpus is
     # expensive. The tool is read-only at query time so sharing across tasks
     # and pipelines is safe.
-    print("Building shared RAGTool (collection='a05')...")
-    rag_tool = _make_rag_tool(collection_name="a05")
+    print(f"Building shared RAGTool (collection='{args.collection_name}')...")
+    rag_tool = _make_rag_tool(collection_name=args.collection_name)
 
     # One shared accumulating client: reset between tasks. Subclassing keeps
     # the existing fallback chain (Groq -> DeepSeek -> Claude -> Gemini ->
@@ -563,6 +586,7 @@ def main() -> int:
     output = {
         "benchmark": "article_05_multi_agent",
         "framework": FRAMEWORK,
+        "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "configurations": [
             {
                 "name": p,
@@ -573,10 +597,11 @@ def main() -> int:
         "dataset": {
             "path": str(args.dataset),
             "num_tasks": len(tasks),
+            "task_ids": [t["id"] for t in tasks],
         },
         "settings": {
             "max_refinements": args.max_refinements,
-            "rag_collection": "a05",
+            "rag_collection": args.collection_name,
             "runs": args.runs,
         },
         "summaries": [asdict(s) for s in summaries],

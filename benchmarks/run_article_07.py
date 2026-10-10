@@ -87,6 +87,10 @@ _CHAOS_DEFAULT_TOP_K = 3
 _CHAOS_DEFAULT_RUNS = 3
 
 
+def _resolve_output_path(path: Path) -> Path:
+    return path if path.is_absolute() else PROJECT_ROOT / path
+
+
 def load_prompts(csv_path: Path) -> list[dict[str, str]]:
     """Load red-team prompts from CSV, skipping comment lines."""
     rows: list[dict[str, str]] = []
@@ -721,6 +725,12 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--output",
+        type=Path,
+        default=_OUTPUT_JSON,
+        help="Red-team stack comparison JSON output path.",
+    )
+    parser.add_argument(
         "--chaos",
         action="store_true",
         help=(
@@ -729,6 +739,12 @@ def main() -> None:
             "5 probe queries on both, and reports bypass metrics in "
             "results/data/article_07_stress.json."
         ),
+    )
+    parser.add_argument(
+        "--stress-output",
+        type=Path,
+        default=_STRESS_OUTPUT_JSON,
+        help="Corpus-poisoning chaos JSON output path.",
     )
     parser.add_argument(
         "--chaos-top-k",
@@ -778,9 +794,11 @@ def main() -> None:
             n_runs=args.chaos_runs,
             api_key=settings.groq_api_key,
         )
-        _STRESS_OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
-        _STRESS_OUTPUT_JSON.write_text(json.dumps(chaos_results, indent=2))
-        print(f"\nChaos results saved to: {_STRESS_OUTPUT_JSON}")
+        chaos_results["timestamp_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        stress_out = _resolve_output_path(args.stress_output)
+        stress_out.parent.mkdir(parents=True, exist_ok=True)
+        stress_out.write_text(json.dumps(chaos_results, indent=2))
+        print(f"\nChaos results saved to: {stress_out}")
         return
 
     prompts = load_prompts(_PROMPTS_CSV)
@@ -796,6 +814,7 @@ def main() -> None:
     }
 
     results: dict[str, Any] = {
+        "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "config": {
             "threshold": args.threshold,
             "prompt_guard_model": _PROMPT_GUARD_MODEL if args.prompt_guard else None,
@@ -854,11 +873,12 @@ def main() -> None:
             per_run_pause_s=args.per_run_pause_s,
         )
 
-    _OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
-    _OUTPUT_JSON.write_text(json.dumps(results, indent=2))
+    out_path = _resolve_output_path(args.output)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(results, indent=2))
 
     print_summary(results)
-    print(f"\nResults saved to: {_OUTPUT_JSON}")
+    print(f"\nResults saved to: {out_path}")
 
 
 if __name__ == "__main__":

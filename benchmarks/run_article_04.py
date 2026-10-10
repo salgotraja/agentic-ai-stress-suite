@@ -51,8 +51,8 @@ from src.agents.tools.search import SearchTool  # noqa: E402
 # Categories included in the published benchmark.
 # multi_framework + failure_scenarios are intentionally excluded: they exercise
 # DuckDuckGo (rate-limited, noisy) and timeout/error paths whose latency variance
-# would dominate aggregate metrics. Both code paths still ship in the agent
-# implementation; the prose calls them "implementation present, not benchmarked here".
+# can dominate aggregate metrics. Pass --categories all for the full 28-query
+# dataset.
 DEFAULT_CATEGORIES = ("rag_calculation", "database_analysis", "code_execution")
 
 
@@ -61,6 +61,8 @@ class AgentBenchmarkResult:
     """Results for a single agent on a single query."""
 
     query_id: str
+    category: str
+    expected_tools: list[str]
     agent_type: str  # "react" or "plan_execute"
     success: bool
     latency_ms: float
@@ -95,6 +97,46 @@ def load_dataset(dataset_path: Path) -> dict[str, Any]:
         return data
 
 
+def _extract_tool_calls_from_result(agent_type: str, result: dict[str, Any]) -> list[str]:
+    """Extract executed tool names from an agent result."""
+    if agent_type == "plan_execute":
+        plan = result.get("plan", [])
+        step_results = result.get("step_results", [])
+        executed_step_count = len(step_results) if isinstance(step_results, list) else 0
+
+        tool_calls = []
+        if isinstance(plan, list):
+            for step in plan[:executed_step_count]:
+                if isinstance(step, dict) and isinstance(step.get("tool"), str):
+                    tool_calls.append(step["tool"])
+
+        if tool_calls:
+            return tool_calls
+
+        if isinstance(step_results, list):
+            for step_result in step_results:
+                for line in str(step_result).splitlines():
+                    if line.startswith("Tool:"):
+                        tool_calls.append(line.removeprefix("Tool:").strip())
+        return tool_calls
+
+    tool_calls = []
+    for msg in result.get("chat_history", []):
+        if not isinstance(msg, dict):
+            continue
+
+        if msg.get("role") == "tool" and isinstance(msg.get("name"), str):
+            tool_calls.append(msg["name"])
+            continue
+
+        if msg.get("role") == "assistant (action)":
+            first_line = str(msg.get("content", "")).splitlines()[0]
+            if first_line.startswith("Using tool:"):
+                tool_calls.append(first_line.removeprefix("Using tool:").strip())
+
+    return tool_calls
+
+
 def run_agent_on_query(
     agent: ReActAgent | PlanAndExecuteAgent,
     agent_type: str,
@@ -114,6 +156,8 @@ def run_agent_on_query(
     """
     query_id = query["id"]
     query_text = query["query"]
+    category = str(query.get("category", "unknown"))
+    expected_tools = list(query.get("expected_tools", []))
 
     # Temporarily swap tool execution methods if using mocks
     if use_mock:
@@ -127,16 +171,12 @@ def run_agent_on_query(
         result = agent.run(query_text)
         latency_ms = (time.time() - start_time) * 1000
 
-        # Extract tool calls from chat history
-        tool_calls_used = []
-        if "chat_history" in result:
-            for msg in result["chat_history"]:
-                if isinstance(msg, dict) and msg.get("role") == "tool":
-                    tool_name = msg.get("name", "unknown")
-                    tool_calls_used.append(tool_name)
+        tool_calls_used = _extract_tool_calls_from_result(agent_type, result)
 
         return AgentBenchmarkResult(
             query_id=query_id,
+            category=category,
+            expected_tools=expected_tools,
             agent_type=agent_type,
             success=result.get("success", False),
             latency_ms=latency_ms,
@@ -151,6 +191,8 @@ def run_agent_on_query(
         latency_ms = (time.time() - start_time) * 1000
         return AgentBenchmarkResult(
             query_id=query_id,
+            category=category,
+            expected_tools=expected_tools,
             agent_type=agent_type,
             success=False,
             latency_ms=latency_ms,
@@ -215,6 +257,7 @@ def run_benchmark(
     max_queries: int | None = None,
     categories: tuple[str, ...] = DEFAULT_CATEGORIES,
     docs_dir: Path | None = None,
+    collection_name: str = "a04",
 ) -> None:
     """Run full benchmark suite comparing ReAct vs Plan-Execute.
 
@@ -226,6 +269,7 @@ def run_benchmark(
         max_queries: If set, only run first N queries (for quick testing)
         categories: Query categories to include (filters dataset)
         docs_dir: Path to tech docs directory (required for non-mock RAG)
+        collection_name: Chroma collection used for non-mock RAG indexing
     """
     print("=" * 80)
     print("Article 4: Single-Agent Benchmark (ReAct vs Plan-and-Execute)")
@@ -241,7 +285,7 @@ def run_benchmark(
     queries = dataset["queries"]
 
     # Filter by category. The dataset ships 28 queries across 5 categories;
-    # the published benchmark scopes to 3 stable categories (~21 queries).
+    # the default benchmark scopes to the 17 records in 3 stable categories.
     if categories:
         before = len(queries)
         queries = [q for q in queries if q.get("category") in categories]
@@ -282,8 +326,8 @@ def run_benchmark(
         if docs_dir is None:
             docs_dir = PROJECT_ROOT / "datasets" / "tech_docs"
 
-        print("Initializing RAGTool: building/reusing Chroma collection 'a04'...")
-        rag_pipeline = NaiveRAGPipeline(collection_name="a04", top_k=5)
+        print(f"Initializing RAGTool: building/reusing Chroma collection '{collection_name}'...")
+        rag_pipeline = NaiveRAGPipeline(collection_name=collection_name, top_k=5)
         # build_index is idempotent at the Chroma level: if the collection
         # already exists with the same docs, this re-embeds but doesn't
         # corrupt. For repeated runs the user can comment out build_index.
@@ -291,7 +335,7 @@ def run_benchmark(
         print(f"  Loaded {len(documents)} documents from {docs_dir}")
         rag_pipeline.build_index(documents)
         tools.append(RAGTool(rag_pipeline=rag_pipeline, top_k=5))
-        print("RAGTool wired to NaiveRAGPipeline (collection='a04')")
+        print(f"RAGTool wired to NaiveRAGPipeline (collection='{collection_name}')")
 
     print(f"Initialized {len(tools)} tools: {[t.__class__.__name__ for t in tools]}")
     print()
@@ -379,6 +423,7 @@ def run_benchmark(
             "total_queries": len(queries),
             "use_mock": use_mock,
             "categories": list(categories) if categories else [],
+            "collection_name": collection_name if not use_mock else None,
             "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
         },
         "summaries": {
@@ -411,10 +456,13 @@ def run_benchmark(
             "react": [
                 {
                     "query_id": r.query_id,
+                    "category": r.category,
+                    "expected_tools": r.expected_tools,
                     "success": r.success,
                     "latency_ms": r.latency_ms,
                     "tool_calls_count": r.tool_calls_count,
                     "tool_calls_used": r.tool_calls_used,
+                    "answer": r.answer,
                     "error": r.error,
                     "iterations": r.iterations,
                 }
@@ -423,10 +471,13 @@ def run_benchmark(
             "plan_execute": [
                 {
                     "query_id": r.query_id,
+                    "category": r.category,
+                    "expected_tools": r.expected_tools,
                     "success": r.success,
                     "latency_ms": r.latency_ms,
                     "tool_calls_count": r.tool_calls_count,
                     "tool_calls_used": r.tool_calls_used,
+                    "answer": r.answer,
                     "error": r.error,
                     "steps": r.steps,
                 }
@@ -500,6 +551,11 @@ def main() -> int:
         default=PROJECT_ROOT / "datasets" / "tech_docs",
         help="Path to tech docs directory for RAG indexing (non-mock runs)",
     )
+    parser.add_argument(
+        "--collection-name",
+        default="a04",
+        help="Chroma collection name for non-mock RAG indexing",
+    )
 
     args = parser.parse_args()
 
@@ -514,6 +570,7 @@ def main() -> int:
             max_queries=args.max_queries,
             categories=categories,
             docs_dir=args.docs_dir,
+            collection_name=args.collection_name,
         )
         return 0
     except KeyboardInterrupt:

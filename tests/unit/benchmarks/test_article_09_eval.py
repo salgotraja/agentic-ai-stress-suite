@@ -94,3 +94,22 @@ def test_reranker_pairs_never_label_a_listed_source_negative() -> None:
     positives = {p["sentence2"] for p in pairs if p["label"] == 1.0}
     assert negatives == {"o1", "o2"}
     assert positives == {"s1", "s2"}
+
+
+def test_cluster_permutation_p_is_exact_and_bounded_by_group_count() -> None:
+    from benchmarks.article_09_eval import cluster_permutation_p
+
+    # Three groups all positive: only the all-plus and all-minus flips reach |T|.
+    p = cluster_permutation_p([1.0, 1.0, 2.0, 3.0], [0, 0, 1, 2])
+    assert p == 2 / 8
+    assert cluster_permutation_p([1.0, -1.0], [0, 1]) == 1.0
+
+
+def test_holm_adjust_is_monotone_and_capped() -> None:
+    from benchmarks.article_09_eval import holm_adjust
+
+    adj = holm_adjust({"a": 0.01, "b": 0.04, "c": 0.5})
+    assert abs(adj["a"] - 0.03) < 1e-12
+    assert abs(adj["b"] - 0.08) < 1e-12
+    assert adj["c"] == 0.5
+    assert adj["a"] <= adj["b"] <= adj["c"]

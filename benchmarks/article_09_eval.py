@@ -9,6 +9,7 @@ Articles 1 to 3 use (src/core/benchmarking.py).
 
 from __future__ import annotations
 
+import itertools
 import random
 import re
 from collections.abc import Sequence
@@ -162,3 +163,30 @@ def build_reranker_pairs(
     pairs = [{"sentence1": query, "sentence2": c["text"], "label": 1.0} for c in positives]
     pairs += [{"sentence1": query, "sentence2": c["text"], "label": 0.0} for c in negatives]
     return pairs
+
+
+def cluster_permutation_p(diffs: Sequence[float], groups: Sequence[int]) -> float:
+    """Exact two-sided sign-flip test of the mean paired difference, flipping whole groups.
+
+    Under the null, each group's differences are symmetric around zero, so the
+    sign of every group's sum can be flipped. With G groups there are 2**G
+    flips; the smallest attainable p-value is 2 / 2**G.
+    """
+    d = np.asarray(diffs, dtype=float)
+    gids = np.asarray(groups)
+    sums = np.array([d[gids == g].sum() for g in np.unique(gids)])
+    signs = np.array(list(itertools.product((1.0, -1.0), repeat=len(sums))))
+    observed = abs(d.sum())
+    return float(np.mean(np.abs(signs @ sums) >= observed - 1e-12))
+
+
+def holm_adjust(p_values: dict[str, float]) -> dict[str, float]:
+    """Holm step-down adjusted p-values for one family of comparisons."""
+    ordered = sorted(p_values.items(), key=lambda kv: kv[1])
+    m = len(ordered)
+    adjusted: dict[str, float] = {}
+    running = 0.0
+    for rank, (key, p) in enumerate(ordered):
+        running = max(running, min(1.0, (m - rank) * p))
+        adjusted[key] = running
+    return adjusted

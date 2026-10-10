@@ -24,6 +24,7 @@ from __future__ import annotations
 
 from enum import Enum
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -161,6 +162,11 @@ class Settings(BaseSettings):
     default_llm_model: str = Field(
         default="groq/openai/gpt-oss-20b",
         description="Default LLM model for development (format: provider/model)",
+    )
+    anthropic_effort: Literal["low", "medium", "high"] = Field(
+        default="medium",
+        description="output_config.effort for claude-sonnet-5-5 calls (low, medium or high; "
+        "thinking is off, so xhigh and max are rejected). Record it with benchmark results",
     )
     llm_pinned_model: str | None = Field(
         default=None,

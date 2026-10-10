@@ -392,6 +392,7 @@ def main() -> int:
             "embedding_model": "BAAI/bge-base-en-v1.5",
             "generator_model": settings.llm_pinned_model
             or "unpinned: UnifiedLLMClient fallback chain, provider per call not recorded",
+            "anthropic_effort": settings.anthropic_effort,
             "index": "naive: Chroma collection dropped and rebuilt; advanced: in-memory index",
         },
         "settings": {

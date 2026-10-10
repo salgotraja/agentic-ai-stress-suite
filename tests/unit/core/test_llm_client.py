@@ -6,12 +6,14 @@ import pytest
 
 from src.core.config import Settings
 from src.core.llm_client import (
+    CLAUDE_SONNET_5_5,
     GROQ_REASONING_EFFORT,
     GROQ_REASONING_HEADROOM,
     EmptyCompletionError,
     GroqModel,
     LLMProvider,
     LLMResponse,
+    ModelRefusalError,
     UnifiedLLMClient,
 )
 from src.ops.security import GuardrailBlockedError, GuardrailsManager
@@ -224,7 +226,8 @@ class TestAnthropicCalls:
     ) -> None:
         """Test successful Anthropic API call."""
         mock_response = Mock()
-        mock_response.content = [Mock(text="Claude response")]
+        mock_response.content = [Mock(type="text", text="Claude response")]
+        mock_response.stop_reason = "end_turn"
         mock_response.usage = Mock(input_tokens=12, output_tokens=18)
 
         mock_client = Mock()
@@ -742,3 +745,100 @@ class TestPinnedModel:
             client.generate("Test")
 
         client._call_deepseek.assert_not_called()
+
+
+class TestClaudeSonnet55:
+    """claude-sonnet-5-5 request shape, refusals and pinning."""
+
+    def _claude_response(
+        self, blocks: list[Mock], stop_reason: str = "end_turn", category: str | None = None
+    ) -> Mock:
+        response = Mock()
+        response.content = blocks
+        response.stop_reason = stop_reason
+        response.stop_details = Mock(category=category) if category else None
+        response.usage = Mock(
+            input_tokens=12,
+            output_tokens=8,
+            cache_creation_input_tokens=0,
+            cache_read_input_tokens=0,
+        )
+        return response
+
+    def _text(self, text: str) -> Mock:
+        return Mock(type="text", text=text)
+
+    def test_sonnet_5_5_omits_temperature_and_disables_thinking(
+        self, mock_settings: Settings
+    ) -> None:
+        client = UnifiedLLMClient(settings=mock_settings)
+        client.anthropic_client = Mock()
+        client.anthropic_client.messages.create.return_value = self._claude_response(
+            [self._text("ok")]
+        )
+
+        response = client._call_anthropic("Hi", 0.7, 100, 30, model=CLAUDE_SONNET_5_5)
+
+        kwargs = client.anthropic_client.messages.create.call_args.kwargs
+        assert kwargs["model"] == "claude-sonnet-5-5"
+        assert "temperature" not in kwargs
+        assert kwargs["thinking"] == {"type": "between_tools"}
+        assert kwargs["output_config"] == {"effort": mock_settings.anthropic_effort}
+        assert kwargs["max_tokens"] == 100
+        assert response.model == "claude-sonnet-5-5"
+        assert response.cost_usd == pytest.approx((12 * 2.00 + 8 * 10.00) / 1_000_000)
+
+    def test_text_blocks_are_joined_by_type(self, mock_settings: Settings) -> None:
+        client = UnifiedLLMClient(settings=mock_settings)
+        client.anthropic_client = Mock()
+        client.anthropic_client.messages.create.return_value = self._claude_response(
+            [Mock(type="thinking", thinking="note"), self._text("a"), self._text("b")]
+        )
+
+        response = client._call_anthropic("Hi", 0.7, 100, 30)
+
+        assert response.content == "ab"
+
+    def test_refusal_raises_with_category(self, mock_settings: Settings) -> None:
+        client = UnifiedLLMClient(settings=mock_settings)
+        client.anthropic_client = Mock()
+        client.anthropic_client.messages.create.return_value = self._claude_response(
+            [], stop_reason="refusal", category="cyber"
+        )
+
+        with pytest.raises(ModelRefusalError) as excinfo:
+            client._call_anthropic("Hi", 0.7, 100, 30)
+
+        assert excinfo.value.category == "cyber"
+
+    def test_empty_answer_cut_off_by_max_tokens_raises(self, mock_settings: Settings) -> None:
+        client = UnifiedLLMClient(settings=mock_settings)
+        client.anthropic_client = Mock()
+        client.anthropic_client.messages.create.return_value = self._claude_response(
+            [], stop_reason="max_tokens"
+        )
+
+        with pytest.raises(EmptyCompletionError):
+            client._call_anthropic("Hi", 0.7, 10, 30)
+
+    def test_pinned_claude_model_does_not_fall_through(
+        self, mock_settings: Settings, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setenv("LLM_PINNED_MODEL", "anthropic/claude-sonnet-5-5")
+        client = UnifiedLLMClient(settings=Settings())
+        client._call_anthropic = Mock(side_effect=ModelRefusalError("claude-sonnet-5-5", "cyber"))
+        client._call_groq = Mock()
+        client._call_openai = Mock()
+
+        with pytest.raises(ModelRefusalError):
+            client.generate("Test")
+
+        assert client._call_anthropic.call_args.kwargs["model"] == "claude-sonnet-5-5"
+        client._call_groq.assert_not_called()
+        client._call_openai.assert_not_called()
+
+    def test_invalid_effort_is_rejected(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("ANTHROPIC_EFFORT", "xhigh")
+
+        with pytest.raises(ValueError):
+            Settings()

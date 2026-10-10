@@ -86,6 +86,24 @@ class EmptyCompletionError(Exception):
     """A provider returned no answer text because it ran out of tokens."""
 
 
+class ModelRefusalError(Exception):
+    """The model declined the request (Claude stop_reason "refusal")."""
+
+    def __init__(self, model: str, category: str | None) -> None:
+        super().__init__(f"{model} declined the request (category: {category})")
+        self.model = model
+        self.category = category
+
+
+# Claude models used by the suite. claude-sonnet-5-5 rejects a non-default
+# temperature (400) and thinks by default, with thinking tokens counted
+# against max_tokens. The suite sends thinking {"type": "between_tools"},
+# the model's lowest setting, so max_tokens stays the answer budget and
+# results stay comparable with the non-reasoning models used earlier.
+CLAUDE_SONNET_5_5 = "claude-sonnet-5-5"
+_CLAUDE_NO_SAMPLING_PARAMS = frozenset({CLAUDE_SONNET_5_5})
+
+
 @dataclass
 class LLMResponse:
     """Standardized LLM response with cache metrics.
@@ -213,6 +231,8 @@ class UnifiedLLMClient:
             LLMProvider.ANTHROPIC: {
                 # Claude Prompt Caching: write 1.25x, read 0.1x
                 "claude-sonnet-4-5-20250929": (3.00, 15.00, 3.75, 0.30),
+                # Anthropic pricing, 2026-10: input, output, 5-min cache write, cache read
+                CLAUDE_SONNET_5_5: (2.00, 10.00, 2.50, 0.20),
             },
             LLMProvider.GOOGLE: {
                 # Gemini context caching (free during preview)
@@ -448,6 +468,7 @@ class UnifiedLLMClient:
         max_tokens: int,
         timeout: int,
         system_prompt: str | None = None,
+        model: str = CLAUDE_SONNET_5_5,
     ) -> LLMResponse:
         """Call Anthropic Claude API with prompt caching support.
 
@@ -475,7 +496,6 @@ class UnifiedLLMClient:
             raise ValueError("Anthropic API key not configured")
 
         start_time = time.time()
-        model = "claude-sonnet-4-5-20250929"
 
         # Build request with optional caching
         messages = [{"role": "user", "content": prompt}]
@@ -491,7 +511,7 @@ class UnifiedLLMClient:
                     "cache_control": {"type": "ephemeral"},
                 }
             ]
-            request_params = {
+            request_params: dict[str, Any] = {
                 "model": model,
                 "max_tokens": max_tokens,
                 "temperature": temperature,
@@ -511,21 +531,28 @@ class UnifiedLLMClient:
             if system_prompt:
                 request_params["system"] = system_prompt
 
-        # SDK boundary: request_params is built dynamically (cache vs no-cache
-        # branches above), so its inferred type is dict[str, object] which
-        # the anthropic SDK overloads don't accept. The runtime keys are
-        # always valid; the type system can't see that through the dict.
-        response = self.anthropic_client.messages.create(**request_params)  # type: ignore[call-overload]
+        if model in _CLAUDE_NO_SAMPLING_PARAMS:
+            request_params.pop("temperature")
+            request_params["thinking"] = {"type": "between_tools"}
+            request_params["output_config"] = {"effort": self.settings.anthropic_effort}
+
+        # request_params is a plain dict: the SDK's typed params do not yet
+        # list thinking {"type": "between_tools"}, which the API accepts.
+        response = self.anthropic_client.messages.create(**request_params)
 
         latency = time.time() - start_time
 
-        # Extract text content from response
-        content = ""
-        if response.content:
-            for block in response.content:
-                if hasattr(block, "text"):
-                    content = block.text
-                    break
+        if response.stop_reason == "refusal":
+            details = getattr(response, "stop_details", None)
+            raise ModelRefusalError(model, getattr(details, "category", None))
+
+        # Join every text block; read by block type, not position, because a
+        # response can also carry thinking blocks.
+        content = "".join(
+            block.text for block in response.content or [] if getattr(block, "type", "") == "text"
+        )
+        if not content and response.stop_reason == "max_tokens":
+            raise EmptyCompletionError(f"{model} returned no answer within {max_tokens} tokens")
 
         # Extract cache metrics
         cache_creation_tokens = 0
@@ -766,7 +793,7 @@ class UnifiedLLMClient:
         1. Groq gpt-oss-20b (fast, cheap, low reasoning effort)
         2. Groq gpt-oss-120b (higher quality, low reasoning effort)
         3. DeepSeek (good balance)
-        4. Claude Sonnet 4.5 (high quality, prompt caching)
+        4. Claude Sonnet 5.5 (high quality, prompt caching)
         5. Gemini 2.0 Flash (alternative)
         6. OpenAI GPT-4 (most reliable, prompt caching)
 
@@ -830,6 +857,15 @@ class UnifiedLLMClient:
                     temperature,
                     max_tokens,
                     timeout,
+                )
+            if preferred_provider == LLMProvider.ANTHROPIC and self.anthropic_client:
+                return self._call_anthropic(
+                    prompt,
+                    temperature,
+                    max_tokens,
+                    timeout,
+                    system_prompt,
+                    model=preferred_model or CLAUDE_SONNET_5_5,
                 )
             if preferred_provider == LLMProvider.OPENAI and self.openai_client:
                 return self._call_openai(
@@ -909,7 +945,7 @@ class UnifiedLLMClient:
                 self.errors.append(
                     LLMError(
                         provider=LLMProvider.ANTHROPIC,
-                        model="claude-sonnet-4-5-20250929",
+                        model=CLAUDE_SONNET_5_5,
                         error=e,
                         attempt=attempt,
                     )

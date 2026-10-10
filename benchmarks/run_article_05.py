@@ -103,7 +103,7 @@ _ROLE_PATTERNS = (
     ("critic", re.compile(r"^You are a technical editor")),
     ("voter", re.compile(r"^Score each option")),
     ("supervisor", re.compile(r"^You are an expert supervisor")),
-    ("specialist", re.compile(r"^You are an? \S+ specialist")),
+    ("specialist", re.compile(r"^You are an? [^\n]+? specialist\.")),
 )
 
 
@@ -342,7 +342,7 @@ def _run_parallel_pipeline(
     task_text: str,
     rag_tool: Any,
     llm: _AccumulatingLLMClient,
-    n_specialists: int = 3,
+    specialties: list[str] | None = None,
 ) -> dict[str, Any]:
     """Drive ParallelOrchestrator with three generic SpecialistAgents.
 
@@ -353,13 +353,14 @@ def _run_parallel_pipeline(
     """
     from src.agents.multi_agent import ParallelOrchestrator, SpecialistAgent
 
+    roles = specialties or [f"Specialist_{i + 1}" for i in range(3)]
     specialists = [
         SpecialistAgent(
-            specialty=f"Specialist_{i + 1}",
+            specialty=role,
             tools=[],  # analyze() never executes tools; listing one invites a rejected call
             llm_client=llm,
         )
-        for i in range(n_specialists)
+        for role in roles
     ]
     orchestrator = ParallelOrchestrator(
         specialists=specialists,
@@ -370,7 +371,7 @@ def _run_parallel_pipeline(
     specialist_results = result.get("specialist_results", [])
     return {
         "output": str(result.get("aggregated_result", "")),
-        "agents_used": n_specialists,
+        "agents_used": len(roles),
         "refinement_count": 0,
         "critic_score": None,
         "specialists_failed": sum(1 for r in specialist_results if not r.get("success")),
@@ -382,6 +383,7 @@ def _run_conflict_resolution(
     rag_tool: Any,
     llm: _AccumulatingLLMClient,
     method: str = "voting",
+    specialties: list[str] | None = None,
 ) -> dict[str, Any]:
     """Drive a VotingResolver or SupervisorResolver.
 
@@ -399,13 +401,15 @@ def _run_conflict_resolution(
     )
 
     n_candidates = 2 if method == "supervisor" else 3
+    roles = specialties or [f"Candidate_{i + 1}" for i in range(n_candidates)]
+    n_candidates = len(roles)
     specialists = [
         SpecialistAgent(
-            specialty=f"Candidate_{i + 1}",
+            specialty=role,
             tools=[],  # analyze() never executes tools; listing one invites a rejected call
             llm_client=llm,
         )
-        for i in range(n_candidates)
+        for role in roles
     ]
     fan_out = ParallelOrchestrator(
         specialists=specialists,
@@ -502,11 +506,15 @@ def run_task(
         elif pattern == "critic_refinement":
             inner = _run_critic_pipeline(task_text, rag_tool, llm, max_refinements=max_refinements)
         elif pattern == "parallel":
-            inner = _run_parallel_pipeline(task_text, rag_tool, llm, n_specialists=3)
+            inner = _run_parallel_pipeline(
+                task_text, rag_tool, llm, specialties=task.get("specialties")
+            )
         elif pattern == "conflict_resolution":
             # q011 is the supervisor task; q006 (and any others) use voting.
             method = "supervisor" if task_id == "q011" else "voting"
-            inner = _run_conflict_resolution(task_text, rag_tool, llm, method=method)
+            inner = _run_conflict_resolution(
+                task_text, rag_tool, llm, method=method, specialties=task.get("specialties")
+            )
         else:
             return TaskResult(
                 task_id=task_id,

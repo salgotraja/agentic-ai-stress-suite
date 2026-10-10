@@ -65,6 +65,7 @@ def test_accumulating_client_counts_parallel_generate_calls(
         ("Score each option from 1-10", "voter"),
         ("You are an expert supervisor who arbitrates", "supervisor"),
         ("You are a Specialist_1 specialist. Your expertise", "specialist"),
+        ("You are a React state management specialist. Your expertise", "specialist"),
         ("Summarize this", "other"),
     ],
 )

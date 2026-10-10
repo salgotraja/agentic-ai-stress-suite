@@ -376,3 +376,37 @@ def test_rejudge_replaces_verdicts_and_recomputes_summaries() -> None:
     assert artifact["detailed_results"]["react"][0]["judge"]["status"] == "ok"
     assert artifact["summaries"]["react"]["evidence_consistent"] == 1
     assert artifact["summaries"]["react"]["judge_parse_failures"] == 0
+
+
+def test_tool_events_keep_long_outputs_for_the_judge() -> None:
+    from src.agents.single_agent import _tool_event
+
+    rows = "\n".join(
+        f"{i}. {i} | pydantic | Doc {i} | path | content | beginner" for i in range(18)
+    )
+
+    event = _tool_event("DatabaseLookupTool", "SELECT 1", "ok", rows)
+
+    assert event["output_preview"] == rows
+    assert event["output_chars"] == len(rows)
+
+
+@pytest.mark.parametrize(
+    ("message", "expected"),
+    [
+        ("You have reached your specified API usage limits. You will regain access", True),
+        ("Your credit balance is too low to access the Anthropic API", True),
+        ("Tool choice is none, but model called a tool", False),
+        (None, False),
+    ],
+)
+def test_billing_errors_are_detected(message: str | None, expected: bool) -> None:
+    from benchmarks.run_article_04 import is_billing_error
+
+    assert is_billing_error(message) is expected
+
+
+def test_billing_error_is_a_provider_error() -> None:
+    exc = Exception("Error code: 400 - You have reached your specified API usage limits.")
+
+    assert classify_error(exc)[1] is True

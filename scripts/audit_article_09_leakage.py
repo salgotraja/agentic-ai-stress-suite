@@ -50,6 +50,12 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--old-data", type=Path, required=True)
     parser.add_argument("--ref", default="d283fb6", help="Commit of the first Article 9 run")
+    parser.add_argument(
+        "--old-history",
+        type=Path,
+        default=None,
+        help="Original models/bge_finetuned/training_history.json, copied into the audit",
+    )
     args = parser.parse_args()
 
     train_rows = json.loads((args.old_data / "train.json").read_text())
@@ -119,6 +125,8 @@ def main() -> None:
             "also_in_bge_training": sum(1 for q in full_eval if q in train_q),
         },
     }
+    if args.old_history is not None:
+        result["original_training_history"] = json.loads(args.old_history.read_text())
     out = PROJECT_ROOT / "results" / "data" / "article_09" / "leakage_audit.json"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(result, indent=2) + "\n")

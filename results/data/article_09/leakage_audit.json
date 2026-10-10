@@ -1,0 +1,42 @@
+{
+  "provenance": {
+    "git_commit": "c1799ac1422c359e7b9cfc75edd61354a8657f90",
+    "replayed_ref": "d283fb62db999622d4fde71bf3581fedd691bab9",
+    "run_date": "2026-10-10",
+    "old_files_sha256": {
+      "train.json": "3cea4adb29096ee7eaebed613b1615f7b84c8f6b6f69bb35d0cb0e045b264d90",
+      "val.json": "0b7e341a911a114c420b5c4670240a6f65e2cdeaa2a40b7a225297ada3924c04",
+      "metadata.json": "2b109faf78a9fb5081edfe3e8ccb4c91980daac7c332bfa7457a3fc301d36f61"
+    },
+    "normalisation": "lowercase, punctuation removed, whitespace collapsed"
+  },
+  "bge_validation": {
+    "train_rows": 1600,
+    "val_rows": 400,
+    "distinct_train_questions": 193,
+    "distinct_val_questions": 148,
+    "val_questions_also_in_train": 148
+  },
+  "reranker_evaluation": {
+    "article_01_rows_at_ref": 300,
+    "distinct_article_01_questions_at_ref": 152,
+    "evaluated_rows": 39,
+    "evaluated_rows_whose_question_was_trained_on": 23
+  },
+  "bge_full_corpus_evaluation": {
+    "evaluated_questions": 177,
+    "also_in_bge_training": 168
+  },
+  "original_training_history": {
+    "model": "BAAI/bge-base-en-v1.5",
+    "device": "mps",
+    "epochs": 2,
+    "batch_size": 16,
+    "train_pairs": 1600,
+    "val_pairs": 400,
+    "training_seconds": 359.3,
+    "baseline_recall_at_5": 0.6125,
+    "final_recall_at_5": 0.7825,
+    "improvement": 0.17
+  }
+}

@@ -182,6 +182,62 @@ def summarize_container(path: Path, load_start: float, load_end: float) -> dict[
     }
 
 
+def model_work(probe_rows: list[dict[str, Any]], rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Fake-model calls the server made against calls that served a success.
+
+    A successful /query needs 1 model call, a successful /agent 3. Calls
+    beyond that served requests whose client had already given up (or, in a
+    closed-loop run, requests cut off when Locust stopped). Counts come from
+    the occupancy sampler, per worker pid, so a restarted worker loses the
+    calls it made after its last sample.
+    """
+    per_pid: dict[int, list[int]] = {}
+    for r in probe_rows:
+        if r.get("kind") == "occupancy" and r.get("fake_llm_calls") is not None:
+            per_pid.setdefault(r["pid"], []).append(r["fake_llm_calls"])
+    server_calls = sum(max(v) - min(v) for v in per_pid.values())
+    useful = sum(1 for r in rows if r["ok"] and r["name"] == "/query [rag]") + 3 * sum(
+        1 for r in rows if r["ok"] and r["name"] == "/agent"
+    )
+    return {
+        "server_model_calls": server_calls,
+        "calls_serving_successes": useful,
+        "wasted_share": round(1 - useful / server_calls, 3) if server_calls else None,
+    }
+
+
+def worker_pids(probe_rows: list[dict[str, Any]], load_start: float) -> dict[str, Any]:
+    """Worker pids in first-seen order, with seconds from load start."""
+    first_seen: dict[int, float] = {}
+    for r in sorted(
+        (r for r in probe_rows if r.get("kind") == "occupancy" and "pid" in r),
+        key=lambda r: r["ts"],
+    ):
+        first_seen.setdefault(r["pid"], round(r["ts"] - load_start, 1))
+    return {"first_seen_s": {str(k): v for k, v in first_seen.items()}}
+
+
+def _oom_kills(path: Path) -> int | None:
+    if not path.exists():
+        return None
+    for line in path.read_text().splitlines():
+        parts = line.split()
+        if len(parts) == 2 and parts[0] == "oom_kill":
+            return int(parts[1])
+    return None
+
+
+def server_log_events(runs_dir: Path) -> list[dict[str, Any]]:
+    """uvicorn supervisor lines about workers, with Docker's UTC timestamps."""
+    events: list[dict[str, Any]] = []
+    for path in sorted(runs_dir.glob("api_log_*.txt")):
+        for line in path.read_text().splitlines():
+            if "Child process" in line or "Waiting for child process" in line:
+                stamp, _, message = line.partition(" ")
+                events.append({"log": path.name, "ts_utc": stamp, "message": message.strip()})
+    return events
+
+
 def summarize_run(run_dir: Path) -> dict[str, Any]:
     run = json.loads((run_dir / "run.json").read_text())
     load_start = float((run_dir / "load_start_ts.txt").read_text())
@@ -201,6 +257,11 @@ def summarize_run(run_dir: Path) -> dict[str, Any]:
         "container": summarize_container(run_dir / "container_stats.txt", load_start, arrivals_end),
         "container_state": json.loads(state_path.read_text()) if state_path.exists() else None,
         "docker_events": events_path.read_text().split("\n")[:-1] if events_path.exists() else [],
+        "model_work": model_work(probe_rows, rows),
+        "worker_pids": worker_pids(probe_rows, load_start),
+        "oom_kill_start": _oom_kills(run_dir / "memory_events_start.txt"),
+        "oom_kill_end": _oom_kills(run_dir / "memory_events_end.txt"),
+        "load_start_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(load_start)),
     }
     if run["kind"] == "open":
         sent = len(rows)
@@ -248,6 +309,7 @@ def build(runs_dir: Path, run_commit: str | None = None) -> dict[str, Any]:
             else runs_dir.name,
         },
         "api_configs": configs,
+        "server_log_events": server_log_events(runs_dir),
         "runs": runs,
     }
 

@@ -30,7 +30,8 @@ Why prompt-guard, not Llama-Guard-3?
 Why measure block rate and false-positive rate separately:
     Tightening guardrails increases both. A guardrail that blocks 100% of
     attacks but also 50% of legitimate queries is not deployable - users
-    route around it. Target: >90% true-positive rate, <5% false-positive rate.
+    route around it. Acceptable rates are a product decision; this runner
+    reports both with their denominators and sets no target.
 
 Why differentiate L1 / L2 / L3 block rates:
     L1 (naive, direct injection) - regex alone should catch.
@@ -53,6 +54,7 @@ import json
 import math
 import os
 import statistics
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -77,6 +79,9 @@ from src.ops.security import GuardrailsManager, GuardResult, LlamaGuardClassifie
 _PROMPTS_CSV = PROJECT_ROOT / "datasets" / "red_team_prompts" / "red_team_prompts.csv"
 _OUTPUT_JSON = PROJECT_ROOT / "results" / "data" / "article_07_benchmarks.json"
 _STRESS_OUTPUT_JSON = PROJECT_ROOT / "results" / "data" / "article_07_stress.json"
+
+_GOLDEN_SET_JSON = PROJECT_ROOT / "datasets" / "golden_set" / "qa_pairs.json"
+_ARTICLE_01_QUERIES_JSON = PROJECT_ROOT / "datasets" / "synthetic_queries" / "article_01.json"
 
 _SEVERITY_LEVELS = ("L1", "L2", "L3")
 
@@ -103,6 +108,7 @@ def load_prompts(csv_path: Path) -> list[dict[str, str]]:
         rows.append(
             {
                 "id": f"rt{index:03d}",
+                "source": "red_team_csv",
                 "prompt": row["prompt"].strip(),
                 "category": row["category"].strip(),
                 "severity": row["severity"].strip(),
@@ -110,6 +116,55 @@ def load_prompts(csv_path: Path) -> list[dict[str, str]]:
             }
         )
     return rows
+
+
+def load_benign_queries(existing: list[dict[str, str]]) -> list[dict[str, str]]:
+    """Load in-domain questions from earlier articles as labelled benign prompts.
+
+    Five benign rows in the red-team CSV cannot estimate a false-positive
+    rate. These are the developer questions the RAG system answered in
+    Articles 1 to 3: the golden set (50, hand-written) and the Article 1
+    query set (142, synthetic). Duplicates of an earlier row are dropped.
+    """
+    seen = {r["prompt"].strip().lower() for r in existing}
+    rows: list[dict[str, str]] = []
+    sources = (
+        ("golden_set", _GOLDEN_SET_JSON, "qa_pairs"),
+        ("article_01_queries", _ARTICLE_01_QUERIES_JSON, "queries"),
+    )
+    for source, path, key in sources:
+        for item in json.loads(path.read_text(encoding="utf-8"))[key]:
+            text = item["query"].strip()
+            if text.lower() in seen:
+                continue
+            seen.add(text.lower())
+            rows.append(
+                {
+                    "id": f"{source}:{item['id']}",
+                    "source": source,
+                    "prompt": text,
+                    "category": "benign",
+                    "severity": "none",
+                    "expected_block": "false",
+                }
+            )
+    return rows
+
+
+def _git(*args: str) -> str:
+    return subprocess.run(
+        ["git", *args], cwd=PROJECT_ROOT, capture_output=True, text=True, check=False
+    ).stdout.strip()
+
+
+def collect_provenance() -> dict[str, Any]:
+    """Code revision and run date for the artifact; no paths or secrets."""
+    return {
+        "git_commit": _git("rev-parse", "HEAD"),
+        "git_dirty": bool(_git("status", "--porcelain", "--untracked-files=no")),
+        "run_date_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "python": sys.version.split()[0],
+    }
 
 
 def _percentile(values: list[float], pct: float) -> float:
@@ -226,6 +281,19 @@ def parse_probability(raw: object) -> float | None:
     return score
 
 
+def _count(rows: list[dict[str, str]], key: str, blocked_only: bool = False) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for r in rows:
+        if blocked_only and r["blocked"] != "true":
+            continue
+        counts[r.get(key, "unknown")] = counts.get(r.get(key, "unknown"), 0) + 1
+    if blocked_only:
+        # Keep zero entries so numerator and denominator dicts share keys.
+        for r in rows:
+            counts.setdefault(r.get(key, "unknown"), 0)
+    return dict(sorted(counts.items()))
+
+
 def _latency_summary(prefix: str, values: list[float]) -> dict[str, float]:
     return {
         f"{prefix}_p50_ms": round(_percentile(values, 50), 4),
@@ -306,15 +374,19 @@ def run_security_benchmark(
         incorrectly_blocked = sum(1 for r in pass_through_expected if r["blocked"] == "true")
         false_positive_rate = incorrectly_blocked / len(pass_through_expected)
 
-    categories: set[str] = {r["category"] for r in prompts}
-    block_rate_by_category: dict[str, float] = {}
-    for cat in sorted(categories):
-        attack_rows = [r for r in blocked_expected if r["category"] == cat]
-        if not attack_rows:
-            block_rate_by_category[cat] = 0.0
-            continue
-        caught = sum(1 for r in attack_rows if r["blocked"] == "true")
-        block_rate_by_category[cat] = caught / len(attack_rows)
+    # Numerators and denominators, so every rate in the artifact can be
+    # restated as "k of n".
+    attacks_by_severity = _count(blocked_expected, "severity")
+    attacks_blocked_by_severity = _count(blocked_expected, "severity", blocked_only=True)
+    attacks_by_category = _count(blocked_expected, "category")
+    attacks_blocked_by_category = _count(blocked_expected, "category", blocked_only=True)
+    benign_by_source = _count(pass_through_expected, "source")
+    benign_blocked_by_source = _count(pass_through_expected, "source", blocked_only=True)
+
+    block_rate_by_category: dict[str, float] = {
+        cat: attacks_blocked_by_category.get(cat, 0) / n
+        for cat, n in sorted(attacks_by_category.items())
+    }
 
     rail_breakdown: dict[str, int] = {}
     for r in blocked_expected:
@@ -348,6 +420,13 @@ def run_security_benchmark(
         "prompts_blocked": total_blocked,
         "prompts_expected_blocked": total_attacks,
         "prompts_expected_passthrough": len(pass_through_expected),
+        "benign_blocked": sum(benign_blocked_by_source.values()),
+        "attacks_by_severity": attacks_by_severity,
+        "attacks_blocked_by_severity": attacks_blocked_by_severity,
+        "attacks_by_category": attacks_by_category,
+        "attacks_blocked_by_category": attacks_blocked_by_category,
+        "benign_by_source": benign_by_source,
+        "benign_blocked_by_source": benign_blocked_by_source,
         "per_prompt": per_prompt,
     }
 
@@ -410,8 +489,7 @@ def print_summary(results: dict[str, Any]) -> None:
         print("  Block rate by severity:")
         for lvl in _SEVERITY_LEVELS:
             rate = summary["block_rate_by_severity"][lvl]["mean"]
-            mark = "OK" if rate >= 0.90 else "BELOW TARGET"
-            print(f"    {lvl}: {rate:>6.1%}  ({mark})")
+            print(f"    {lvl}: {rate:>6.1%}")
         print("  Whole-stack latency, all prompts (mean / std across runs, ms):")
         for pct in ("p50", "p95", "p99"):
             mean = summary[f"stack_latency_{pct}_ms_mean"]
@@ -808,6 +886,11 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--no-extra-benign",
+        action="store_true",
+        help="Use only the 5 benign rows in the red-team CSV (the pre-2026-10 setup).",
+    )
+    parser.add_argument(
         "--pace-s",
         type=float,
         default=0.0,
@@ -889,6 +972,7 @@ def main() -> None:
             api_key=settings.groq_api_key,
         )
         chaos_results["timestamp_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        chaos_results["provenance"] = collect_provenance()
         stress_out = _resolve_output_path(args.stress_output)
         stress_out.parent.mkdir(parents=True, exist_ok=True)
         stress_out.write_text(json.dumps(chaos_results, indent=2))
@@ -896,6 +980,8 @@ def main() -> None:
         return
 
     prompts = load_prompts(_PROMPTS_CSV)
+    if not args.no_extra_benign:
+        prompts += load_benign_queries(prompts)
     distribution = {
         "by_severity": {
             lvl: sum(1 for p in prompts if p["severity"] == lvl) for lvl in _SEVERITY_LEVELS
@@ -904,11 +990,18 @@ def main() -> None:
             "true": sum(1 for p in prompts if p["expected_block"] == "true"),
             "false": sum(1 for p in prompts if p["expected_block"] == "false"),
         },
+        "attacks_by_severity": _count(
+            [p for p in prompts if p["expected_block"] == "true"], "severity"
+        ),
+        "benign_by_source": _count(
+            [p for p in prompts if p["expected_block"] == "false"], "source"
+        ),
         "total": len(prompts),
     }
 
     results: dict[str, Any] = {
         "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "provenance": collect_provenance(),
         "config": {
             "threshold": args.threshold,
             "prompt_guard_model": _PROMPT_GUARD_MODEL if args.prompt_guard else None,

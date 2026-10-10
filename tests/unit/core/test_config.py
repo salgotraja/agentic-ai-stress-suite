@@ -24,7 +24,10 @@ class TestSettings:
     def test_default_values(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """Test that default values are set correctly."""
         # Clear any existing .env file influence by overriding env vars
-        # This ensures we're testing the actual defaults, not .env placeholders
+        # This ensures we're testing the actual defaults, not .env placeholders.
+        # ENVIRONMENT is delenv'd (not setenv'd) so CI, which exports
+        # ENVIRONMENT=test at the job level, does not leak into the default check.
+        monkeypatch.delenv("ENVIRONMENT", raising=False)
         monkeypatch.setenv("GROQ_API_KEY", "")
         monkeypatch.setenv("DEEPSEEK_API_KEY", "")
         monkeypatch.setenv("ANTHROPIC_API_KEY", "")

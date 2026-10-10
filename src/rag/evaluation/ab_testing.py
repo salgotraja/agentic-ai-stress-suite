@@ -79,11 +79,21 @@ class ABTestRouter:
                     tokens_used INTEGER,
                     cost_usd REAL,
                     metadata TEXT,
-                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    INDEX idx_test_pipeline (test_name, pipeline_id),
-                    INDEX idx_query_hash (query_hash)
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
                 )
             """
+            )
+            conn.execute(
+                """
+                CREATE INDEX IF NOT EXISTS idx_test_pipeline
+                ON ab_test_results (test_name, pipeline_id)
+                """
+            )
+            conn.execute(
+                """
+                CREATE INDEX IF NOT EXISTS idx_query_hash
+                ON ab_test_results (query_hash)
+                """
             )
             conn.commit()
 
@@ -264,12 +274,20 @@ class ABTestAnalyzer:
             },
         }
 
+        mean_diff = stats_dict["pipeline_a"]["mean"] - stats_dict["pipeline_b"]["mean"]
+        std_a = stats_dict["pipeline_a"]["std"]
+        std_b = stats_dict["pipeline_b"]["std"]
+
         # Two-sample t-test
         # Why Welch's t-test (equal_var=False):
         # - Does not assume equal variances between groups
         # - More robust when sample sizes differ
         # - Generally recommended over Student's t-test
-        t_statistic, p_value = stats.ttest_ind(values_a_arr, values_b_arr, equal_var=False)
+        if np.isclose(std_a, 0.0) and np.isclose(std_b, 0.0):
+            t_statistic = 0.0 if mean_diff == 0.0 else float("inf") * np.sign(mean_diff)
+            p_value = 1.0 if mean_diff == 0.0 else 0.0
+        else:
+            t_statistic, p_value = stats.ttest_ind(values_a_arr, values_b_arr, equal_var=False)
 
         # Effect size (Cohen's d)
         # Why Cohen's d:
@@ -283,9 +301,10 @@ class ABTestAnalyzer:
             )
             / (len(values_a) + len(values_b) - 2)
         )
-        cohens_d = (
-            stats_dict["pipeline_a"]["mean"] - stats_dict["pipeline_b"]["mean"]
-        ) / pooled_std
+        if np.isclose(pooled_std, 0.0):
+            cohens_d = 0.0 if mean_diff == 0.0 else float("inf") * np.sign(mean_diff)
+        else:
+            cohens_d = mean_diff / pooled_std
 
         # Confidence interval (95%)
         # Why 95% CI:
@@ -295,8 +314,6 @@ class ABTestAnalyzer:
         se = pooled_std * np.sqrt(1 / len(values_a) + 1 / len(values_b))
         df = len(values_a) + len(values_b) - 2
         ci_margin = stats.t.ppf(0.975, df) * se
-        mean_diff = stats_dict["pipeline_a"]["mean"] - stats_dict["pipeline_b"]["mean"]
-
         # Explicitly type as dict[str, Any] to accommodate mixed types (float, bool, str)
         hypothesis_test: dict[str, Any] = {
             "t_statistic": float(t_statistic),

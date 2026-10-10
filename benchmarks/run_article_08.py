@@ -28,6 +28,7 @@ import os
 import random
 import re
 import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -314,9 +315,9 @@ def _build_event_loop_contention(scenarios: dict[str, dict[str, Any]]) -> dict[s
 
     Phase 1 (rampup_r2, peaks at 100 users): /health p95 = 7200ms.
     Phase 2 (sustained_r2, 50 users):        /health p95 = 14ms.
-    Halving concurrency frees the FastAPI event loop, which sync embedding
-    inference normally blocks. This pair is the controlled comparison; do
-    not conflate with sustained_r5 (different replica count).
+    Halving concurrency frees the request-serving path. Current API routes are
+    synchronous FastAPI endpoints, so the publishable claim is request-worker
+    contention rather than a literal async-event-loop block.
     """
     rampup_health = scenarios["rampup_r2"]["by_endpoint"].get("/health", {})
     sustained_health = scenarios["sustained_r2"]["by_endpoint"].get("/health", {})
@@ -329,10 +330,11 @@ def _build_event_loop_contention(scenarios: dict[str, dict[str, Any]]) -> dict[s
         "ratio": round(rampup_p95 / sustained_p95, 1) if sustained_p95 else None,
         "explanation": (
             "Same code, same replica count; only concurrent user count changes. "
-            "/health has zero external dependencies so its tail latency is a "
-            "direct measure of FastAPI event-loop pressure. BGE embedding runs "
-            "synchronously inside async handlers, blocking the loop while a "
-            "/query is mid-embed. Halving the offered load frees the loop."
+            "/health has zero external dependencies, so its tail latency is a "
+            "direct measure of request-serving pressure. The current API uses "
+            "synchronous FastAPI endpoints and runs BGE embedding in the request "
+            "path; under load, those long-running /query calls delay even cheap "
+            "health responses. Halving offered load frees the request path."
         ),
     }
 
@@ -375,9 +377,9 @@ def _build_key_findings() -> list[str]:
         "Both runs were below the cliff (zero failures), so this measures "
         "scaling efficiency, not capacity. Cloud-LLM round-trip latency, "
         "not pod CPU, was the gating factor at this load.",
-        "/health p95 tracks FastAPI event-loop pressure: 7200ms at peak 100 "
+        "/health p95 tracks FastAPI request-worker pressure: 7200ms at peak 100 "
         "concurrent users, 14ms at sustained 50 users (same code, same r=2). "
-        "Sync embedding inference inside async handlers is the cause.",
+        "Sync embedding inference inside the request path is the cause.",
         "The 2-replica setup hits a saturation cliff at 200 users: 85% "
         "RemoteDisconnected failures, both pods SIGKILLed by liveness probe "
         "at t~110s, cluster self-heals cleanly without operator intervention.",
@@ -604,6 +606,9 @@ def main(argv: list[str] | None = None) -> None:
         results = build_measured_results(args.csv_dir)
     else:
         results = build_simulated_results()
+    results["timestamp_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    if args.mode == "measured":
+        results["source_csv_dir"] = str(args.csv_dir)
 
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(results, indent=2))

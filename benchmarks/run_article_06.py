@@ -177,6 +177,10 @@ def _flush_redis(redis_client: redis.Redis) -> None:
     redis_client.flushdb()
 
 
+def _resolve_output_path(path: Path) -> Path:
+    return path if path.is_absolute() else PROJECT_ROOT / path
+
+
 def run_cache_benchmark(
     queries: list[dict[str, str]],
     redis_client: redis.Redis,
@@ -631,6 +635,12 @@ def main() -> None:
         default=None,
         help="Override Redis URL (defaults to settings.redis_url).",
     )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=PROJECT_ROOT / "results" / "data" / "article_06_benchmarks.json",
+        help="Happy-path benchmark JSON output path.",
+    )
     # --chaos is mutually exclusive with the cache+router path: the two
     # benchmarks answer different questions (cost optimization vs
     # resilience under provider failure) and writing both into one run
@@ -644,6 +654,12 @@ def main() -> None:
         "--quick",
         action="store_true",
         help="Use a 5-prompt subset of the chaos golden set. Only relevant with --chaos.",
+    )
+    parser.add_argument(
+        "--stress-output",
+        type=Path,
+        default=PROJECT_ROOT / "results" / "data" / "article_06_stress.json",
+        help="Chaos benchmark JSON output path.",
     )
     args = parser.parse_args()
 
@@ -675,7 +691,8 @@ def main() -> None:
             print(f"ERROR: chaos precondition unmet: {e}", file=sys.stderr)
             sys.exit(2)
 
-        out_path = PROJECT_ROOT / "results" / "data" / "article_06_stress.json"
+        chaos_output["timestamp_utc"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        out_path = _resolve_output_path(args.stress_output)
         out_path.parent.mkdir(parents=True, exist_ok=True)
         out_path.write_text(json.dumps(_sanitize_nan(chaos_output), indent=2))
         _print_chaos_summary(chaos_output)
@@ -739,6 +756,7 @@ def main() -> None:
             router_runs.append(router_result)
 
     output = {
+        "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "config": {
             "redis_url": redis_url,
             "embedding_model": "BAAI/bge-base-en-v1.5",
@@ -746,6 +764,10 @@ def main() -> None:
             "simple_model": _SIMPLE_MODEL,
             "complex_model": _COMPLEX_MODEL,
             "baseline_model": _BASELINE_MODEL,
+            "pricing_per_1m_tokens_usd": {
+                model: {"input": prices[0], "output": prices[1]}
+                for model, prices in _PRICES.items()
+            },
             "n_queries": len(queries),
             "n_runs": args.runs,
             "n_warmup_runs": args.warmup,
@@ -765,7 +787,7 @@ def main() -> None:
         },
     }
 
-    out_path = PROJECT_ROOT / "results" / "data" / "article_06_benchmarks.json"
+    out_path = _resolve_output_path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(output, indent=2))
 

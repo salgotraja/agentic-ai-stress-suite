@@ -36,6 +36,10 @@ Usage:
     # Full training on MPS (M4, ~5-10 min for 2 epochs)
     uv run python examples/article_09_dl/train_custom_embedder.py
 
+    # Chunk-shaped pairs, one seed
+    uv run python examples/article_09_dl/train_custom_embedder.py \\
+        --train-file train_chunk.json --seed 13 --output-dir models/bge_chunk_seed13
+
     # Fast smoke-test (CPU, 1 epoch, small subset)
     uv run python examples/article_09_dl/train_custom_embedder.py \\
         --device cpu --epochs 1 --max-steps 20
@@ -52,41 +56,11 @@ import time
 from pathlib import Path
 
 import torch
-import torch.nn.functional as functional
 from sentence_transformers import SentenceTransformer, losses
 from sentence_transformers.trainer import SentenceTransformerTrainer
 from sentence_transformers.training_args import SentenceTransformerTrainingArguments
 
 from datasets import Dataset
-
-# ---------------------------------------------------------------------------
-# Recall@K evaluation
-# ---------------------------------------------------------------------------
-
-
-def recall_at_k(model: SentenceTransformer, val_pairs: list[dict[str, str]], k: int = 5) -> float:
-    """Compute Recall@K on val set using anchor→positive retrieval.
-
-    Teaching note: We embed all val positives as the "corpus" and each val
-    anchor as the "query". Recall@K = fraction of queries whose correct positive
-    is in the top-K by cosine similarity. This is fast (400 pairs ≈ 800
-    embeddings) and correlates well with full-corpus Recall@K (task 5.4).
-    """
-    anchors = [p["anchor"] for p in val_pairs]
-    positives = [p["positive"] for p in val_pairs]
-
-    a_emb = model.encode(anchors, batch_size=64, show_progress_bar=False, convert_to_tensor=True)
-    p_emb = model.encode(positives, batch_size=64, show_progress_bar=False, convert_to_tensor=True)
-
-    a_norm = functional.normalize(a_emb, dim=-1)
-    p_norm = functional.normalize(p_emb, dim=-1)
-    sim = torch.mm(a_norm, p_norm.T)  # [Q, P]
-
-    top_k = torch.topk(sim, k=k, dim=1).indices  # [Q, k]
-    correct = torch.arange(len(anchors), device=top_k.device).unsqueeze(1)  # [Q, 1]
-    hits = (top_k == correct).any(dim=1)
-    return float(hits.float().mean().item())
-
 
 # ---------------------------------------------------------------------------
 # Main
@@ -117,6 +91,8 @@ def main() -> None:
         default=Path("datasets/dl_training"),
         help="Training data directory",
     )
+    parser.add_argument("--train-file", default="train.json", help="File in --data-dir")
+    parser.add_argument("--seed", type=int, default=42, help="Training seed")
     parser.add_argument(
         "--output-dir",
         type=Path,
@@ -138,39 +114,26 @@ def main() -> None:
     print(f"Device: {device}")
 
     # Load data
-    train_path = args.data_dir / "train.json"
-    val_path = args.data_dir / "val.json"
+    train_path = args.data_dir / args.train_file
     if not train_path.exists():
         raise FileNotFoundError(
             f"{train_path} not found. Run: uv run python scripts/prepare_dl_training_data.py"
         )
-
     with open(train_path) as f:
         raw_train = json.load(f)
-    with open(val_path) as f:
-        raw_val = json.load(f)
-    print(f"Train: {len(raw_train)} pairs  Val: {len(raw_val)} pairs")
-
-    # Convert to sentence-transformers v3 column format:
-    # {anchor, positive, negative} - column names must match the loss expectation
-    def remap(pairs: list[dict[str, str]]) -> list[dict[str, str]]:
-        return [
+    print(f"Train: {len(raw_train)} triples from {train_path}")
+    train_dataset = Dataset.from_list(
+        [
             {"anchor": p["query"], "positive": p["positive"], "negative": p["negative"]}
-            for p in pairs
+            for p in raw_train
         ]
-
-    train_dataset = Dataset.from_list(remap(raw_train))
-    val_pairs_remapped = remap(raw_val)
+    )
+    torch.manual_seed(args.seed)
 
     # Load model
     model_name = "BAAI/bge-base-en-v1.5"
     print(f"Loading {model_name}...")
     model = SentenceTransformer(model_name, device=device)
-
-    # Baseline Recall@5 before fine-tuning
-    print("Computing baseline Recall@5...")
-    baseline_r5 = recall_at_k(model, val_pairs_remapped, k=5)
-    print(f"  Baseline Recall@5: {baseline_r5:.4f}")
 
     # Loss: MultipleNegativesRankingLoss
     # Teaching note: expects columns (anchor, positive, negative) in that order.
@@ -188,6 +151,7 @@ def main() -> None:
         save_strategy="no",  # We save manually after training
         logging_steps=10,
         report_to="none",  # Disable wandb/mlflow
+        seed=args.seed,
     )
 
     # Trainer
@@ -204,26 +168,18 @@ def main() -> None:
     elapsed = time.time() - t0
     print(f"Training took {elapsed:.1f}s")
 
-    # Post-training Recall@5
-    model.eval()
-    final_r5 = recall_at_k(model, val_pairs_remapped, k=5)
-    improvement = final_r5 - baseline_r5
-    print(f"\nBaseline Recall@5: {baseline_r5:.4f}")
-    print(f"Final Recall@5:    {final_r5:.4f}  (Δ={improvement:+.4f})")
-
-    # Save model and training history
     model.save(str(args.output_dir))
     history = {
         "model": model_name,
         "device": device,
+        "seed": args.seed,
         "epochs": args.epochs,
         "batch_size": args.batch_size,
-        "train_pairs": len(raw_train),
-        "val_pairs": len(raw_val),
+        "learning_rate": training_args.learning_rate,
+        "train_file": args.train_file,
+        "train_triples": len(raw_train),
         "training_seconds": round(elapsed, 1),
-        "baseline_recall_at_5": round(baseline_r5, 4),
-        "final_recall_at_5": round(final_r5, 4),
-        "improvement": round(improvement, 4),
+        "torch": torch.__version__,
     }
     history_path = args.output_dir / "training_history.json"
     with open(history_path, "w") as f:

@@ -6,9 +6,10 @@ SQLite database with no cross-test state pollution.
 
 from __future__ import annotations
 
+import sqlite3
 from pathlib import Path
 
-from src.ops.security import AuditLogger, GuardResult
+from src.ops.security import AuditLogger, GuardResult, SpacyPIIScanner
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -118,3 +119,40 @@ def test_no_delete_method(tmp_path: Path) -> None:
 
     assert not hasattr(logger, "delete")
     assert not hasattr(logger, "update")
+
+
+def _all_stored_values(db_path: Path) -> list[str]:
+    conn = sqlite3.connect(db_path)
+    try:
+        rows = conn.execute("SELECT * FROM blocked_queries").fetchall()
+    finally:
+        conn.close()
+    return [str(value) for row in rows for value in row]
+
+
+def test_no_stored_field_contains_ner_entity_text(tmp_path: Path) -> None:
+    """A NER block leaves no entity text in any stored column."""
+    db_path = tmp_path / "test_audit.db"
+    logger = AuditLogger(db_path=str(db_path))
+    scanner = SpacyPIIScanner(nlp_fn=lambda _: [("Alice Smith", "PERSON"), ("Acme", "ORG")])
+    output = "Alice Smith of Acme asked about the deployment."
+
+    logger.log_blocked(output, scanner.scan(output))
+
+    stored = _all_stored_values(db_path)
+    assert stored
+    assert not any("Alice" in value or "Acme" in value for value in stored)
+
+
+def test_no_stored_field_contains_structured_pii_from_reason(tmp_path: Path) -> None:
+    """A reason built by any rail is redacted for email, SSN, and phone before storage."""
+    db_path = tmp_path / "test_audit.db"
+    logger = AuditLogger(db_path=str(db_path))
+    reason = "Matched alice@corp.com, 123-45-6789 and +1-650-555-0101."
+
+    logger.log_blocked("raw input", _blocked_result(rail="custom", reason=reason))
+
+    stored = _all_stored_values(db_path)
+    for secret in ("alice@corp.com", "123-45-6789", "650-555-0101"):
+        assert not any(secret in value for value in stored)
+    assert any("[REDACTED]" in value for value in stored)

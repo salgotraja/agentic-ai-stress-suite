@@ -311,12 +311,15 @@ class SpacyPIIScanner:
         if not pii_found:
             return GuardResult(blocked=False)
 
-        # Surface up to 3 entities in the reason for triage. Truncating at 3
-        # keeps the reason human-readable without leaking full entity lists.
-        sample = ", ".join(f"{t} ({lbl})" for t, lbl in pii_found[:3])
+        # The reason carries labels and counts only. Entity text is the PII
+        # itself, and reasons are stored by AuditLogger.
+        counts: dict[str, int] = {}
+        for _, label in pii_found:
+            counts[label] = counts.get(label, 0) + 1
+        summary = ", ".join(f"{label} x{n}" for label, n in sorted(counts.items()))
         return GuardResult(
             blocked=True,
-            reason=f"PII entities detected in output: {sample}.",
+            reason=f"PII entities detected in output: {summary}.",
             rail="output_ner_pii",
         )
 
@@ -465,15 +468,19 @@ def sanitize_output(text: str) -> str:
 # Why append-only?
 #   Security audit logs must be tamper-evident. If an attacker (or a bug) could
 #   UPDATE or DELETE rows, they could erase evidence of their own intrusion.
-#   Append-only enforces that every event is permanent. For true immutability
-#   in production, pair this with a write-once object store (S3 Object Lock,
-#   WORM disk) and restrict DELETE privilege at the DB user level.
+#   This class only inserts, but anyone with write access to the SQLite file
+#   can still change or delete rows: WAL mode is a concurrency setting, not
+#   tamper protection. For tamper resistance, pair this with a write-once
+#   object store (S3 Object Lock, WORM disk) and restrict DELETE privilege at
+#   the DB user level.
 #
 # Why SHA-256 of the input, not the raw text?
 #   1. Privacy: storing the raw jailbreak or PII string turns the audit log into
 #      a second data store of sensitive user input - a compliance liability.
 #   2. Traceability: the hash is deterministic; if the same string appears again,
-#      the same hash matches, enabling deduplication without storing PII.
+#      the same hash matches, enabling deduplication. The hash is unsalted, so
+#      a low-entropy input (a bare SSN or phone number) can be recovered by
+#      enumeration; use a keyed HMAC if that matters.
 #   3. Verifiability: the originating team can hash a candidate string and check
 #      if it appears in the log without exposing the string itself.
 #
@@ -485,6 +492,13 @@ def sanitize_output(text: str) -> str:
 #   Limitation: not suitable for multi-node distributed deployments - migrate to
 #   PostgreSQL (with audit-log extension) when horizontal scaling is required.
 # ---------------------------------------------------------------------------
+
+
+def _redact_structured_pii(text: str) -> str:
+    """Replace email, SSN, and phone shapes so free-text reasons stay PII-free."""
+    for pattern in _INPUT_PII_PATTERNS:
+        text = pattern.sub("[REDACTED]", text)
+    return text
 
 
 class AuditLogger:
@@ -549,7 +563,7 @@ class AuditLogger:
             (
                 datetime.now(UTC).isoformat(),
                 result.rail or "unknown",
-                result.reason or "",
+                _redact_structured_pii(result.reason or ""),
                 hashlib.sha256(text.encode()).hexdigest(),
                 "blocked",
             ),

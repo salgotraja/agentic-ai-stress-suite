@@ -67,12 +67,16 @@ def test_ner_org_in_output_blocked() -> None:
     assert result.rail == "output_ner_pii"
 
 
-def test_ner_blocked_reason_includes_entity_text() -> None:
-    """Blocked reason names the detected entity for triage."""
-    scanner = SpacyPIIScanner(nlp_fn=_nlp_fn_with_entities([("Alice Walker", "PERSON")]))
-    result = scanner.scan("User: Alice Walker.")
+def test_ner_blocked_reason_excludes_entity_text() -> None:
+    """Blocked reason carries labels and counts, never the entity text itself."""
+    scanner = SpacyPIIScanner(
+        nlp_fn=_nlp_fn_with_entities([("Alice Walker", "PERSON"), ("Bob Ray", "PERSON")])
+    )
+    result = scanner.scan("User: Alice Walker and Bob Ray.")
     assert result.blocked is True
-    assert "Alice Walker" in (result.reason or "")
+    assert "Alice" not in (result.reason or "")
+    assert "Bob" not in (result.reason or "")
+    assert "PERSON x2" in (result.reason or "")
 
 
 def test_ner_blocked_reason_includes_label() -> None:

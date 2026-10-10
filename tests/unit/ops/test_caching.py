@@ -166,3 +166,53 @@ def test_purge_empty_cache_returns_zero() -> None:
     cache = SemanticCache(redis_client=mock_redis)
     assert cache.purge() == 0
     mock_redis.delete.assert_not_called()
+
+
+def test_l2_returns_most_similar_entry_not_first_above_threshold() -> None:
+    """With two entries above threshold, L2 returns the closer one regardless of order."""
+    mock_redis = MagicMock()
+    mock_redis.get.return_value = None
+    near = json.dumps({"embedding": [1.0, 0.0, 0.0], "response": "near"}).encode()
+    far = json.dumps({"embedding": [0.96, 0.28, 0.0], "response": "far"}).encode()
+    mock_redis.smembers.return_value = [b"l2:far", b"l2:near"]
+    mock_redis.mget.return_value = [far, near]
+
+    cache = SemanticCache(
+        redis_client=mock_redis, embed_fn=lambda _q: [1.0, 0.0, 0.0], l2_threshold=0.95
+    )
+    assert cache.get("What is FastAPI?") == "near"
+
+
+def test_lookup_reports_tier_similarity_and_matched_query() -> None:
+    """lookup() attributes each result to L1, L2, or miss and carries the L2 evidence."""
+    mock_redis = MagicMock()
+    stored = json.dumps(
+        {"embedding": [1.0, 0.0, 0.0], "response": "cached", "query": "What is FastAPI?"}
+    ).encode()
+    mock_redis.get.side_effect = [b"exact", None, None]
+    mock_redis.smembers.return_value = [b"l2:a"]
+    mock_redis.mget.return_value = [stored]
+    embeddings = iter([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    cache = SemanticCache(redis_client=mock_redis, embed_fn=lambda _q: next(embeddings))
+
+    l1 = cache.lookup("What is FastAPI?")
+    l2 = cache.lookup("What does FastAPI do?")
+    miss = cache.lookup("Unrelated question")
+
+    assert (l1.tier, l1.response, l1.similarity) == ("l1", "exact", None)
+    assert (l2.tier, l2.response, l2.matched_query) == ("l2", "cached", "What is FastAPI?")
+    assert l2.similarity == pytest.approx(1.0)
+    assert (miss.tier, miss.response) == ("miss", None)
+    assert miss.similarity == pytest.approx(0.0)
+    assert miss.matched_query == "What is FastAPI?"
+    stats = cache.stats()
+    assert (stats["l1_hits"], stats["l2_hits"], stats["misses"]) == (1, 1, 1)
+
+
+def test_l2_set_stores_source_query_in_payload() -> None:
+    """The L2 payload records the source query so a hit can be traced to it."""
+    mock_redis = MagicMock()
+    cache = SemanticCache(redis_client=mock_redis, embed_fn=lambda _q: [0.1, 0.2, 0.3])
+    cache.set("What is FastAPI?", "FastAPI is a web framework")
+    payload = json.loads(mock_redis.pipeline.return_value.setex.call_args[0][2])
+    assert payload["query"] == "What is FastAPI?"

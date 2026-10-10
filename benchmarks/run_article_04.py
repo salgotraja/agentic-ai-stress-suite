@@ -178,8 +178,13 @@ def route_conformance(
 def classify_error(exc: BaseException) -> tuple[str, bool]:
     """Return the exception type and whether it came from the LLM layer."""
     error_type = type(exc).__name__
-    provider = error_type in _PROVIDER_ERROR_TYPES or str(exc).startswith(
-        "All LLM providers failed"
+    message = str(exc)
+    provider = (
+        error_type in _PROVIDER_ERROR_TYPES
+        or message.startswith("All LLM providers failed")
+        # Groq rejects a request when a reasoning model emits a native tool
+        # call the request did not declare; a provider protocol failure.
+        or "tool_use_failed" in message
     )
     return error_type, provider
 
@@ -255,11 +260,15 @@ def judge_trial(
     n_criteria = len(query.get("acceptance", []))
     if n_criteria == 0:
         return {"status": "no_criteria"}
+    if not result.completed:
+        # A failed or refused trial has no answer to grade; scoring it from the
+        # tool calls alone rated "Error: Agent reasoning failed." as consistent.
+        return {"status": "not_completed", "evidence_consistent": False}
     try:
         response = judge_client.generate(
             prompt=build_judge_prompt(query, result),
             temperature=0.0,
-            max_tokens=800,
+            max_tokens=1500,
             preferred_provider=JUDGE_PROVIDER,
             preferred_model=JUDGE_MODEL,
         )
@@ -572,11 +581,17 @@ def run_benchmark(
     print()
 
     # Initialize tools
+    db_path = PROJECT_ROOT / "datasets" / "tech_docs.db"
+    if not use_mock and not db_path.exists():
+        raise FileNotFoundError(
+            f"{db_path} is missing (it is gitignored). Build it first with: "
+            "uv run python scripts/create_tech_docs_db.py"
+        )
     print("Initializing tools...")
     tools: list[Any] = [
         SearchTool(),
         CalculatorTool(),
-        DatabaseLookupTool(db_path=str(PROJECT_ROOT / "datasets" / "tech_docs.db")),
+        DatabaseLookupTool(db_path=str(db_path)),
         # Benchmark explicitly opts in to real execution; production callers must do the same.
         CodeExecutionTool(enabled=True),
     ]

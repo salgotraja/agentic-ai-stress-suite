@@ -156,6 +156,7 @@ def test_parse_judge_response_requires_one_verdict_per_criterion() -> None:
 
 def _result(answer: str = "720") -> AgentBenchmarkResult:
     return AgentBenchmarkResult(
+        completed=True,
         query_id="q004",
         category="rag_calculation",
         expected_tools=["calculator"],
@@ -297,3 +298,21 @@ def test_plan_execute_records_tool_events() -> None:
     ]
     assert events[0]["output_is_error"] is False
     assert "720" in events[0]["output_preview"]
+
+
+def test_judge_skips_trials_that_did_not_complete() -> None:
+    client = Mock()
+    query = {"query": "Calculate 6!", "acceptance": ["states 6 factorial is 720"]}
+    failed = _result(answer="Error: Agent reasoning failed.")
+    failed.completed = False
+
+    verdict = judge_trial(client, query, failed)
+
+    assert verdict == {"status": "not_completed", "evidence_consistent": False}
+    client.generate.assert_not_called()
+
+
+def test_groq_tool_use_failed_is_a_provider_error() -> None:
+    exc = Exception("Error code: 400 - {'error': {'code': 'tool_use_failed'}}")
+
+    assert classify_error(exc) == ("Exception", True)

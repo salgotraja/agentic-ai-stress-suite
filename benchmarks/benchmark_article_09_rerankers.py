@@ -121,6 +121,8 @@ def main() -> None:
     import torch
 
     torch.set_num_threads(args.threads)
+    git_commit = _git("rev-parse", "HEAD")
+    git_dirty = bool(_git("status", "--porcelain", "--untracked-files=no"))
 
     split = json.loads(SPLIT_MANIFEST.read_text())
     meta = {q["id"]: q for q in split["questions"]}
@@ -230,8 +232,8 @@ def main() -> None:
     run_date = datetime.now(UTC).date().isoformat()
     result = {
         "provenance": {
-            "git_commit": _git("rev-parse", "HEAD"),
-            "git_dirty": bool(_git("status", "--porcelain", "--untracked-files=no")),
+            "git_commit": git_commit,
+            "git_dirty": git_dirty,
             "run_date": run_date,
             "candidates": str(CANDIDATES.relative_to(PROJECT_ROOT)),
             "split_manifest": str(SPLIT_MANIFEST.relative_to(PROJECT_ROOT)),

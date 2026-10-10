@@ -3,6 +3,34 @@
 All notable changes to this project are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased] - 2026-10-10 Claude Sonnet 5.5 support
+
+### Added
+
+- `claude-sonnet-5-5` in `UnifiedLLMClient`, reachable through the fallback
+  chain, `preferred_provider=LLMProvider.ANTHROPIC` with `preferred_model`, and
+  `LLM_PINNED_MODEL=anthropic/claude-sonnet-5-5`
+- `ANTHROPIC_EFFORT` setting (`low`, `medium` or `high`, default `medium`),
+  recorded in Article 1 and 2 provenance
+- `ModelRefusalError`: a Claude refusal (`stop_reason: "refusal"`) raises with
+  its category instead of returning an empty answer
+
+### Changed
+
+- Sonnet 5.5 calls omit `temperature` (non-default values return 400) and send
+  `thinking: {"type": "between_tools"}`, so no thinking tokens are spent and
+  `max_tokens` stays the answer budget
+- The fallback chain's Claude step is now `claude-sonnet-5-5` ($2 / $10 per 1M
+  tokens) instead of `claude-sonnet-4-5-20250929`
+- Claude responses join every `text` block by type, and an empty answer cut
+  off by `max_tokens` raises `EmptyCompletionError`
+
+### Notes
+
+- Server-side refusal fallbacks are deliberately not enabled: a fallback
+  changes the model, which a pinned benchmark run must not do
+- The LiteLLM router still lists `anthropic/claude-sonnet-4-5-20250929`
+
 ## [Unreleased] - 2026-10-08 Groq model replacement
 
 ### Changed

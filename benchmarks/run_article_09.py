@@ -1,10 +1,13 @@
 """Article 9 benchmark orchestrator - task 5.13.
 
 Teaching note: WHY subprocess isolation?
-  Each Article 9 benchmark loads 400MB+ ML models (BGE-base-en-v1.5, PyTorch,
-  JAX). Running them sequentially in the same process would compete for the
+  Each Article 9 step loads 400MB+ ML models (BGE-base-en-v1.5 and
+  cross-encoders). Running them sequentially in the same process would compete for the
   M4 unified-memory pool. Subprocesses isolate memory: each step loads its
   models, runs, and releases memory on exit before the next step begins.
+
+The PyTorch-vs-JAX op benchmark is no longer part of this run; run
+benchmarks/benchmark_pytorch_vs_jax.py directly if needed.
 """
 
 from __future__ import annotations
@@ -19,14 +22,33 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent
 
-# Map step label → output file that signals the step is complete.
+SEEDS = (13, 21, 42)
+_DATA = PROJECT_ROOT / "results" / "data" / "article_09"
+_TODAY = time.strftime("%Y-%m-%d", time.gmtime())
+
+# Map step label -> output file that signals the step is complete.
 # _should_skip() uses these to implement the skip-if-exists optimisation.
+# Benchmark outputs carry the run date, so a new day never reuses old results.
 _STEP_OUTPUTS: dict[str, Path] = {
-    "train": PROJECT_ROOT / "models" / "bge_finetuned" / "training_history.json",
-    "embeddings": PROJECT_ROOT / "results" / "data" / "article_09_benchmarks.json",
-    "optimizations": PROJECT_ROOT / "results" / "data" / "pytorch_optimizations.json",
-    "reranker": PROJECT_ROOT / "results" / "data" / "custom_reranker_benchmark.json",
-    "jax": PROJECT_ROOT / "results" / "data" / "pytorch_vs_jax_benchmark.json",
+    "split": PROJECT_ROOT / "datasets" / "dl_training_split.json",
+    "candidates": _DATA / "candidates_2026-10-10.json",
+    "pairs": PROJECT_ROOT / "datasets" / "dl_training" / "train_chunk.json",
+    "train_reranker": PROJECT_ROOT
+    / "models"
+    / "cross_encoder_finetuned"
+    / f"seed{SEEDS[-1]}"
+    / "training_history.json",
+    "rerankers": _DATA / f"rerankers_{_TODAY}.json",
+    **{
+        f"train_bge_{kind}_{seed}": PROJECT_ROOT
+        / "models"
+        / f"bge_{kind}_seed{seed}"
+        / "training_history.json"
+        for kind in ("answer", "chunk")
+        for seed in SEEDS
+    },
+    "embeddings": _DATA / f"embedders_{_TODAY}.json",
+    "optimizations": _DATA / f"pytorch_optimizations_{_TODAY}.json",
 }
 
 
@@ -93,7 +115,7 @@ def format_summary(results: list[StepResult], output_files: list[Path]) -> str:
     return "\n".join(lines)
 
 
-def main(*, force: bool = False, quick: bool = False) -> int:
+def main(*, force: bool = False) -> int:
     """Run all Article 9 benchmarks in sequence.
 
     Returns exit code: 0 if all steps passed, 1 if any step failed.
@@ -104,45 +126,84 @@ def main(*, force: bool = False, quick: bool = False) -> int:
         print(f"[smoke] {Path(__file__).stem}: imports OK, exiting early")
         return 0
 
+    def script(*parts: str) -> str:
+        return str(PROJECT_ROOT.joinpath(*parts))
+
+    candidates = str(_STEP_OUTPUTS["candidates"])
     steps: list[tuple[str, list[str], Path]] = [
         (
-            "train_embedder",
-            [
-                sys.executable,
-                str(PROJECT_ROOT / "examples" / "article_09_dl" / "train_custom_embedder.py"),
-            ],
-            _STEP_OUTPUTS["train"],
+            "split_and_answer_pairs",
+            [sys.executable, script("scripts", "prepare_dl_training_data.py")],
+            _STEP_OUTPUTS["split"],
         ),
         (
-            "benchmark_embeddings",
+            "freeze_candidates",
+            [sys.executable, script("benchmarks", "build_article_09_candidates.py")],
+            _STEP_OUTPUTS["candidates"],
+        ),
+        (
+            "chunk_pairs",
             [
                 sys.executable,
-                str(PROJECT_ROOT / "benchmarks" / "benchmark_custom_embeddings.py"),
-            ]
-            + (["--quick"] if quick else []),
+                script("scripts", "prepare_dl_training_data.py"),
+                "--candidates",
+                candidates,
+            ],
+            _STEP_OUTPUTS["pairs"],
+        ),
+        (
+            "train_reranker",
+            [
+                sys.executable,
+                script("examples", "article_09_dl", "custom_reranker.py"),
+                "--train",
+                "--seeds",
+                *map(str, SEEDS),
+            ],
+            _STEP_OUTPUTS["train_reranker"],
+        ),
+        (
+            "benchmark_rerankers",
+            [
+                sys.executable,
+                script("benchmarks", "benchmark_article_09_rerankers.py"),
+                "--seeds",
+                *map(str, SEEDS),
+            ],
+            _STEP_OUTPUTS["rerankers"],
+        ),
+    ]
+    model_args: list[str] = []
+    for kind, train_file in (("answer", "train.json"), ("chunk", "train_chunk.json")):
+        for seed in SEEDS:
+            out_dir = f"models/bge_{kind}_seed{seed}"
+            model_args += ["--model", f"{kind}_seed{seed}={out_dir}"]
+            steps.append(
+                (
+                    f"train_bge_{kind}_{seed}",
+                    [
+                        sys.executable,
+                        script("examples", "article_09_dl", "train_custom_embedder.py"),
+                        "--train-file",
+                        train_file,
+                        "--seed",
+                        str(seed),
+                        "--output-dir",
+                        out_dir,
+                    ],
+                    _STEP_OUTPUTS[f"train_bge_{kind}_{seed}"],
+                )
+            )
+    steps += [
+        (
+            "benchmark_embeddings",
+            [sys.executable, script("benchmarks", "benchmark_custom_embeddings.py"), *model_args],
             _STEP_OUTPUTS["embeddings"],
         ),
         (
             "pytorch_optimizations",
-            [
-                sys.executable,
-                str(PROJECT_ROOT / "examples" / "article_09_dl" / "pytorch_optimizations.py"),
-            ],
+            [sys.executable, script("examples", "article_09_dl", "pytorch_optimizations.py")],
             _STEP_OUTPUTS["optimizations"],
-        ),
-        (
-            "custom_reranker",
-            [
-                sys.executable,
-                str(PROJECT_ROOT / "examples" / "article_09_dl" / "custom_reranker.py"),
-                "--eval",
-            ],
-            _STEP_OUTPUTS["reranker"],
-        ),
-        (
-            "pytorch_vs_jax",
-            [sys.executable, str(PROJECT_ROOT / "benchmarks" / "benchmark_pytorch_vs_jax.py")],
-            _STEP_OUTPUTS["jax"],
         ),
     ]
 
@@ -154,10 +215,8 @@ def main(*, force: bool = False, quick: bool = False) -> int:
         result = run_step(label, cmd, skip=skip)
         results.append(result)
         if not result.passed:
-            # Fail fast: training failure invalidates all downstream steps.
-            # benchmark_embeddings, custom_reranker, and pytorch_vs_jax all
-            # load bge_finetuned/ - running them after a training failure would
-            # benchmark the stock model silently and publish misleading numbers.
+            # Fail fast: every later step reads the split, the candidates or a
+            # trained model from an earlier step.
             print(f"  Stopping early: {label} failed.")
             break
 
@@ -174,6 +233,5 @@ if __name__ == "__main__":
     parser.add_argument(
         "--force", action="store_true", help="Re-run all steps ignoring cached outputs"
     )
-    parser.add_argument("--quick", action="store_true", help="Pass --quick to embedding benchmark")
     args = parser.parse_args()
-    sys.exit(main(force=args.force, quick=args.quick))
+    sys.exit(main(force=args.force))

@@ -11,6 +11,18 @@ Teaching note: WHY load test before K8s deploy?
   - Sustained: 50 users for 30 min        -> detect memory leaks, degradation
   - Spike:     10 -> 200 -> 10 users      -> test autoscaler reaction time
 
+  Authentication: /query and /agent require a bearer token (see auth.py).
+  Export the same value the API was started with as API_AUTH_TOKEN:
+    export LOADTEST_API_TOKEN=<token>
+  The test refuses to start without it, so a missing token can never show up
+  as a wall of 401 "load failures".
+
+  Optional:
+    LOADTEST_TIMEOUT_S     per-request client timeout in seconds (default: none)
+    LOADTEST_REQUEST_LOG   path of a JSONL file with one row per request. Locust's
+                           own percentiles mix failed and successful requests;
+                           this log is what success-only latency is computed from.
+
   Run headless (CI):
     locust -f src/ops/deployment/load_test.py --headless -u 50 -r 5 -t 60s \\
            --host http://localhost:8000
@@ -21,10 +33,54 @@ Teaching note: WHY load test before K8s deploy?
 
 from __future__ import annotations
 
+import json
+import os
 import random
+import time
 from dataclasses import dataclass
+from typing import IO, Any
 
 from locust import HttpUser, between, events, task
+
+TOKEN_ENV = "LOADTEST_API_TOKEN"
+TIMEOUT_ENV = "LOADTEST_TIMEOUT_S"
+REQUEST_LOG_ENV = "LOADTEST_REQUEST_LOG"
+
+
+def auth_headers() -> dict[str, str]:
+    """Bearer header for /query and /agent. Raises when the token is unset."""
+    token = os.environ.get(TOKEN_ENV, "").strip()
+    if not token:
+        raise RuntimeError(
+            f"{TOKEN_ENV} is not set. /query and /agent require a bearer token; "
+            "export the value the API was started with (API_AUTH_TOKEN)."
+        )
+    return {"Authorization": f"Bearer {token}"}
+
+
+def request_timeout() -> float | None:
+    raw = os.environ.get(TIMEOUT_ENV, "").strip()
+    return float(raw) if raw else None
+
+
+def request_record(
+    name: str,
+    request_type: str,
+    response_time: float,
+    response: Any,
+    exception: BaseException | None,
+) -> dict[str, Any]:
+    """One JSONL row per request; the schema the summarizer reads."""
+    status = getattr(response, "status_code", None)
+    return {
+        "ts": time.time(),
+        "name": name,
+        "method": request_type,
+        "latency_ms": round(float(response_time), 2),
+        "status": status,
+        "ok": exception is None,
+        "error": type(exception).__name__ if exception is not None else None,
+    }
 
 
 @dataclass
@@ -96,12 +152,11 @@ class RAGSystemUser(HttpUser):  # type: ignore[misc]
     def on_start(self) -> None:
         """Called once per simulated user when it starts.
 
-        Teaching note: on_start is the right place to set up per-user state
-        (e.g., authentication tokens). Here we log so that operators can
-        confirm the correct number of virtual users has spawned when watching
-        a live test run.
+        Teaching note: on_start is the right place to set up per-user state.
+        Every user carries the bearer header for the authenticated endpoints.
         """
-        print(f"[locust] Virtual user started - host: {self.host}")
+        self._auth = auth_headers()
+        self._timeout = request_timeout()
 
     @task(7)  # type: ignore[misc]
     def query_rag(self) -> None:
@@ -117,6 +172,8 @@ class RAGSystemUser(HttpUser):  # type: ignore[misc]
             "/query",
             json={"query": query, "pipeline": "naive"},
             name="/query [rag]",
+            headers=self._auth,
+            timeout=self._timeout,
         )
 
     @task(2)  # type: ignore[misc]
@@ -133,6 +190,8 @@ class RAGSystemUser(HttpUser):  # type: ignore[misc]
             "/agent",
             json={"task": task_text},
             name="/agent",
+            headers=self._auth,
+            timeout=self._timeout,
         )
 
     @task(1)  # type: ignore[misc]
@@ -144,7 +203,48 @@ class RAGSystemUser(HttpUser):  # type: ignore[misc]
         spikes above the K8s probe timeout (default 1s), the kubelet will
         restart pods during normal traffic - a silent production failure mode.
         """
-        self.client.get("/health", name="/health")
+        self.client.get("/health", name="/health", timeout=self._timeout)
+
+
+_request_log: IO[str] | None = None
+
+
+@events.test_start.add_listener  # type: ignore[misc]
+def on_test_start(environment: Any, **kwargs: object) -> None:
+    """Refuse to run unauthenticated, and open the per-request log."""
+    global _request_log
+    try:
+        auth_headers()
+    except RuntimeError as exc:
+        print(f"[locust] {exc}")
+        if environment.runner is not None:
+            environment.runner.quit()
+        return
+    path = os.environ.get(REQUEST_LOG_ENV, "").strip()
+    if path:
+        _request_log = open(path, "a", encoding="utf-8")  # noqa: SIM115
+
+
+@events.request.add_listener  # type: ignore[misc]
+def on_request(
+    request_type: str,
+    name: str,
+    response_time: float,
+    response: Any = None,
+    exception: BaseException | None = None,
+    **kwargs: object,
+) -> None:
+    if _request_log is not None:
+        record = request_record(name, request_type, response_time, response, exception)
+        _request_log.write(json.dumps(record) + "\n")
+
+
+@events.test_stop.add_listener  # type: ignore[misc]
+def on_test_stop(environment: Any, **kwargs: object) -> None:
+    global _request_log
+    if _request_log is not None:
+        _request_log.close()
+        _request_log = None
 
 
 @events.init.add_listener  # type: ignore[misc]

@@ -241,16 +241,27 @@ def install_capture(capture: Capture) -> None:
             setattr(getattr(ma, name), method, wrapped)
 
 
-def build_rag(client: MeasuredClient, capture: Capture) -> Any:
+def build_rag(client: MeasuredClient, capture: Capture, collection_name: str | None = None) -> Any:
     from src.agents.tools.rag import RAGTool
     from src.rag.naive_rag import NaiveRAGPipeline
 
     pipeline = NaiveRAGPipeline(
-        collection_name="a05_followup_20261025_" + uuid.uuid4().hex[:8], top_k=5
+        collection_name=collection_name or "a05_followup_20261025_" + uuid.uuid4().hex[:8], top_k=5
     )
     pipeline.llm_client = client
-    documents = pipeline.load_documents(ROOT / "datasets/tech_docs")
-    pipeline.build_index(documents)
+    if collection_name:
+        from llama_index.core import VectorStoreIndex
+        from llama_index.vector_stores.chroma import ChromaVectorStore
+
+        collection = pipeline.chroma_client.get_collection(collection_name)
+        if not collection.count():
+            raise ValueError("Cannot resume an empty evidence collection")
+        pipeline._index = VectorStoreIndex.from_vector_store(
+            ChromaVectorStore(chroma_collection=collection), embed_model=pipeline.embed_model
+        )
+    else:
+        documents = pipeline.load_documents(ROOT / "datasets/tech_docs")
+        pipeline.build_index(documents)
     original = pipeline.query
 
     def query(query_str: str, **kwargs: Any) -> Any:
@@ -437,6 +448,9 @@ def main() -> None:
         else []
     )
     done = {r["trial_id"] for r in previous}
+    prior_collection = next(
+        (r["rag_collection"] for r in previous if r.get("rag_collection")), None
+    )
     meta_path = args.output / "metadata.json"
     if not meta_path.exists():
         corpus = hashlib.sha256()
@@ -484,7 +498,7 @@ def main() -> None:
             break
         if track == "multi" and rag is None:
             print("Building isolated RAG index", flush=True)
-            rag = build_rag(inner, capture)
+            rag = build_rag(inner, capture, prior_collection)
         for c in [client, inner, judge]:
             c.trial_id = trial_id
         capture.nodes.clear()

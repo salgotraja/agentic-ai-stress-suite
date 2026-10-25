@@ -1,0 +1,743 @@
+{
+  "reviewer": "Codex; not human calibration",
+  "method": "Read every SQL final answer and executed SQL statement, checked literal fixture IDs/counts and retained logical predicates. Separately inspected every multi-agent judge approval and sampled negative traces. Raw model verdicts are preserved unchanged.",
+  "limitations": "This is assistant trace review, not human-labelled correctness. Negative multi-agent verdicts were not exhaustively re-judged for factual correctness. The scoring gate requires task conformance and evidence; failure is not proof that every factual statement is wrong.",
+  "sql": [
+    {
+      "trial_id": "final_sonnet/sql/z001/react/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "No django rows exist. Additional broad diagnostic checks were not accepted as matching beginner rows; final answer remained zero.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z001/react/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 1,
+      "additional_queries_after_initial": 0,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "No django rows exist. Additional broad diagnostic checks were not accepted as matching beginner rows; final answer remained zero.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z001/react/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "No django rows exist. Additional broad diagnostic checks were not accepted as matching beginner rows; final answer remained zero.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z001/plan_execute/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "No django rows exist. Additional broad diagnostic checks were not accepted as matching beginner rows; final answer remained zero.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z001/plan_execute/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "No django rows exist. Additional broad diagnostic checks were not accepted as matching beginner rows; final answer remained zero.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z001/plan_execute/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "No django rows exist. Additional broad diagnostic checks were not accepted as matching beginner rows; final answer remained zero.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z002/react/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 1,
+      "additional_queries_after_initial": 0,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "The impossible fastapi AND react conjunction was preserved in the answer. Preplanned checks of individual frameworks were explicitly diagnostic; alternatives were labelled as different questions.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z002/react/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 1,
+      "additional_queries_after_initial": 0,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "The impossible fastapi AND react conjunction was preserved in the answer. Preplanned checks of individual frameworks were explicitly diagnostic; alternatives were labelled as different questions.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z002/react/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 1,
+      "additional_queries_after_initial": 0,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "The impossible fastapi AND react conjunction was preserved in the answer. Preplanned checks of individual frameworks were explicitly diagnostic; alternatives were labelled as different questions.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z002/plan_execute/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "The impossible fastapi AND react conjunction was preserved in the answer. Preplanned checks of individual frameworks were explicitly diagnostic; alternatives were labelled as different questions.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z002/plan_execute/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "The impossible fastapi AND react conjunction was preserved in the answer. Preplanned checks of individual frameworks were explicitly diagnostic; alternatives were labelled as different questions.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z002/plan_execute/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "The impossible fastapi AND react conjunction was preserved in the answer. Preplanned checks of individual frameworks were explicitly diagnostic; alternatives were labelled as different questions.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z003/react/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 1,
+      "additional_queries_after_initial": 0,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "Exact absent title and pydantic filter were preserved. Plan-and-Execute repeated the query or counted it; no unrelated rows were accepted.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z003/react/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 1,
+      "additional_queries_after_initial": 0,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "Exact absent title and pydantic filter were preserved. Plan-and-Execute repeated the query or counted it; no unrelated rows were accepted.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z003/react/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 1,
+      "additional_queries_after_initial": 0,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "Exact absent title and pydantic filter were preserved. Plan-and-Execute repeated the query or counted it; no unrelated rows were accepted.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z003/plan_execute/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "Exact absent title and pydantic filter were preserved. Plan-and-Execute repeated the query or counted it; no unrelated rows were accepted.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z003/plan_execute/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "Exact absent title and pydantic filter were preserved. Plan-and-Execute repeated the query or counted it; no unrelated rows were accepted.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/z003/plan_execute/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [],
+      "answer_ids_checked_by_assistant": [],
+      "final_count_checked_by_assistant": 0,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "valid_empty",
+      "valid_repair": false,
+      "note": "Exact absent title and pydantic filter were preserved. Plan-and-Execute repeated the query or counted it; no unrelated rows were accepted.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r001/react/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        3,
+        7
+      ],
+      "answer_ids_checked_by_assistant": [
+        3,
+        7
+      ],
+      "final_count_checked_by_assistant": 2,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "Case normalization repaired Pydantic to pydantic while retaining beginner; accepted IDs were exactly 3 and 7.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r001/react/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        3,
+        7
+      ],
+      "answer_ids_checked_by_assistant": [
+        3,
+        7
+      ],
+      "final_count_checked_by_assistant": 2,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "Case normalization repaired Pydantic to pydantic while retaining beginner; accepted IDs were exactly 3 and 7.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r001/react/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        3,
+        7
+      ],
+      "answer_ids_checked_by_assistant": [
+        3,
+        7
+      ],
+      "final_count_checked_by_assistant": 2,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "Case normalization repaired Pydantic to pydantic while retaining beginner; accepted IDs were exactly 3 and 7.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r001/plan_execute/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        3,
+        7
+      ],
+      "answer_ids_checked_by_assistant": [
+        3,
+        7
+      ],
+      "final_count_checked_by_assistant": 2,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "Case normalization repaired Pydantic to pydantic while retaining beginner; accepted IDs were exactly 3 and 7.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r001/plan_execute/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        3,
+        7
+      ],
+      "answer_ids_checked_by_assistant": [
+        3,
+        7
+      ],
+      "final_count_checked_by_assistant": 2,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "Case normalization repaired Pydantic to pydantic while retaining beginner; accepted IDs were exactly 3 and 7.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r001/plan_execute/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        3,
+        7
+      ],
+      "answer_ids_checked_by_assistant": [
+        3,
+        7
+      ],
+      "final_count_checked_by_assistant": 2,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "Case normalization repaired Pydantic to pydantic while retaining beginner; accepted IDs were exactly 3 and 7.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r002/react/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        2
+      ],
+      "answer_ids_checked_by_assistant": [
+        2
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The request explicitly permits case-insensitive difficulty. Accepted LOWER() queries retain the fastapi and advanced concepts and return only ID 2.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r002/react/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        2
+      ],
+      "answer_ids_checked_by_assistant": [
+        2
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The request explicitly permits case-insensitive difficulty. Accepted LOWER() queries retain the fastapi and advanced concepts and return only ID 2.",
+      "raw_judge_disagrees_on_acceptance": true
+    },
+    {
+      "trial_id": "final_sonnet/sql/r002/react/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        2
+      ],
+      "answer_ids_checked_by_assistant": [
+        2
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The request explicitly permits case-insensitive difficulty. Accepted LOWER() queries retain the fastapi and advanced concepts and return only ID 2.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r002/plan_execute/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        2
+      ],
+      "answer_ids_checked_by_assistant": [
+        2
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The request explicitly permits case-insensitive difficulty. Accepted LOWER() queries retain the fastapi and advanced concepts and return only ID 2.",
+      "raw_judge_disagrees_on_acceptance": true
+    },
+    {
+      "trial_id": "final_sonnet/sql/r002/plan_execute/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        2
+      ],
+      "answer_ids_checked_by_assistant": [
+        2
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The request explicitly permits case-insensitive difficulty. Accepted LOWER() queries retain the fastapi and advanced concepts and return only ID 2.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r002/plan_execute/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        2
+      ],
+      "answer_ids_checked_by_assistant": [
+        2
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The request explicitly permits case-insensitive difficulty. Accepted LOWER() queries retain the fastapi and advanced concepts and return only ID 2.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r003/react/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        5
+      ],
+      "answer_ids_checked_by_assistant": [
+        5
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The misspelled framewrok column was corrected; both react and beginner filters were retained; accepted ID was 5.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r003/react/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        5
+      ],
+      "answer_ids_checked_by_assistant": [
+        5
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The misspelled framewrok column was corrected; both react and beginner filters were retained; accepted ID was 5.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r003/react/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        5
+      ],
+      "answer_ids_checked_by_assistant": [
+        5
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 2,
+      "additional_queries_after_initial": 1,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The misspelled framewrok column was corrected; both react and beginner filters were retained; accepted ID was 5.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r003/plan_execute/1",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        5
+      ],
+      "answer_ids_checked_by_assistant": [
+        5
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 4,
+      "additional_queries_after_initial": 3,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The misspelled framewrok column was corrected; both react and beginner filters were retained; accepted ID was 5.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r003/plan_execute/2",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        5
+      ],
+      "answer_ids_checked_by_assistant": [
+        5
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The misspelled framewrok column was corrected; both react and beginner filters were retained; accepted ID was 5.",
+      "raw_judge_disagrees_on_acceptance": false
+    },
+    {
+      "trial_id": "final_sonnet/sql/r003/plan_execute/3",
+      "reviewer": "Codex (assistant, not a human)",
+      "expected_ids": [
+        5
+      ],
+      "answer_ids_checked_by_assistant": [
+        5
+      ],
+      "final_count_checked_by_assistant": 1,
+      "final_correct": true,
+      "accepted_predicates_preserved": true,
+      "harmful_constraint_drift": false,
+      "first_exact_query_verified": true,
+      "sql_calls": 3,
+      "additional_queries_after_initial": 2,
+      "case_kind": "repair",
+      "valid_repair": true,
+      "note": "The misspelled framewrok column was corrected; both react and beginner filters were retained; accepted ID was 5.",
+      "raw_judge_disagrees_on_acceptance": false
+    }
+  ],
+  "baseline_multi_positive_review": [
+    {
+      "trial_id": "final_sonnet/multi/q001/sequential/2",
+      "raw_judge_approved": true,
+      "approval_confirmed": false,
+      "reason": "Writer output ends mid-critique, with no subsequent refinement. Node sequence is researcher, writer, critic; no writer-refine node ran."
+    },
+    {
+      "trial_id": "final_sonnet/multi/q008/sequential/1",
+      "raw_judge_approved": true,
+      "approval_confirmed": false,
+      "reason": "Guide ends mid-sentence. Judge invented a writer pass after critic feedback; the node sequence ends at critic and refinement_count is zero."
+    }
+  ],
+  "control_positive_review": [
+    {
+      "trial_id": "budget_control_2000/multi/q001/sequential/1",
+      "raw_judge_approved": true,
+      "approval_confirmed": false,
+      "reason": "Longer output labels its first summary Refined, then gives critique/caveats, but shows no subsequent revision. No writer-refine call ran after critic. This does not establish the requested critique-then-refinement workflow."
+    },
+    {
+      "trial_id": "budget_control_2000/multi/q002/parallel/1",
+      "raw_judge_approved": true,
+      "approval_confirmed": false,
+      "reason": "Only three specialist nodes ran, no tools or post-fan-out synthesizer. Final text includes handoff-to-synthesis instructions. Judge incorrectly claimed a completed synthesis and evidence support."
+    }
+  ],
+  "control_negative_review": [
+    {
+      "trial_id": "budget_control_2000/multi/q003/critic_refinement/1",
+      "reason": "Judge says final examples use deprecated @validator. The final output actually uses @field_validator and @model_validator; the V1 example is in an earlier RAG response. This is a final/intermediate-state evaluation error. No blanket correctness approval is substituted."
+    }
+  ],
+  "ledger_scan": {
+    "successful_empty_max_tokens_calls": 0,
+    "refusal_calls": 0,
+    "unknown_usage_calls": 2,
+    "unknown_usage_scope": "Two rejected generator requests before credit restoration; not included as agent-quality trials."
+  }
+}

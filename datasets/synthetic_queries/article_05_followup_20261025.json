@@ -5,7 +5,7 @@
   "multi_agent_acceptance": {
     "q001": ["Summarizes FastAPI dependency injection in two paragraphs.", "Research evidence is retrieved and used.", "A critique and subsequent revision are present, as requested."],
     "q002": ["Compares hooks and class components on state, lifecycle, and performance.", "Three distinct requested aspects receive separate specialist analysis.", "Produces a synthesized comparison rather than only concatenated responses."],
-    "q003": ["Explains Pydantic validators with technically valid code examples.", "A writer draft and critic review are present.", "Uses the requested 1–10 scoring policy with threshold 7 and a maximum of two revisions."],
+    "q003": ["Explains Pydantic validators with technically valid code examples.", "A writer draft and critic review are present.", "Writer revises substantive issues identified in the feedback, with at most two revisions."],
     "q004": ["Researches Spring Boot and FastAPI async patterns separately.", "Identifies similarities using the retrieved evidence.", "Produces one unified best-practices guide."],
     "q005": ["Actually queries the database for beginner documents.", "Reports a count established by the executed database query.", "Explains concepts from three identified selected documents."],
     "q006": ["Three candidates separately cover FastAPI, React, and Spring async support.", "Voting selects an existing recommendation.", "The recommendation is justified by evidence gathered during the trial."],

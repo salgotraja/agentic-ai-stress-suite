@@ -42,6 +42,7 @@ class Ledger:
         self.lock = threading.Lock()
         self.reserved = 0.0
         self.liability = 0.0
+        self.blocked = False
         self.events: list[dict[str, Any]] = []
         if path.exists():
             self.events = [json.loads(line) for line in path.read_text().splitlines()]
@@ -57,6 +58,7 @@ class Ledger:
     def reserve(self, amount: float) -> str:
         with self.lock:
             if self.liability + self.reserved + amount > self.cap:
+                self.blocked = True
                 raise BudgetExceededError("Request would exceed the approved API budget")
             self.reserved += amount
             token = str(uuid.uuid4())
@@ -243,7 +245,9 @@ def build_rag(client: MeasuredClient, capture: Capture) -> Any:
     from src.agents.tools.rag import RAGTool
     from src.rag.naive_rag import NaiveRAGPipeline
 
-    pipeline = NaiveRAGPipeline(collection_name="a05_followup_20261025", top_k=5)
+    pipeline = NaiveRAGPipeline(
+        collection_name="a05_followup_20261025_" + uuid.uuid4().hex[:8], top_k=5
+    )
     pipeline.llm_client = client
     documents = pipeline.load_documents(ROOT / "datasets/tech_docs")
     pipeline.build_index(documents)
@@ -405,6 +409,8 @@ def main() -> None:
         "--output", type=Path, default=ROOT / "results/data/article_05_followup_20261025"
     )
     parser.add_argument("--limit", type=int, default=72)
+    parser.add_argument("--ledger", type=Path)
+    parser.add_argument("--run-label", default="pilot")
     parser.add_argument("--track", choices=["all", "multi", "sql"], default="all")
     args = parser.parse_args()
     load_credentials(args.credentials_from)
@@ -413,7 +419,7 @@ def main() -> None:
     settings = get_settings(force_reload=True)
     specification = json.loads(DATASET.read_text())
     args.output.mkdir(parents=True, exist_ok=True)
-    ledger = Ledger(args.output / "calls.jsonl")
+    ledger = Ledger(args.ledger or args.output / "calls.jsonl")
     client, inner, judge = [
         MeasuredClient(ledger, role, settings) for role in ["outer", "inner_rag", "judge"]
     ]
@@ -468,7 +474,7 @@ def main() -> None:
     for track, task, agent, run in jobs:
         if args.track != "all" and args.track != track:
             continue
-        trial_id = f"{track}/{task['id']}/{agent or task['pattern']}/{run}"
+        trial_id = f"{args.run_label}/{track}/{task['id']}/{agent or task['pattern']}/{run}"
         if trial_id in done:
             continue
         if completed >= args.limit:
@@ -489,6 +495,8 @@ def main() -> None:
             "pattern": task.get("pattern"),
             "run": run,
         }
+        if track == "multi":
+            record["rag_collection"] = rag.rag_pipeline.collection_name
         try:
             result = (
                 run_multi(task, rag, client)
@@ -498,6 +506,7 @@ def main() -> None:
             record.update(result=result, nodes=list(capture.nodes), tools=list(capture.tools))
         except Exception as error:
             record.update(error_type=type(error).__name__, error=str(error)[:300])
+        record.update(nodes=list(capture.nodes), tools=list(capture.tools))
         record["latency_ms"] = (time.monotonic() - start) * 1000
         criteria = (
             specification["multi_agent_acceptance"][task["id"]]
@@ -536,7 +545,7 @@ def main() -> None:
             f"supported={record['judge'].get('supported_answer')} budget=${ledger.liability:.4f}/10",
             flush=True,
         )
-        if any(e["status"] == "error" for e in events):
+        if ledger.blocked or any(e["status"] == "error" for e in events):
             print("Stopping for provider/budget error review; paid work retained.", flush=True)
             break
 

@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "frozen_before_generation": true,
+  "criteria_author": "Codex; not human calibrated",
+  "multi_agent_acceptance": {
+    "q001": ["Summarizes FastAPI dependency injection in two paragraphs.", "Research evidence is retrieved and used.", "A critique and subsequent revision are present, as requested."],
+    "q002": ["Compares hooks and class components on state, lifecycle, and performance.", "Three distinct requested aspects receive separate specialist analysis.", "Produces a synthesized comparison rather than only concatenated responses."],
+    "q003": ["Explains Pydantic validators with technically valid code examples.", "A writer draft and critic review are present.", "Uses the requested 1–10 scoring policy with threshold 7 and a maximum of two revisions."],
+    "q004": ["Researches Spring Boot and FastAPI async patterns separately.", "Identifies similarities using the retrieved evidence.", "Produces one unified best-practices guide."],
+    "q005": ["Actually queries the database for beginner documents.", "Reports a count established by the executed database query.", "Explains concepts from three identified selected documents."],
+    "q006": ["Three candidates separately cover FastAPI, React, and Spring async support.", "Voting selects an existing recommendation.", "The recommendation is justified by evidence gathered during the trial."],
+    "q007": ["Provides a React useEffect tutorial with accurate examples.", "Critic reviews clarity and completeness using the requested 1–10 scale and threshold 7.", "Any required revision and resubmission are recorded."],
+    "q008": ["Researcher gathers evidence about FastAPI security.", "Writer produces a guide and critic checks completeness.", "Writer incorporates missing pieces after the review."],
+    "q009": ["Executes database queries establishing counts for Spring, Pydantic, and FastAPI.", "Reports the tool-established counts and correct percentages.", "Aggregates the counts into a coherent final answer."],
+    "q010": ["Retrieves evidence about GraphRAG concepts.", "Produces an implementation guide with code consistent with the evidence.", "A critic reviews technical accuracy and no more than two rewrites occur."],
+    "q011": ["Two candidates propose solutions to async errors in FastAPI.", "Supervisor reviews both and selects an approach.", "The final answer conveys the selected approach with a useful rationale."],
+    "q012": ["Frontend, backend, and testing perspectives separately investigate React testing tools.", "Evidence about the compared tools is gathered during the trial.", "A synthesizer produces a comprehensive comparison table."]
+  },
+  "fixture_rows": [
+    [1, "fastapi", "FastAPI Intro", "fastapi/intro.md", "FastAPI routing", "beginner"],
+    [2, "fastapi", "FastAPI Async", "fastapi/async.md", "FastAPI async", "advanced"],
+    [3, "pydantic", "Pydantic Basics", "pydantic/basics.md", "Pydantic validation", "beginner"],
+    [4, "pydantic", "Pydantic Models", "pydantic/models.md", "Pydantic models", "intermediate"],
+    [5, "react", "React Basics", "react/basics.md", "React rendering", "beginner"],
+    [6, "spring", "Spring Basics", "spring/basics.md", "Spring injection", "beginner"],
+    [7, "pydantic", "Pydantic Fields", "pydantic/fields.md", "Pydantic fields", "beginner"],
+    [8, "react", "React Performance", "react/performance.md", "React performance", "advanced"]
+  ],
+  "sql_cases": [
+    {"id":"z001","kind":"valid_empty","request":"Find beginner docs for the framework django.","initial_sql":"SELECT id, framework, title, difficulty FROM docs WHERE framework = 'django' AND difficulty = 'beginner'","oracle_sql":"SELECT id FROM docs WHERE framework = 'django' AND difficulty = 'beginner' ORDER BY id","expected_ids":[]},
+    {"id":"z002","kind":"valid_empty","request":"Find docs whose single framework value is simultaneously fastapi AND react. Preserve that conjunction.","initial_sql":"SELECT id, framework, title, difficulty FROM docs WHERE framework = 'fastapi' AND framework = 'react'","oracle_sql":"SELECT id FROM docs WHERE framework = 'fastapi' AND framework = 'react' ORDER BY id","expected_ids":[]},
+    {"id":"z003","kind":"valid_empty","request":"Find pydantic docs with the exact title Absent API guide.","initial_sql":"SELECT id, framework, title, difficulty FROM docs WHERE framework = 'pydantic' AND title = 'Absent API guide'","oracle_sql":"SELECT id FROM docs WHERE framework = 'pydantic' AND title = 'Absent API guide' ORDER BY id","expected_ids":[]},
+    {"id":"r001","kind":"repair","request":"Find beginner docs for pydantic. Framework matching is case-insensitive; retain the beginner constraint.","initial_sql":"SELECT id, framework, title, difficulty FROM docs WHERE framework = 'Pydantic' AND difficulty = 'beginner'","oracle_sql":"SELECT id FROM docs WHERE framework = 'pydantic' AND difficulty = 'beginner' ORDER BY id","expected_ids":[3,7]},
+    {"id":"r002","kind":"repair","request":"Find advanced docs for fastapi. Difficulty matching is case-insensitive; retain the fastapi constraint.","initial_sql":"SELECT id, framework, title, difficulty FROM docs WHERE framework = 'fastapi' AND difficulty = 'Advanced'","oracle_sql":"SELECT id FROM docs WHERE framework = 'fastapi' AND difficulty = 'advanced' ORDER BY id","expected_ids":[2]},
+    {"id":"r003","kind":"repair","request":"Find beginner docs for react. Correct the misspelled column in the supplied starting query if needed, while preserving both filters.","initial_sql":"SELECT id, framework, title, difficulty FROM docs WHERE framewrok = 'react' AND difficulty = 'beginner'","oracle_sql":"SELECT id FROM docs WHERE framework = 'react' AND difficulty = 'beginner' ORDER BY id","expected_ids":[5]}
+  ]
+}

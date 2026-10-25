@@ -145,6 +145,8 @@ class MeasuredClient:
                     json=payload,
                 )
             event["http_status"] = response.status_code
+            if response.is_error:
+                event["provider_error"] = response.json().get("error", {})
             response.raise_for_status()
             data = response.json()
             usage = data["usage"]

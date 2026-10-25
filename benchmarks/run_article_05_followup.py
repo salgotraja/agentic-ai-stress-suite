@@ -408,8 +408,7 @@ def main() -> None:
     load_credentials(args.credentials_from)
     from src.core.config import get_settings
 
-    get_settings.cache_clear()
-    settings = get_settings()
+    settings = get_settings(force_reload=True)
     specification = json.loads(DATASET.read_text())
     args.output.mkdir(parents=True, exist_ok=True)
     ledger = Ledger(args.output / "calls.jsonl")

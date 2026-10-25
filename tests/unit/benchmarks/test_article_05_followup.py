@@ -3,6 +3,7 @@ import subprocess
 import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+from types import SimpleNamespace
 
 import httpx
 import pytest
@@ -101,6 +102,72 @@ def test_ledger_lock_excludes_a_second_process(tmp_path: Path) -> None:
         assert "Another process is already using" in attempt.stderr
     finally:
         lock.close()
+
+
+def test_anthropic_cache_usage_and_control_output_floor(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    client = MeasuredClient(Ledger(tmp_path / "calls.jsonl"), "outer")
+    client.output_floor = 2000
+
+    def respond(request: httpx.Request) -> httpx.Response:
+        assert json.loads(request.content)["max_tokens"] == 2000
+        return httpx.Response(
+            200,
+            request=request,
+            json={
+                "id": "r",
+                "model": "claude-sonnet-5-5",
+                "content": [{"type": "text", "text": "ok"}],
+                "stop_reason": "end_turn",
+                "usage": {
+                    "input_tokens": 100,
+                    "output_tokens": 50,
+                    "cache_creation_input_tokens": 1000,
+                    "cache_read_input_tokens": 2000,
+                },
+            },
+        )
+
+    client.http = httpx.Client(transport=httpx.MockTransport(respond))
+    response = client.generate(prompt="test", max_tokens=100)
+    assert response.cost_usd == pytest.approx(0.0034)
+    assert response.prompt_tokens == 3100
+    assert client.ledger.events[0]["requested_max_output_tokens"] == 100
+
+
+def test_judge_cache_cost_and_limit_are_separate_from_control(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    client = MeasuredClient(Ledger(tmp_path / "calls.jsonl"), "outer")
+    client.output_floor = 2000
+
+    def respond(request: httpx.Request) -> httpx.Response:
+        assert json.loads(request.content)["max_tokens"] == 80
+        return httpx.Response(
+            200,
+            request=request,
+            json={
+                "id": "r",
+                "model": "gpt-4o-mini",
+                "choices": [{"message": {"content": "{}"}, "finish_reason": "stop"}],
+                "usage": {
+                    "prompt_tokens": 300,
+                    "completion_tokens": 50,
+                    "prompt_tokens_details": {"cached_tokens": 200},
+                },
+            },
+        )
+
+    client.http = httpx.Client(transport=httpx.MockTransport(respond))
+    response = client.generate(
+        prompt="test", max_tokens=80, preferred_provider=SimpleNamespace(value="openai")
+    )
+    assert response.cost_usd == pytest.approx(0.00006)
+    assert response.prompt_tokens == 300
+    assert client.ledger.events[0]["role"] == "judge"
 
 
 def test_provider_error_consumes_reservation_and_is_retained(

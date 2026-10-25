@@ -99,12 +99,14 @@ class MeasuredClient:
         self.role = role
         self.settings = settings
         self.trial_id = "pilot"
+        self.output_floor = 0
         self.http = httpx.Client(timeout=90)
 
     def generate(self, prompt: str, **kwargs: Any) -> SimpleNamespace:
         judge = getattr(kwargs.get("preferred_provider"), "value", None) == "openai"
         model = JUDGE if judge else GENERATOR
-        maximum = int(kwargs.get("max_tokens") or 2000)
+        requested_maximum = int(kwargs.get("max_tokens") or 2000)
+        maximum = requested_maximum if judge else max(requested_maximum, self.output_floor)
         system = kwargs.get("system_prompt") or ""
         rates = PRICES[model]
         bound_input = len((prompt + system).encode()) + 2048
@@ -118,6 +120,7 @@ class MeasuredClient:
             "prompt": prompt,
             "system_prompt": system,
             "max_output_tokens": maximum,
+            "requested_max_output_tokens": requested_maximum,
             "reservation_usd": reservation,
             "started_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "temperature": 0.7 if judge else None,
@@ -447,6 +450,10 @@ def main() -> None:
     parser.add_argument("--ledger", type=Path)
     parser.add_argument("--run-label", default="pilot")
     parser.add_argument("--track", choices=["all", "multi", "sql"], default="all")
+    parser.add_argument("--runs", type=int, default=3)
+    parser.add_argument("--tasks", nargs="+")
+    parser.add_argument("--collection")
+    parser.add_argument("--output-floor", type=int, default=0)
     args = parser.parse_args()
     load_credentials(args.credentials_from)
     from src.core.config import get_settings
@@ -466,6 +473,7 @@ def main() -> None:
     client, inner, judge = [
         MeasuredClient(ledger, role, settings) for role in ["outer", "inner_rag", "judge"]
     ]
+    client.output_floor = inner.output_floor = args.output_floor
     fixture = args.output / "sql_fixture.db"
     create_fixture(fixture, specification["fixture_rows"])
     for case in specification["sql_cases"]:
@@ -477,7 +485,7 @@ def main() -> None:
         else []
     )
     done = {r["trial_id"] for r in previous}
-    prior_collection = next(
+    prior_collection = args.collection or next(
         (r["rag_collection"] for r in previous if r.get("rag_collection")), None
     )
     meta_path = args.output / "metadata.json"
@@ -502,23 +510,28 @@ def main() -> None:
             "criteria_author": specification["criteria_author"],
             "judge_temperature": 0.7,
             "generator_effort": "medium",
+            "output_floor": args.output_floor,
+            "runs": args.runs,
+            "task_filter": args.tasks,
             "transport_change": "Direct HTTP; no implicit retries or provider fallback; unchanged agent prompts/routes.",
         }
         meta_path.write_text(json.dumps(meta, indent=2) + "\n")
     capture = Capture()
     install_capture(capture)
     tasks = json.loads((ROOT / "datasets/synthetic_queries/article_05.json").read_text())["queries"]
-    jobs = [("multi", t, "", run) for t in tasks for run in range(1, 4)]
+    jobs = [("multi", t, "", run) for t in tasks for run in range(1, args.runs + 1)]
     jobs += [
         ("sql", t, agent, run)
         for t in specification["sql_cases"]
         for agent in ["react", "plan_execute"]
-        for run in range(1, 4)
+        for run in range(1, args.runs + 1)
     ]
     rag = None
     completed = 0
     for track, task, agent, run in jobs:
         if args.track != "all" and args.track != track:
+            continue
+        if args.tasks and task["id"] not in args.tasks:
             continue
         trial_id = f"{args.run_label}/{track}/{task['id']}/{agent or task['pattern']}/{run}"
         if trial_id in done:

@@ -431,6 +431,10 @@ def main() -> None:
     settings = get_settings(force_reload=True)
     specification = json.loads(DATASET.read_text())
     args.output.mkdir(parents=True, exist_ok=True)
+    execution_commit = subprocess.check_output(
+        ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True
+    ).strip()
+    execution_hash = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     if not 0 < args.cap <= 10:
         raise ValueError("API cap must be positive and at most the approved $10")
     ledger = Ledger(args.ledger or args.output / "calls.jsonl", cap=args.cap)
@@ -505,6 +509,8 @@ def main() -> None:
         capture.tools.clear()
         start = time.monotonic()
         record: dict[str, Any] = {
+            "runner_commit": execution_commit,
+            "runner_sha256": execution_hash,
             "trial_id": trial_id,
             "track": track,
             "task_id": task["id"],

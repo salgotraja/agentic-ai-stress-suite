@@ -1,4 +1,6 @@
 import json
+import subprocess
+import sys
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -10,6 +12,7 @@ from benchmarks.run_article_05_followup import (
     BudgetExceededError,
     Ledger,
     MeasuredClient,
+    acquire_ledger_lock,
     create_fixture,
     parse_verdict,
     query_ids,
@@ -68,10 +71,36 @@ def test_empty_billed_response_is_accounted(
             )
         )
     )
-    result = client.generate(prompt="test", max_tokens=100)
-    assert result.content == ""
+    from src.core.llm_client import EmptyCompletionError
+
+    with pytest.raises(EmptyCompletionError):
+        client.generate(prompt="test", max_tokens=100)
     assert ledger.events[0]["cost_usd"] == pytest.approx(0.0007)
     assert ledger.events[0]["role"] == "inner_rag"
+    assert ledger.events[0]["usage_known"]
+
+
+def test_ledger_lock_excludes_a_second_process(tmp_path: Path) -> None:
+    path = tmp_path / "calls.jsonl"
+    lock = acquire_ledger_lock(path)
+    try:
+        attempt = subprocess.run(
+            [
+                sys.executable,
+                "-c",
+                "from pathlib import Path; import sys; "
+                "from benchmarks.run_article_05_followup import acquire_ledger_lock; "
+                "acquire_ledger_lock(Path(sys.argv[1]))",
+                str(path),
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        assert attempt.returncode != 0
+        assert "Another process is already using" in attempt.stderr
+    finally:
+        lock.close()
 
 
 def test_provider_error_consumes_reservation_and_is_retained(

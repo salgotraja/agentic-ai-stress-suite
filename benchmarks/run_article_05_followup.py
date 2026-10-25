@@ -7,6 +7,7 @@ transport disables implicit retries and records usage before interpreting text.
 from __future__ import annotations
 
 import argparse
+import fcntl
 import hashlib
 import json
 import os
@@ -19,7 +20,7 @@ import time
 import uuid
 from pathlib import Path
 from types import SimpleNamespace
-from typing import Any
+from typing import Any, TextIO
 
 import httpx
 
@@ -33,6 +34,17 @@ PRICES = {GENERATOR: (2.0, 10.0, 2.5, 0.1), JUDGE: (0.15, 0.60, 0.15, 0.075)}
 
 class BudgetExceededError(RuntimeError):
     pass
+
+
+def acquire_ledger_lock(path: Path) -> TextIO:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    stream = path.with_suffix(".lock").open("a")
+    try:
+        fcntl.flock(stream.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        stream.close()
+        raise RuntimeError("Another process is already using this budget ledger") from None
+    return stream
 
 
 class Ledger:
@@ -183,6 +195,15 @@ class MeasuredClient:
                 response_model=data.get("model"),
                 status="ok",
             )
+            if not judge:
+                from src.core.llm_client import EmptyCompletionError, ModelRefusalError
+
+                if stop == "refusal":
+                    raise ModelRefusalError(model, (data.get("stop_details") or {}).get("category"))
+                if not content and stop == "max_tokens":
+                    raise EmptyCompletionError(
+                        f"{model} returned no answer within {maximum} tokens"
+                    )
             return SimpleNamespace(
                 content=content,
                 prompt_tokens=input_tokens + cache_write + cache_read,
@@ -333,6 +354,8 @@ def parse_verdict(text: str, count: int) -> dict[str, Any]:
     assert all(type(c["met"]) is bool and isinstance(c["reason"], str) for c in verdict["criteria"])
     assert type(verdict["evidence_supported"]) is bool
     assert type(verdict["fabrication"]) is bool
+    for name in ["final_correct", "constraint_drift", "valid_repair", "unnecessary_retry"]:
+        assert verdict.get(name) is None or type(verdict[name]) is bool
     verdict["acceptance_pass"] = all(c["met"] for c in verdict["criteria"])
     verdict["supported_answer"] = (
         verdict["acceptance_pass"] and verdict["evidence_supported"] and not verdict["fabrication"]
@@ -437,7 +460,9 @@ def main() -> None:
     execution_hash = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     if not 0 < args.cap <= 10:
         raise ValueError("API cap must be positive and at most the approved $10")
-    ledger = Ledger(args.ledger or args.output / "calls.jsonl", cap=args.cap)
+    ledger_path = args.ledger or args.output / "calls.jsonl"
+    _ledger_lock = acquire_ledger_lock(ledger_path)
+    ledger = Ledger(ledger_path, cap=args.cap)
     client, inner, judge = [
         MeasuredClient(ledger, role, settings) for role in ["outer", "inner_rag", "judge"]
     ]

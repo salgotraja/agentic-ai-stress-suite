@@ -409,6 +409,7 @@ def main() -> None:
         "--output", type=Path, default=ROOT / "results/data/article_05_followup_20261025"
     )
     parser.add_argument("--limit", type=int, default=72)
+    parser.add_argument("--cap", type=float, default=10.0)
     parser.add_argument("--ledger", type=Path)
     parser.add_argument("--run-label", default="pilot")
     parser.add_argument("--track", choices=["all", "multi", "sql"], default="all")
@@ -419,7 +420,9 @@ def main() -> None:
     settings = get_settings(force_reload=True)
     specification = json.loads(DATASET.read_text())
     args.output.mkdir(parents=True, exist_ok=True)
-    ledger = Ledger(args.ledger or args.output / "calls.jsonl")
+    if not 0 < args.cap <= 10:
+        raise ValueError("API cap must be positive and at most the approved $10")
+    ledger = Ledger(args.ledger or args.output / "calls.jsonl", cap=args.cap)
     client, inner, judge = [
         MeasuredClient(ledger, role, settings) for role in ["outer", "inner_rag", "judge"]
     ]
@@ -542,7 +545,7 @@ def main() -> None:
         completed += 1
         print(
             f"{trial_id}: calls={record['llm_calls']} cost=${record['generator_cost_usd']:.4f} "
-            f"supported={record['judge'].get('supported_answer')} budget=${ledger.liability:.4f}/10",
+            f"supported={record['judge'].get('supported_answer')} budget=${ledger.liability:.4f}/{ledger.cap}",
             flush=True,
         )
         if ledger.blocked or any(e["status"] == "error" for e in events):

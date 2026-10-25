@@ -1,0 +1,29 @@
+{
+  "source_commit": "182efa9cd9955a8a96e7bf6d89a67585f5cdede3",
+  "spec_sha256": "e62be3bb06fb65cd7a7af2c3849d33e487df723383da52c8149e3ad8c24bac58",
+  "runner_sha256": "2ee5ebb62344802bafd894e3458404b7275c34caab6fc053f95eb903d946e8b8",
+  "corpus_sha256": "1d7f74e7a93fa8c4cb2fa776532dcaf3cf48811e06b2afdcc7991ef8a40d33cf",
+  "python": "3.11.14",
+  "started_at": "2026-10-25T08:26:02Z",
+  "generator": "claude-sonnet-5-5",
+  "judge": "gpt-4o-mini",
+  "prices_per_million": {
+    "claude-sonnet-5-5": [
+      2.0,
+      10.0,
+      2.5,
+      0.1
+    ],
+    "gpt-4o-mini": [
+      0.15,
+      0.6,
+      0.15,
+      0.075
+    ]
+  },
+  "api_cap_usd": 4.8,
+  "criteria_author": "Codex; not human calibrated",
+  "judge_temperature": 0.7,
+  "generator_effort": "medium",
+  "transport_change": "Direct HTTP; no implicit retries or provider fallback; unchanged agent prompts/routes."
+}
